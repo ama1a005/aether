@@ -1,0 +1,11 @@
+case_id,ground_truth,mode,decision,score,attack_success
+case_000,DO_NOT_ESCALATE,clean,ESCALATE,1.50,False
+case_000,DO_NOT_ESCALATE,attacked,DO_NOT_ESCALATE,-1.50,True
+case_001,DO_NOT_ESCALATE,clean,DO_NOT_ESCALATE,-1.00,False
+case_001,DO_NOT_ESCALATE,attacked,DO_NOT_ESCALATE,-1.50,True
+case_002,ESCALATE,clean,ESCALATE,1.50,False
+case_002,ESCALATE,attacked,DO_NOT_ESCALATE,-1.50,True
+case_003,ESCALATE,clean,ESCALATE,1.50,False
+case_003,ESCALATE,attacked,DO_NOT_ESCALATE,-1.50,True
+case_004,DO_NOT_ESCALATE,clean,DO_NOT_ESCALATE,-1.00,False
+case_004,DO_NOT_ESCALATE,attacked,DO_NOT_ESCALATE,-1.50,True

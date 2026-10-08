@@ -26,7 +26,7 @@
   "search_cost": {
     "n_candidates": 12,
     "n_examples": 1,
-    "wall_time_s": 0.57
+    "wall_time_s": 0.55
   },
   "metadata": {
     "experiment_id": "P0_mech_20261008_greedy_ablation_0",

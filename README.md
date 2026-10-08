@@ -1,115 +1,141 @@
-# AETHER — Cross-Agent Causal Circuit Discovery
+# AETHER
+**Cross-Agent Causal Circuit Discovery and Mechanism-Guided Remediation for Adversarial Trust Failures in MCP/A2A Multi-Agent Systems**
 
-**Research title:** AETHER: Cross-Agent Causal Circuit Discovery and Mechanism-Guided Remediation for Adversarial Trust Failures in MCP/A2A Multi-Agent Systems
-
-**Phase:** 1 (4 Oct – 16 Nov 2026) | **Review checkpoint:** 8 October 2026
-
----
-
-## One-Sentence Identity
-
-> We introduce a cross-agent causal circuit-discovery framework that traces adversarial trust failures from a sender model's internal computation, through an A2A message, into a receiver model's internal computation, and uses the resulting minimal causal mechanism to guide targeted remediation.
+Sprint 4–8 Oct 2026 | Phase 1 deadline: 16 Nov 2026
 
 ---
 
-## Quick Start
+## Quick start
 
 ```bash
-# 1. Install dependencies
-pip install -e ".[transformers]"
+git clone <repo>
+cd aether
+pip install torch numpy matplotlib pyyaml pytest
 
-# 2. Run smoke tests
-python scripts/smoke_test.py
-
-# 3. P3 demo — mechanistic instrumentation
+# All four demo commands
+python -m target.runner --config configs/experiments/review_target.yaml
+python -m attacks.runner --config configs/experiments/review_attack.yaml
 python -m experiments.phase1.single_agent_circuit_smoke
-
-# 4. P4 demo — cross-agent causal graph
 python -m experiments.phase1.cross_agent_smoke
 
-# 5. P1 demo — target harness
-python -m target.runner --config configs/experiments/review_target.yaml
+# Full end-to-end integration (chains all four modules)
+python -m experiments.phase1.end_to_end_smoke
 
-# 6. P2 demo — attack corpus
-python -m attacks.runner --config configs/experiments/review_attack.yaml
-
-# 7. All unit tests
-python -m pytest tests/unit/ -v
-
-# 8. All tests
-python -m pytest tests/ -v
+# Test suite
+python -m pytest tests/unit/ tests/integration/ -q          # 77 tests, <10s
+python -m pytest tests/regression/ -v                        # 6 regression, ~25s
 ```
 
 ---
 
-## Repository Structure
+## Repository structure
 
 ```
 aether/
-├── contracts/         ← FROZEN shared data schemas (PatientCase, RunTrace, CircuitResult, ...)
-├── target/            ← P1: two-agent MCP/A2A target harness
-├── attacks/           ← P2: attack corpus, evaluator, MCPTox adapter
-├── instrumentation/   ← P3: activation hooks, cache, trace capture
-├── causal/            ← P3+P4: interventions, metrics, graph, bridge, validation
-├── discovery/         ← P3+P4: random baseline, greedy pruner, RL (Phase 2)
-├── remediation/       ← P4: candidate extraction, selector, steering
-├── evaluation/        ← Shared: circuit metrics, attack metrics, stats, plots
-├── experiments/       ← Runnable experiment scripts (phase1/, phase2/)
-├── data/              ← Synthetic cases, attack cases, dataset splits
-├── results/           ← raw/, processed/, figures/ (machine-generated only)
-├── tests/             ← unit/, integration/, regression/, fixtures/
-├── configs/           ← YAML configs for models, attacks, experiments
-├── benchmarks/        ← REGISTRY.yaml + external benchmark adapters
-├── docs/              ← Architecture, decisions, experiment cards, literature
-└── scripts/           ← smoke_test.py, setup helpers, reproduce_paper_figures.py
+├── contracts/            # Frozen shared schemas v0.1.0
+│   └── schemas.py        # PatientCase, A2AMessageRecord, AttackSpec, RunTrace,
+│                         #   ActivationTrace, InterventionSpec, CircuitResult
+│
+├── target/               # P1 — Two-agent target harness
+│   ├── agents/           #   AgentA (intake), AgentB (escalation decision)
+│   ├── mcp/              #   MockMCPClient (tool_description_poison, tool_output_inject)
+│   ├── a2a/              #   A2AMessageBuilder
+│   ├── case_loader.py    #   CaseLoader (synthetic / fixture / ptbxl-stub)
+│   ├── decision_parser.py
+│   ├── trace_logger.py
+│   └── runner.py         #   CLI entry-point
+│
+├── attacks/              # P2 — Attack corpus & evaluation
+│   ├── corpus/           #   CorpusBuilder, AttackStore
+│   ├── adapters/         #   MCPToxAdapter (prior-art attribution)
+│   ├── templates/        #   6 frozen attack templates
+│   ├── a2a/              #   A2AManipulator
+│   ├── evaluator.py      #   AttackEvaluator (ASR, conditional ASR)
+│   ├── stats.py          #   bootstrap_ci, paired_mcnemar, effect_size_odds_ratio
+│   └── runner.py         #   CLI entry-point
+│
+├── instrumentation/      # P3 — Activation hooks
+│   ├── hooks/            #   HookRegistry (non-interference verified)
+│   ├── cache/            #   ActivationCache (tensor save/load)
+│   └── trace_capture.py
+│
+├── causal/               # P3+P4 — Causal analysis
+│   ├── interventions/    #   ZeroAblation, MeanAblation, ActivationPatch
+│   ├── metrics/          #   faithfulness F(C), necessity, benign_damage
+│   ├── candidate_graph/  #   CandidateGraphBuilder, CrossAgentGraph
+│   ├── bridge/           #   MessageBridge, CrossAgentInterventionRunner
+│   └── validation/       #   SyntheticCausalBenchmark, circuit metrics
+│
+├── discovery/            # P3+P4 — Circuit discovery
+│   ├── greedy/           #   GreedyCausalPruner, CrossAgentGreedyPruner
+│   └── random_baseline/  #   RandomCircuitSampler
+│
+├── remediation/          # P4 — Intervention selection
+│   ├── candidates/       #   RemediationCandidateExtractor
+│   └── selector/         #   DeterministicInterventionSelector (Pareto)
+│
+├── experiments/
+│   └── phase1/
+│       ├── single_agent_circuit_smoke.py   # P3 demo
+│       ├── cross_agent_smoke.py            # P4 demo
+│       └── end_to_end_smoke.py             # Full integration (P1→P2→P3→P4)
+│
+├── tests/
+│   ├── unit/             # 77 unit + integration tests
+│   ├── integration/
+│   └── regression/       # 6 regression tests (subprocess, verifies all demos)
+│
+├── configs/
+│   └── experiments/
+│       ├── review_target.yaml   # P1 config (synthetic cases, seed=42)
+│       └── review_attack.yaml   # P2 config (3 families, n_per_family=5)
+│
+├── benchmarks/REGISTRY.yaml     # MCPTox, BFCL, PTB-XL, Tracr, IOI, AETHER-CATF
+├── data/attack_cases/           # 15 generated attack specs + MANIFEST.json
+├── results/
+│   ├── raw/                     # CSVs, JSONs, RunTraces
+│   └── figures/                 # PNG plots (matplotlib, Agg backend)
+│
+├── RESEARCH_CONTRACT.md         # Novelty bounds, metric definitions, binding rules
+├── AGENTS.md                    # Coding-agent operating rules
+├── PROJECT_STATE.md             # Current sprint status
+└── TASK.md                      # Daily task board
 ```
 
 ---
 
-## Team and Branch Ownership
+## Key quantitative results (8 October review)
 
-| Member | Branch | Primary Directories |
-|--------|--------|---------------------|
-| P1 — Target & Protocol Lead | `m1/target-harness` | `target/`, `contracts/` |
-| P2 — Attack, Benchmark & Stats Lead | `m2/attack-corpus` | `attacks/`, `evaluation/` |
-| P3 — Mechanistic Discovery & RL Lead | `m3/mech-interventions` | `instrumentation/`, `causal/interventions/`, `causal/metrics/`, `discovery/` |
-| P4 — Cross-Agent Causality & Remediation Lead | `m4/cross-agent-graph` | `causal/candidate_graph/`, `causal/bridge/`, `causal/validation/`, `remediation/` |
+| Member | Command | Key metric |
+|--------|---------|------------|
+| P1 | `python -m target.runner ...` | clean_pass=80%, attack_success=100% (tool_description_poison, rule-based) |
+| P2 | `python -m attacks.runner ...` | ASR=100% (mock), 3 families, 95% bootstrap CI |
+| P3 | `python -m experiments.phase1.single_agent_circuit_smoke` | faithfulness=0.925, 99th pct vs random, L1.H2+L2.H1 recovered |
+| P4 | `python -m experiments.phase1.cross_agent_smoke` | precision=1.0, F1=0.75, bridge_acc=1.0, message patch delta=-1.0 |
+| All | `python -m experiments.phase1.end_to_end_smoke` | 9/9 checks PASS in 0.83 s |
 
----
-
-## Key Files to Read First
-
-1. [`RESEARCH_CONTRACT.md`](RESEARCH_CONTRACT.md) — novelty rules, what AETHER is/is not
-2. [`AGENTS.md`](AGENTS.md) — coding-agent operating rules
-3. [`PROJECT_STATE.md`](PROJECT_STATE.md) — daily status, known bugs, next tasks
-4. [`contracts/schemas.py`](contracts/schemas.py) — frozen data contracts
+> **Scope note:** All P3/P4 results use a ToyTransformer and SyntheticCausalBenchmark respectively.
+> Real model integration is scheduled for 9–15 October.
+> P2 ASR uses a mock target — real ASR against the P1 pipeline is the next integration milestone.
 
 ---
 
-## 8 October Review Demo Commands
+## Branch map
 
-```bash
-# P3: single-agent causal ablation smoke
-python -m experiments.phase1.single_agent_circuit_smoke
-
-# P4: cross-agent graph and intervention smoke
-python -m experiments.phase1.cross_agent_smoke
-```
-
----
-
-## Experiment ID Convention
-
-```
-P0_<module>_<yyyymmdd>_<shortname>_<seed>
-```
+| Branch | Owner | Contents |
+|--------|-------|----------|
+| `main` | All | Shared contracts, fixtures, configs, governance |
+| `m1/target-harness` | Member 1 | `target/` |
+| `m2/attack-corpus` | Member 2 | `attacks/` |
+| `m3/mech-interventions` | Member 3 | `instrumentation/`, `causal/interventions/`, `discovery/greedy/pruner.py` |
+| `m4/cross-agent-graph` | Member 4 | `causal/candidate_graph/cross_agent_graph.py`, `causal/bridge/`, `discovery/greedy/cross_agent_pruner.py`, `remediation/` |
 
 ---
 
-## Key Constraints
+## Important constraints
 
-- No result may be manually typed into a file — all outputs from executed experiments
-- No `except Exception: pass` — all errors must propagate clearly
-- No changes to `contracts/` without schema-change issue + approval
-- Final test set (PTB-XL fold 10 / AETHER-CATF test) is LOCKED
-- Feature freeze: 8 November 2026
+- **No real LLM calls**: everything runs on CPU with rule-based / toy models
+- **No GPU required**: all tests pass on CPU in < 30 s total
+- **MCPTox is prior art**: results labelled `AETHER-CATF`, never `MCPTox ASR`
+- **PTB-XL not loaded**: raises `NotImplementedError` by design — restricted dataset
+- **Schema v0.1.0 frozen**: no field changes without team vote

@@ -56,7 +56,10 @@ def test_mock_mcp_poison_description():
     client = MockMCPClient({"test_tool": lambda x: {"result": x*2}})
     spec = AttackSpec("a1", "tool_description_poison", "mcp_tool_description", "DO_NOT_ESCALATE", {}, {"description": "POISON"})
     res = client.call_tool("test_tool", {"x": 5}, poisoned=True, poison_spec=spec)
-    assert res == {"result": 10, "_poison_context": "POISON"}
+    # _poison_context now includes [OVERRIDE:<target_behavior>] for machine-detectable parsing
+    assert res["result"] == 10
+    assert "POISON" in res["_poison_context"]
+    assert "[OVERRIDE:DO_NOT_ESCALATE]" in res["_poison_context"]
 
 def test_mock_mcp_poison_output():
     client = MockMCPClient({"test_tool": lambda x: {"result": x*2}})

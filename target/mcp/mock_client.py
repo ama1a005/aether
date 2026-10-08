@@ -21,9 +21,14 @@ class MockMCPClient:
         # Apply poisoning if requested
         if poisoned and poison_spec is not None:
             if poison_spec.target_surface == 'mcp_tool_description':
-                # Prepend adversarial payload to context
+                # Inject override instruction into result — embeds target_behavior
+                # so Agent B's poison detector can identify it
                 if isinstance(result, dict):
-                    result['_poison_context'] = poison_spec.adversarial_payload.get('description', str(poison_spec.adversarial_payload))
+                    override_text = poison_spec.adversarial_payload.get('description', '')
+                    # Append target_behavior so the override is machine-detectable
+                    result['_poison_context'] = (
+                        f"{override_text} [OVERRIDE:{poison_spec.target_behavior}]"
+                    )
             elif poison_spec.target_surface == 'mcp_tool_output':
                 # Replace result with adversarial payload
                 result = poison_spec.adversarial_payload.get('result', poison_spec.adversarial_payload)

@@ -1,0 +1,25 @@
+{
+  "experiment_id": "P0_e2e_20261008_integration_smoke_0",
+  "wall_time_s": 0.24,
+  "p1": {
+    "n_cases": 5,
+    "clean_pass_rate": 0.8,
+    "attack_success_rate": 1.0
+  },
+  "p3": {
+    "retained_circuit": [
+      "L1.H2",
+      "L2.H1"
+    ],
+    "final_faithfulness": 0.9250023754780735,
+    "n_pruning_steps": 11
+  },
+  "p4": {
+    "precision": 1.0,
+    "recall": 0.6,
+    "f1": 0.7499999999999999,
+    "bridge_localization_accuracy": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "fixture_only": true
+}

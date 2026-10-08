@@ -11,12 +11,12 @@
     "mcp_tool_output": 5
   },
   "version": "1.0",
-  "generation_date": "2026-10-08T22:46:11.862874",
+  "generation_date": "2026-10-08T23:32:48.727741",
   "seed": 42,
   "n_total": 15,
   "families": [
-    "tool_output_inject",
     "tool_description_poison",
-    "a2a_manipulation"
+    "a2a_manipulation",
+    "tool_output_inject"
   ]
 }
