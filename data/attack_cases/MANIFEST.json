@@ -1,0 +1,22 @@
+{
+  "total_count": 15,
+  "by_family": {
+    "a2a_manipulation": 5,
+    "tool_description_poison": 5,
+    "tool_output_inject": 5
+  },
+  "by_surface": {
+    "a2a_message": 5,
+    "mcp_tool_description": 5,
+    "mcp_tool_output": 5
+  },
+  "version": "1.0",
+  "generation_date": "2026-10-08T22:46:11.862874",
+  "seed": 42,
+  "n_total": 15,
+  "families": [
+    "tool_output_inject",
+    "tool_description_poison",
+    "a2a_manipulation"
+  ]
+}
