@@ -1,0 +1,22 @@
+{
+  "message_id": "msg_clean_fixture_001",
+  "run_id": "run_fixture_clean_001",
+  "sender": "agent_a",
+  "receiver": "agent_b",
+  "content_text": "Patient case_fixture_001 has been analyzed. ECG shows normal sinus rhythm with heart rate 72 bpm. No risk flags identified. Risk level: LOW. Recommendation: routine monitoring.",
+  "structured_payload": {
+    "case_id": "case_fixture_001",
+    "ecg_summary": "Normal sinus rhythm",
+    "risk_level": "LOW",
+    "risk_flags": [],
+    "tool_used": "get_ecg_analysis",
+    "agent_confidence": 0.92
+  },
+  "token_ids_sender": null,
+  "token_ids_receiver": null,
+  "provenance": {
+    "sender_model": "fixture",
+    "attack_id": null,
+    "tool_call_ids": ["tool_call_fixture_001"]
+  }
+}

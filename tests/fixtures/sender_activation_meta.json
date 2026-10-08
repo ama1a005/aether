@@ -1,0 +1,20 @@
+{
+  "run_id": "run_fixture_attacked_001",
+  "agent_id": "agent_a",
+  "model_id": "fixture_model",
+  "component_granularity": "head",
+  "component_ids": ["L0.H0", "L0.H1", "L0.H2", "L0.H3",
+                    "L1.H0", "L1.H1", "L1.H2", "L1.H3",
+                    "L1.MLP", "L2.H0", "L2.H1", "L2.H2", "L2.H3", "L2.MLP"],
+  "tensor_artifact_path": "tests/fixtures/tensors/sender_activations.pt",
+  "token_map": {
+    "L0.H0": [0, 1, 2, 3],
+    "L0.H1": [0, 1, 2, 3],
+    "L1.MLP": [0, 1, 2, 3],
+    "L2.H2": [2, 3]
+  },
+  "metadata": {
+    "fixture_only": true,
+    "description": "Fixture activation trace metadata for sender agent — tensors are zero-initialized placeholders"
+  }
+}

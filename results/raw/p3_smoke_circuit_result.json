@@ -1,0 +1,44 @@
+{
+  "experiment_id": "P0_mech_20261008_greedy_ablation_0",
+  "source_attack_ids": [
+    "fixture_adv_input_seed42"
+  ],
+  "nodes": [
+    {
+      "id": "L1.H2",
+      "type": "attention_head",
+      "region": "receiver",
+      "retained": true
+    },
+    {
+      "id": "L2.H1",
+      "type": "attention_head",
+      "region": "receiver",
+      "retained": true
+    }
+  ],
+  "edges": [],
+  "faithfulness": 0.9250023754780735,
+  "necessity": null,
+  "size": 2,
+  "benign_damage": 113.342037,
+  "search_method": "greedy",
+  "search_cost": {
+    "n_candidates": 12,
+    "n_examples": 1,
+    "wall_time_s": 0.57
+  },
+  "metadata": {
+    "experiment_id": "P0_mech_20261008_greedy_ablation_0",
+    "seed": 42,
+    "model": "ToyTransformer_3L4H_d64",
+    "known_causal_components": [
+      "L1.H2",
+      "L2.H1"
+    ],
+    "random_baseline_mean": 0.181274,
+    "random_baseline_std": 0.119699,
+    "random_baseline_percentile": 99.0,
+    "fixture_only": true
+  }
+}

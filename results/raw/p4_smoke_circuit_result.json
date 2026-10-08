@@ -1,0 +1,67 @@
+{
+  "experiment_id": "P0_cross_20261008_cross_agent_smoke_0",
+  "source_attack_ids": [
+    "synthetic_benchmark"
+  ],
+  "nodes": [
+    {
+      "id": "S1",
+      "type": "layer",
+      "region": "sender",
+      "retained": true
+    },
+    {
+      "id": "M1",
+      "type": "layer",
+      "region": "message",
+      "retained": true
+    },
+    {
+      "id": "R2",
+      "type": "layer",
+      "region": "receiver",
+      "retained": true
+    }
+  ],
+  "edges": [
+    {
+      "src": "M1",
+      "dst": "R2",
+      "type": "message_to_receiver",
+      "bridge": true,
+      "weight": 1.0
+    }
+  ],
+  "faithfulness": 1.0,
+  "necessity": null,
+  "size": 3,
+  "benign_damage": 0.0,
+  "search_method": "greedy",
+  "search_cost": {
+    "n_candidates": 8,
+    "n_forward_passes": 40,
+    "wall_time_s": 0.04
+  },
+  "metadata": {
+    "experiment_id": "P0_cross_20261008_cross_agent_smoke_0",
+    "seed": 42,
+    "benchmark": "SyntheticCausalBenchmark",
+    "ground_truth_path": [
+      "S1",
+      "S2",
+      "M1",
+      "R2",
+      "Y"
+    ],
+    "evaluation": {
+      "precision": 1.0,
+      "recall": 0.6,
+      "f1": 0.7499999999999999,
+      "bridge_localization_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    },
+    "random_baseline_mean": 0.025001,
+    "random_baseline_std": 0.156125,
+    "fixture_only": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "experiment_id": "P0_cross_20261008_fixture_circuit_0",
+  "source_attack_ids": ["atk_poison_001"],
+  "nodes": [
+    {"id": "L1.H2", "type": "attention_head", "region": "sender", "retained": true},
+    {"id": "L1.MLP", "type": "mlp_block", "region": "sender", "retained": true},
+    {"id": "message_field:content_text", "type": "message_text", "region": "message", "retained": true},
+    {"id": "message_field:risk_level", "type": "message_field", "region": "message", "retained": true},
+    {"id": "L0.H3", "type": "attention_head", "region": "receiver", "retained": true},
+    {"id": "L2.H1", "type": "attention_head", "region": "receiver", "retained": true},
+    {"id": "outcome", "type": "decision", "region": "outcome", "retained": true}
+  ],
+  "edges": [
+    {"src": "L1.H2", "dst": "L1.MLP", "type": "internal", "region": "sender"},
+    {"src": "L1.MLP", "dst": "message_field:content_text", "type": "sender_to_message", "bridge": true},
+    {"src": "message_field:risk_level", "dst": "L0.H3", "type": "message_to_receiver", "bridge": true},
+    {"src": "L0.H3", "dst": "L2.H1", "type": "internal", "region": "receiver"},
+    {"src": "L2.H1", "dst": "outcome", "type": "internal", "region": "receiver"}
+  ],
+  "faithfulness": 0.87,
+  "necessity": 0.72,
+  "size": 7,
+  "benign_damage": 0.04,
+  "search_method": "greedy",
+  "search_cost": {
+    "n_forward_passes": 42,
+    "wall_time_s": 1.2,
+    "n_examples": 3
+  },
+  "metadata": {
+    "fixture_only": true,
+    "description": "Sample circuit result fixture for schema validation"
+  }
+}

@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "aether"
+version = "0.1.0"
+description = "AETHER: Cross-Agent Causal Circuit Discovery for Adversarial Trust Failures"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24",
+    "torch>=2.0",
+    "pyyaml>=6.0",
+    "matplotlib>=3.7",
+    "scipy>=1.11",
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "tqdm>=4.65",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+transformers = [
+    "transformers>=4.40",
+    "accelerate>=0.28",
+    "huggingface-hub>=0.21",
+    "safetensors>=0.4",
+    "einops>=0.7",
+    "bitsandbytes>=0.43; platform_system=='Linux'",
+]
+dev = [
+    "black>=23.0",
+    "isort>=5.12",
+    "mypy>=1.5",
+    "ruff>=0.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

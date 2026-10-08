@@ -1,0 +1,14 @@
+{
+  "intervention_id": "intv_fixture_msg_patch_001",
+  "run_id": "run_fixture_attacked_001",
+  "location_type": "message",
+  "component_id": "message_field:risk_level",
+  "operator": "field_patch",
+  "source_run_id": "run_fixture_clean_001",
+  "parameters": {
+    "field_path": "structured_payload.risk_level",
+    "patch_value": "LOW",
+    "original_value": "LOW",
+    "description": "Patch message risk_level field from attacked to clean value"
+  }
+}

@@ -1,0 +1,21 @@
+experiment_id: "P0_attack_20261008_review_attack_0"
+description: "Review attack corpus smoke test — Member 2"
+corpus:
+  families:
+    - tool_description_poison
+    - tool_output_inject
+    - a2a_manipulation
+  fixtures_dir: tests/fixtures/
+  use_fixtures: true
+target:
+  mode: mock
+  trace_dir: results/raw/
+n_cases_per_family: 5
+seed: 42
+output:
+  raw_results: results/raw/p2_review_attack_results.csv
+  asr_table: results/raw/p2_review_asr_table.csv
+  figure: results/figures/p2_asr_plot.png
+bootstrap_ci:
+  n_bootstrap: 1000
+  confidence: 0.95

@@ -1,0 +1,4 @@
+intervention_location,component_id,score_before,score_after,delta,is_causal
+message,M1,1.0,0.0,-1.0,True
+sender,S1,1.0,0.0,-1.0,True
+receiver,R2,1.0,0.0,-1.0,True

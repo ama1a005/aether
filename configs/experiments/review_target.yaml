@@ -1,0 +1,22 @@
+experiment_id: "P0_cross_20261008_review_target_0"
+description: "Review target harness smoke test — Member 1"
+mode: "clean_and_attacked"
+model:
+  agent_a: "fixture_model"
+  agent_b: "fixture_model"
+case_source:
+  type: fixture
+  path: tests/fixtures/patient_case.json
+attack:
+  clean_spec: tests/fixtures/clean_attack_spec.json
+  poison_spec: tests/fixtures/poison_attack_spec.json
+  families:
+    - tool_description_poison
+seed: 42
+n_cases: 5
+output:
+  trace_dir: results/raw/
+  log_dir: results/raw/logs/
+decoding:
+  temperature: 0.0
+  max_new_tokens: 64

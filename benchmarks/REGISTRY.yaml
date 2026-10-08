@@ -1,0 +1,91 @@
+name: MCPTox
+version: "AAAI-2026-release"
+source: official
+license: "See https://doi.org/10.1609/aaai.v40i42.40895"
+commit_or_doi: "10.1609/aaai.v40i42.40895"
+local_hash: "TBD_after_download"
+official_evaluator: true
+role: external_attack_benchmark
+allowed_splits: [test]
+modifications: none
+notes: "Wang et al., MCPTox: A Benchmark for Tool Poisoning on Real-World MCP Servers, AAAI 2026. 45 servers, 353 tools, 1348 malicious cases, 10 risk categories. AETHER uses MCPTox families as attack template source (Class B use), not as claimed MCPTox ASR results."
+
+---
+name: BFCL
+version: "pinned_release_TBD"
+source: official
+license: "See https://gorilla.cs.berkeley.edu/blogs/8_berkeley_function_calling_leaderboard.html"
+commit_or_doi: "TBD"
+local_hash: "TBD"
+official_evaluator: true
+role: external_benign_tool_competence_benchmark
+allowed_splits: [test]
+modifications: none
+notes: "Berkeley Function Calling Leaderboard. Required for benign tool-use competence verification before adversarial claims."
+
+---
+name: PTB-XL
+version: "v1.0.3"
+source: official
+license: "Creative Commons Attribution 4.0 International"
+commit_or_doi: "https://doi.org/10.13026/kfzx-aw45"
+local_hash: "TBD_after_download"
+official_evaluator: false
+role: primary_medical_source_dataset
+allowed_splits: ["fold_1", "fold_2", "fold_3", "fold_4", "fold_5", "fold_6", "fold_7", "fold_8", "fold_9"]
+locked_test_split: "fold_10"
+modifications: "Structured case records derived deterministically from metadata and SCP-ECG labels. No raw ECG waveforms passed to LLMs."
+notes: "21,801 clinical 12-lead ECG records. Folds 1-8 = development. Fold 9 = validation. Fold 10 = LOCKED TEST. No fold-10 cases used during attack template tuning, prompt tuning, circuit hyperparameter selection, threshold selection, or defense selection."
+
+---
+name: Tracr
+version: "TBD"
+source: official
+license: "Apache 2.0"
+commit_or_doi: "https://github.com/google-deepmind/tracr"
+local_hash: "TBD"
+official_evaluator: false
+role: mechanistic_interpretability_calibration
+allowed_splits: [all]
+modifications: none
+notes: "Used for calibrating circuit-discovery implementation against known-structure programs. Required before applying AETHER's discovery code to adversarial trust decisions."
+
+---
+name: IOI_Greater_Than
+version: "GPT-2 Small canonically studied circuits"
+source: reproduced
+license: "N/A (open reproduction)"
+commit_or_doi: "Indirect Object Identification: https://arxiv.org/abs/2211.00593"
+local_hash: "TBD"
+official_evaluator: false
+role: mechanistic_interpretability_calibration
+allowed_splits: [all]
+modifications: "Local reproduction using public prompts and GPT-2 Small"
+notes: "At least one of IOI or Greater-Than must be reproduced before Phase 1 paper claims."
+
+---
+name: AETHER-CATF
+version: "v0.1.0-dev"
+source: project_constructed
+license: "N/A (project artifact)"
+commit_or_doi: "N/A"
+local_hash: "TBD"
+official_evaluator: true
+role: primary_project_benchmark
+allowed_splits: ["development", "validation"]
+locked_test_split: "test_fold10"
+modifications: "Constructed from PTB-XL case identities + MCPTox attack families + fixed A2A schemas + frozen agent prompts + frozen model revisions + deterministic case selection + versioned intervention definitions."
+notes: "v0.x = development only, NOT paper results. v1.0.0 = Phase 1 frozen benchmark."
+
+---
+name: AgentDojo
+version: "TBD"
+source: official
+license: "MIT"
+commit_or_doi: "https://github.com/ethz-spylab/agentdojo"
+local_hash: "TBD"
+official_evaluator: true
+role: external_security_benchmark
+allowed_splits: [test]
+modifications: none
+notes: "97 tasks, 629 security test cases. Phase 1: optional. Phase 2: mandatory external generalization benchmark."

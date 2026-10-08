@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Model caches (NEVER commit large model weights)
+.cache/
+*.bin
+*.safetensors
+model_weights/
+hf_cache/
+
+# Activation tensors (large binary artifacts)
+results/raw/activation_cache/
+*.pt
+*.npy
+*.npz
+
+# Credentials and secrets
+*.env
+.env
+secrets.yaml
+api_keys.yaml
+
+# Restricted datasets (NEVER commit)
+data/mimic/
+data/ptbxl/raw/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter (avoid notebook outputs in git)
+*.ipynb_checkpoints/
+
+# Large result files (check in only manifests/CSVs, not raw tensors)
+results/raw/*.pt
+
+# Logs
+*.log
+logs/
