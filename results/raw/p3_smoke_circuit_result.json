@@ -1,5 +1,5 @@
 {
-  "experiment_id": "P0_mech_20261008_greedy_ablation_0",
+  "experiment_id": "P0_mech_20261011_greedy_ablation_0",
   "source_attack_ids": [
     "fixture_adv_input_seed42"
   ],
@@ -18,18 +18,18 @@
     }
   ],
   "edges": [],
-  "faithfulness": 0.9250023754780735,
+  "faithfulness": 0.9250021762983478,
   "necessity": null,
   "size": 2,
-  "benign_damage": 113.342037,
+  "benign_damage": 113.341934,
   "search_method": "greedy",
   "search_cost": {
     "n_candidates": 12,
     "n_examples": 1,
-    "wall_time_s": 0.55
+    "wall_time_s": 0.59
   },
   "metadata": {
-    "experiment_id": "P0_mech_20261008_greedy_ablation_0",
+    "experiment_id": "P0_mech_20261011_greedy_ablation_0",
     "seed": 42,
     "model": "ToyTransformer_3L4H_d64",
     "known_causal_components": [

@@ -1,5 +1,5 @@
 import torch
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 from .hooks.hook_registry import HookRegistry
 
 class TraceCapture:

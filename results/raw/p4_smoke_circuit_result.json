@@ -1,5 +1,5 @@
 {
-  "experiment_id": "P0_cross_20261008_cross_agent_smoke_0",
+  "experiment_id": "P0_cross_20261011_cross_agent_smoke_0",
   "source_attack_ids": [
     "synthetic_benchmark"
   ],
@@ -40,10 +40,10 @@
   "search_cost": {
     "n_candidates": 8,
     "n_forward_passes": 40,
-    "wall_time_s": 0.04
+    "wall_time_s": 0.02
   },
   "metadata": {
-    "experiment_id": "P0_cross_20261008_cross_agent_smoke_0",
+    "experiment_id": "P0_cross_20261011_cross_agent_smoke_0",
     "seed": 42,
     "benchmark": "SyntheticCausalBenchmark",
     "ground_truth_path": [

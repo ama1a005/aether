@@ -8,7 +8,7 @@
   },
   "messages": [
     {
-      "message_id": "df923dc3-5ca8-49ee-b0d7-546045a36719",
+      "message_id": "ca327a18-8c5f-452e-943f-d5cada9b1aa1",
       "run_id": "run_case_004_clean",
       "sender": "rule_based_v1",
       "receiver": "agent_b_model",
@@ -33,8 +33,8 @@
       "token_ids_receiver": null,
       "provenance": {
         "tool_call_ids": [
-          "6c0cc5cc-a8e3-4694-83ff-54ab43e4c664",
-          "0055f38d-4c4a-4efe-95f0-4dcae6412f73"
+          "514c96d9-63b7-49d5-a866-16ad784b3391",
+          "208fc02d-0513-455f-a356-34b4b841685f"
         ],
         "attack_id": null,
         "sender_model": "rule_based_v1"
