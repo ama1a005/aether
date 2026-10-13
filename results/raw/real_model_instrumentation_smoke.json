@@ -1,0 +1,89 @@
+{
+  "experiment_id": "P0_mech_20261012_real_instrumentation_0",
+  "run_id": "real_instrumentation_0",
+  "utc_timestamp": "2026-10-12T17:29:52.296440+00:00",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "dtype": "float32",
+  "device": "cpu",
+  "attention_implementation": "eager",
+  "torch_version": "2.14.1+cpu",
+  "transformers_version": "5.19.0",
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 4,
+    "seed": 42,
+    "baseline_text": "Safe",
+    "observed_text": "Safe",
+    "intervened_text": "safe"
+  },
+  "capture": {
+    "component_id": "L12.mlp_output",
+    "component_type": "mlp_output",
+    "tensor_semantics": "MLP module output before residual addition",
+    "token_positions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25
+    ],
+    "tensor_shape": [
+      1,
+      26,
+      896
+    ],
+    "dtype": "torch.float32",
+    "artifact_location": "results\\raw\\activation_cache\\real_instrumentation_0\\L12.mlp_output.pt",
+    "artifact_hash": "9c60bb97dcbd3c3e806ea3df89e2db525c600d746e8eec5a8cf26bd4bafb98ab"
+  },
+  "non_interference": {
+    "greedy_tokens_identical": true,
+    "argmax_identical": true,
+    "max_absolute_logit_difference": 0.0,
+    "tolerance": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    }
+  },
+  "intervention": {
+    "operator": "zero_ablation",
+    "component_id": "L12.mlp_output",
+    "max_absolute_logit_difference": 13.126136779785156,
+    "generated_tokens_changed": true,
+    "hooks_remaining_after_run": 0
+  },
+  "timing_seconds": {
+    "model_load": 8.771966399857774,
+    "baseline_inference_and_generation": 0.5209769001230597,
+    "total": 10.223640199983492
+  },
+  "process_memory_bytes": {
+    "rss_before_model_load": 227110912,
+    "rss_after_model_load": 2440650752,
+    "rss_after_experiment": 2517397504,
+    "peak_working_set": 2546548736
+  }
+}

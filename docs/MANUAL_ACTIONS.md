@@ -2,7 +2,7 @@
 
 ## Required now
 
-None. Stage 0 is ready for review.
+None. The real-model/instrumentation checkpoint is ready for review.
 
 ## Optional workstation fixes
 
@@ -12,4 +12,4 @@ None. Stage 0 is ready for review.
 
 ## Approval gate
 
-Approve the next bounded model-selection/non-interference task before any model or benchmark download.
+No approval is currently blocking: the selected model is public, ungated, Apache-2.0, and requires no paid resource. Stop and add an action here if later work requires credentials, license acceptance, cloud/GPU spending, or final-test access.

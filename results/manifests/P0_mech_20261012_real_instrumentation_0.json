@@ -1,0 +1,50 @@
+{
+  "artifact_paths": {
+    "results\\raw\\activation_cache\\real_instrumentation_0\\L12.mlp_output.pt": "9c60bb97dcbd3c3e806ea3df89e2db525c600d746e8eec5a8cf26bd4bafb98ab",
+    "results\\raw\\real_model_instrumentation_smoke.json": "6dba3f2e6faac60dcab5f5d46731b6e9f020851a8187089f492cf9053f20e7ab",
+    "results\\raw\\real_model_instrumentation_tokens.json": "4b7499a61395747468d3d8ce84942990777ab459b68724f642ca2ffad695143f"
+  },
+  "attack_configuration_hashes": {},
+  "command_line": [
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\experiments\\phase1\\real_model_instrumentation_smoke.py"
+  ],
+  "config_file": "configs\\models\\model_registry.json",
+  "config_hash": "e755758e0a4e60d99b25f67285429af8d633cc4f379b517d8d84422545bb4993",
+  "dataset_id": "fixed_prompt_smoke",
+  "dataset_manifest_hashes": {},
+  "dataset_split": "not_applicable",
+  "dataset_version": "v1",
+  "experiment_id": "P0_mech_20261012_real_instrumentation_0",
+  "git_commit": "1b52b565e346e520cc474ac61eeca5a09c5896ac",
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "intervention_configuration": {
+    "component_id": "L12.mlp_output",
+    "operator": "zero_ablation"
+  },
+  "manifest_version": "1.0.0",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "prompt_versions": {
+    "results\\raw\\real_model_instrumentation_tokens.json": "4b7499a61395747468d3d8ce84942990777ab459b68724f642ca2ffad695143f"
+  },
+  "python_env_hash": "0696b4752cde1401d1f7087eb97018245c050fc9bbe4f463b3f7982c41e19aba",
+  "python_executable": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\.venv\\Scripts\\python.exe",
+  "python_version": "3.11.9",
+  "random_seeds": [
+    42
+  ],
+  "raw_output_path": "results\\raw\\real_model_instrumentation_smoke.json",
+  "run_id": "real_instrumentation_0",
+  "search_configuration": {},
+  "subset_ids": [
+    "safe_prompt_0"
+  ],
+  "timing_seconds": {
+    "baseline_inference_and_generation": 0.5209769001230597,
+    "model_load": 8.771966399857774,
+    "total": 10.223640199983492
+  },
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "uncommitted_diff": true,
+  "utc_timestamp": "2026-10-12T17:29:53.689581+00:00"
+}

@@ -1,0 +1,19 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "license": "Apache-2.0",
+  "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct",
+  "dtype": "float32",
+  "attention_implementation": "eager",
+  "device": "cpu",
+  "cache_dir": ".cache/huggingface",
+  "local_path": ".cache/huggingface/Qwen2.5-0.5B-Instruct/7ae557604adf67be50417f59c2c2f167def9a775",
+  "parameter_count": 494032768,
+  "weight_file_bytes": 988097824,
+  "weight_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+  "download_timestamp": "2026-10-12T17:26:26.6374574Z",
+  "transformers_version": "5.19.0",
+  "torch_version": "2.14.1+cpu"
+}
