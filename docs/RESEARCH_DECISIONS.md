@@ -79,3 +79,21 @@
 - **Date:** 2026-10-14
 - **Decision:** Evidence is reported edge-by-edge as Level 0 association, Level 1 mediator causality, Level 2 sender-activation-to-mediator causality, and Level 3 receiver-activation-to-outcome causality. Nonzero internal effects are insufficient: an intervention must move the designated downstream variable in the predeclared clean direction. No full-path claim is allowed unless all required edges are accepted.
 - **Observed result:** Level 1 is accepted from whole-message rescue and induction. Level 2 is rejected because the exploratory sender patch left the attacked message unchanged. Level 3 is rejected because the exploratory receiver effect was `-0.5124740600585938`, opposite the clean direction. Maximum accepted level is 1; the distributed path is not verified.
+
+## RD-014 — Positive-control terminology correction
+
+- **Date:** 2026-10-14
+- **Decision:** Name the ECG attack **AETHER deterministic tool-output manipulation** and the dataset **AETHER positive-control causal substrate**. Do not associate it with MCPTox semantics.
+- **Reason:** MCPTox injects malicious instructions into tool metadata/descriptions; the positive control changes tool output evidence from `A` to `B`. Immutable pre-correction artifacts remain hashed and carry an explicit provenance correction.
+
+## RD-015 — Standardized anchor pins and compatibility limits
+
+- **Date:** 2026-10-14
+- **Decision:** Pin MCPTox at `f85189f9ad12504c197c7f920ab818a40657b1fa` and TAMAS at `545c112af9aab93b7ef2b0b60831d93c81c365c3`. Treat the present MCPTox smoke as released-response rescoring and TAMAS as adapter-only.
+- **Reason:** The MCPTox release omits evaluator code and clean counterparts, and its repository has no license file. TAMAS's native execution requires AutoGen/CrewAI and provider APIs or Ollama. Transforming either through AETHER would require a separate result origin.
+
+## RD-016 — Coarse internal discovery freeze
+
+- **Date:** 2026-10-14
+- **Decision:** Scan layers `[0,5,9,14,18,23]` and block/attention/MLP outputs for each role using paired clean→attacked patches at the aligned last prompt token. Fix top-K at 3 and control seeds at 11, 22, and 33 before executing effects.
+- **Observed result:** Four sender and ten receiver candidates satisfy the exploratory development rule. These are intervention-backed candidate edges but do not establish a continuous distributed circuit or held-out incremental value.

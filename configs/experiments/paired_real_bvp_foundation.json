@@ -3,7 +3,7 @@
   "result_state": "DEV",
   "model_registry": "configs/models/model_registry.json",
   "task": "synthetic_ecg_escalation",
-  "attack_family": "AETHER adaptation of MCPTox-style tool-output poisoning",
+  "attack_family": "AETHER deterministic tool-output manipulation",
   "attack_surface": "tool_evidence.recommendation_code",
   "mediator_schema": "aether.mediator.v1",
   "seed": 42,

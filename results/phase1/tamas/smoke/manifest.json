@@ -1,0 +1,10 @@
+{
+  "manifest_version": "1.0.0",
+  "result_state": "SMOKE",
+  "evaluation_origin": "tamas_official_adapter",
+  "official_commit": "545c112af9aab93b7ef2b0b60831d93c81c365c3",
+  "artifacts": {
+    "results\\phase1\\tamas\\smoke\\adapter_rows.json": "083dae8757e922a1d544465af0fbc7e7ce9c320c12fc1aae1b0fe2463f673dfe",
+    "results\\phase1\\tamas\\smoke\\summary.json": "ffa1eba0185fc4d8d7b9f0380138b543e0269c2c6465231bd95ca82d283a3555"
+  }
+}

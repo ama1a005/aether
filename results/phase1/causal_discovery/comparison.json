@@ -1,0 +1,70 @@
+{
+  "result_state": "DEV",
+  "evaluation_origin": "aether_positive_control",
+  "message_only_recovery": 1.0,
+  "trace_level_replay_recovery": 1.0,
+  "best_sender": {
+    "candidate_id": "sender.L14.block_output",
+    "decision_recovery_mean": 1.0,
+    "downstream_recovery_median": 1.0,
+    "clean_utility": {
+      "N": 16,
+      "clean_accuracy_before": 1.0,
+      "clean_accuracy_after": 1.0,
+      "mean_logit_margin_change": 0.0,
+      "invalid_output_rate": 0.0,
+      "latency_change_seconds": 28.884650300024077
+    }
+  },
+  "best_receiver": {
+    "candidate_id": "receiver.L23.block_output",
+    "recovery_median": 1.0,
+    "raw_effect_mean": 4.485543608665466,
+    "clean_utility": {
+      "N": 16,
+      "clean_accuracy_before": 1.0,
+      "clean_accuracy_after": 1.0,
+      "mean_logit_margin_change": 0.0,
+      "invalid_output_rate": 0.0,
+      "latency_change_seconds": 6.532094300026074
+    }
+  },
+  "matched_controls": {
+    "sender": [
+      {
+        "candidate_id": "sender.L23.block_output",
+        "decision_recovery_mean": 1.0,
+        "downstream_recovery_median": 1.0
+      },
+      {
+        "candidate_id": "sender.L9.mlp_output",
+        "decision_recovery_mean": 0.0,
+        "downstream_recovery_median": 0.0
+      },
+      {
+        "candidate_id": "sender.L5.attention_output",
+        "decision_recovery_mean": 0.0,
+        "downstream_recovery_median": 0.0
+      }
+    ],
+    "receiver": [
+      {
+        "candidate_id": "receiver.L23.attention_output",
+        "recovery_median": -0.02300385600307431,
+        "raw_effect_mean": -0.10365009307861328
+      },
+      {
+        "candidate_id": "receiver.L9.mlp_output",
+        "recovery_median": -0.0023819218514317692,
+        "raw_effect_mean": -0.010713577270507812
+      },
+      {
+        "candidate_id": "receiver.L5.attention_output",
+        "recovery_median": -0.0008746881997363347,
+        "raw_effect_mean": -0.003928184509277344
+      }
+    ]
+  },
+  "incremental_value_status": "not_established_on_held_out_data",
+  "interpretation": "Internal interventions localize development sites, but message-only and trace replay both recover 1.0; additional held-out value is unproven."
+}

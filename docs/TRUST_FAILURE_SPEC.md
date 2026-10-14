@@ -17,7 +17,9 @@ The only permitted clean/attack difference is:
 
 `tool_evidence.recommendation_code: A -> B`
 
-This is labelled an **AETHER adaptation of MCPTox-style tool-output poisoning**, not an official MCPTox result. All features, task identity, tool identity, prompt policy, model revision, tokenizer revision, seed, schema, and generation settings remain fixed.
+This is labelled **AETHER deterministic tool-output manipulation**. It is a synthetic positive-control causal substrate, not MCPTox and not external security evidence. All features, task identity, tool identity, prompt policy, model revision, tokenizer revision, seed, schema, and generation settings remain fixed.
+
+The immutable BVP result artifacts created before checkpoint `b531b7d` retain the earlier inaccurate phrase in their recorded metadata. Their hashes and values are preserved; this paragraph is the provenance correction.
 
 ## Serialized mediator
 

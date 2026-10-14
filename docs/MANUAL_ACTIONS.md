@@ -2,7 +2,7 @@
 
 ## Required now
 
-None. The paired real-trace and BVP foundation checkpoint is ready for review. Validation and test splits remain unopened.
+Review the missing license in the pinned MCPTox repository before redistributing its data or publishing derived artifacts. No credential or paid-compute action is required now. Validation and test splits remain unopened.
 
 ## Optional workstation fixes
 

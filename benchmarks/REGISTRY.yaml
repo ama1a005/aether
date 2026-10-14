@@ -1,14 +1,29 @@
 name: MCPTox
-version: "AAAI-2026-release"
+version: "git-f85189f9"
 source: official
-license: "See https://doi.org/10.1609/aaai.v40i42.40895"
-commit_or_doi: "10.1609/aaai.v40i42.40895"
-local_hash: "TBD_after_download"
+repository: "https://github.com/zhiqiangwang4/MCPTox-Benchmark"
+license: "No license file in pinned repository; research-use status requires human review"
+commit_or_doi: "f85189f9ad12504c197c7f920ab818a40657b1fa; 10.1609/aaai.v40i42.40895"
+local_hash: "pure_tool.json=9a321dc4ecf4869883cf2a29ea8189e1f7663720a9c41a3e5ce2323d580e31c1; response_all.json=4f8177dcbe3718ce3d6ea6a0eec8fa27813158179bd30afe340fe854e886fdf5"
 official_evaluator: true
 role: external_attack_benchmark
-allowed_splits: [test]
+allowed_splits: [smoke]
 modifications: none
-notes: "Wang et al., MCPTox: A Benchmark for Tool Poisoning on Real-World MCP Servers, AAAI 2026. 45 servers, 353 tools, 1348 malicious cases, 10 risk categories. AETHER uses MCPTox families as attack template source (Class B use), not as claimed MCPTox ASR results."
+notes: "Pinned release has 45 servers and 485 poisoned-tool records. Published counts differ: arXiv abstract 1312; AAAI paper 1348. Smoke results remain separate from transformed and synthetic AETHER results."
+
+---
+name: TAMAS
+version: "git-545c112a"
+source: official
+repository: "https://github.com/microsoft/TAMAS"
+license: "MIT code; CDLA-Permissive-2.0 data"
+commit_or_doi: "545c112af9aab93b7ef2b0b60831d93c81c365c3; arXiv:2511.05269"
+local_hash: "LICENSE=820ff92d890bd6b411c38249f050d652ffb76c1bc750268be23fd75f4fc67f29; LICENSE.CDLA-2.0=87d0fecab2a1d9b90f6dadef103e3984c4fd17fcad1a7137d613baa0c937c7a7"
+official_evaluator: true
+role: external_multi_agent_security_benchmark
+allowed_splits: [smoke]
+modifications: none
+notes: "Pinned release has 300 adversarial instances across six attacks. Native execution requires AutoGen/CrewAI plus provider APIs or Ollama; AETHER adapter smoke validates data only."
 
 ---
 name: BFCL
@@ -74,7 +89,7 @@ official_evaluator: true
 role: primary_project_benchmark
 allowed_splits: ["development", "validation"]
 locked_test_split: "test_fold10"
-modifications: "Constructed from PTB-XL case identities + MCPTox attack families + fixed A2A schemas + frozen agent prompts + frozen model revisions + deterministic case selection + versioned intervention definitions."
+modifications: "Constructed from deterministic project task identities + AETHER deterministic tool-output manipulation + fixed A2A schemas + frozen agent prompts + frozen model revisions + deterministic case selection + versioned intervention definitions. External MCPTox transformations, if later created, remain a separate origin."
 notes: "v0.x = development only, NOT paper results. v1.0.0 = Phase 1 frozen benchmark."
 
 ---

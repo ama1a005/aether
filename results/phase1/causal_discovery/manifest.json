@@ -1,0 +1,47 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "P0_cross_20261014_coarse_discovery_0",
+  "result_state": "DEV",
+  "git_commit": "b531b7d",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "candidate_registry": "configs\\causal_candidates\\qwen2_5_0_5b_phase1_coarse.json",
+  "candidate_registry_hash": "aa96328c63afd46ba6a004f9091e6675cde666fb9f82918e5a332d19554cee11",
+  "split": "development",
+  "split_hash": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e",
+  "pair_ids": [
+    "pair_000",
+    "pair_001",
+    "pair_002",
+    "pair_003",
+    "pair_004",
+    "pair_005",
+    "pair_006",
+    "pair_007",
+    "pair_008",
+    "pair_009",
+    "pair_010",
+    "pair_011",
+    "pair_012",
+    "pair_013",
+    "pair_014",
+    "pair_015"
+  ],
+  "random_seeds": [
+    11,
+    22,
+    33
+  ],
+  "artifacts": {
+    "results\\phase1\\causal_discovery\\sender_scan.json": "22bb509f7e939374d7673abb39a79efc8263c14b559cd001ccdc79ad9e85d20d",
+    "results\\phase1\\causal_discovery\\receiver_scan.json": "3c8138ea654663fcfcb99cb458c01d19cccaaa9aac76a8844f776d0b8983fe46",
+    "results\\phase1\\causal_discovery\\dcmg_evidence.json": "188f51fed5fb59e4b376a60243f16495d925a296728afb8e471c0495eac01255",
+    "results\\phase1\\causal_discovery\\summary.json": "cfe5492133d634aa1e510b2f5ab99b9c940b17098661906dfa6c77d781749d51",
+    "results\\phase1\\causal_discovery\\comparison.json": "3d328ad58bd3ad03be74f18d7c725b2c95406d279577503f71f7dcdea6b49c36"
+  },
+  "query_counts": {
+    "sender_forwards": 2,
+    "sender_generations": 24,
+    "receiver_forwards": 52
+  }
+}

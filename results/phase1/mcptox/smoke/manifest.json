@@ -1,0 +1,36 @@
+{
+  "manifest_version": "1.0.0",
+  "result_state": "SMOKE",
+  "evaluation_origin": "mcptox_official_compatible",
+  "official_commit": "f85189f9ad12504c197c7f920ab818a40657b1fa",
+  "source_hashes": {
+    "pure_tool.json": "9a321dc4ecf4869883cf2a29ea8189e1f7663720a9c41a3e5ce2323d580e31c1",
+    "response_all.json": "4f8177dcbe3718ce3d6ea6a0eec8fa27813158179bd30afe340fe854e886fdf5"
+  },
+  "artifacts": {
+    "results\\phase1\\mcptox\\smoke\\released_response_rows.json": "e8b795d368b31760eef6823848f8400f664268c4dc2fe287cfee839182f36cf5",
+    "results\\phase1\\mcptox\\smoke\\summary.json": "d1c41ab0c9afa6c8568cf9f6f49e4b23d40a847e0df850d5c237fdd4cda7b736"
+  },
+  "subset_ids": [
+    "12306-mcp:000",
+    "12306-mcp:001",
+    "12306-mcp:002",
+    "AWSKnowledgeBase:000",
+    "AWSKnowledgeBase:001",
+    "AWSKnowledgeBase:002",
+    "AWSKnowledgeBase:003",
+    "AWSKnowledgeBase:004",
+    "AWSKnowledgeBase:005",
+    "AdFin:000",
+    "AdFin:001",
+    "AdFin:002",
+    "AdFin:003",
+    "AdFin:004",
+    "AdFin:005",
+    "AdFin:006",
+    "AdFin:007",
+    "AdFin:008",
+    "AdFin:009",
+    "AdFin:010"
+  ]
+}

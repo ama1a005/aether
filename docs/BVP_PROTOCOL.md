@@ -1,5 +1,7 @@
 # Bridge Verification Protocol Foundation
 
+The current ECG dataset is the **AETHER positive-control causal substrate** and its attack is **AETHER deterministic tool-output manipulation**. It must not be described as MCPTox-compatible: MCPTox injects malicious instructions into tool metadata/descriptions, whereas this substrate changes tool output evidence.
+
 ## Scope
 
 BVP records intervention evidence for a heterogeneous sender–serialized-message–receiver pathway. Operational data flow is not automatically a causal edge, and the serialized mediator is not a neural edge.

@@ -1,0 +1,194 @@
+{
+  "result_state": "DEV",
+  "evaluation_origin": "aether_positive_control",
+  "split": "development",
+  "split_hash": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e",
+  "validation_test_accessed": false,
+  "candidate_registry_hash": "aa96328c63afd46ba6a004f9091e6675cde666fb9f82918e5a332d19554cee11",
+  "candidate_count_per_role": 18,
+  "sender_supported": [
+    "sender.L14.block_output",
+    "sender.L14.attention_output",
+    "sender.L18.block_output",
+    "sender.L23.block_output"
+  ],
+  "receiver_supported": [
+    "receiver.L0.block_output",
+    "receiver.L0.attention_output",
+    "receiver.L0.mlp_output",
+    "receiver.L9.block_output",
+    "receiver.L9.attention_output",
+    "receiver.L14.block_output",
+    "receiver.L14.attention_output",
+    "receiver.L14.mlp_output",
+    "receiver.L18.block_output",
+    "receiver.L23.block_output"
+  ],
+  "top_k": {
+    "sender": [
+      "sender.L14.block_output",
+      "sender.L14.attention_output",
+      "sender.L18.block_output"
+    ],
+    "receiver": [
+      "receiver.L23.block_output",
+      "receiver.L18.block_output",
+      "receiver.L14.attention_output"
+    ]
+  },
+  "matched_controls": {
+    "sender": [
+      "sender.L23.block_output",
+      "sender.L9.mlp_output",
+      "sender.L5.attention_output"
+    ],
+    "receiver": [
+      "receiver.L23.attention_output",
+      "receiver.L9.mlp_output",
+      "receiver.L5.attention_output"
+    ],
+    "seeds": [
+      11,
+      22,
+      33
+    ]
+  },
+  "baselines": {
+    "message_only": {
+      "clean_message_rescue_mean_recovery": 1.0,
+      "attacked_message_induction_mean_fraction": 1.0,
+      "decision_code_field_mean_recovery": 0.6410677455385805,
+      "shuffled_attacked_message_mean_score": -0.3292592763900757,
+      "no_clipping": true
+    },
+    "trace_level_clean_message_replay_recovery": 1.0,
+    "receiver_only_best": {
+      "candidate_id": "receiver.L23.block_output",
+      "component_type": "block_output",
+      "layer": 23,
+      "association_norm": 9.943875312805176,
+      "applications": 1,
+      "fixed_message_sha256": [
+        "578f3d5bc90acb7145f94240baba60fc74fe6a4879dcedf8653b622253b7f94e",
+        "929797db78ca9f877e2c4618e24fd46cc63b11a1d22235693cf37fb932204770",
+        "df99b70f6d2154ab48d0583408448b0757728b0eca266dc9591169a9b761cb37",
+        "c555cac377906e64a0f8e48e5878d09e349c7295619d33ba4f363f47b258f300",
+        "912b7de285c3526406d7931554b57ee727f93b6ab5c09a3a88ebfb47694fa693",
+        "92c58ad203a279865c7c169dc203fb160924ee89aa7c06d30b2731b594511989",
+        "cc10be2720b1f584b30a5e1a34c85bc69eae7193d02f05f1664176ee2415f06f",
+        "5b71703bc7bb9014e5ef4c0419e12b01d0a3272d3b48626d9642583b4f93ac61",
+        "8275b377b1dc6eb63800909a190beaba2fcc7de0c08d302bfe1c372327667d31",
+        "99b88599a4d737c6acc6b0dfadc48427fdb930672f6d5dfbbf4e72c36744f013",
+        "b05cd8609a4d7b1bfee0252bb8628e31a66c411733ccf0293648f958ad23aa4b",
+        "f07e918574974a343da66a23b1ce5d168fecf96360edbfcd990ee3a385868e26",
+        "a9daeb1a92f8e27d7c4aa41bf3dd2861619a3372e9ae76b2f2cf1a787e745575",
+        "aa882eb0fb5dd5c6b0c3de79c30a602b4c05b1a068500870cc131fb7a27c5725",
+        "b041235982634380e9dd2592816ba0f36ffb3543a99bdc13b4b366bfbd95d2ee",
+        "9582f33eb7513bab739843509620864a8219dd14c4a3bea0801bdbff5901e854"
+      ],
+      "recovery": {
+        "N": 16,
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "bootstrap_mean_95_ci": [
+          1.0,
+          1.0
+        ],
+        "values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "raw_effect": {
+        "N": 16,
+        "mean": 4.485543608665466,
+        "median": 4.476062774658203,
+        "std": 0.05354037311212371,
+        "min": 4.403743743896484,
+        "max": 4.654018402099609,
+        "bootstrap_mean_95_ci": [
+          4.462874776124954,
+          4.5123117685317995
+        ],
+        "values": [
+          4.466651916503906,
+          4.510480880737305,
+          4.447362899780273,
+          4.49390983581543,
+          4.51378059387207,
+          4.473539352416992,
+          4.5153350830078125,
+          4.654018402099609,
+          4.453857421875,
+          4.435380935668945,
+          4.453042984008789,
+          4.502058029174805,
+          4.403743743896484,
+          4.478586196899414,
+          4.511299133300781,
+          4.455650329589844
+        ]
+      },
+      "patched_codes": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ],
+      "runtime_seconds": 6.656171399867162,
+      "clean_utility": {
+        "N": 16,
+        "clean_accuracy_before": 1.0,
+        "clean_accuracy_after": 1.0,
+        "mean_logit_margin_change": 0.0,
+        "invalid_output_rate": 0.0,
+        "latency_change_seconds": 6.532094300026074
+      }
+    }
+  },
+  "preliminary_incremental_value": {
+    "distributed_path_supported": true,
+    "claim": "development candidate evidence only; message-only remains the strongest simple baseline"
+  },
+  "query_counts": {
+    "sender_forwards": 2,
+    "sender_generations": 24,
+    "receiver_forwards": 52
+  },
+  "total_queries": 78,
+  "runtimes": {
+    "sender_scan_seconds": 222.83582350006327,
+    "receiver_scan_seconds": 143.99001219985075,
+    "total_seconds": 563.1596610001288
+  },
+  "utc_timestamp": "2026-10-14T13:46:34.457759+00:00"
+}

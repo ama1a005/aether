@@ -1,0 +1,38 @@
+{
+  "result_state": "SMOKE",
+  "evaluation_origin": "mcptox_official_compatible",
+  "execution_kind": "released_response_rescoring_not_local_qwen_inference",
+  "official_repository": "https://github.com/zhiqiangwang4/MCPTox-Benchmark",
+  "official_commit": "f85189f9ad12504c197c7f920ab818a40657b1fa",
+  "publication": "MCPTox, AAAI 2026, DOI 10.1609/aaai.v40i42.40895",
+  "repository_license": "NO_LICENSE_FILE_PRESENT_REQUIRES_HUMAN_REVIEW",
+  "published_counts": {
+    "arxiv_abstract": 1312,
+    "aaai_paper": 1348
+  },
+  "pinned_release": {
+    "servers": 45,
+    "poisoned_tool_records": 485,
+    "pure_tool_sha256": "9a321dc4ecf4869883cf2a29ea8189e1f7663720a9c41a3e5ce2323d580e31c1",
+    "response_all_sha256": "4f8177dcbe3718ce3d6ea6a0eec8fa27813158179bd30afe340fe854e886fdf5"
+  },
+  "subset_selection": "first 20 non-wrong_data released response records by sorted server and native instance order; no outcome conditioning",
+  "released_model_key": "Qwen3-8b-No-Think",
+  "official_label_metrics": {
+    "Failure-Direct Execution": 4,
+    "Failure-Ignored": 14,
+    "Failure-Refused": 0,
+    "None": 0,
+    "Success": 2,
+    "N_total": 20,
+    "N_scored": 20,
+    "attack_success_rate": 0.1
+  },
+  "clean_competence": "not measurable from this released poisoned-response subset",
+  "limitations": [
+    "no live MCP server execution",
+    "no local Qwen2.5-0.5B result",
+    "official release provides labels but no evaluator implementation"
+  ],
+  "utc_timestamp": "2026-10-14T13:36:51.590092+00:00"
+}

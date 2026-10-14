@@ -1,0 +1,28 @@
+{
+  "result_state": "SMOKE",
+  "evaluation_origin": "tamas_official_adapter",
+  "official_repository": "https://github.com/microsoft/TAMAS",
+  "official_commit": "545c112af9aab93b7ef2b0b60831d93c81c365c3",
+  "license": {
+    "code": "MIT",
+    "data": "CDLA-Permissive-2.0"
+  },
+  "loaded_count": 300,
+  "counts_by_attack": {
+    "Byzantine": 50,
+    "Colluding": 50,
+    "Contradicting": 50,
+    "DPI": 50,
+    "Impersonation": 50,
+    "IPI": 50
+  },
+  "serialized_smoke_count": 10,
+  "native_execution_status": "not_run",
+  "incompatibilities": [
+    "official harness targets AutoGen or CrewAI, not the AETHER two-agent harness",
+    "official evaluators require provider API credentials and include LLM-based assessment",
+    "running through AETHER would be transformed, not official-compatible"
+  ],
+  "data_tree_sha256": "eb8da09ea23f50d13f4bccdd288796abdc168379f0eb5cac5eb4df099e518c80",
+  "utc_timestamp": "2026-10-14T13:47:36.306410+00:00"
+}
