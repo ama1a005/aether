@@ -2,7 +2,7 @@
 
 ## Required now
 
-None. The mechanistic calibration checkpoint is ready for review.
+None. The paired real-trace and BVP foundation checkpoint is ready for review. Validation and test splits remain unopened.
 
 ## Optional workstation fixes
 

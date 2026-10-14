@@ -1,0 +1,22 @@
+{
+  "experiment_id": "P0_cross_20261014_paired_real_bvp_0",
+  "result_state": "DEV",
+  "model_registry": "configs/models/model_registry.json",
+  "task": "synthetic_ecg_escalation",
+  "attack_family": "AETHER adaptation of MCPTox-style tool-output poisoning",
+  "attack_surface": "tool_evidence.recommendation_code",
+  "mediator_schema": "aether.mediator.v1",
+  "seed": 42,
+  "pair_count": 24,
+  "executed_split": "development",
+  "capture_layers": [4, 12, 20],
+  "capture_components": ["block_output", "attention_output", "mlp_output"],
+  "capture_token_positions": ["last_prompt_token"],
+  "sender_intervention": {"site": "L12.mlp_output", "position": "last_prompt_token", "status": "exploratory_development"},
+  "receiver_intervention": {"site": "L12.mlp_output", "position": "last_prompt_token", "status": "exploratory_development"},
+  "negative_control": "shuffled_attacked_message_from_next_development_pair",
+  "outcome_score": "logit(A=ESCALATE)-logit(B=DO_NOT_ESCALATE)",
+  "recovery_minimum_denominator": 1e-6,
+  "recovery_clipping": "none",
+  "generation": {"do_sample": false, "max_new_tokens": 1}
+}

@@ -32,6 +32,7 @@ class Qwen2ModelAdapter(ModelAdapter):
         self.tokenizer: Any = None
         self.activations: dict[str, torch.Tensor] = {}
         self._handles: list[Any] = []
+        self.intervention_applications = 0
 
     def load(self) -> None:
         """Load the exact requested revision without remote model code."""
@@ -132,3 +133,33 @@ class Qwen2ModelAdapter(ModelAdapter):
             return torch.zeros_like(output)
 
         self._handles.append(self._module_for(site).register_forward_hook(zero_output))
+
+    def install_activation_patch(
+        self,
+        site: ComponentSite,
+        source: torch.Tensor,
+        token_positions: Sequence[int],
+    ) -> None:
+        """Patch paired source activations at aligned positions during matching sequence steps."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing an intervention")
+        if source.ndim != 3:
+            raise ValueError("source activation must have shape [batch, sequence, hidden]")
+        positions = tuple(token_positions)
+        if not positions:
+            raise ValueError("at least one token position is required")
+        self.intervention_applications = 0
+
+        def patch_output(_module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any) -> Any:
+            tensor = output[0] if isinstance(output, tuple) else output
+            if tensor.shape != source.shape:
+                return None
+            patched = tensor.clone()
+            aligned_source = source.to(device=tensor.device, dtype=tensor.dtype)
+            patched[:, positions, :] = aligned_source[:, positions, :]
+            self.intervention_applications += 1
+            if isinstance(output, tuple):
+                return (patched, *output[1:])
+            return patched
+
+        self._handles.append(self._module_for(site).register_forward_hook(patch_output))

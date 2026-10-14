@@ -1,0 +1,82 @@
+{
+  "artifact_paths": {
+    "results\\phase1\\paired_real\\case_registry.json": "5539bc4fe42d5beba2ed88d26307536aa2770e8b25e3eb4d0c19d124dd6b7c26",
+    "results\\phase1\\paired_real\\development_traces.json": "1e60834cb6fc657097e727cbc306dd2bac490ce46cee0698933171b01db2838c",
+    "results\\phase1\\paired_real\\summary.json": "5feec79050ea41e7f3de6916d548b1d25f598eb277489301ab1bda2edf30f08a",
+    "results\\raw\\activation_cache\\paired_real_bvp\\attacked_receiver.pt": "80cd49dad120ef1de40fdfaa47ebacd75a0b22edbea19dc605a48484baf84c49",
+    "results\\raw\\activation_cache\\paired_real_bvp\\attacked_sender.pt": "51836d5c6124212e69f3f9329fef1e9fb3367e883083492416f14e926d4b37cb",
+    "results\\raw\\activation_cache\\paired_real_bvp\\clean_receiver.pt": "bbcdf3c454647db17e0538e8f3946fd2611a38ddb2f7bda84b781482662f29f1",
+    "results\\raw\\activation_cache\\paired_real_bvp\\clean_sender.pt": "6975235d25b5b45e680acc9828086d8d2ed56f301c844ff91849888821e8e819"
+  },
+  "attack_configuration_hashes": {},
+  "command_line": [
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\paired_trace\\run_foundation.py"
+  ],
+  "config_file": "configs\\experiments\\paired_real_bvp_foundation.json",
+  "config_hash": "c7d81291bf18912387141bcccb5a9b37713aa6bda83fb7c9f9612ad75f8d6495",
+  "dataset_id": "aether_paired_ecg_development",
+  "dataset_manifest_hashes": {
+    "results\\phase1\\paired_real\\case_registry.json": "5539bc4fe42d5beba2ed88d26307536aa2770e8b25e3eb4d0c19d124dd6b7c26"
+  },
+  "dataset_split": "development",
+  "dataset_version": "1.0.0",
+  "experiment_id": "P0_cross_20261014_paired_real_bvp_0",
+  "git_commit": "28ecd11e065bda2947126066497949fa05c449d4",
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "intervention_configuration": {
+    "message": [
+      "whole",
+      "decision_code",
+      "shuffled"
+    ],
+    "receiver": {
+      "position": "last_prompt_token",
+      "site": "L12.mlp_output",
+      "status": "exploratory_development"
+    },
+    "sender": {
+      "position": "last_prompt_token",
+      "site": "L12.mlp_output",
+      "status": "exploratory_development"
+    }
+  },
+  "manifest_version": "1.0.0",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "prompt_versions": {
+    "results\\phase1\\paired_real\\development_traces.json": "1e60834cb6fc657097e727cbc306dd2bac490ce46cee0698933171b01db2838c"
+  },
+  "python_env_hash": "802b92a2b55f9530c308c5a9b40e25060491bb62ea1748e10048c3366694059d",
+  "python_executable": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\.venv\\Scripts\\python.exe",
+  "python_version": "3.11.9",
+  "random_seeds": [
+    42
+  ],
+  "raw_output_path": "results\\phase1\\paired_real\\summary.json",
+  "run_id": "paired_real_bvp_0",
+  "search_configuration": {},
+  "subset_ids": [
+    "pair_000",
+    "pair_001",
+    "pair_002",
+    "pair_003",
+    "pair_004",
+    "pair_005",
+    "pair_006",
+    "pair_007",
+    "pair_008",
+    "pair_009",
+    "pair_010",
+    "pair_011",
+    "pair_012",
+    "pair_013",
+    "pair_014",
+    "pair_015"
+  ],
+  "timing_seconds": {
+    "total": 181.5070421001874
+  },
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "uncommitted_diff": true,
+  "utc_timestamp": "2026-10-14T06:00:00.925559+00:00"
+}

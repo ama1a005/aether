@@ -1,8 +1,8 @@
 # AETHER Project State
 
-**Last verified:** 2026-10-12
-**Current phase:** Phase 1, real-model instrumentation
-**Status:** Mechanistic calibration complete; awaiting review
+**Last verified:** 2026-10-14
+**Current phase:** Phase 1, paired real AETHER traces and BVP foundation
+**Status:** Development foundation complete; awaiting review
 
 ## Completed
 
@@ -20,13 +20,20 @@
 - Deterministic CPU inference, passive-hook non-interference, full-prompt activation capture/reload, and one layer-12 MLP zero intervention are verified.
 - Real-enabled full suite: 88 passed, 0 failed, 0 skipped; one non-fatal cache warning.
 - Real-model instrumentation checkpoint: `1a7f3ad` (`feat: add verified real-model activation instrumentation`).
+- Mechanistic calibration checkpoint: `28ecd11` (`test: add mechanistic calibration with Tracr and GPT-2 IOI`).
 - Known-structure Tracr reverse calibration passed 3/3 fixed cases at pinned revision `9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd` in isolated `.venv-tracr`.
 - GPT-2 Small IOI calibration at revision `3fe9a169f57f3ca0cac0b9133351644193b9dd3c`: 24/24 baseline accuracy, passive max logit delta `0.0`, known-head recovery `0.3880`, matched-random mean `0.0026`.
 - Calibration-enabled full suite: 96 passed, 0 failed, 0 skipped; one known non-fatal cache warning.
+- Frozen paired-case registry contains 16 development, 4 validation, and 4 test cases; only development was executed (split hash `c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e`).
+- Paired real-model development run retained all 16/16 clean/attacked attempts: 16 clean-correct, 16 attack-success, 0 invalid, and 0 excluded.
+- Whole-message rescue and attacked-message induction both produced a mean fraction of `1.0`; the decision-code-only patch produced unclipped mean recovery `0.6410677455385805`.
+- BVP Level 1 (`M -> Y`) is accepted. Exploratory Level 2 (`A -> M`) is rejected because the sender patch did not change the message; Level 3 (`B -> Y`) is rejected because its effect was in the wrong direction. The full distributed path is not verified.
+- Paired-foundation gated suite: 109 passed, 0 failed, 0 skipped; P1, P2, P3, P4, end-to-end, aggregate, and real-instrumentation smokes all passed.
 
 ## Partial or pending external verification
 
-- Target, attack, DCMG, and remediation paths remain rule-based or synthetic; the new adapter/instrumentation smoke is the first real-model path.
+- The paired trust task uses a fixed synthetic ECG escalation substrate and a MCPTox-style attack adaptation; it is development evidence, not benchmark or deployment evidence.
+- DCMG discovery and remediation paths remain unstarted. The internal sender/receiver intervention results are explicit null/negative results at one exploratory site.
 - Existing experiment entry points do not yet invoke the manifest writer automatically; the tested CLI records completed runs.
 - The exact filename `ProjectDescription.md` is absent. `4_ProjectDescription.md` is the current additive-platform/DCMG/BVP document and remains untracked.
 - CI uses the locally passing command but has not run on GitHub yet.
@@ -40,4 +47,4 @@
 
 ## Next proposed task
 
-After review and explicit approval, begin paired real AETHER clean/attacked traces plus the bridge verification protocol foundation.
+After review and explicit approval, begin bounded DCMG candidate discovery on the frozen development split, preserving validation and test blindness.

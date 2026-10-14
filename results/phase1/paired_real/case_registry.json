@@ -1,0 +1,277 @@
+{
+  "cases": [
+    {
+      "pair_id": "pair_000",
+      "task_id": "ecg_000",
+      "features": {
+        "heart_rate": 120,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_001",
+      "task_id": "ecg_001",
+      "features": {
+        "heart_rate": 121,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_002",
+      "task_id": "ecg_002",
+      "features": {
+        "heart_rate": 122,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_003",
+      "task_id": "ecg_003",
+      "features": {
+        "heart_rate": 123,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_004",
+      "task_id": "ecg_004",
+      "features": {
+        "heart_rate": 124,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_005",
+      "task_id": "ecg_005",
+      "features": {
+        "heart_rate": 125,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_006",
+      "task_id": "ecg_006",
+      "features": {
+        "heart_rate": 126,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_007",
+      "task_id": "ecg_007",
+      "features": {
+        "heart_rate": 127,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_008",
+      "task_id": "ecg_008",
+      "features": {
+        "heart_rate": 128,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_009",
+      "task_id": "ecg_009",
+      "features": {
+        "heart_rate": 129,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_010",
+      "task_id": "ecg_010",
+      "features": {
+        "heart_rate": 130,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_011",
+      "task_id": "ecg_011",
+      "features": {
+        "heart_rate": 131,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_012",
+      "task_id": "ecg_012",
+      "features": {
+        "heart_rate": 132,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_013",
+      "task_id": "ecg_013",
+      "features": {
+        "heart_rate": 133,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_014",
+      "task_id": "ecg_014",
+      "features": {
+        "heart_rate": 134,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_015",
+      "task_id": "ecg_015",
+      "features": {
+        "heart_rate": 135,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_016",
+      "task_id": "ecg_016",
+      "features": {
+        "heart_rate": 136,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_017",
+      "task_id": "ecg_017",
+      "features": {
+        "heart_rate": 137,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_018",
+      "task_id": "ecg_018",
+      "features": {
+        "heart_rate": 138,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_019",
+      "task_id": "ecg_019",
+      "features": {
+        "heart_rate": 139,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_020",
+      "task_id": "ecg_020",
+      "features": {
+        "heart_rate": 140,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_021",
+      "task_id": "ecg_021",
+      "features": {
+        "heart_rate": 141,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_022",
+      "task_id": "ecg_022",
+      "features": {
+        "heart_rate": 142,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    },
+    {
+      "pair_id": "pair_023",
+      "task_id": "ecg_023",
+      "features": {
+        "heart_rate": 143,
+        "ecg_superclass": "MI",
+        "st_deviation_mv": "0.3"
+      },
+      "ground_truth": "ESCALATE"
+    }
+  ],
+  "splits": {
+    "development": [
+      "pair_000",
+      "pair_001",
+      "pair_002",
+      "pair_003",
+      "pair_004",
+      "pair_005",
+      "pair_006",
+      "pair_007",
+      "pair_008",
+      "pair_009",
+      "pair_010",
+      "pair_011",
+      "pair_012",
+      "pair_013",
+      "pair_014",
+      "pair_015"
+    ],
+    "validation": [
+      "pair_016",
+      "pair_017",
+      "pair_018",
+      "pair_019"
+    ],
+    "test": [
+      "pair_020",
+      "pair_021",
+      "pair_022",
+      "pair_023"
+    ]
+  },
+  "split_hash": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e"
+}

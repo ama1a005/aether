@@ -67,3 +67,15 @@
 - **Date:** 2026-10-13
 - **Decision:** Patch paired clean per-head attention output `z` immediately before GPT-2 `c_proj`, at the final input/answer position. Test published name-mover heads `(9,9)`, `(10,0)`, `(9,6)` against equal-sized random non-circuit groups from seeds 11, 22, and 33. Predeclared success requires baseline accuracy at least 0.70, passive non-interference, and known recovery exceeding random mean by at least 0.10.
 - **Observed result:** Baseline accuracy `1.0`; passive maximum logit difference `0.0`; known recovery `0.3880246`; random-control mean `0.0026128`; margin `0.3854118`.
+
+## RD-012 — Paired trust-failure substrate and split lock
+
+- **Date:** 2026-10-14
+- **Decision:** The foundation task is deterministic ECG escalation with labels `A=ESCALATE` and `B=DO_NOT_ESCALATE`. Clean/attacked pairs may differ only in `tool_evidence.recommendation_code`. The 24-case registry is frozen as 16 development, 4 validation, and 4 test cases with hash `c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e`; discovery may inspect development only.
+- **Reason:** An exact attack delta, serialized mediator, single-token receiver outcome, and precommitted split make causal comparisons auditable and prevent test-set leakage.
+
+## RD-013 — Bridge Verification Protocol evidence discipline
+
+- **Date:** 2026-10-14
+- **Decision:** Evidence is reported edge-by-edge as Level 0 association, Level 1 mediator causality, Level 2 sender-activation-to-mediator causality, and Level 3 receiver-activation-to-outcome causality. Nonzero internal effects are insufficient: an intervention must move the designated downstream variable in the predeclared clean direction. No full-path claim is allowed unless all required edges are accepted.
+- **Observed result:** Level 1 is accepted from whole-message rescue and induction. Level 2 is rejected because the exploratory sender patch left the attacked message unchanged. Level 3 is rejected because the exploratory receiver effect was `-0.5124740600585938`, opposite the clean direction. Maximum accepted level is 1; the distributed path is not verified.
