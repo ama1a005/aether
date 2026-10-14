@@ -24,3 +24,7 @@ The release contains queries, poisoned descriptions, server/tool identities, ris
 - `aether_positive_control`: the synthetic ECG substrate, which is unrelated to MCPTox semantics.
 
 The deterministic 20-record smoke uses the first eligible released responses by sorted server and native instance order. It does not select on outcomes. Full benchmark execution and live MCP server calls are deferred.
+
+## Redistribution boundary
+
+Raw MCPTox dataset records and released responses are not redistributed in this repository or its publication artifacts while the pinned source has no license file. The repository retains the source URL, pinned commit, source hashes, deterministic subset identifiers, aggregate smoke metrics, and downloader/integration code. The locally cloned benchmark remains ignored. This restriction does not block the present causal-development work.

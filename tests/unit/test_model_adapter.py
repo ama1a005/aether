@@ -71,3 +71,17 @@ def test_activation_patch_is_step_aware_and_hooks_are_removed() -> None:
     assert adapter.intervention_applications == 1
     adapter.remove_hooks()
     assert adapter._handles == []
+
+
+def test_position_zero_intervention_is_local_and_removed() -> None:
+    adapter = adapter_with_dummy_model()
+    site = ComponentSite("L0.mlp_output", 0, "mlp_output", "fixture MLP output")
+    inputs = torch.ones(1, 3, 2)
+    baseline = adapter.model.model.layers[0](inputs)
+    adapter.install_zero_intervention_at_positions(site, [2])
+    changed = adapter.model.model.layers[0](inputs)
+    assert adapter.intervention_applications == 1
+    assert torch.equal(baseline[:, :2], changed[:, :2])
+    assert not torch.equal(baseline[:, 2:], changed[:, 2:])
+    adapter.remove_hooks()
+    assert adapter._handles == []

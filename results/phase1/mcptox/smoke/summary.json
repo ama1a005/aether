@@ -29,10 +29,11 @@
     "attack_success_rate": 0.1
   },
   "clean_competence": "not measurable from this released poisoned-response subset",
+  "redistribution": "raw released records excluded pending license resolution",
   "limitations": [
     "no live MCP server execution",
     "no local Qwen2.5-0.5B result",
     "official release provides labels but no evaluator implementation"
   ],
-  "utc_timestamp": "2026-10-14T13:36:51.590092+00:00"
+  "utc_timestamp": "2026-10-14T17:57:22.915275+00:00"
 }

@@ -2,7 +2,7 @@
 
 ## Required now
 
-Review the missing license in the pinned MCPTox repository before redistributing its data or publishing derived artifacts. No credential or paid-compute action is required now. Validation and test splits remain unopened.
+Review the missing license in the pinned MCPTox repository before any raw-data redistribution. Raw released rows have been removed from tracked artifacts and future outputs are summary-only, so this does not block causal development. No credential or paid-compute action is required now. Validation and test splits remain unopened.
 
 ## Optional workstation fixes
 
@@ -12,4 +12,4 @@ Review the missing license in the pinned MCPTox repository before redistributing
 
 ## Approval gate
 
-No approval is currently blocking: the selected model is public, ungated, Apache-2.0, and requires no paid resource. Stop and add an action here if later work requires credentials, license acceptance, cloud/GPU spending, or final-test access.
+Human review is required before freezing the method or opening validation because no internal candidate survived specificity hardening. The selected model itself is public, ungated, Apache-2.0, and requires no paid resource. Stop and add an action here if later work requires credentials, license acceptance, cloud/GPU spending, or final-test access.

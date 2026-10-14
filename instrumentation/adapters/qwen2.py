@@ -134,6 +134,30 @@ class Qwen2ModelAdapter(ModelAdapter):
 
         self._handles.append(self._module_for(site).register_forward_hook(zero_output))
 
+    def install_zero_intervention_at_positions(
+        self, site: ComponentSite, token_positions: Sequence[int]
+    ) -> None:
+        """Zero a selected module output only at explicitly aligned token positions."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing an intervention")
+        positions = tuple(token_positions)
+        if not positions:
+            raise ValueError("at least one token position is required")
+        self.intervention_applications = 0
+
+        def zero_positions(_module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any) -> Any:
+            tensor = output[0] if isinstance(output, tuple) else output
+            if max(positions) >= tensor.shape[1] or min(positions) < 0:
+                return None
+            patched = tensor.clone()
+            patched[:, positions, :] = 0
+            self.intervention_applications += 1
+            if isinstance(output, tuple):
+                return (patched, *output[1:])
+            return patched
+
+        self._handles.append(self._module_for(site).register_forward_hook(zero_positions))
+
     def install_activation_patch(
         self,
         site: ComponentSite,

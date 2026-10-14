@@ -8,8 +8,7 @@
     "response_all.json": "4f8177dcbe3718ce3d6ea6a0eec8fa27813158179bd30afe340fe854e886fdf5"
   },
   "artifacts": {
-    "results\\phase1\\mcptox\\smoke\\released_response_rows.json": "e8b795d368b31760eef6823848f8400f664268c4dc2fe287cfee839182f36cf5",
-    "results\\phase1\\mcptox\\smoke\\summary.json": "d1c41ab0c9afa6c8568cf9f6f49e4b23d40a847e0df850d5c237fdd4cda7b736"
+    "results\\phase1\\mcptox\\smoke\\summary.json": "4c3632ae3475b0361e48a702ca531083cf24c58773e4052845b01010e1013ceb"
   },
   "subset_ids": [
     "12306-mcp:000",
@@ -32,5 +31,6 @@
     "AdFin:008",
     "AdFin:009",
     "AdFin:010"
-  ]
+  ],
+  "raw_records_redistributed": false
 }

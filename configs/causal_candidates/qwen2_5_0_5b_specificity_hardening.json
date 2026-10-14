@@ -1,0 +1,58 @@
+{
+  "protocol_version": "1.0.0",
+  "result_state": "DEV",
+  "scope": "development_only",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "sender_candidates": [
+    "L14.block_output",
+    "L14.attention_output",
+    "L18.block_output"
+  ],
+  "receiver_candidates": [
+    "L23.block_output",
+    "L18.block_output",
+    "L14.attention_output"
+  ],
+  "position_specificity_candidates": {
+    "sender": "L14.block_output",
+    "receiver": "L23.block_output"
+  },
+  "positions": {
+    "decision": "last_prompt_token",
+    "evidence": "first_cross_condition_differing_token",
+    "irrelevant": "token_index_1_structurally_equal_required"
+  },
+  "directions": [
+    "clean_to_attacked_rescue",
+    "attacked_to_clean_induction"
+  ],
+  "operators": [
+    "paired_activation_replacement",
+    "clean_execution_zero_ablation"
+  ],
+  "shuffled_activation": {
+    "mapping": "cyclic_shift_by_one",
+    "self_maps_allowed": false
+  },
+  "matched_random_controls": {
+    "count": 12,
+    "seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112],
+    "match_on": ["agent_role", "component_type", "decision_position", "rescue_direction", "operator"],
+    "retain_prior_strong_control": "sender.L23.block_output"
+  },
+  "strong_support_criteria": {
+    "median_rescue_minimum": 0.5,
+    "rescue_fraction_above_0_25_minimum": 0.75,
+    "median_induction_minimum": 0.5,
+    "induction_fraction_above_0_25_minimum": 0.75,
+    "matched_control_median_separation_minimum": 0.2,
+    "irrelevant_position_separation_minimum": 0.2,
+    "shuffled_activation_separation_minimum": 0.2,
+    "directional_effect_required": true
+  },
+  "refinement_stopping_rule": "stop_after_top3_bidirectional_tests_and_top1_position_specificity; no broader layer scan",
+  "head_refinement_gate": "only_if_parent_attention_candidate_survives_all_strong_criteria_and_valid_pre_projection_per_head_instrumentation_exists",
+  "head_refinement_available": false,
+  "primary_incremental_value_claim": "DCMG adds intervention-validated internal localization on both sides of an already-causal serialized message mediator."
+}

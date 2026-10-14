@@ -1,0 +1,24 @@
+{
+  "result_state": "DEV",
+  "scope": "development_only",
+  "validation_test_accessed": false,
+  "protocol_hash": "8a7c75827064e4ff847742d808f307478acba09cf925047ca0029291a83b7049",
+  "config_hash": "85d8539e4ab6facb4d60d912d7a3402b12e98485e23a6b636be63d17e6223f1d",
+  "split_hash": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e",
+  "coarse_sites_reclassified_as": "development_causal_responders",
+  "retained_prior_strong_random_control": "sender.L23.block_output",
+  "supported_internal_causal_candidates": [],
+  "assessment_outcome": "coarse_intervention_specificity_insufficient",
+  "head_refinement": "not_performed_no_valid_pre_projection_per_head_instrumentation",
+  "message_only_recovery": 1.0,
+  "identity_patch_interpretation": "intervention_non_interference_not_defense_utility",
+  "query_counts": {
+    "sender_forwards": 2,
+    "sender_generations": 23,
+    "receiver_forwards": 42
+  },
+  "total_queries": 67,
+  "runtime_seconds": 698.4249114999548,
+  "primary_claim_candidate": "DCMG adds intervention-validated internal localization on both sides of an already-causal serialized message mediator.",
+  "utc_timestamp": "2026-10-14T17:46:19.751802+00:00"
+}

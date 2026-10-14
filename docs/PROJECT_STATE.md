@@ -1,8 +1,8 @@
 # AETHER Project State
 
 **Last verified:** 2026-10-14
-**Current phase:** Phase 1, standardized anchors and development causal discovery
-**Status:** Coarse development scan complete; awaiting review
+**Current phase:** Phase 1, causal-specificity hardening and method-freeze review
+**Status:** Hardening complete; no internal candidate survived; method freeze not recommended
 
 ## Completed
 
@@ -36,11 +36,19 @@
 - Coarse development search scanned 18 frozen sites per role. Four sender sites and ten receiver sites met the predeclared exploratory support rule. Best sender sites recovered all 16 mediator decisions; best receiver site `receiver.L23.block_output` recovered all 16 scores (`1.0` normalized recovery).
 - Message-only and trace-level clean-message replay recovery remain `1.0`; the strongest simple baseline is therefore not hidden. The internal results are exploratory development candidates, not a full distributed-mechanism result.
 - Standardized-anchor/discovery gated suite: 121 passed, 0 failed, 0 skipped; one known non-fatal cache warning.
+- Standardized-anchor/discovery checkpoint: `34848c1` (`feat: add standardized anchors and development causal discovery`).
+- Specificity protocol/config were frozen before execution at SHA-256 `8a7c75827064e4ff847742d808f307478acba09cf925047ca0029291a83b7049` and `85d8539e4ab6facb4d60d912d7a3402b12e98485e23a6b636be63d17e6223f1d`.
+- Development-only hardening completed 67 queries in 698.42 s. All six selected internal sites were rejected. Every site failed shuffled-source separation; sender L14 block/attention additionally failed induction, receiver L18 block failed median rescue, and receiver L14 attention failed all non-position criteria.
+- Earlier coarse hits are now **development causal responders**, not supported internal causal candidates. The retained randomly selected `sender.L23.block_output` control also had rescue `1.0`.
+- Message rescue and trace replay remain `1.0`; Level 1 mediator causality is the only robust current causal level. Identity patching is intervention non-interference, not benign-utility preservation.
+- `docs/PHASE1_METHOD_FREEZE_CANDIDATE.md` records recommendation **DO NOT FREEZE METHOD**. Validation and test remain unopened.
+- MCPTox raw released-response rows were removed from tracked artifacts and ignored pending license resolution; source hashes, subset IDs, aggregate metrics, and integration code remain.
+- Hardening-complete gated suite: 126 passed, 0 failed, 0 skipped with real-model and calibration gates enabled; one known non-fatal `.pytest_cache` warning. P1, P2, P3, P4, end-to-end, aggregate 3/3, real instrumentation, MCPTox summary-only, and TAMAS adapter smokes passed.
 
 ## Partial or pending external verification
 
-- The paired trust task uses a fixed synthetic ECG escalation substrate and a MCPTox-style attack adaptation; it is development evidence, not benchmark or deployment evidence.
-- DCMG discovery and remediation paths remain unstarted. The internal sender/receiver intervention results are explicit null/negative results at one exploratory site.
+- The paired trust task uses a fixed synthetic ECG escalation substrate and AETHER deterministic tool-output manipulation; it is development evidence, not benchmark or deployment evidence.
+- DCMG coarse discovery and specificity hardening are complete on development, but localized internal causality is unsupported. Remediation remains unstarted.
 - Existing experiment entry points do not yet invoke the manifest writer automatically; the tested CLI records completed runs.
 - The exact filename `ProjectDescription.md` is absent. `4_ProjectDescription.md` is the current additive-platform/DCMG/BVP document and remains untracked.
 - CI uses the locally passing command but has not run on GitHub yet.
@@ -54,4 +62,4 @@
 
 ## Next proposed task
 
-After review and explicit approval, freeze the method, evaluate validation, select intervention candidates, and prepare—without yet executing—the locked test evaluation.
+Current recommendation: after review, define a bounded development-only redesign of intervention granularity/operator semantics, freeze it before execution, and repeat specificity hardening. Do not open validation until a specific internal candidate survives or the Phase-1 claim is formally narrowed to mediator-level causality.

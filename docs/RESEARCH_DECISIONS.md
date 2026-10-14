@@ -97,3 +97,27 @@
 - **Date:** 2026-10-14
 - **Decision:** Scan layers `[0,5,9,14,18,23]` and block/attention/MLP outputs for each role using paired clean→attacked patches at the aligned last prompt token. Fix top-K at 3 and control seeds at 11, 22, and 33 before executing effects.
 - **Observed result:** Four sender and ten receiver candidates satisfy the exploratory development rule. These are intervention-backed candidate edges but do not establish a continuous distributed circuit or held-out incremental value.
+
+## RD-017 — Coarse hits are development causal responders
+
+- **Date:** 2026-10-14
+- **Decision:** Reclassify historical coarse-scan “supported” sites as **development causal responders**. Promote a site to **supported internal causal candidate** only if it passes the frozen bidirectional effect, consistency, matched-control, shuffled-source, and applicable position-specificity criteria.
+- **Reason:** A randomly selected `sender.L23.block_output` control also recovered `1.0`, demonstrating that broad hidden-state replacement can create generic causal effects.
+
+## RD-018 — Specificity hardening outcome and claim boundary
+
+- **Date:** 2026-10-14
+- **Decision:** Reject all six refined candidates under protocol SHA-256 `8a7c75827064e4ff847742d808f307478acba09cf925047ca0029291a83b7049`. Do not claim intervention-validated internal localization on either side of the mediator and do not freeze the validation method.
+- **Reason:** All candidates failed shuffled-source separation. Additional failures included absent sender induction at L14 and insufficient receiver rescue at L18/L14. Message rescue remains the only robust causal level and behavioral recovery remains `1.0`.
+
+## RD-019 — Identity patch, ablation, and head terminology
+
+- **Date:** 2026-10-14
+- **Decision:** Treat clean self-patching as identity-patch/intervention non-interference, not defense utility. Treat zero ablation only as operator sensitivity/necessity-like evidence. Do not run head refinement without valid pre-projection per-head tensors.
+- **Reason:** These operations do not establish benign behavior for a deployable defense, formal necessity, or semantically valid head localization.
+
+## RD-020 — MCPTox redistribution boundary
+
+- **Date:** 2026-10-14
+- **Decision:** Do not track or publish raw MCPTox records or released responses while the pinned repository has no license file. Retain source URL, commit, hashes, deterministic subset IDs, aggregate results, and integration/downloader code.
+- **Reason:** Provenance can remain reproducible without redistributing potentially unlicensed source material.

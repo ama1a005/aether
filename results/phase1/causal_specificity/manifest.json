@@ -1,0 +1,58 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "P0_cross_20261014_specificity_hardening_0",
+  "run_id": "P0_cross_20261014_specificity_hardening_0",
+  "utc_timestamp": "2026-10-14T17:46:19.751802+00:00",
+  "result_state": "DEV",
+  "git_commit": "34848c1",
+  "uncommitted_diff": true,
+  "dataset_manifest_hashes": {
+    "frozen_split": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e"
+  },
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "prompt_versions": {
+    "paired_trace": "foundation_v1"
+  },
+  "random_seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112],
+  "hardware": "CPU; torch float32 eager attention",
+  "python_env_hash": "e990f30235520d8fe358b22dcc4b009341b5667f59008b07e87bd76994bf5605",
+  "command_line": ".venv\\Scripts\\python.exe -m causal.run_specificity_hardening",
+  "config_file": "configs\\causal_candidates\\qwen2_5_0_5b_specificity_hardening.json",
+  "raw_output_path": "results\\phase1\\causal_specificity\\hardening_results.json",
+  "protocol": "docs\\CAUSAL_SPECIFICITY_PROTOCOL.md",
+  "protocol_hash": "8a7c75827064e4ff847742d808f307478acba09cf925047ca0029291a83b7049",
+  "config": "configs\\causal_candidates\\qwen2_5_0_5b_specificity_hardening.json",
+  "config_hash": "85d8539e4ab6facb4d60d912d7a3402b12e98485e23a6b636be63d17e6223f1d",
+  "split": "development",
+  "split_hash": "c510bc406b168a2639ac49f8199a7f78ba2f318893fce7be2d6c3b254266a39e",
+  "pair_ids": [
+    "pair_000",
+    "pair_001",
+    "pair_002",
+    "pair_003",
+    "pair_004",
+    "pair_005",
+    "pair_006",
+    "pair_007",
+    "pair_008",
+    "pair_009",
+    "pair_010",
+    "pair_011",
+    "pair_012",
+    "pair_013",
+    "pair_014",
+    "pair_015"
+  ],
+  "query_counts": {
+    "sender_forwards": 2,
+    "sender_generations": 23,
+    "receiver_forwards": 42
+  },
+  "artifacts": {
+    "results\\phase1\\causal_specificity\\hardening_results.json": "bd64218b8b2e998d26e6b3e7520d8acdb6505572c1127e31f713e36fbf503724",
+    "results\\phase1\\causal_specificity\\revised_dcmg_evidence.json": "853a4b61ed362531cf15e92de8b64ea47f57e8f9022faa32c9e51ca4794be59f",
+    "results\\phase1\\causal_specificity\\summary.json": "7ca960b9d69b059600b082a27f8cb5bbbee01bf894eb6677116fafb139570ac1"
+  }
+}

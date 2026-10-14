@@ -43,8 +43,6 @@ def main() -> None:
             break
     output_dir = Path("results/phase1/mcptox/smoke")
     output_dir.mkdir(parents=True, exist_ok=True)
-    rows_path = output_dir / "released_response_rows.json"
-    rows_path.write_text(json.dumps(rows, indent=2), encoding="utf-8")
     summary = {
         "result_state": "SMOKE",
         "evaluation_origin": "mcptox_official_compatible",
@@ -59,6 +57,7 @@ def main() -> None:
         "released_model_key": MODEL_KEY,
         "official_label_metrics": summarize_official_labels(labels),
         "clean_competence": "not measurable from this released poisoned-response subset",
+        "redistribution": "raw released records excluded pending license resolution",
         "limitations": ["no live MCP server execution", "no local Qwen2.5-0.5B result", "official release provides labels but no evaluator implementation"],
         "utc_timestamp": datetime.now(timezone.utc).isoformat(),
     }
@@ -70,8 +69,9 @@ def main() -> None:
         "evaluation_origin": "mcptox_official_compatible",
         "official_commit": OFFICIAL_COMMIT,
         "source_hashes": {"pure_tool.json": PURE_TOOL_SHA256, "response_all.json": RESPONSE_SHA256},
-        "artifacts": {str(rows_path): sha256_file(rows_path), str(summary_path): sha256_file(summary_path)},
+        "artifacts": {str(summary_path): sha256_file(summary_path)},
         "subset_ids": [row["case_id"] for row in rows],
+        "raw_records_redistributed": False,
     }
     (output_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps(summary, indent=2))

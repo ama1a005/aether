@@ -40,3 +40,5 @@ The exploratory sender intervention patches paired clean `L12.mlp_output` into a
 ## Provenance and null results
 
 Every evidence record names pair IDs, result type, intervention, raw effect and artifact. Calibration, synthetic and real-model results cannot be aggregated. Null results and wrong-direction effects are preserved as rejected evidence. Association or activation difference may propose later candidates but cannot create a real DCMG edge.
+
+Subsequent hardening reclassifies coarse internal scan hits as development causal responders. No selected internal site survived the frozen shuffled-source specificity criterion, so Level 1 message causality remains the only robust accepted causal level in the present development evidence. Clean-to-clean identity patch results are intervention non-interference controls, not defense-utility results.
