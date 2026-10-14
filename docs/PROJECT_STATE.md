@@ -2,7 +2,7 @@
 
 **Last verified:** 2026-10-12
 **Current phase:** Phase 1, real-model instrumentation
-**Status:** Real-model instrumentation milestone complete; awaiting review
+**Status:** Mechanistic calibration complete; awaiting review
 
 ## Completed
 
@@ -19,6 +19,10 @@
 - Qwen2.5-0.5B-Instruct is pinned to `7ae557604adf67be50417f59c2c2f167def9a775`; its 988,097,824-byte weight file matches the publisher SHA-256.
 - Deterministic CPU inference, passive-hook non-interference, full-prompt activation capture/reload, and one layer-12 MLP zero intervention are verified.
 - Real-enabled full suite: 88 passed, 0 failed, 0 skipped; one non-fatal cache warning.
+- Real-model instrumentation checkpoint: `1a7f3ad` (`feat: add verified real-model activation instrumentation`).
+- Known-structure Tracr reverse calibration passed 3/3 fixed cases at pinned revision `9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd` in isolated `.venv-tracr`.
+- GPT-2 Small IOI calibration at revision `3fe9a169f57f3ca0cac0b9133351644193b9dd3c`: 24/24 baseline accuracy, passive max logit delta `0.0`, known-head recovery `0.3880`, matched-random mean `0.0026`.
+- Calibration-enabled full suite: 96 passed, 0 failed, 0 skipped; one known non-fatal cache warning.
 
 ## Partial or pending external verification
 
@@ -36,4 +40,4 @@
 
 ## Next proposed task
 
-After review and explicit approval, begin bounded Tracr plus canonical GPT-2 mechanistic calibration. Do not begin that calibration before approval.
+After review and explicit approval, begin paired real AETHER clean/attacked traces plus the bridge verification protocol foundation.

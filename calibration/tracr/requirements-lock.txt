@@ -1,0 +1,17 @@
+absl-py==2.5.1
+chex==0.1.92
+dm-haiku==0.0.17
+einops==0.8.2
+jax==0.10.2
+jaxlib==0.10.2
+jmp==0.0.4
+ml_dtypes==0.6.0
+networkx==3.6.1
+numpy==2.4.6
+opt_einsum==3.4.0
+packaging==26.3
+scipy==1.17.1
+tabulate==0.10.0
+toolz==1.2.0
+tracr @ git+https://github.com/google-deepmind/tracr.git@9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd
+typing_extensions==4.16.0

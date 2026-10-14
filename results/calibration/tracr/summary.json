@@ -1,0 +1,347 @@
+{
+  "experiment_id": "P0_mech_20261013_tracr_reverse_0",
+  "utc_timestamp": "2026-10-13T14:41:13.155501+00:00",
+  "source": {
+    "repository": "https://github.com/google-deepmind/tracr",
+    "revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+    "license": "Apache-2.0",
+    "environment": ".venv-tracr",
+    "python": "3.11",
+    "program": "tracr.compiler.lib.make_reverse(rasp.tokens)",
+    "compiler_bos": "BOS",
+    "vocab": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "max_seq_len": 6,
+    "intervention": "not_attempted_bounded_reference_only"
+  },
+  "classification": "known-structure transformer calibration",
+  "cases": [
+    {
+      "input": [
+        "BOS",
+        1,
+        2,
+        3
+      ],
+      "expected": [
+        "BOS",
+        3,
+        2,
+        1
+      ],
+      "observed": [
+        "BOS",
+        3,
+        2,
+        1
+      ],
+      "exact_match": true
+    },
+    {
+      "input": [
+        "BOS",
+        4,
+        2,
+        1
+      ],
+      "expected": [
+        "BOS",
+        1,
+        2,
+        4
+      ],
+      "observed": [
+        "BOS",
+        1,
+        2,
+        4
+      ],
+      "exact_match": true
+    },
+    {
+      "input": [
+        "BOS",
+        1,
+        4
+      ],
+      "expected": [
+        "BOS",
+        4,
+        1
+      ],
+      "observed": [
+        "BOS",
+        4,
+        1
+      ],
+      "exact_match": true
+    }
+  ],
+  "compiler_graph": {
+    "node_count": 8,
+    "edge_count": 9,
+    "nodes": [
+      {
+        "id": "reverse_1",
+        "name": "reverse",
+        "type": "Aggregate"
+      },
+      {
+        "id": "reverse_selector_2",
+        "name": "reverse_selector",
+        "type": "Select"
+      },
+      {
+        "id": "tokens",
+        "name": "tokens",
+        "type": "TokensType"
+      },
+      {
+        "id": "indices",
+        "name": "indices",
+        "type": "IndicesType"
+      },
+      {
+        "id": "opp_idx-1_3",
+        "name": "opp_idx-1",
+        "type": "Map"
+      },
+      {
+        "id": "opp_idx_4",
+        "name": "opp_idx",
+        "type": "SequenceMap"
+      },
+      {
+        "id": "length_5",
+        "name": "length",
+        "type": "SelectorWidth"
+      },
+      {
+        "id": "all_true_selector_6",
+        "name": "all_true_selector",
+        "type": "Select"
+      }
+    ],
+    "edges": [
+      [
+        "reverse_selector_2",
+        "reverse_1"
+      ],
+      [
+        "tokens",
+        "reverse_1"
+      ],
+      [
+        "tokens",
+        "all_true_selector_6"
+      ],
+      [
+        "indices",
+        "reverse_selector_2"
+      ],
+      [
+        "indices",
+        "opp_idx_4"
+      ],
+      [
+        "opp_idx-1_3",
+        "reverse_selector_2"
+      ],
+      [
+        "opp_idx_4",
+        "opp_idx-1_3"
+      ],
+      [
+        "length_5",
+        "opp_idx_4"
+      ],
+      [
+        "all_true_selector_6",
+        "length_5"
+      ]
+    ]
+  },
+  "observed_internal_structure": {
+    "residuals": [
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      }
+    ],
+    "layer_outputs": [
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      }
+    ],
+    "attention_logits": [
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      }
+    ]
+  },
+  "intervention": {
+    "performed": false,
+    "reason": "Optional intervention omitted to avoid building a JAX/Haiku-specific parallel intervention layer; GPT-2 IOI is the causal calibration."
+  },
+  "timing_seconds": {
+    "total": 14.575302599929273
+  }
+}

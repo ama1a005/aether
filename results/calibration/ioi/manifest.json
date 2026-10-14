@@ -1,0 +1,75 @@
+{
+  "artifact_paths": {
+    "calibration\\ioi\\fixed_prompts.json": "0a5a7e91d3a7bb864cbe8952d50b3c3b6c4ec9571e1639d055d83a0cf6b94fd5",
+    "results\\calibration\\ioi\\known_vs_random.png": "bd493b1a9270e7621120409722326104cd59058e1a86c74c4a1c1efdfa998a7c",
+    "results\\calibration\\ioi\\patching_results.csv": "5a8c127497bf806b36dabcac4288c4f46d01779a14aaa7a3ad941c493d9c26f1",
+    "results\\calibration\\ioi\\summary.json": "a0a48110d1827c3b654ec15a50bbfc2cfe08c463244576d99023d9a529afab72"
+  },
+  "attack_configuration_hashes": {},
+  "command_line": [
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\calibration\\ioi\\run_calibration.py"
+  ],
+  "config_file": "calibration\\ioi\\acceptance.json",
+  "config_hash": "dabb8a5ce30b72b3f39c73ecf56cc4d14161593b8b31442faa7e6291d4d60416",
+  "dataset_id": "fixed_ioi_calibration",
+  "dataset_manifest_hashes": {},
+  "dataset_split": "calibration",
+  "dataset_version": "1.0.0",
+  "experiment_id": "P0_mech_20261013_gpt2_ioi_calibration_0",
+  "git_commit": "1a7f3ad77102804da134b32e516b5d0eaed24813",
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "intervention_configuration": {
+    "operator": "paired_clean_head_output_patch",
+    "position": "end"
+  },
+  "manifest_version": "1.0.0",
+  "model_id": "openai-community/gpt2",
+  "model_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "prompt_versions": {
+    "calibration\\ioi\\fixed_prompts.json": "0a5a7e91d3a7bb864cbe8952d50b3c3b6c4ec9571e1639d055d83a0cf6b94fd5"
+  },
+  "python_env_hash": "55f64e562d4f822b8ab11347254118a1af3dc1208fc13a6113b49d44caa1cbda",
+  "python_executable": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\.venv\\Scripts\\python.exe",
+  "python_version": "3.11.9",
+  "random_seeds": [
+    0,
+    11,
+    22,
+    33
+  ],
+  "raw_output_path": "results\\calibration\\ioi\\summary.json",
+  "run_id": "gpt2_ioi_calibration_0",
+  "search_configuration": {},
+  "subset_ids": [
+    "ioi_00_baba",
+    "ioi_00_abba",
+    "ioi_01_baba",
+    "ioi_01_abba",
+    "ioi_02_baba",
+    "ioi_02_abba",
+    "ioi_03_baba",
+    "ioi_03_abba",
+    "ioi_04_baba",
+    "ioi_04_abba",
+    "ioi_05_baba",
+    "ioi_05_abba",
+    "ioi_06_baba",
+    "ioi_06_abba",
+    "ioi_07_baba",
+    "ioi_07_abba",
+    "ioi_08_baba",
+    "ioi_08_abba",
+    "ioi_09_baba",
+    "ioi_09_abba",
+    "ioi_10_baba",
+    "ioi_10_abba",
+    "ioi_11_baba",
+    "ioi_11_abba"
+  ],
+  "timing_seconds": {
+    "total": 18.72537750005722
+  },
+  "tokenizer_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "uncommitted_diff": true,
+  "utc_timestamp": "2026-10-13T14:39:43.679187+00:00"
+}

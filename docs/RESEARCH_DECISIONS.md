@@ -55,3 +55,15 @@
 - **Date:** 2026-10-12
 - **Decision:** Use a zero ablation of the layer-12 MLP module output before residual addition only as a pipeline-control experiment, not as a mechanistic discovery claim.
 - **Observed result:** Maximum absolute logit difference was `13.126136779785156`; output changed from `Safe` to `safe`; all hooks were removed afterward.
+
+## RD-010 — Calibration source pins and environment isolation
+
+- **Date:** 2026-10-13
+- **Decision:** Pin Tracr to `9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd`, original IOI experimental code to `ea15315dd24481e9e2ac5c3ef335d82907a1dc34`, and GPT-2 Small to `3fe9a169f57f3ca0cac0b9133351644193b9dd3c`. Tracr uses `.venv-tracr`; GPT-2 uses the working main environment without TransformerLens.
+- **Reason:** Immutable authoritative definitions and isolation are more important than forcing legacy JAX and current PyTorch dependencies into one environment.
+
+## RD-011 — IOI causal site and acceptance rule
+
+- **Date:** 2026-10-13
+- **Decision:** Patch paired clean per-head attention output `z` immediately before GPT-2 `c_proj`, at the final input/answer position. Test published name-mover heads `(9,9)`, `(10,0)`, `(9,6)` against equal-sized random non-circuit groups from seeds 11, 22, and 33. Predeclared success requires baseline accuracy at least 0.70, passive non-interference, and known recovery exceeding random mean by at least 0.10.
+- **Observed result:** Baseline accuracy `1.0`; passive maximum logit difference `0.0`; known recovery `0.3880246`; random-control mean `0.0026128`; margin `0.3854118`.

@@ -1,0 +1,12 @@
+{
+  "predeclared_before_causal_run": true,
+  "baseline_accuracy_minimum": 0.70,
+  "passive_fp32_rtol": 1e-5,
+  "passive_fp32_atol": 1e-6,
+  "passive_tokens_identical": true,
+  "known_mean_recovery_must_exceed_control_mean": true,
+  "known_minus_control_minimum": 0.10,
+  "random_control_seeds": [11, 22, 33],
+  "known_subset": [[9,9],[10,0],[9,6]],
+  "patch_position": "answer_position_last_input_token"
+}

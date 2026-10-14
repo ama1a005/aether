@@ -2,7 +2,7 @@
 
 ## Required now
 
-None. The real-model/instrumentation checkpoint is ready for review.
+None. The mechanistic calibration checkpoint is ready for review.
 
 ## Optional workstation fixes
 

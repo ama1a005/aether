@@ -1,0 +1,17 @@
+{
+  "model_id": "openai-community/gpt2",
+  "model_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "tokenizer_id": "openai-community/gpt2",
+  "tokenizer_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "architecture": "GPT2LMHeadModel",
+  "parameter_count": 137022720,
+  "license": "Apache-2.0",
+  "source_url": "https://huggingface.co/openai-community/gpt2",
+  "weight_file_bytes": 548105171,
+  "weight_sha256": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+  "dtype": "float32",
+  "device": "cpu",
+  "attention_implementation": "eager",
+  "local_path": ".cache/huggingface/gpt2/3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "download_timestamp": "2026-10-13T14:37:09.0507227Z"
+}

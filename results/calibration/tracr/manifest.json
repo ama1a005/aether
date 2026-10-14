@@ -1,0 +1,32 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "P0_mech_20261013_tracr_reverse_0",
+  "utc_timestamp": "2026-10-13T14:41:13.161018+00:00",
+  "git_commit": "1a7f3ad77102804da134b32e516b5d0eaed24813",
+  "source_revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+  "config_path": "calibration\\tracr\\config.json",
+  "config_sha256": "54da52fa787a356403f25d144ea0b5c09b14c0ed379f51fc7e7c88d826bca206",
+  "result_path": "results\\calibration\\tracr\\summary.json",
+  "result_sha256": "27ceb875e4f87c8552b103ea874e242219eb2e99156e9db3412d7754be8afb08",
+  "environment_path": "calibration\\tracr\\environment.json",
+  "environment_sha256": "8b8bb430dcaf9f9d1ed3902044b7710967a3a50658280b14e428ef1b8b89b8f5",
+  "inputs": [
+    [
+      "BOS",
+      1,
+      2,
+      3
+    ],
+    [
+      "BOS",
+      4,
+      2,
+      1
+    ],
+    [
+      "BOS",
+      1,
+      4
+    ]
+  ]
+}

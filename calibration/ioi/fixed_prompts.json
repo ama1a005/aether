@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 0,
+  "sampling": "none_fixed_enumeration",
+  "tokenizer_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+  "examples": [
+    {
+      "pair_id": "ioi_00_baba",
+      "clean_prompt": "Then, John and Mary went to the store. John gave a ring to",
+      "corrupted_prompt": "Then, John and Mary went to the store. Mary gave a ring to",
+      "io_name": "Mary",
+      "subject_name": "John"
+    },
+    {
+      "pair_id": "ioi_00_abba",
+      "clean_prompt": "Then, Mary and John went to the store. John gave a ring to",
+      "corrupted_prompt": "Then, Mary and John went to the store. Mary gave a ring to",
+      "io_name": "Mary",
+      "subject_name": "John"
+    },
+    {
+      "pair_id": "ioi_01_baba",
+      "clean_prompt": "Then, Michael and Sarah went to the store. Michael gave a ring to",
+      "corrupted_prompt": "Then, Michael and Sarah went to the store. Sarah gave a ring to",
+      "io_name": "Sarah",
+      "subject_name": "Michael"
+    },
+    {
+      "pair_id": "ioi_01_abba",
+      "clean_prompt": "Then, Sarah and Michael went to the store. Michael gave a ring to",
+      "corrupted_prompt": "Then, Sarah and Michael went to the store. Sarah gave a ring to",
+      "io_name": "Sarah",
+      "subject_name": "Michael"
+    },
+    {
+      "pair_id": "ioi_02_baba",
+      "clean_prompt": "Then, James and David went to the store. James gave a ring to",
+      "corrupted_prompt": "Then, James and David went to the store. David gave a ring to",
+      "io_name": "David",
+      "subject_name": "James"
+    },
+    {
+      "pair_id": "ioi_02_abba",
+      "clean_prompt": "Then, David and James went to the store. James gave a ring to",
+      "corrupted_prompt": "Then, David and James went to the store. David gave a ring to",
+      "io_name": "David",
+      "subject_name": "James"
+    },
+    {
+      "pair_id": "ioi_03_baba",
+      "clean_prompt": "Then, Daniel and Robert went to the store. Daniel gave a ring to",
+      "corrupted_prompt": "Then, Daniel and Robert went to the store. Robert gave a ring to",
+      "io_name": "Robert",
+      "subject_name": "Daniel"
+    },
+    {
+      "pair_id": "ioi_03_abba",
+      "clean_prompt": "Then, Robert and Daniel went to the store. Daniel gave a ring to",
+      "corrupted_prompt": "Then, Robert and Daniel went to the store. Robert gave a ring to",
+      "io_name": "Robert",
+      "subject_name": "Daniel"
+    },
+    {
+      "pair_id": "ioi_04_baba",
+      "clean_prompt": "Then, Matthew and Jessica went to the store. Matthew gave a ring to",
+      "corrupted_prompt": "Then, Matthew and Jessica went to the store. Jessica gave a ring to",
+      "io_name": "Jessica",
+      "subject_name": "Matthew"
+    },
+    {
+      "pair_id": "ioi_04_abba",
+      "clean_prompt": "Then, Jessica and Matthew went to the store. Matthew gave a ring to",
+      "corrupted_prompt": "Then, Jessica and Matthew went to the store. Jessica gave a ring to",
+      "io_name": "Jessica",
+      "subject_name": "Matthew"
+    },
+    {
+      "pair_id": "ioi_05_baba",
+      "clean_prompt": "Then, Jennifer and Ashley went to the store. Jennifer gave a ring to",
+      "corrupted_prompt": "Then, Jennifer and Ashley went to the store. Ashley gave a ring to",
+      "io_name": "Ashley",
+      "subject_name": "Jennifer"
+    },
+    {
+      "pair_id": "ioi_05_abba",
+      "clean_prompt": "Then, Ashley and Jennifer went to the store. Jennifer gave a ring to",
+      "corrupted_prompt": "Then, Ashley and Jennifer went to the store. Ashley gave a ring to",
+      "io_name": "Ashley",
+      "subject_name": "Jennifer"
+    },
+    {
+      "pair_id": "ioi_06_baba",
+      "clean_prompt": "Then, Amanda and Joshua went to the store. Amanda gave a ring to",
+      "corrupted_prompt": "Then, Amanda and Joshua went to the store. Joshua gave a ring to",
+      "io_name": "Joshua",
+      "subject_name": "Amanda"
+    },
+    {
+      "pair_id": "ioi_06_abba",
+      "clean_prompt": "Then, Joshua and Amanda went to the store. Amanda gave a ring to",
+      "corrupted_prompt": "Then, Joshua and Amanda went to the store. Joshua gave a ring to",
+      "io_name": "Joshua",
+      "subject_name": "Amanda"
+    },
+    {
+      "pair_id": "ioi_07_baba",
+      "clean_prompt": "Then, Ryan and Andrew went to the store. Ryan gave a ring to",
+      "corrupted_prompt": "Then, Ryan and Andrew went to the store. Andrew gave a ring to",
+      "io_name": "Andrew",
+      "subject_name": "Ryan"
+    },
+    {
+      "pair_id": "ioi_07_abba",
+      "clean_prompt": "Then, Andrew and Ryan went to the store. Ryan gave a ring to",
+      "corrupted_prompt": "Then, Andrew and Ryan went to the store. Andrew gave a ring to",
+      "io_name": "Andrew",
+      "subject_name": "Ryan"
+    },
+    {
+      "pair_id": "ioi_08_baba",
+      "clean_prompt": "Then, Justin and Jason went to the store. Justin gave a ring to",
+      "corrupted_prompt": "Then, Justin and Jason went to the store. Jason gave a ring to",
+      "io_name": "Jason",
+      "subject_name": "Justin"
+    },
+    {
+      "pair_id": "ioi_08_abba",
+      "clean_prompt": "Then, Jason and Justin went to the store. Justin gave a ring to",
+      "corrupted_prompt": "Then, Jason and Justin went to the store. Jason gave a ring to",
+      "io_name": "Jason",
+      "subject_name": "Justin"
+    },
+    {
+      "pair_id": "ioi_09_baba",
+      "clean_prompt": "Then, Brian and William went to the store. Brian gave a ring to",
+      "corrupted_prompt": "Then, Brian and William went to the store. William gave a ring to",
+      "io_name": "William",
+      "subject_name": "Brian"
+    },
+    {
+      "pair_id": "ioi_09_abba",
+      "clean_prompt": "Then, William and Brian went to the store. Brian gave a ring to",
+      "corrupted_prompt": "Then, William and Brian went to the store. William gave a ring to",
+      "io_name": "William",
+      "subject_name": "Brian"
+    },
+    {
+      "pair_id": "ioi_10_baba",
+      "clean_prompt": "Then, Anthony and Nicole went to the store. Anthony gave a ring to",
+      "corrupted_prompt": "Then, Anthony and Nicole went to the store. Nicole gave a ring to",
+      "io_name": "Nicole",
+      "subject_name": "Anthony"
+    },
+    {
+      "pair_id": "ioi_10_abba",
+      "clean_prompt": "Then, Nicole and Anthony went to the store. Anthony gave a ring to",
+      "corrupted_prompt": "Then, Nicole and Anthony went to the store. Nicole gave a ring to",
+      "io_name": "Nicole",
+      "subject_name": "Anthony"
+    },
+    {
+      "pair_id": "ioi_11_baba",
+      "clean_prompt": "Then, Adam and Eric went to the store. Adam gave a ring to",
+      "corrupted_prompt": "Then, Adam and Eric went to the store. Eric gave a ring to",
+      "io_name": "Eric",
+      "subject_name": "Adam"
+    },
+    {
+      "pair_id": "ioi_11_abba",
+      "clean_prompt": "Then, Eric and Adam went to the store. Adam gave a ring to",
+      "corrupted_prompt": "Then, Eric and Adam went to the store. Eric gave a ring to",
+      "io_name": "Eric",
+      "subject_name": "Adam"
+    }
+  ]
+}

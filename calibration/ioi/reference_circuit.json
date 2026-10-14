@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "source_repository": "https://github.com/redwoodresearch/Easy-Transformer",
+  "source_revision": "ea15315dd24481e9e2ac5c3ef335d82907a1dc34",
+  "source_file": "easy_transformer/ioi_circuit_extraction.py",
+  "source_lines": "155-202",
+  "paper": "https://arxiv.org/abs/2211.00593",
+  "components": {
+    "name mover": [[9,9],[10,0],[9,6],[10,10],[10,6],[10,2],[10,1],[11,2],[9,7],[9,0],[11,9]],
+    "negative": [[10,7],[11,10]],
+    "s2 inhibition": [[7,3],[7,9],[8,6],[8,10]],
+    "induction": [[5,5],[5,8],[5,9],[6,9]],
+    "duplicate token": [[0,1],[0,10],[3,0]],
+    "previous token": [[2,2],[4,11]]
+  },
+  "tested_known_subset": [[9,9],[10,0],[9,6]],
+  "tested_position": "end"
+}

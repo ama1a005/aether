@@ -1,0 +1,205 @@
+{
+  "experiment_id": "P0_mech_20261013_gpt2_ioi_calibration_0",
+  "run_id": "gpt2_ioi_calibration_0",
+  "utc_timestamp": "2026-10-13T14:39:41.487717+00:00",
+  "model": {
+    "model_id": "openai-community/gpt2",
+    "model_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+    "tokenizer_id": "openai-community/gpt2",
+    "tokenizer_revision": "3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+    "architecture": "GPT2LMHeadModel",
+    "parameter_count": 137022720,
+    "license": "Apache-2.0",
+    "source_url": "https://huggingface.co/openai-community/gpt2",
+    "weight_file_bytes": 548105171,
+    "weight_sha256": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+    "dtype": "float32",
+    "device": "cpu",
+    "attention_implementation": "eager",
+    "local_path": ".cache/huggingface/gpt2/3fe9a169f57f3ca0cac0b9133351644193b9dd3c",
+    "download_timestamp": "2026-10-13T14:37:09.0507227Z"
+  },
+  "dataset": {
+    "count": 24,
+    "sha256": "0a5a7e91d3a7bb864cbe8952d50b3c3b6c4ec9571e1639d055d83a0cf6b94fd5",
+    "token_shape": [
+      24,
+      15
+    ]
+  },
+  "baseline": {
+    "accuracy": 1.0,
+    "mean_logit_difference": 3.2605068683624268,
+    "mean_95ci": [
+      2.6705045721962337,
+      3.85050916452862
+    ],
+    "median_logit_difference": 2.918792724609375,
+    "error_pair_ids": [],
+    "corrupted_mean_logit_difference": -4.170350551605225,
+    "corrupted_mean_95ci": [
+      -4.710606893472707,
+      -3.6300942097377424
+    ]
+  },
+  "passive_non_interference": {
+    "max_absolute_logit_difference": 0.0,
+    "argmax_identical": true,
+    "hooks_remaining": 0
+  },
+  "known_group": {
+    "identity": [
+      [
+        9,
+        9
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        9,
+        6
+      ]
+    ],
+    "mean_logit_difference": -1.2869950532913208,
+    "normalized_recovery": 0.3880246151780871
+  },
+  "known_individual": [
+    {
+      "kind": "known_individual",
+      "identity": [
+        [
+          9,
+          9
+        ]
+      ],
+      "seed": null,
+      "mean_logit_difference": -2.328383207321167,
+      "normalized_recovery": 0.24788087017170637
+    },
+    {
+      "kind": "known_individual",
+      "identity": [
+        [
+          10,
+          0
+        ]
+      ],
+      "seed": null,
+      "mean_logit_difference": -3.215015411376953,
+      "normalized_recovery": 0.12856324874610464
+    },
+    {
+      "kind": "known_individual",
+      "identity": [
+        [
+          9,
+          6
+        ]
+      ],
+      "seed": null,
+      "mean_logit_difference": -4.528690338134766,
+      "normalized_recovery": -0.04822321002472016
+    }
+  ],
+  "matched_random_controls": [
+    {
+      "kind": "matched_random",
+      "identity": [
+        [
+          5,
+          2
+        ],
+        [
+          11,
+          1
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "seed": 11,
+      "mean_logit_difference": -4.148947238922119,
+      "normalized_recovery": 0.0028803288988315115
+    },
+    {
+      "kind": "matched_random",
+      "identity": [
+        [
+          11,
+          8
+        ],
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          10
+        ]
+      ],
+      "seed": 22,
+      "mean_logit_difference": -4.145092487335205,
+      "normalized_recovery": 0.0033990781484450647
+    },
+    {
+      "kind": "matched_random",
+      "identity": [
+        [
+          6,
+          10
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          7,
+          6
+        ]
+      ],
+      "seed": 33,
+      "mean_logit_difference": -4.158766269683838,
+      "normalized_recovery": 0.00155894288348734
+    }
+  ],
+  "comparison": {
+    "control_mean_normalized_recovery": 0.0026127833102546384,
+    "known_minus_control": 0.38541183186783246,
+    "acceptance_passed": true,
+    "criterion": {
+      "predeclared_before_causal_run": true,
+      "baseline_accuracy_minimum": 0.7,
+      "passive_fp32_rtol": 1e-05,
+      "passive_fp32_atol": 1e-06,
+      "passive_tokens_identical": true,
+      "known_mean_recovery_must_exceed_control_mean": true,
+      "known_minus_control_minimum": 0.1,
+      "random_control_seeds": [
+        11,
+        22,
+        33
+      ],
+      "known_subset": [
+        [
+          9,
+          9
+        ],
+        [
+          10,
+          0
+        ],
+        [
+          9,
+          6
+        ]
+      ],
+      "patch_position": "answer_position_last_input_token"
+    }
+  },
+  "timing_seconds": {
+    "total": 18.72537750005722
+  }
+}
