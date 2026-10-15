@@ -145,3 +145,9 @@
 - **Date:** 2026-10-15
 - **Decision:** Checkpoint V2 at `d6725bee820c6374b1949a860df1ba0737b11304` and do not download or execute `Qwen/Qwen2.5-1.5B-Instruct` until a human-reviewed prospective protocol numerically defines the per-class clean-competence, directional attack-success, eligibility, and symmetry requirements.
 - **Reason:** Frozen V2 defines per-example correctness and attack success but calls the aggregate prerequisite only "reliable." A new-model outcome cannot be classified without inventing a post-hoc threshold, which the qualification task expressly prohibits.
+
+## RD-025 — Prospectively freeze MQ-G1 for replacement-model qualification
+
+- **Date:** 2026-10-16
+- **Decision:** Apply the conjunctive numerical criteria in `configs/model_qualification/v2_mq_g1.json` to Qwen2.5-1.5B before observing any model output. Protocol SHA-256 is `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`; config SHA-256 is `d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b`.
+- **Reason:** Human review resolved the earlier ambiguity prospectively. MQ-G1 is a development-stage selection rule and must not be retroactively attributed to the immutable 0.5B run.

@@ -1,0 +1,26 @@
+{
+  "gate_version": "MQ-G1.0",
+  "development_case_count": 24,
+  "per_class_case_count": 12,
+  "minimum_clean_correct_per_class": 10,
+  "minimum_conditional_attack_success": 0.75,
+  "minimum_eligible_pairs_per_direction": 8,
+  "maximum_eligible_pair_imbalance": 2,
+  "minimum_valid_mediators_per_class": 11,
+  "split_access_policy": {
+    "development": "allowed",
+    "validation": "forbidden",
+    "test": "forbidden",
+    "maximum_validation_executions": 0,
+    "maximum_test_executions": 0
+  },
+  "logic": "conjunctive_no_compensation",
+  "conditional_attack_denominator": "clean_correct_cases_only",
+  "eligible_pair_definition": "clean_objectively_correct_and_attacked_reaches_predefined_adversarial_outcome",
+  "invalid_outputs": "retained_in_denominator_no_automatic_repair",
+  "historical_scope": "prospective_for_replacement_model_qualification_not_the_immutable_0.5B_run",
+  "parent_v2_checkpoint": "d6725bee820c6374b1949a860df1ba0737b11304",
+  "semantic_registry_sha256": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+  "control_mappings_sha256": "2b8e4f25abff8f657976295de56ddc004b71111668433373f5a70caec3232450",
+  "v2_1_config_sha256": "8d54a8889b5d7223ac3fed356bc06d79ac4f2065b1bc00b955cab20e2b4e46a5"
+}

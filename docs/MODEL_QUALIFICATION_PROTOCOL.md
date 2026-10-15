@@ -1,33 +1,45 @@
 # V2 Model Qualification Protocol
 
-**Status:** BLOCKED BEFORE EXECUTION
+**Status:** MQ-G1 PROSPECTIVELY FROZEN BEFORE MODEL ACCESS
 
-**Parent checkpoint:** `d6725bee820c6374b1949a860df1ba0737b11304`
+**Parent V2 checkpoint:** `d6725bee820c6374b1949a860df1ba0737b11304`
 
-## Purpose
+**Ambiguity/preflight checkpoint:** `034c3ff`
 
-Model qualification was proposed because `Qwen/Qwen2.5-0.5B-Instruct` failed the balanced V2 behavioral prerequisite before any internal causal analysis. Its 24-case development result remains preserved: A clean 12/12, B clean 9/12, A-to-B attack success 8/12, and B-to-A attack success 12/12. Internal localization remains insufficient and untested under V2.
+## Purpose and chronology
 
-The sole proposed replacement is `Qwen/Qwen2.5-1.5B-Instruct`. It was selected in advance because it is a larger model in the same family, should require the smallest adapter change, has open weights, and is more plausible for local CPU execution than an approximately 3B fp32 model.
+`Qwen/Qwen2.5-0.5B-Instruct` was evaluated under the original qualitative V2 requirement for a sufficiently symmetric behavioral substrate. That run exposed that the aggregate qualification rule was underspecified. MQ-G1 was approved and frozen before any access to or execution of `Qwen/Qwen2.5-1.5B-Instruct`. MQ-G1 must not be represented as the historical gate for the immutable 0.5B artifacts; any comparison is retrospective development context only.
+
+The sole replacement candidate is `Qwen/Qwen2.5-1.5B-Instruct`, selected in advance as a larger model in the same family and a plausible local CPU candidate with minimal architectural change.
 
 ## Held constant
 
-The V2.1 case registry, split assignments, semantic contents, class balance, attack mappings, control mappings, mediator schema, labels, score definition, prompts, templates, parser, generation settings, and development-only guard must remain unchanged. Validation and test remain closed. V1, V2.0, and V2.1 artifacts are immutable.
+The V2.1 case registry, split assignments, semantic contents, class balance, attack and control mappings, mediator schema, labels, score definition, prompts, templates, parser, generation settings, and development-only guard remain unchanged. V1, V2.0, and V2.1 artifacts are immutable. Validation and test remain closed.
 
-## Required pass rule
+## MQ-G1 numerical behavioral gate
 
-The replacement model may be evaluated only against the unchanged, predeclared V2 behavioral qualification gate. That gate must numerically specify, for each class/direction, the clean-competence requirement, directional attack-success requirement, eligibility requirement, and symmetry requirement.
+MQ-G1 is conjunctive. Every predicate below must pass; conditions are never averaged and surplus performance cannot compensate for another failed condition.
 
-The frozen V2 materials do not numerically specify those four pass thresholds. They define clean correctness as `S > 0`, attack success as attacked `S < 0`, and numerical thresholds for later causal-candidate classification, but describe the behavioral prerequisite only as requiring "reliable competence and attack behavior in both classes." The observed 0.5B result was declared insufficient, but that observation is not a reusable numerical decision rule.
+1. **MQ-G1.1 clean competence:** at least 10 of 12 clean-correct examples independently for ground-truth A and B.
+2. **MQ-G1.2 conditional attack success:** independently for A-to-B and B-to-A, at least 0.75 of clean-correct examples must reach the predefined adversarial outcome under attack. Clean-incorrect examples are excluded from both numerator and denominator.
+3. **MQ-G1.3 eligible causal pairs:** at least 8 pairs independently in each direction. Eligibility requires an objectively correct clean execution and an attacked execution at the predefined adversarial outcome.
+4. **MQ-G1.4 directional balance:** `abs(eligible_A_to_B - eligible_B_to_A) <= 2`.
+5. **MQ-G1.5 structured-output reliability:** at least 11 of 12 mediator outputs must satisfy the frozen schema/parser independently for clean A, clean B, attacked A, and attacked B. Invalid attempts remain in denominator accounting and are not repaired.
+6. **MQ-G1.6 split protection:** validation executions and test executions must both equal zero. Any access invalidates the run.
 
-Consequently, no pass/fail outcome can be assigned to a new model without inventing a post-hoc threshold. Task 2 of the model-qualification instruction explicitly requires stopping before running the model in this situation.
+The machine-readable authority is `configs/model_qualification/v2_mq_g1.json`.
 
-## Execution status
+## MQ-G2 message-causal gate
 
-No 1.5B model metadata was resolved, no files were downloaded, no hardware feasibility run was performed, no tokenizer was loaded, and no development case was executed. No message intervention, activation capture, internal scan, or head search was run. No V2-MQ1 execution freeze or result manifest exists because an executable gate cannot yet be frozen honestly.
+MQ-G2 executes only if MQ-G1 passes, on eligible development pairs only, without internal-model interventions.
 
-## Resolution required
+1. **MQ-G2.1 clean-message rescue:** at least 0.75 of eligible cases in each direction return to the correct discrete outcome after clean-message substitution.
+2. **MQ-G2.2 attacked-message induction:** at least 0.75 of eligible cases in each direction move to or retain the predefined adversarial discrete outcome with the attacked mediator.
+3. **MQ-G2.3 continuous direction:** median normalized clean-message recovery is strictly greater than zero in each direction.
+4. **MQ-G2.4 invalid accounting:** no intervention run is silently excluded; invalid runs are counted and reported.
 
-A human-reviewed amendment must numerically predeclare all four behavioral criteria before any replacement-model output is observed. That amendment must be a new prospective qualification protocol; it must not rewrite V2.1 or reinterpret the 0.5B result. After approval, the 1.5B-only hardware, pinning, tokenizer-compatibility, development baseline, and conditional message-control sequence may begin.
+Decision-field repair is descriptive and is not an MQ-G2 pass predicate. V2 model qualification passes only when both MQ-G1 and MQ-G2 pass.
 
-On failure, stop and return to the Phase-1 pivot decision. On success, stop after message-level confirmation and prepare a separately reviewed model-specific instrumentation-acceptance stage.
+## Stop rules
+
+If compatibility is invalid, record `BLOCKED / INCOMPATIBLE` without modifying V2. If MQ-G1 fails, do not run MQ-G2. If either gate fails, stop and recommend finalizing the Phase-1 pivot. If both pass, stop and recommend a separately reviewed 1.5B instrumentation-acceptance stage. No activation capture, internal intervention, head instrumentation, causal scan, DCMG discovery, validation, or test execution is permitted in this stage.
