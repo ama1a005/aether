@@ -52,6 +52,8 @@
 - Generation-step intervention and exact Qwen pre-`o_proj` head capture/intervention are implemented. Real acceptance verified standard/uncached greedy equality, passive non-interference, exact head concatenation reconstruction, and cleanup.
 - `docs/PHASE1_PIVOT_DECISION.md` recommends **PIVOT PHASE 1** for human review. No pivot, validation access, test access, RL, or Phase 2 execution has begun.
 - V2-complete lightweight/calibration suite: 135 passed, 0 failed, 2 expected real-model skips, and one known cache warning. The two opt-in Qwen generation/head integration tests were run separately and both passed.
+- V2 behavioral-gate checkpoint: `d6725bee820c6374b1949a860df1ba0737b11304` (`experiment: stop balanced V2 at behavioral qualification gate`).
+- Replacement-model qualification stopped before download or execution. The frozen V2 materials do not numerically define the clean-competence, directional attack, eligibility, and symmetry pass thresholds; `docs/MODEL_QUALIFICATION_PROTOCOL.md` records the ambiguity. Qwen2.5-1.5B has not been evaluated and has no qualification outcome.
 
 ## Partial or pending external verification
 
@@ -70,4 +72,4 @@
 
 ## Next proposed task
 
-Current recommendation: review `docs/PHASE1_PIVOT_DECISION.md` and choose a narrowed Phase-1 scope. Do not open validation/test or launch another activation search on the current V2 substrate.
+Current recommendation: prospectively freeze a human-reviewed numerical behavioral gate if model qualification is still desired; otherwise finalize the Phase-1 pivot. Do not download/run Qwen2.5-1.5B, open validation/test, or launch another activation search until that decision is made.

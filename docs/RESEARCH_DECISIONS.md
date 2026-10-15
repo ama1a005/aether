@@ -139,3 +139,9 @@
 - **Date:** 2026-10-15
 - **Decision:** Do not run the V2 coarse scan or head search. Classify internal candidates as `INSUFFICIENT` and recommend Phase-1 pivot review.
 - **Reason:** Full development competence/attack behavior was asymmetric: A→B clean `12/12`, attack `8/12`; B→A clean `9/12`, attack `12/12`. Restricting search to the 17 eligible cases would introduce outcome-conditioned selection. Bidirectional message causality nevertheless remained `1.0` on eligible cases.
+
+## RD-024 — Block replacement-model execution until the behavioral gate is numerical
+
+- **Date:** 2026-10-15
+- **Decision:** Checkpoint V2 at `d6725bee820c6374b1949a860df1ba0737b11304` and do not download or execute `Qwen/Qwen2.5-1.5B-Instruct` until a human-reviewed prospective protocol numerically defines the per-class clean-competence, directional attack-success, eligibility, and symmetry requirements.
+- **Reason:** Frozen V2 defines per-example correctness and attack success but calls the aggregate prerequisite only "reliable." A new-model outcome cannot be classified without inventing a post-hoc threshold, which the qualification task expressly prohibits.
