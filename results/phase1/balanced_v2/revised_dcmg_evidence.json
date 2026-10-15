@@ -1,0 +1,90 @@
+[
+  {
+    "edge_id": "message.decision_code->receiver.outcome.A_TO_B",
+    "source_type": "message_field",
+    "target_type": "outcome",
+    "evidence_type": "message_intervention",
+    "operator": "whole_message_rescue_and_induction",
+    "split": "development",
+    "attack_direction": "A_TO_B",
+    "n_eligible": 8,
+    "rescue_effects": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "induction_effects": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "status": "supported"
+  },
+  {
+    "edge_id": "message.decision_code->receiver.outcome.B_TO_A",
+    "source_type": "message_field",
+    "target_type": "outcome",
+    "evidence_type": "message_intervention",
+    "operator": "whole_message_rescue_and_induction",
+    "split": "development",
+    "attack_direction": "B_TO_A",
+    "n_eligible": 9,
+    "rescue_effects": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "induction_effects": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "status": "supported"
+  },
+  {
+    "edge_id": "sender_internal->message.decision_code",
+    "source_type": "sender_internal",
+    "target_type": "message.decision_code",
+    "evidence_type": "not_executed_behavioral_gate_failed",
+    "operator": null,
+    "split": "development",
+    "attack_direction": "both",
+    "n_eligible": 0,
+    "effect_values": [],
+    "status": "insufficient"
+  },
+  {
+    "edge_id": "receiver_internal->receiver.outcome",
+    "source_type": "receiver_internal",
+    "target_type": "receiver.outcome",
+    "evidence_type": "not_executed_behavioral_gate_failed",
+    "operator": null,
+    "split": "development",
+    "attack_direction": "both",
+    "n_eligible": 0,
+    "effect_values": [],
+    "status": "insufficient"
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "protocol_version": "2.0.0",
+  "result_state": "DEV",
+  "scope": "development_only",
+  "dataset_registry": "data/causal_v2/case_registry.json",
+  "control_mappings": "data/causal_v2/control_mappings.json",
+  "model_registry": "configs/models/model_registry.json",
+  "seed": 42,
+  "behavioral_smoke_count": 8,
+  "development_count": 24,
+  "coarse_layers": [0, 5, 9, 14, 18, 23],
+  "coarse_component_types": ["block_output", "attention_output", "mlp_output"],
+  "coarse_top_k_per_role": 3,
+  "attention_top_k_per_role": 1,
+  "sender_generation": {
+    "use_cache": false,
+    "max_new_tokens": 2,
+    "decision_generation_step": 0,
+    "irrelevant_post_decision_step": 1,
+    "secondary_evidence_step": null
+  },
+  "receiver_positions": {
+    "decision": "last_prompt_token",
+    "message_evidence": "first_cross_condition_differing_token",
+    "irrelevant": 1
+  },
+  "controls": [
+    "paired_clean",
+    "same_label_shuffled_clean",
+    "opposite_label_shuffled_clean",
+    "attacked_same_pair",
+    "irrelevant_position"
+  ],
+  "classification_thresholds": {
+    "effect_minimum": 0.5,
+    "weak_effect_maximum": 0.25,
+    "separation_minimum": 0.2,
+    "equivalence_tolerance": 0.2,
+    "both_attack_directions_required": true
+  },
+  "head_refinement_gate": {
+    "parent_attention_paired_rescue_minimum_both_directions": 0.5,
+    "parent_attention_paired_induction_minimum_both_directions": 0.5,
+    "maximum_attention_layers_per_role": 1,
+    "all_heads_within_selected_layer": true
+  },
+  "query_budget_maximum": 350,
+  "primary_question": "Can sender or receiver effects be localized to semantically meaningful decision-related components after balancing labels, separating semantic shuffle controls, and aligning sender interventions to the decision-generation step?"
+}

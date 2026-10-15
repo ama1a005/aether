@@ -44,6 +44,14 @@
 - `docs/PHASE1_METHOD_FREEZE_CANDIDATE.md` records recommendation **DO NOT FREEZE METHOD**. Validation and test remain unopened.
 - MCPTox raw released-response rows were removed from tracked artifacts and ignored pending license resolution; source hashes, subset IDs, aggregate metrics, and integration code remain.
 - Hardening-complete gated suite: 126 passed, 0 failed, 0 skipped with real-model and calibration gates enabled; one known non-fatal `.pytest_cache` warning. P1, P2, P3, P4, end-to-end, aggregate 3/3, real instrumentation, MCPTox summary-only, and TAMAS adapter smokes passed.
+- Hardening checkpoint: `303e0d8` (`experiment: harden causal specificity and reject coarse localization`). V1 artifacts were restored byte-for-byte before the checkpoint.
+- Balanced V2 is frozen as 24 development, 8 validation, and 8 test cases, with 12/12, 4/4, and 4/4 A/B balance respectively. Validation/test were generated but never executed.
+- V2.0 behavioral smoke exposed right-padding and mediator-wording execution defects. Its artifacts and freeze record are preserved. V2.1 corrected only those execution defects before causal search and was separately frozen.
+- V2.1 full development behavior: A→B clean 12/12, attack success 8/12; B→A clean 9/12, attack success 12/12; invalid 0/24. Message rescue, induction, and decision-field replacement were each `1.0` on all eligible cases in both directions.
+- The balanced behavioral gate failed. Coarse sender/receiver scans, semantic shuffle controls, and head search were not run; candidate classifications are `INSUFFICIENT`, not negative localization evidence.
+- Generation-step intervention and exact Qwen pre-`o_proj` head capture/intervention are implemented. Real acceptance verified standard/uncached greedy equality, passive non-interference, exact head concatenation reconstruction, and cleanup.
+- `docs/PHASE1_PIVOT_DECISION.md` recommends **PIVOT PHASE 1** for human review. No pivot, validation access, test access, RL, or Phase 2 execution has begun.
+- V2-complete lightweight/calibration suite: 135 passed, 0 failed, 2 expected real-model skips, and one known cache warning. The two opt-in Qwen generation/head integration tests were run separately and both passed.
 
 ## Partial or pending external verification
 
@@ -62,4 +70,4 @@
 
 ## Next proposed task
 
-Current recommendation: after review, define a bounded development-only redesign of intervention granularity/operator semantics, freeze it before execution, and repeat specificity hardening. Do not open validation until a specific internal candidate survives or the Phase-1 claim is formally narrowed to mediator-level causality.
+Current recommendation: review `docs/PHASE1_PIVOT_DECISION.md` and choose a narrowed Phase-1 scope. Do not open validation/test or launch another activation search on the current V2 substrate.

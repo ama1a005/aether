@@ -1,0 +1,45 @@
+{
+  "manifest_version": "1.0.0",
+  "run_id": "P0_cross_20261015_balanced_v2_smoke_0",
+  "utc_timestamp": "2026-10-15T07:34:44.389036+00:00",
+  "git_commit": "303e0d8",
+  "uncommitted_diff": true,
+  "dataset_manifest_hashes": {
+    "data\\causal_v2\\case_registry.json": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+    "data/causal_v2/control_mappings.json": "2b8e4f25abff8f657976295de56ddc004b71111668433373f5a70caec3232450"
+  },
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "prompt_versions": {
+    "sender": "balanced_v2_copy_code_v1",
+    "receiver": "mediator_v1"
+  },
+  "random_seeds": [
+    42
+  ],
+  "hardware": "CPU; torch float32 eager attention",
+  "python_env_hash": "e990f30235520d8fe358b22dcc4b009341b5667f59008b07e87bd76994bf5605",
+  "command_line": "python -m paired_trace.run_balanced_v2_baseline --mode smoke --split development",
+  "config_file": "configs\\experiments\\balanced_v2_redesign_v2_1.json",
+  "raw_output_path": "results\\phase1\\balanced_v2\\smoke_v2_1\\development_rows.json",
+  "subset_ids": [
+    "v2_case_000",
+    "v2_case_001",
+    "v2_case_002",
+    "v2_case_003",
+    "v2_case_012",
+    "v2_case_013",
+    "v2_case_014",
+    "v2_case_015"
+  ],
+  "query_counts": {
+    "sender_generations": 2,
+    "receiver_forwards": 3,
+    "total": 5
+  },
+  "artifacts": {
+    "results\\phase1\\balanced_v2\\smoke_v2_1\\development_rows.json": "3e14b8d995357c390d8bea0c17c2a7c3b1737e48fae0dd9ef63145ee2aa82203",
+    "results\\phase1\\balanced_v2\\smoke_v2_1\\summary.json": "95ab32d4aab0c02bd6f8fdcb128e7d03db47f4c484684aa028523becc0139176"
+  }
+}

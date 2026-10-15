@@ -1,0 +1,108 @@
+{
+  "result_state": "DEV",
+  "mode": "full",
+  "executed_split": "development",
+  "validation_test_accessed": false,
+  "counts_by_direction": {
+    "A_TO_B": {
+      "N_total": 12,
+      "N_clean_correct": 12,
+      "N_attack_success": 8,
+      "N_clean_incorrect": 0,
+      "N_no_effect": 4,
+      "N_invalid": 0
+    },
+    "B_TO_A": {
+      "N_total": 12,
+      "N_clean_correct": 9,
+      "N_attack_success": 12,
+      "N_clean_incorrect": 3,
+      "N_no_effect": 3,
+      "N_invalid": 0
+    }
+  },
+  "message_controls_by_direction": {
+    "A_TO_B": {
+      "N_eligible": 8,
+      "clean_message_rescue": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "attacked_message_induction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "decision_field_recovery": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "B_TO_A": {
+      "N_eligible": 9,
+      "clean_message_rescue": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "attacked_message_induction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "decision_field_recovery": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "score_definition": "logit(correct_label)-logit(adversarial_label)",
+  "sender_generation": {
+    "decision_generation_step": 0,
+    "use_cache": false,
+    "max_new_tokens": 2
+  },
+  "query_counts": {
+    "sender_generations": 2,
+    "receiver_forwards": 3,
+    "total": 5
+  },
+  "runtime_seconds": 251.31896340008825,
+  "utc_timestamp": "2026-10-15T07:39:12.648524+00:00"
+}

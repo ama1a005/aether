@@ -1,0 +1,20 @@
+{
+  "freeze_version": "balanced-v2-pre-experiment-v1",
+  "utc_timestamp": "2026-10-15T07:29:48.522689+00:00",
+  "checkpoint_commit": "303e0d8",
+  "scope": "development_only",
+  "validation_test_accessed": false,
+  "files": {
+    "paired_trace\\balanced_v2.py": "df69d8bb1a2f6c5b7b8f6109cd641dcd5cfb29bb309c77b5787fdf6658743cf3",
+    "paired_trace\\run_balanced_v2_baseline.py": "b6af27d7b1f114d9793e2d7e069f2f9f256b94aa24bbaab14c30c8f3842fea21",
+    "paired_trace\\schemas.py": "411d6a441f0a15a20a7b3db675dd2c4f7b51d30ff25a8e9f7ff2a51ecafd813f",
+    "paired_trace\\run_foundation.py": "7187fc7a89fa05e69cddd1e1db5935e8b21c24f47626f839746a57da091db4cc",
+    "causal\\v2_classification.py": "c8ed36c7daf0bb8322eb20280e8b14a6780048ff9daded406e2a252097f3c732",
+    "data\\causal_v2\\case_registry.json": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+    "data\\causal_v2\\control_mappings.json": "2b8e4f25abff8f657976295de56ddc004b71111668433373f5a70caec3232450",
+    "configs\\experiments\\balanced_v2_redesign.json": "a2c6ef21ec0a46707ba26512e215032857ea739453d39b4664c96b81038e640a",
+    "docs\\BALANCED_SUBSTRATE_V2.md": "b1957ff7c8a0cfd8be9d09e0e2eaa5a89f967c0e1ceb92568d4226295db1a830",
+    "docs\\GENERATION_STEP_INTERVENTION.md": "bd94888500254140e6eb942b7cbfc3c78957751b6fdd879e029776f2609c2c96",
+    "docs\\QWEN_HEAD_INSTRUMENTATION.md": "fac45e62cf525d9af1b1bc90c287360298c3e9d5851f9e63777ed596d89dbaa0"
+  }
+}

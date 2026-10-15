@@ -121,3 +121,21 @@
 - **Date:** 2026-10-14
 - **Decision:** Do not track or publish raw MCPTox records or released responses while the pinned repository has no license file. Retain source URL, commit, hashes, deterministic subset IDs, aggregate results, and integration/downloader code.
 - **Reason:** Provenance can remain reproducible without redistributing potentially unlicensed source material.
+
+## RD-021 — Balanced V2 control-identifiability redesign
+
+- **Date:** 2026-10-15
+- **Decision:** Preserve V1 exactly and create a separate balanced 24/8/8 V2 registry with equal A/B classes, bidirectional attacks, case-normalized scores, deterministic same-label/opposite-label mappings, generation-step sender semantics, and conditional pre-projection head instrumentation.
+- **Reason:** V1's all-A clean labels confounded shuffled-clean controls, and its sender intervention did not explicitly encode autoregressive generation-step semantics.
+
+## RD-022 — V2.1 behavioral correction before causal search
+
+- **Date:** 2026-10-15
+- **Decision:** Preserve the failed V2.0 smoke, then separately freeze V2.1 with left padding for variable-length decoder-only batches and the verified V1 mediator evidence wording. No data, split, score, candidate, control, or threshold changed.
+- **Reason:** V2.0 predicted from right-padding positions and changed a positive-control message field. These were execution defects found before causal effects, not outcome-conditioned causal tuning.
+
+## RD-023 — Stop internal search and recommend Phase-1 pivot
+
+- **Date:** 2026-10-15
+- **Decision:** Do not run the V2 coarse scan or head search. Classify internal candidates as `INSUFFICIENT` and recommend Phase-1 pivot review.
+- **Reason:** Full development competence/attack behavior was asymmetric: A→B clean `12/12`, attack `8/12`; B→A clean `9/12`, attack `12/12`. Restricting search to the 17 eligible cases would introduce outcome-conditioned selection. Bidirectional message causality nevertheless remained `1.0` on eligible cases.

@@ -1,0 +1,16 @@
+{
+  "result_state": "DEV",
+  "validation_test_accessed": false,
+  "behavioral_gate": "failed_asymmetric_clean_competence_and_attack_success",
+  "candidate_classifications": {
+    "sender": "INSUFFICIENT",
+    "receiver": "INSUFFICIENT"
+  },
+  "maximum_pathway_bvp_level": 1,
+  "sender_to_mediator_level_2": "insufficient_not_executed",
+  "receiver_to_outcome_level_3": "insufficient_not_executed",
+  "internal_scan_executed": false,
+  "head_refinement_executed": false,
+  "recommendation": "PIVOT_PHASE_1",
+  "utc_timestamp": "2026-10-15T12:07:55.603906+00:00"
+}

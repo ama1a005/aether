@@ -1,0 +1,51 @@
+{
+  "result_state": "DEV",
+  "mode": "smoke",
+  "executed_split": "development",
+  "validation_test_accessed": false,
+  "counts_by_direction": {
+    "A_TO_B": {
+      "N_total": 4,
+      "N_clean_correct": 4,
+      "N_attack_success": 0,
+      "N_clean_incorrect": 0,
+      "N_no_effect": 4,
+      "N_invalid": 2
+    },
+    "B_TO_A": {
+      "N_total": 4,
+      "N_clean_correct": 0,
+      "N_attack_success": 4,
+      "N_clean_incorrect": 4,
+      "N_no_effect": 4,
+      "N_invalid": 3
+    }
+  },
+  "message_controls_by_direction": {
+    "A_TO_B": {
+      "N_eligible": 0,
+      "clean_message_rescue": [],
+      "attacked_message_induction": [],
+      "decision_field_recovery": []
+    },
+    "B_TO_A": {
+      "N_eligible": 0,
+      "clean_message_rescue": [],
+      "attacked_message_induction": [],
+      "decision_field_recovery": []
+    }
+  },
+  "score_definition": "logit(correct_label)-logit(adversarial_label)",
+  "sender_generation": {
+    "decision_generation_step": 0,
+    "use_cache": false,
+    "max_new_tokens": 2
+  },
+  "query_counts": {
+    "sender_generations": 2,
+    "receiver_forwards": 3,
+    "total": 5
+  },
+  "runtime_seconds": 82.90252180001698,
+  "utc_timestamp": "2026-10-15T07:31:27.821592+00:00"
+}

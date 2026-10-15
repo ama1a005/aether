@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0.0",
+  "run_id": "P0_cross_20261015_balanced_v2_pivot_0",
+  "utc_timestamp": "2026-10-15T12:07:55.603906+00:00",
+  "git_commit": "303e0d8",
+  "uncommitted_diff": true,
+  "source_summary": "results\\phase1\\balanced_v2\\full_v2_1\\summary.json",
+  "source_summary_hash": "0a3e3f43179a4d5aa8898bc10da508df62a1b6756321f019c9a90694f0e4afd2",
+  "freeze_manifest": "data/causal_v2/freeze_manifest_v2_1.json",
+  "freeze_manifest_hash": "22db455bf0a17b0dc3f933c652017f5cff0a7fe28c5f289f7932a5c6292f5b05",
+  "split": "development",
+  "validation_test_accessed": false,
+  "artifacts": {
+    "results\\phase1\\balanced_v2\\revised_dcmg_evidence.json": "55a891bfda0c3f97b616368039f659d6f989be18c5872fb9e5734262b1e32d5e",
+    "results\\phase1\\balanced_v2\\pivot_summary.json": "96f15a42de9ddd719d380590bfff1fb9d4ed6f78b4c46491b3a6599bb2703cda"
+  }
+}

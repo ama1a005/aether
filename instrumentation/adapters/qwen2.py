@@ -33,6 +33,9 @@ class Qwen2ModelAdapter(ModelAdapter):
         self.activations: dict[str, torch.Tensor] = {}
         self._handles: list[Any] = []
         self.intervention_applications = 0
+        self.generation_hook_events: list[dict[str, int]] = []
+        self._active_generation_step: int | None = None
+        self.head_activations: dict[str, torch.Tensor] = {}
 
     def load(self) -> None:
         """Load the exact requested revision without remote model code."""
@@ -76,6 +79,33 @@ class Qwen2ModelAdapter(ModelAdapter):
             raise RuntimeError("load() must be called before generate()")
         with torch.inference_mode():
             return self.model.generate(**inputs, do_sample=False, max_new_tokens=max_new_tokens)
+
+    def generate_uncached(self, inputs: dict[str, torch.Tensor], max_new_tokens: int) -> torch.Tensor:
+        """Greedily decode with explicit steps and no KV cache for causal interventions."""
+        if self.model is None:
+            raise RuntimeError("load() must be called before generate_uncached()")
+        generated = inputs["input_ids"].clone()
+        attention_mask = inputs.get("attention_mask")
+        if attention_mask is None:
+            attention_mask = torch.ones_like(generated)
+        self.generation_hook_events.clear()
+        try:
+            with torch.inference_mode():
+                for step in range(max_new_tokens):
+                    self._active_generation_step = step
+                    output = self.model(
+                        input_ids=generated,
+                        attention_mask=attention_mask,
+                        use_cache=False,
+                    )
+                    next_token = output.logits[:, -1, :].argmax(dim=-1, keepdim=True)
+                    generated = torch.cat((generated, next_token), dim=1)
+                    attention_mask = torch.cat(
+                        (attention_mask, torch.ones_like(next_token)), dim=1
+                    )
+        finally:
+            self._active_generation_step = None
+        return generated
 
     def identify_components(self, layers: Sequence[int]) -> list[ComponentSite]:
         """Expose block, post-attention projection, and MLP outputs at selected layers."""
@@ -187,3 +217,103 @@ class Qwen2ModelAdapter(ModelAdapter):
             return patched
 
         self._handles.append(self._module_for(site).register_forward_hook(patch_output))
+
+    def install_generation_step_patch(
+        self,
+        site: ComponentSite,
+        source: torch.Tensor,
+        target_step: int,
+    ) -> None:
+        """Patch the last-token state only while predicting one generated token."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing an intervention")
+        if source.ndim not in (2, 3):
+            raise ValueError("source must have shape [batch, hidden] or [batch, sequence, hidden]")
+        if target_step < 0:
+            raise ValueError("target generation step must be non-negative")
+        self.intervention_applications = 0
+
+        def patch_step(_module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any) -> Any:
+            tensor = output[0] if isinstance(output, tuple) else output
+            step = self._active_generation_step
+            if step != target_step:
+                return None
+            aligned = source[:, -1, :] if source.ndim == 3 else source
+            if aligned.shape != tensor[:, -1, :].shape:
+                raise ValueError("generation-step source shape does not match target")
+            patched = tensor.clone()
+            patched[:, -1, :] = aligned.to(device=tensor.device, dtype=tensor.dtype)
+            self.intervention_applications += 1
+            self.generation_hook_events.append({"step": step, "sequence_length": tensor.shape[1]})
+            if isinstance(output, tuple):
+                return (patched, *output[1:])
+            return patched
+
+        self._handles.append(self._module_for(site).register_forward_hook(patch_step))
+
+    def _head_shape(self, layer: int) -> tuple[int, int]:
+        attention = self.model.model.layers[layer].self_attn
+        heads = int(attention.config.num_attention_heads)
+        head_dim = int(attention.head_dim)
+        if heads * head_dim != attention.o_proj.in_features:
+            raise ValueError("Qwen attention head dimensions do not reconstruct o_proj input")
+        return heads, head_dim
+
+    def install_head_capture(self, layer: int) -> None:
+        """Capture the exact concatenated per-head tensor entering attention o_proj."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing head capture")
+        heads, head_dim = self._head_shape(layer)
+        self.head_activations.clear()
+        o_proj = self.model.model.layers[layer].self_attn.o_proj
+
+        def capture(_module: torch.nn.Module, inputs: tuple[Any, ...]) -> None:
+            concatenated = inputs[0]
+            self.head_activations[f"L{layer}.pre_o_proj_concat"] = concatenated.detach().cpu().clone()
+            self.head_activations[f"L{layer}.pre_o_proj_heads"] = (
+                concatenated.view(*concatenated.shape[:-1], heads, head_dim)
+                .detach().cpu().clone()
+            )
+            return None
+
+        self._handles.append(o_proj.register_forward_pre_hook(capture))
+
+    def install_head_patch(
+        self,
+        layer: int,
+        head: int,
+        source: torch.Tensor,
+        token_position: int = -1,
+        target_generation_step: int | None = None,
+    ) -> None:
+        """Patch one pre-o_proj query-head slice at one token and optional decode step."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing a head intervention")
+        heads, head_dim = self._head_shape(layer)
+        if head < 0 or head >= heads:
+            raise IndexError(f"head {head} outside range 0..{heads - 1}")
+        if source.ndim not in (2, 3):
+            raise ValueError("head source must have shape [batch, head_dim] or [batch, sequence, head_dim]")
+        self.intervention_applications = 0
+        o_proj = self.model.model.layers[layer].self_attn.o_proj
+
+        def patch(_module: torch.nn.Module, inputs: tuple[Any, ...]) -> tuple[Any, ...] | None:
+            if target_generation_step is not None and self._active_generation_step != target_generation_step:
+                return None
+            concatenated = inputs[0]
+            resolved = token_position if token_position >= 0 else concatenated.shape[1] + token_position
+            if resolved < 0 or resolved >= concatenated.shape[1]:
+                return None
+            head_view = concatenated.view(*concatenated.shape[:-1], heads, head_dim).clone()
+            aligned = source[:, resolved, :] if source.ndim == 3 else source
+            if aligned.shape != head_view[:, resolved, head, :].shape:
+                raise ValueError("head source shape does not match target")
+            head_view[:, resolved, head, :] = aligned.to(concatenated.device, concatenated.dtype)
+            self.intervention_applications += 1
+            if self._active_generation_step is not None:
+                self.generation_hook_events.append(
+                    {"step": self._active_generation_step, "sequence_length": concatenated.shape[1]}
+                )
+            return (head_view.reshape_as(concatenated), *inputs[1:])
+
+        self._handles.append(o_proj.register_forward_pre_hook(patch))
