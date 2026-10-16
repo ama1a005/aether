@@ -44,6 +44,8 @@ The proposed single-model qualification with `Qwen/Qwen2.5-1.5B-Instruct` stoppe
 
 Human review subsequently froze MQ-G1 at commit `302bf1f`. The hardware preflight then stopped safely because only 1.66 GiB of physical RAM was available. No model files or tokenizer were accessed and no MQ-G1 result exists. This is a compute block, not evidence for or against 1.5B behavioral qualification.
 
+One resource-only retry was authorized under MQ-HW1. Its first pre-model measurement also blocked: 1.487 GiB available versus the frozen 10.5 GiB requirement. Manual cleanup or reboot is permitted before repeating this pre-model check; model access has still never occurred.
+
 ## Recommendation
 
-**FINALIZE THE PHASE-1 PIVOT unless human review authorizes an identical frozen-gate retry after sufficient physical RAM becomes available.** Do not open validation/test or start internal activation work.
+**MANUAL MEMORY CLEANUP IS REQUIRED before the one authorized campaign can begin.** If the unchanged 10.5 GiB pre-access threshold cannot be met, finalize the Phase-1 pivot. Do not open validation/test or start internal activation work.

@@ -163,3 +163,9 @@
 - **Date:** 2026-10-16
 - **Decision:** Permit repeated pre-model measurements after manual cleanup, but only one model-access campaign, under MQ-HW1 config SHA-256 `68d2d2d32e3687aa82350f0944073abdcc5c91c5f7480699c51ee59adfbf0d69` and additive protocol SHA-256 `18bd44883692e013e735b4b0ae6fcc7599d0c69f59b195de2de7c0aa53d0ca4d`.
 - **Reason:** The first block may have reflected temporary application usage. Prospective 10.5 GiB pre-access RAM, 12 GiB disk, and 2 GiB post-load RAM thresholds prevent resource availability from being adjusted after observation. MQ-G1/MQ-G2 remain unchanged.
+
+## RD-028 — Stop MQ-HW1 retry before model access
+
+- **Date:** 2026-10-16
+- **Decision:** Record `BLOCKED_PRE_ACCESS` because available physical RAM was 1.487 GiB, below the frozen 10.5 GiB threshold. Do not terminate user processes or access the model.
+- **Reason:** Installed RAM (15.67 GiB) and disk (13.255 GiB free) passed, but the conjunctive available-memory predicate failed. Pre-model measurement may be repeated only after manual cleanup under the unchanged gate.

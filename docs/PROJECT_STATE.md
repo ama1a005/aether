@@ -57,6 +57,7 @@
 - Human review prospectively approved MQ-G1 before any 1.5B model access. Protocol SHA-256: `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`; gate-config SHA-256: `d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b`.
 - MQ-G1 was frozen at commit `302bf1f10f44bbd4a7b5724b74e916dc7008aaae`. Hardware preflight then found 15.67 GiB installed RAM but only 1.66 GiB available, versus an estimated 7.5–9.5 GB model-load and 9–12 GB inference footprint. Qualification is `BLOCKED_NOT_EXECUTED`: the model repository/tokenizer were not accessed, no behavioral or message run occurred, and validation/test accesses remain zero.
 - Human review authorized one resource-only retry. MQ-HW1 is prospectively defined in additive protocol SHA-256 `18bd44883692e013e735b4b0ae6fcc7599d0c69f59b195de2de7c0aa53d0ca4d` and config SHA-256 `68d2d2d32e3687aa82350f0944073abdcc5c91c5f7480699c51ee59adfbf0d69`; the parent MQ protocol remains unchanged at `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`.
+- MQ-HW1 was frozen at commit `9bce5fea523977485a29d0927704a03d2b430487`. The first retry measurement found 15.67 GiB installed, 1.487 GiB available, and 13.255 GiB disk free. Installed RAM and disk passed; available RAM failed the immutable 10.5 GiB threshold. State is `BLOCKED_PRE_ACCESS`; no model access occurred.
 
 ## Partial or pending external verification
 
@@ -75,4 +76,4 @@
 
 ## Next proposed task
 
-Current recommendation: finalize the Phase-1 pivot unless human review authorizes retrying the identical frozen qualification after enough physical RAM is made available. Validation/test and internal instrumentation remain prohibited.
+Current action: manually close memory-heavy applications or reboot, then rerun the identical MQ-HW1 preflight. If sufficient memory cannot be made available, finalize the Phase-1 pivot. Validation/test and internal instrumentation remain prohibited.

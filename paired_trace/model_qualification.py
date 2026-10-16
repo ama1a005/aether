@@ -142,3 +142,39 @@ def evaluate_mq_g2(
         "predicates": predicates,
         "overall": "PASS" if all(predicates.values()) else "FAIL",
     }
+
+
+def evaluate_mq_hw1(measurement: dict[str, float], gate: dict[str, Any]) -> dict[str, Any]:
+    """Evaluate the frozen pre-access hardware gate without touching the model."""
+    execution = gate["execution"]
+    predicates = {
+        "MQ-HW1.installed_ram": measurement["installed_ram_gib"]
+        >= gate["minimum_installed_physical_ram_gib"],
+        "MQ-HW1.available_ram": measurement["available_ram_gib"]
+        >= gate["minimum_pre_access_available_physical_ram_gib"],
+        "MQ-HW1.free_disk": measurement["disk_free_gib"]
+        >= gate["minimum_cache_drive_free_disk_gib"],
+        "MQ-HW1.cpu": execution["device"] == "cpu",
+        "MQ-HW1.fp32": execution["dtype"] == "float32",
+        "MQ-HW1.unquantized": execution["quantized"] is False,
+        "MQ-HW1.no_offload": execution["explicit_offload"] is False
+        and execution["disk_offload"] is False,
+        "MQ-HW1.no_cuda": execution["cuda_install_or_migration"] is False,
+        "MQ-HW1.no_pagefile_change": execution["page_file_modification"] is False,
+        "MQ-HW1.one_model": gate["candidate_model_id"] == "Qwen/Qwen2.5-1.5B-Instruct",
+        "MQ-HW1.split_lock": gate["split_access_policy"]["validation"] == "forbidden"
+        and gate["split_access_policy"]["test"] == "forbidden",
+    }
+    passed = all(predicates.values())
+    return {
+        "predicates": predicates,
+        "overall": "PASS" if passed else "BLOCKED",
+        "state": "READY_FOR_MODEL_ACCESS" if passed else gate["pre_access_failure_state"],
+    }
+
+
+def post_load_memory_state(available_ram_gib: float, gate: dict[str, Any]) -> str:
+    """Return the frozen post-load safety transition."""
+    if available_ram_gib < gate["minimum_post_load_available_physical_ram_gib"]:
+        return gate["post_load_failure_state"]
+    return "READY_FOR_BEHAVIORAL_EXECUTION"

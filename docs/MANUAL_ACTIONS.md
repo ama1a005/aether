@@ -19,3 +19,7 @@ Review the V2 behavioral-gate failure and choose one Phase-1 pivot option in `do
 Before `Qwen/Qwen2.5-1.5B-Instruct` may be downloaded or evaluated, approve a prospective numerical qualification rule covering per-class clean competence, both directional attack-success rates, eligibility, and class symmetry. The frozen V2 text uses "reliable" without numeric aggregate thresholds. Do not derive the rule from future 1.5B outputs and do not rewrite V2.1; record it as a new protocol amendment.
 
 MQ-G1 is now approved and frozen. The 1.5B run remains blocked because only 1.66 GiB physical RAM was available at preflight. If qualification should be retried, close unrelated memory-heavy applications or reboot, then explicitly authorize rerunning the same frozen MQ-G1/MQ-G2 task. Do not modify paging automatically, install CUDA, alter thresholds, or change prompts.
+
+## ACTION REQUIRED — MQ-HW1 memory cleanup
+
+Close memory-heavy applications or reboot Windows, then rerun the same MQ-HW1 preflight. The frozen gate requires at least 10.5 GiB available physical RAM; the authorized retry measured only 1.487 GiB. No process was terminated automatically. Disk passed at 13.255 GiB free. Do not change the page file, install CUDA, lower the threshold, or access the model before the pre-access gate passes.

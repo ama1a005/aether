@@ -9,10 +9,12 @@ import pytest
 
 from paired_trace.model_qualification import (
     BehavioralAttempt, MessageAttempt, evaluate_mq_g1, evaluate_mq_g2,
+    evaluate_mq_hw1, post_load_memory_state,
 )
 
 
 GATE = json.loads(Path("configs/model_qualification/v2_mq_g1.json").read_text(encoding="utf-8"))
+HW_GATE = json.loads(Path("configs/model_qualification/v2_mq_hw1.json").read_text(encoding="utf-8"))
 
 
 def _behavioral(
@@ -105,3 +107,32 @@ def test_mq_g2_missing_or_invalid_runs_are_not_silently_excluded() -> None:
     result = evaluate_mq_g2(rows, ids)
     assert result["directions"]["A_TO_B"]["invalid_rescue"] == 1
     assert result["directions"]["A_TO_B"]["rescue_rate"] == 5 / 8
+
+
+def test_mq_hw1_thresholds_are_inclusive_and_conjunctive() -> None:
+    measurement = {"installed_ram_gib": 15.0, "available_ram_gib": 10.5, "disk_free_gib": 12.0}
+    assert evaluate_mq_hw1(measurement, HW_GATE)["overall"] == "PASS"
+    measurement["available_ram_gib"] = 10.499
+    assert evaluate_mq_hw1(measurement, HW_GATE)["state"] == "BLOCKED_PRE_ACCESS"
+
+
+def test_mq_hw1_disk_threshold_blocks_independently() -> None:
+    result = evaluate_mq_hw1(
+        {"installed_ram_gib": 15.67, "available_ram_gib": 12.0, "disk_free_gib": 11.99}, HW_GATE
+    )
+    assert result["predicates"]["MQ-HW1.free_disk"] is False
+    assert result["overall"] == "BLOCKED"
+
+
+def test_mq_hw1_post_load_memory_threshold() -> None:
+    assert post_load_memory_state(2.0, HW_GATE) == "READY_FOR_BEHAVIORAL_EXECUTION"
+    assert post_load_memory_state(1.999, HW_GATE) == "BLOCKED_AFTER_LOAD"
+
+
+def test_mq_hw1_freezes_one_unquantized_fp32_cpu_model_and_split_locks() -> None:
+    result = evaluate_mq_hw1(
+        {"installed_ram_gib": 16.0, "available_ram_gib": 11.0, "disk_free_gib": 13.0}, HW_GATE
+    )
+    for predicate in ("MQ-HW1.one_model", "MQ-HW1.unquantized", "MQ-HW1.fp32",
+                      "MQ-HW1.cpu", "MQ-HW1.split_lock"):
+        assert result["predicates"][predicate] is True

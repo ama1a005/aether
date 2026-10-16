@@ -1,0 +1,29 @@
+{
+  "measurement_date": "2026-10-16",
+  "mq_hw1_commit": "9bce5fea523977485a29d0927704a03d2b430487",
+  "installed_ram_bytes": 16825634816,
+  "installed_ram_gib": 15.67,
+  "available_ram_bytes": 1596739584,
+  "available_ram_gib": 1.487,
+  "disk_free_bytes": 14232268800,
+  "disk_free_gib": 13.255,
+  "measurement_process_rss_bytes": 22691840,
+  "measurement_process_rss_mib": 21.64,
+  "major_memory_consumers_observed": [
+    {"name": "chrome.exe", "rss_gib": 0.915},
+    {"name": "chrome.exe", "rss_gib": 0.871},
+    {"name": "msedge.exe", "rss_gib": 0.518},
+    {"name": "chrome.exe", "rss_gib": 0.366},
+    {"name": "chrome.exe", "rss_gib": 0.362},
+    {"name": "Code.exe", "rss_gib": 0.335},
+    {"name": "explorer.exe", "rss_gib": 0.324},
+    {"name": "Code.exe", "rss_gib": 0.311},
+    {"name": "Discord.exe", "rss_gib": 0.278},
+    {"name": "Code.exe", "rss_gib": 0.256}
+  ],
+  "processes_terminated": false,
+  "model_accessed": false,
+  "model_downloaded": false,
+  "validation_executions": 0,
+  "test_executions": 0
+}
