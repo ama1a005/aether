@@ -151,3 +151,9 @@
 - **Date:** 2026-10-16
 - **Decision:** Apply the conjunctive numerical criteria in `configs/model_qualification/v2_mq_g1.json` to Qwen2.5-1.5B before observing any model output. Protocol SHA-256 is `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`; config SHA-256 is `d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b`.
 - **Reason:** Human review resolved the earlier ambiguity prospectively. MQ-G1 is a development-stage selection rule and must not be retroactively attributed to the immutable 0.5B run.
+
+## RD-026 — Stop 1.5B qualification at hardware preflight
+
+- **Date:** 2026-10-16
+- **Decision:** Do not download or load Qwen2.5-1.5B with only 1.66 GiB physical RAM available. Record qualification as blocked/not executed rather than assigning MQ-G1 PASS or FAIL.
+- **Reason:** Approximate fp32 weights alone require 6.0 GB decimal (5.59 GiB), with estimated load and inference footprints far above currently available physical memory. Depending on the page file would risk severe system pressure and violate the fail-safe compute rule.

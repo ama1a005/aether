@@ -17,3 +17,5 @@ Human review is required before freezing the method or opening validation becaus
 Review the V2 behavioral-gate failure and choose one Phase-1 pivot option in `docs/PHASE1_PIVOT_DECISION.md`. No current option is automatically authorized. Validation/test, another substrate, a larger model, and further internal search all require an explicit reviewed decision.
 
 Before `Qwen/Qwen2.5-1.5B-Instruct` may be downloaded or evaluated, approve a prospective numerical qualification rule covering per-class clean competence, both directional attack-success rates, eligibility, and class symmetry. The frozen V2 text uses "reliable" without numeric aggregate thresholds. Do not derive the rule from future 1.5B outputs and do not rewrite V2.1; record it as a new protocol amendment.
+
+MQ-G1 is now approved and frozen. The 1.5B run remains blocked because only 1.66 GiB physical RAM was available at preflight. If qualification should be retried, close unrelated memory-heavy applications or reboot, then explicitly authorize rerunning the same frozen MQ-G1/MQ-G2 task. Do not modify paging automatically, install CUDA, alter thresholds, or change prompts.

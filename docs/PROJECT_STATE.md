@@ -55,6 +55,7 @@
 - V2 behavioral-gate checkpoint: `d6725bee820c6374b1949a860df1ba0737b11304` (`experiment: stop balanced V2 at behavioral qualification gate`).
 - Replacement-model qualification stopped before download or execution. The frozen V2 materials do not numerically define the clean-competence, directional attack, eligibility, and symmetry pass thresholds; `docs/MODEL_QUALIFICATION_PROTOCOL.md` records the ambiguity. Qwen2.5-1.5B has not been evaluated and has no qualification outcome.
 - Human review prospectively approved MQ-G1 before any 1.5B model access. Protocol SHA-256: `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`; gate-config SHA-256: `d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b`.
+- MQ-G1 was frozen at commit `302bf1f10f44bbd4a7b5724b74e916dc7008aaae`. Hardware preflight then found 15.67 GiB installed RAM but only 1.66 GiB available, versus an estimated 7.5–9.5 GB model-load and 9–12 GB inference footprint. Qualification is `BLOCKED_NOT_EXECUTED`: the model repository/tokenizer were not accessed, no behavioral or message run occurred, and validation/test accesses remain zero.
 
 ## Partial or pending external verification
 
@@ -73,4 +74,4 @@
 
 ## Next proposed task
 
-Current bounded task: qualify only Qwen2.5-1.5B against frozen MQ-G1 and conditional MQ-G2 on development. Validation/test and internal instrumentation remain prohibited.
+Current recommendation: finalize the Phase-1 pivot unless human review authorizes retrying the identical frozen qualification after enough physical RAM is made available. Validation/test and internal instrumentation remain prohibited.

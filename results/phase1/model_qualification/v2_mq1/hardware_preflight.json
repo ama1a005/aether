@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED_INSUFFICIENT_AVAILABLE_RAM",
+  "measurement_date": "2026-10-16",
+  "device_policy": "cpu_only_no_cuda_install",
+  "physical_ram_bytes": 16825634816,
+  "available_ram_bytes": 1782493184,
+  "page_file_total_bytes": 16642998272,
+  "page_file_free_bytes": 14774517760,
+  "disk_total_bytes": 372953649152,
+  "disk_free_bytes": 16180715520,
+  "nominal_parameter_count_for_estimate": 1500000000,
+  "estimated_fp32_weight_bytes": 6000000000,
+  "estimated_model_load_ram_bytes_range": [7500000000, 9500000000],
+  "estimated_inference_peak_ram_bytes_range": [9000000000, 12000000000],
+  "decision": "Do not download or load the model while only 1.66 GiB physical RAM is available; page-file reliance would create unsafe system pressure.",
+  "page_file_modified": false,
+  "model_accessed": false,
+  "validation_executions": 0,
+  "test_executions": 0
+}

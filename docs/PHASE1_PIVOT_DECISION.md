@@ -42,6 +42,8 @@ No option is selected here. Human review must choose the scientific scope before
 
 The proposed single-model qualification with `Qwen/Qwen2.5-1.5B-Instruct` stopped before download and execution. The frozen V2 protocol defines per-example correctness and attack success but does not numerically define the aggregate behavioral pass gate. Under the explicit no-post-hoc-threshold rule, the 1.5B model is neither qualified nor disqualified. A human-reviewed prospective numerical gate is required before option 2 can proceed.
 
+Human review subsequently froze MQ-G1 at commit `302bf1f`. The hardware preflight then stopped safely because only 1.66 GiB of physical RAM was available. No model files or tokenizer were accessed and no MQ-G1 result exists. This is a compute block, not evidence for or against 1.5B behavioral qualification.
+
 ## Recommendation
 
-**PIVOT PHASE 1 unless a prospective numerical model-qualification gate is approved.** Do not open validation/test, download/run the replacement model, or start an internal activation search under the current ambiguous gate.
+**FINALIZE THE PHASE-1 PIVOT unless human review authorizes an identical frozen-gate retry after sufficient physical RAM becomes available.** Do not open validation/test or start internal activation work.
