@@ -157,3 +157,9 @@
 - **Date:** 2026-10-16
 - **Decision:** Do not download or load Qwen2.5-1.5B with only 1.66 GiB physical RAM available. Record qualification as blocked/not executed rather than assigning MQ-G1 PASS or FAIL.
 - **Reason:** Approximate fp32 weights alone require 6.0 GB decimal (5.59 GiB), with estimated load and inference footprints far above currently available physical memory. Depending on the page file would risk severe system pressure and violate the fail-safe compute rule.
+
+## RD-027 — Freeze one resource-only qualification retry
+
+- **Date:** 2026-10-16
+- **Decision:** Permit repeated pre-model measurements after manual cleanup, but only one model-access campaign, under MQ-HW1 config SHA-256 `68d2d2d32e3687aa82350f0944073abdcc5c91c5f7480699c51ee59adfbf0d69` and additive protocol SHA-256 `18bd44883692e013e735b4b0ae6fcc7599d0c69f59b195de2de7c0aa53d0ca4d`.
+- **Reason:** The first block may have reflected temporary application usage. Prospective 10.5 GiB pre-access RAM, 12 GiB disk, and 2 GiB post-load RAM thresholds prevent resource availability from being adjusted after observation. MQ-G1/MQ-G2 remain unchanged.

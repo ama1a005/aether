@@ -1,0 +1,35 @@
+{
+  "gate_version": "MQ-HW1.0",
+  "campaign": "one_authorized_qwen2_5_1_5b_qualification_retry",
+  "candidate_model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "minimum_installed_physical_ram_gib": 15.0,
+  "minimum_pre_access_available_physical_ram_gib": 10.5,
+  "minimum_cache_drive_free_disk_gib": 12.0,
+  "minimum_post_load_available_physical_ram_gib": 2.0,
+  "execution": {
+    "device": "cpu",
+    "dtype": "float32",
+    "quantized": false,
+    "explicit_offload": false,
+    "disk_offload": false,
+    "cuda_install_or_migration": false,
+    "page_file_modification": false,
+    "low_cpu_mem_usage": true,
+    "model_eval": true
+  },
+  "pre_access_failure_state": "BLOCKED_PRE_ACCESS",
+  "post_load_failure_state": "BLOCKED_AFTER_LOAD",
+  "runtime_memory_failure_state": "BLOCKED_MEMORY_RUNTIME",
+  "load_attempt_policy": "single_attempt_no_automatic_retry",
+  "pre_model_rechecks_after_manual_cleanup": "allowed_until_model_access",
+  "model_restriction": "exactly_one_candidate_no_alternates",
+  "split_access_policy": {
+    "development": "allowed_after_hardware_and_compatibility_gates",
+    "validation": "forbidden",
+    "test": "forbidden"
+  },
+  "parent_mq_g1_commit": "302bf1f10f44bbd4a7b5724b74e916dc7008aaae",
+  "parent_mq_protocol_sha256": "64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89",
+  "parent_mq_g1_config_sha256": "d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b",
+  "previous_blocked_preflight_commit": "205b400"
+}
