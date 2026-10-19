@@ -1,5 +1,7 @@
 # AETHER — ProjectDescription.md
 
+> **Implementation note (19 October 2026):** The removable review UI now separates live local-Qwen + official MCP stdio execution, deterministic fallback, and verified replay. The live path is implemented but remains unaccepted until the isolated GPU environment installs and the 12-case qualification runs. This does not change frozen scientific claims or turn demo fixtures into validation evidence.
+
 **Platform/project working title:**  
 **AETHER: A Mechanistic Security Analysis and Remediation Platform for MCP/A2A Multi-Agent Systems**  
 **Phase 1 paper working title:**  

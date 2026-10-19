@@ -1,5 +1,9 @@
 # AETHER Intermediate Review Runbook
 
+## Choose and state the execution mode
+
+For a reliable presentation use `scripts/run_review_demo.ps1 -Mode deterministic`. For real execution, complete the setup and qualification in `DEMO_README.md`, then use `-Mode live_model_mcp`. Never describe deterministic fallback or replay as live Qwen/MCP. Live startup preloads the model and fails before serving if CUDA or the pinned local model is unavailable.
+
 ## Purpose and scientific boundary
 
 This runbook presents a reliable code-review demonstration without changing the research protocol. The clinical-like records are synthetic and educational, not medical advice. The default live path is a deterministic orchestration of real AETHER contracts, tools, attack validation, and causal message-patching code. It is not presented as a fresh language-model experiment. Committed research cards are labelled by evidence tier and retain their original limitations.

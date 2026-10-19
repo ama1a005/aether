@@ -1,5 +1,25 @@
 # AETHER Intermediate Review Demo
 
+## Execution modes
+
+- **Live Qwen + real MCP** uses `.venv-demo-gpu`, pinned CUDA PyTorch, one fp16 GPU model, and the independent `aether-clinical-tools` MCP stdio subprocess. Failure returns HTTP 503; it never switches mode automatically.
+- **Deterministic fallback** is the original review-safe fixture pipeline. It is executable, but it is not model inference or MCP protocol traffic.
+- **Verified replay** reads committed deterministic artifacts and is not live execution.
+
+The eight live tools are real MCP tools in `demo/mcp_server/server.py`. Their data are synthetic local fixtures; “real MCP” describes the protocol connection, not an external clinical system.
+
+## Live setup
+
+```powershell
+py -3.11 -m venv .venv-demo-gpu
+.\scripts\setup_demo_gpu.ps1
+.\.venv-demo-gpu\Scripts\python.exe scripts\download_demo_model.py
+.\.venv-demo-gpu\Scripts\python.exe scripts\qualify_demo_live.py
+.\scripts\run_review_demo.ps1 -Mode live_model_mcp
+```
+
+The download script is the only model-download step. Runtime loading pins `Qwen/Qwen2.5-0.5B-Instruct` revision `7ae557604adf67be50417f59c2c2f167def9a775` and uses `local_files_only=True`. Set `AETHER_DEMO_MODEL_CACHE` to use an external cache. Use `-Mode deterministic` until live qualification succeeds.
+
 The demo is a removable localhost-only review layer over AETHER core contracts, tools, mediator serialization, message intervention, and committed research artifacts. It never reads or executes frozen validation/test splits.
 
 ## Setup

@@ -1,5 +1,17 @@
 # AETHER Project State
 
+## 2026-10-19 live-demo integration checkpoint
+
+- Deterministic review demo preserved at Git checkpoint `0d7dfc2`.
+- Independent eight-tool MCP stdio server and official-SDK client implemented.
+- Explicit live/deterministic/replay UI modes implemented; live failures do not silently fall back.
+- Pinned singleton CUDA fp16 Qwen runtime, real Agent A generation, and Agent B A/B logit scoring implemented.
+- Separate `.venv-demo-gpu` created with Python 3.11.9; research `.venv` unchanged.
+- Frontend: 2/2 tests pass and production build passes.
+- Focused backend: 9 pass, 1 MCP integration skip in the research environment.
+- Blocking gate: pip's system trust-store mode fixed TLS validation, but the package-download proxy repeatedly corrupts responses (`InvalidChunkLength`). CUDA PyTorch, MCP SDK, model download, real stdio integration, and 12-case qualification are not yet executed.
+- No scientific result file or frozen contract changed.
+
 **Last verified:** 2026-10-14
 **Current phase:** Phase 1, causal-specificity hardening and method-freeze review
 **Status:** Hardening complete; no internal candidate survived; method freeze not recommended

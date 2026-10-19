@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from dataclasses import asdict
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from typing import Literal
 
 from demo.backend.evidence import evidence_cards, system_status
 from demo.backend.model_runtime import model_status, preload_model
 from demo.backend.repository import get_case, load_cases
-from demo.backend.service import get_replay, get_run, run_induction, run_pipeline, run_rescue
+from demo.backend.service import get_live_replay, get_replay, get_run, run_induction, run_pipeline, run_rescue
 from demo.backend.tools import run_all_tools, run_tool
 
 
@@ -21,9 +24,18 @@ class CaseRequest(BaseModel):
     """Request identifying exactly one isolated demo fixture."""
     case_id: str
     tool_name: str | None = None
+    execution_mode: Literal["deterministic", "live_model_mcp"] = "deterministic"
 
 
-app = FastAPI(title="AETHER Intermediate Review Demo", version="1.0.0")
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Preload the pinned model before accepting live-mode review traffic."""
+    if os.environ.get("AETHER_DEMO_MODE") == "live_model_mcp":
+        preload_model()
+    yield
+
+
+app = FastAPI(title="AETHER Intermediate Review Demo", version="2.0.0", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["*"], allow_headers=["*"])
 
 
@@ -52,23 +64,51 @@ def case_detail(case_id: str) -> dict:
 @app.post("/api/demo/tools/run")
 def tools_run(request: CaseRequest):
     case = _case(request.case_id)
+    if request.execution_mode == "live_model_mcp":
+        if request.tool_name:
+            raise HTTPException(400, "live MCP mode runs the case tool set in one session")
+        try:
+            from demo.backend.mcp_client import run_all_mcp_tools
+            return [asdict(item) for item in run_all_mcp_tools(case)]
+        except (RuntimeError, OSError, ValueError, ImportError) as exc:
+            raise HTTPException(503, f"real MCP execution failed: {exc}") from exc
     return asdict(run_tool(case, request.tool_name)) if request.tool_name else [asdict(item) for item in run_all_tools(case)]
 
 
+def _execute(request: CaseRequest, action: str):
+    if request.execution_mode == "deterministic":
+        return {
+            "clean": lambda: run_pipeline(request.case_id, False),
+            "attack": lambda: run_pipeline(request.case_id, True),
+            "rescue": lambda: run_rescue(request.case_id),
+            "induction": lambda: run_induction(request.case_id),
+        }[action]()
+    try:
+        from demo.backend.live_service import run_live_induction, run_live_pipeline, run_live_rescue
+        return {
+            "clean": lambda: run_live_pipeline(request.case_id, False),
+            "attack": lambda: run_live_pipeline(request.case_id, True),
+            "rescue": lambda: run_live_rescue(request.case_id),
+            "induction": lambda: run_live_induction(request.case_id),
+        }[action]()
+    except (RuntimeError, OSError, ValueError, ImportError) as exc:
+        raise HTTPException(503, f"live model + MCP execution failed: {exc}") from exc
+
+
 @app.post("/api/demo/pipeline/clean")
-def pipeline_clean(request: CaseRequest): return run_pipeline(request.case_id, False)
+def pipeline_clean(request: CaseRequest): return _execute(request, "clean")
 
 
 @app.post("/api/demo/pipeline/attack")
-def pipeline_attack(request: CaseRequest): return run_pipeline(request.case_id, True)
+def pipeline_attack(request: CaseRequest): return _execute(request, "attack")
 
 
 @app.post("/api/demo/pipeline/rescue")
-def pipeline_rescue(request: CaseRequest): return run_rescue(request.case_id)
+def pipeline_rescue(request: CaseRequest): return _execute(request, "rescue")
 
 
 @app.post("/api/demo/pipeline/induction")
-def pipeline_induction(request: CaseRequest): return run_induction(request.case_id)
+def pipeline_induction(request: CaseRequest): return _execute(request, "induction")
 
 
 @app.get("/api/demo/runs/{run_id}")
@@ -100,6 +140,13 @@ def replay(case_id: str):
     _case(case_id)
     try: return get_replay(case_id)
     except KeyError as exc: raise HTTPException(404, f"no verified replay for {case_id}") from exc
+
+
+@app.get("/api/demo/replay-live/{case_id}")
+def live_replay(case_id: str):
+    _case(case_id)
+    try: return get_live_replay(case_id)
+    except KeyError as exc: raise HTTPException(404, str(exc)) from exc
 
 
 frontend = Path(__file__).parents[1] / "frontend" / "dist"

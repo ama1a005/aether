@@ -1,5 +1,19 @@
 # Manual Actions
 
+## 2026-10-19 — demo GPU environment blocked by package-download proxy
+
+The first download attempt failed TLS certificate validation. Pip's verified Windows trust-store mode fixed that, but repeated PyPI transfers then failed with `InvalidChunkLength`, indicating a proxy/network response corruption. CUDA and the RTX 2050 are visible. Do not bypass verification with `--trusted-host`.
+
+On an unrestricted/stable connection, run:
+
+```powershell
+.\scripts\setup_demo_gpu.ps1
+.\.venv-demo-gpu\Scripts\python.exe scripts\download_demo_model.py
+.\.venv-demo-gpu\Scripts\python.exe scripts\qualify_demo_live.py
+```
+
+Until the qualification succeeds, live Qwen + MCP is implemented but not verified or accepted.
+
 ## Required now
 
 Review the missing license in the pinned MCPTox repository before any raw-data redistribution. Raw released rows have been removed from tracked artifacts and future outputs are summary-only, so this does not block causal development. No credential or paid-compute action is required now. Validation and test splits remain unopened.

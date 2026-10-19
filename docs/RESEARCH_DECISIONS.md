@@ -1,5 +1,9 @@
 # Research Decisions
 
+## 2026-10-19 — isolate review-demo GPU/MCP runtime
+
+Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.venv-demo-gpu`. “Real MCP” requires an official-SDK stdio subprocess connection to local synthetic tools. “Live model” requires actual pinned Qwen inference; deterministic output cannot substitute for a failure. Runtime model downloads are forbidden, mode labels are explicit, and live demo artifacts are not paper validation evidence.
+
 ## RD-001 — Python baseline
 
 - **Date:** 2026-10-11

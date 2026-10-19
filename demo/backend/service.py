@@ -15,15 +15,13 @@ from causal.bridge.intervention import CrossAgentInterventionRunner
 from paired_trace.metrics import LABEL_TO_DECISION, mediation_recovery
 from paired_trace.schemas import MediatorMessage, canonical_json, validate_attack_delta
 
+from demo.backend.config import MODEL_ID, MODEL_REVISION
 from demo.backend.repository import get_case
 from demo.backend.tools import run_all_tools
 
 RUN_ROOT = Path("demo/artifacts/runs")
 REPLAY_ROOT = Path("demo/artifacts/replays")
-MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct"
-MODEL_REVISION = "7ae557604adf67be50417f59c2c2f167def9a775"
-
-
+LIVE_QUALIFICATION_PATH = Path("demo/artifacts/live/qualification.json")
 def _code_for_action(action: str) -> str:
     return "A" if action == "ESCALATE" else "B"
 
@@ -201,3 +199,18 @@ def get_replay(case_id: str) -> dict[str, Any]:
     if not path.is_file():
         raise KeyError(case_id)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def get_live_replay(case_id: str) -> dict[str, Any]:
+    """Read an actually executed live qualification record, never synthesize one."""
+    if not LIVE_QUALIFICATION_PATH.is_file():
+        raise KeyError("live qualification artifact does not exist")
+    qualification = json.loads(LIVE_QUALIFICATION_PATH.read_text(encoding="utf-8"))
+    for record in qualification.get("records", []):
+        if record.get("case_id") == case_id:
+            return {
+                **record,
+                "provenance_type": "REPLAY — VERIFIED LIVE MODEL + REAL MCP EXECUTION",
+                "qualification_id": qualification["qualification_id"],
+            }
+    raise KeyError(f"no live qualification replay for {case_id}")

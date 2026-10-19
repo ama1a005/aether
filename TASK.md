@@ -1,5 +1,9 @@
 # TASK.md — AETHER Sprint Task Board
 
+## Current bounded task — real demo runtime (2026-10-19)
+
+Convert the removable review demo into explicit real local-Qwen plus real MCP stdio, deterministic fallback, and verified replay paths. Preserve frozen contracts and research artifacts. Use a separate Python 3.11 `.venv-demo-gpu`, pinned dependencies/model revision, fail-fast startup, complete run provenance, and a 12-case qualification gate. Do not claim live readiness until CUDA, MCP, preload, and qualification execute successfully.
+
 **Sprint:** 4 Oct – 8 Oct 2026  
 **Review:** 8 October 2026  
 **Updated:** 2026-10-08 22:50 IST

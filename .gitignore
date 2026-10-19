@@ -11,6 +11,9 @@ build/
 
 # Virtual environments
 .venv/
+.venv-demo-gpu/
+demo/artifacts/live/
+demo/artifacts/model_cache/
 .venv-tracr/
 venv/
 env/

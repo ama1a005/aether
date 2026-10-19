@@ -73,6 +73,25 @@ def test_frontend_api_contracts() -> None:
     assert model.status_code == 200 and model.json()["policy"].startswith("single instance")
 
 
+def test_execution_modes_are_explicit_and_live_failure_does_not_fallback() -> None:
+    client = TestClient(app)
+    deterministic = client.post(
+        "/api/demo/pipeline/clean",
+        json={"case_id": "DEMO-PAT-001", "execution_mode": "deterministic"},
+    )
+    assert deterministic.status_code == 200
+    assert deterministic.json()["execution_mode"] == "deterministic AETHER core demo pipeline"
+    live = client.post(
+        "/api/demo/pipeline/clean",
+        json={"case_id": "DEMO-PAT-001", "execution_mode": "live_model_mcp"},
+    )
+    assert live.status_code == 503
+    assert "live model + MCP execution failed" in live.json()["detail"]
+    missing_live_replay = client.get("/api/demo/replay-live/DEMO-PAT-001")
+    assert missing_live_replay.status_code == 404
+    assert "qualification artifact does not exist" in missing_live_replay.json()["detail"]
+
+
 def test_core_does_not_import_demo_and_removal_boundary_exists() -> None:
     for root in ("attacks","benchmarks","calibration","causal","contracts","discovery","experiments","instrumentation","paired_trace","remediation","target"):
         for path in Path(root).rglob("*.py"):
