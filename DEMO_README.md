@@ -20,6 +20,22 @@ py -3.11 -m venv .venv-demo-gpu
 
 The download script is the only model-download step. Runtime loading pins `Qwen/Qwen2.5-0.5B-Instruct` revision `7ae557604adf67be50417f59c2c2f167def9a775` and uses `local_files_only=True`. Set `AETHER_DEMO_MODEL_CACHE` to use an external cache. Use `-Mode deterministic` until live qualification succeeds.
 
+Dependencies are downloaded first into ignored `.local/wheelhouse`, hashed in `wheelhouse_manifest.json`, and only then installed offline. The pinned GPU build is `torch==2.8.0` from the official CUDA 12.6 index for CPython 3.11/Windows x86-64. The demo does not use torchvision or torchaudio.
+
+For an already transferred wheelhouse:
+
+```powershell
+.\scripts\install_demo_wheelhouse.ps1 -Wheelhouse .local\wheelhouse
+```
+
+For a transferred model snapshot, set its exact directory and verify it before loading:
+
+```powershell
+$env:AETHER_DEMO_MODEL_PATH = "D:\trusted-transfer\qwen-snapshot"
+.\.venv-demo-gpu\Scripts\python.exe scripts\verify_demo_model_cache.py
+.\.venv-demo-gpu\Scripts\python.exe scripts\accept_demo_model.py
+```
+
 The demo is a removable localhost-only review layer over AETHER core contracts, tools, mediator serialization, message intervention, and committed research artifacts. It never reads or executes frozen validation/test splits.
 
 ## Setup

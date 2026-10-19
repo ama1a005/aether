@@ -11,7 +11,7 @@ from typing import Any
 import psutil
 import torch
 
-from demo.backend.config import DEFAULT_MODEL_CACHE, MODEL_CACHE_ENV, MODEL_ID, MODEL_REVISION
+from demo.backend.config import DEFAULT_MODEL_CACHE, MODEL_CACHE_ENV, MODEL_ID, MODEL_PATH_ENV, MODEL_REVISION
 
 _lock = Lock()
 _model: Any | None = None
@@ -46,13 +46,16 @@ def preload_model() -> dict[str, Any]:
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         cache_dir = Path(os.environ.get(MODEL_CACHE_ENV, DEFAULT_MODEL_CACHE)).resolve()
+        model_path = os.environ.get(MODEL_PATH_ENV)
+        source = str(Path(model_path).resolve()) if model_path else MODEL_ID
+        revision = None if model_path else MODEL_REVISION
         try:
             tokenizer = AutoTokenizer.from_pretrained(
-                MODEL_ID, revision=MODEL_REVISION, cache_dir=cache_dir, local_files_only=True
+                source, revision=revision, cache_dir=cache_dir, local_files_only=True
             )
             model = AutoModelForCausalLM.from_pretrained(
-                MODEL_ID,
-                revision=MODEL_REVISION,
+                source,
+                revision=revision,
                 cache_dir=cache_dir,
                 local_files_only=True,
                 torch_dtype=torch.float16,

@@ -37,8 +37,9 @@ def evidence_cards() -> list[dict[str, Any]]:
 def system_status() -> list[dict[str, str]]:
     """Return claim-safe current capabilities."""
     return [
-        {"capability":"Synthetic patient tools","status":"WORKING — DETERMINISTIC"}, {"capability":"Real MCP stdio demo","status":"IMPLEMENTED — INSTALL/PROTOCOL CHECK BLOCKED"},
-        {"capability":"Qwen 0.5B demo inference","status":"IMPLEMENTED — GPU QUALIFICATION NOT RUN"}, {"capability":"Deterministic Agent A / mediator / Agent B","status":"WORKING"},
+        {"capability":"Synthetic patient tools","status":"WORKING — DETERMINISTIC"}, {"capability":"Real MCP","status":"IMPLEMENTED — NOT RUNTIME VERIFIED"},
+        {"capability":"Qwen GPU","status":"IMPLEMENTED — DEPENDENCY BLOCKED"}, {"capability":"Live Model + MCP","status":"NOT QUALIFIED"},
+        {"capability":"Deterministic Agent A / mediator / Agent B","status":"WORKING"},
         {"capability":"Tool-output manipulation","status":"WORKING"}, {"capability":"Paired clean/attack traces","status":"WORKING"},
         {"capability":"Clean-message rescue","status":"VERIFIED"}, {"capability":"Attacked-message induction","status":"VERIFIED"},
         {"capability":"Activation capture/intervention","status":"WORKING"}, {"capability":"Tracr calibration","status":"VERIFIED"},

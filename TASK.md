@@ -2,7 +2,7 @@
 
 ## Current bounded task — real demo runtime (2026-10-19)
 
-Convert the removable review demo into explicit real local-Qwen plus real MCP stdio, deterministic fallback, and verified replay paths. Preserve frozen contracts and research artifacts. Use a separate Python 3.11 `.venv-demo-gpu`, pinned dependencies/model revision, fail-fast startup, complete run provenance, and a 12-case qualification gate. Do not claim live readiness until CUDA, MCP, preload, and qualification execute successfully.
+Resolve live-demo dependencies through a verified online or offline wheelhouse, then run CUDA, MCP, pinned-model, single-case, rescue, and 12-case acceptance in fail-fast order. Do not modify the research environment or claim live readiness before every gate succeeds.
 
 **Sprint:** 4 Oct – 8 Oct 2026  
 **Review:** 8 October 2026  

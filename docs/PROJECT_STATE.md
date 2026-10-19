@@ -9,7 +9,7 @@
 - Separate `.venv-demo-gpu` created with Python 3.11.9; research `.venv` unchanged.
 - Frontend: 2/2 tests pass and production build passes.
 - Focused backend: 9 pass, 1 MCP integration skip in the research environment.
-- Blocking gate: pip's system trust-store mode fixed TLS validation, but the package-download proxy repeatedly corrupts responses (`InvalidChunkLength`). CUDA PyTorch, MCP SDK, model download, real stdio integration, and 12-case qualification are not yet executed.
+- Blocking gate: a 66 KB ordinary wheel downloads, but MCP index responses repeatedly corrupt (`InvalidChunkLength`). Classified `NETWORK_TRANSPORT_CORRUPTION`; online attempts stopped before transformers/PyTorch. Verified offline wheelhouse and model-snapshot workflows are available. CUDA PyTorch, MCP protocol, model load, and qualification remain unexecuted.
 - No scientific result file or frozen contract changed.
 
 **Last verified:** 2026-10-14

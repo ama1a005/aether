@@ -4,13 +4,30 @@
 
 The first download attempt failed TLS certificate validation. Pip's verified Windows trust-store mode fixed that, but repeated PyPI transfers then failed with `InvalidChunkLength`, indicating a proxy/network response corruption. CUDA and the RTX 2050 are visible. Do not bypass verification with `--trusted-host`.
 
-On an unrestricted/stable connection, run:
+### Stable network option
+
+From a Windows x86-64 machine with Python 3.11 and a trusted stable connection, use the same repository checkout:
 
 ```powershell
-.\scripts\setup_demo_gpu.ps1
+.\scripts\build_demo_wheelhouse.ps1 -Wheelhouse .local\wheelhouse
+```
+
+This downloads ordinary dependencies from PyPI, `mcp==2.3.0`, and only `torch==2.8.0` from the official CUDA 12.6 PyTorch index. It creates SHA-256 `wheelhouse_manifest.json`. Do not add torchvision or torchaudio.
+
+### Offline wheelhouse option
+
+Transfer the entire `.local\wheelhouse` directory by USB, trusted cloud storage, or local network to this repository's `.local\wheelhouse`, then run:
+
+```powershell
+.\scripts\install_demo_wheelhouse.ps1 -Wheelhouse .local\wheelhouse
+.\.venv-demo-gpu\Scripts\python.exe -m pytest tests\integration\test_demo_mcp_stdio.py -v
 .\.venv-demo-gpu\Scripts\python.exe scripts\download_demo_model.py
+.\.venv-demo-gpu\Scripts\python.exe scripts\verify_demo_model_cache.py
+.\.venv-demo-gpu\Scripts\python.exe scripts\accept_demo_model.py
 .\.venv-demo-gpu\Scripts\python.exe scripts\qualify_demo_live.py
 ```
+
+If Hugging Face is also unreliable, run `download_demo_model.py` on the stable machine, transfer the exact snapshot directory containing `aether_model_snapshot_manifest.json`, set `AETHER_DEMO_MODEL_PATH` to that directory here, and start at `verify_demo_model_cache.py`. Do not transfer an unknown whole Python environment.
 
 Until the qualification succeeds, live Qwen + MCP is implemented but not verified or accepted.
 

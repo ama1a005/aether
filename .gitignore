@@ -14,6 +14,9 @@ build/
 .venv-demo-gpu/
 demo/artifacts/live/
 demo/artifacts/model_cache/
+.local/
+wheelhouse/
+*.whl
 .venv-tracr/
 venv/
 env/

@@ -4,7 +4,7 @@
 
 - Scope: 12 fixed synthetic cases, clean/attack and qualifying rescue.
 - Model: `Qwen/Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775`.
-- MCP: `aether-clinical-tools` stdio with official Python SDK `mcp==2.0.0`.
+- MCP: `aether-clinical-tools` stdio with official Python SDK `mcp==2.3.0`.
 - Blocker: trust-store mode fixed initial TLS verification, but the local proxy repeatedly corrupted package responses before installation.
 - No qualification numbers or live artifacts were produced.
 - Intended command: `.\.venv-demo-gpu\Scripts\python.exe scripts\qualify_demo_live.py`.
