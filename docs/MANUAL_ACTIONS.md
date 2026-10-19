@@ -23,3 +23,5 @@ MQ-G1 is now approved and frozen. The 1.5B run remains blocked because only 1.66
 ## ACTION REQUIRED — MQ-HW1 memory cleanup
 
 Close memory-heavy applications or reboot Windows, then rerun the same MQ-HW1 preflight. The frozen gate requires at least 10.5 GiB available physical RAM; the authorized retry measured only 1.487 GiB. No process was terminated automatically. Disk passed at 13.255 GiB free. Do not change the page file, install CUDA, lower the threshold, or access the model before the pre-access gate passes.
+
+The 2026-10-19 recheck after cleanup improved available RAM to 2.814 GiB, but this remains below 10.5 GiB. A full Windows restart with minimal startup applications is still required before another unchanged pre-model check. If that cannot make 10.5 GiB available, finalize the Phase-1 pivot due to local compute constraints.

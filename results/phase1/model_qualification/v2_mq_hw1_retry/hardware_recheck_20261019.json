@@ -1,0 +1,25 @@
+{
+  "measurement_date": "2026-10-19",
+  "measurement_sequence": 2,
+  "mq_hw1_commit": "9bce5fea523977485a29d0927704a03d2b430487",
+  "installed_ram_bytes": 16825634816,
+  "installed_ram_gib": 15.67,
+  "available_ram_bytes": 3021164544,
+  "available_ram_gib": 2.814,
+  "disk_free_bytes": 26190950400,
+  "disk_free_gib": 24.392,
+  "measurement_process_rss_bytes": 21336064,
+  "measurement_process_rss_mib": 20.35,
+  "predicates": {
+    "installed_ram_at_least_15_gib": true,
+    "available_ram_at_least_10_5_gib": false,
+    "free_disk_at_least_12_gib": true
+  },
+  "result_state": "BLOCKED_PRE_ACCESS",
+  "model_accessed": false,
+  "model_downloaded": false,
+  "tokenizer_accessed": false,
+  "validation_executions": 0,
+  "test_executions": 0,
+  "recommendation": "MANUAL_MEMORY_CLEANUP_REQUIRED_BEFORE_THE_ONE_AUTHORIZED_RETRY"
+}
