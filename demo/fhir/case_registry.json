@@ -1,0 +1,7 @@
+{
+  "schema_version": "aether.demo.fhir-registry.v1",
+  "synthetic_only": true,
+  "mapping_rule": "DEMO-PAT-NNN -> Patient/aether-demo-pat-nnn",
+  "case_count": 12
+}
+

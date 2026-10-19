@@ -24,7 +24,7 @@ class CaseRequest(BaseModel):
     """Request identifying exactly one isolated demo fixture."""
     case_id: str
     tool_name: str | None = None
-    execution_mode: Literal["deterministic", "live_model_mcp"] = "deterministic"
+    execution_mode: Literal["real_fhir_mcp_deterministic", "real_fhir_mcp_qwen", "mock_deterministic", "deterministic", "live_model_mcp"] = "real_fhir_mcp_deterministic"
 
 
 @asynccontextmanager
@@ -61,9 +61,35 @@ def case_detail(case_id: str) -> dict:
     return _case(case_id).to_dict()
 
 
+@app.get("/api/demo/mcp/tools")
+def discover_mcp_tools():
+    """Perform live MCP initialization and tool discovery; never return a hard-coded list."""
+    try:
+        from demo.backend.wso2_mcp_client import WSO2FHIRClient
+        return WSO2FHIRClient().discover_tools()
+    except (RuntimeError, OSError, ValueError, ImportError) as exc:
+        raise HTTPException(503, f"external WSO2 MCP discovery failed: {exc}") from exc
+
+
+@app.get("/api/demo/fhir/{case_id}")
+def fhir_case(case_id: str):
+    _case(case_id)
+    try:
+        from demo.backend.fhir_service import fetch_case
+        return fetch_case(case_id)
+    except (RuntimeError, OSError, ValueError, ImportError) as exc:
+        raise HTTPException(503, f"external WSO2 MCP retrieval failed: {exc}") from exc
+
+
 @app.post("/api/demo/tools/run")
 def tools_run(request: CaseRequest):
     case = _case(request.case_id)
+    if request.execution_mode == "real_fhir_mcp_deterministic":
+        try:
+            from demo.backend.fhir_service import fetch_case
+            return fetch_case(request.case_id)
+        except (RuntimeError, OSError, ValueError, ImportError) as exc:
+            raise HTTPException(503, f"external WSO2 MCP retrieval failed: {exc}") from exc
     if request.execution_mode == "live_model_mcp":
         if request.tool_name:
             raise HTTPException(400, "live MCP mode runs the case tool set in one session")
@@ -76,13 +102,24 @@ def tools_run(request: CaseRequest):
 
 
 def _execute(request: CaseRequest, action: str):
-    if request.execution_mode == "deterministic":
+    if request.execution_mode == "real_fhir_mcp_deterministic":
+        try:
+            from demo.backend.fhir_service import run_fhir_pipeline, run_fhir_rescue
+            if action == "clean": return run_fhir_pipeline(request.case_id, False)
+            if action == "attack": return run_fhir_pipeline(request.case_id, True)
+            if action == "rescue": return run_fhir_rescue(request.case_id)
+            raise ValueError("induction is not exposed in primary FHIR mode")
+        except (RuntimeError, OSError, ValueError, ImportError) as exc:
+            raise HTTPException(503, f"external WSO2 MCP pipeline failed: {exc}") from exc
+    if request.execution_mode in ("deterministic", "mock_deterministic"):
         return {
             "clean": lambda: run_pipeline(request.case_id, False),
             "attack": lambda: run_pipeline(request.case_id, True),
             "rescue": lambda: run_rescue(request.case_id),
             "induction": lambda: run_induction(request.case_id),
         }[action]()
+    if request.execution_mode == "real_fhir_mcp_qwen":
+        raise HTTPException(503, "optional Qwen-over-FHIR mode is not qualified")
     try:
         from demo.backend.live_service import run_live_induction, run_live_pipeline, run_live_rescue
         return {
