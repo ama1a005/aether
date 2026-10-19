@@ -124,3 +124,13 @@ P0_cross_20261007_message_patch_0
 - [ ] Research metric definitions unchanged or explicitly documented
 - [ ] New experiment code writes manifest metadata
 - [ ] One teammate reviewed
+
+---
+
+## Team Study Mode
+
+When the user supplies `MEMBER_1_TARGET_PROTOCOL`, `MEMBER_2_ATTACK_EVALUATION`, `MEMBER_3_MECHANISTIC_INSTRUMENTATION`, or `MEMBER_4_CAUSAL_MEDIATION` and asks to study, review, or prepare, first read `Phase1Project.md`, `4_ProjectDescription.md`, `docs/team/COMPLETE_PROJECT_STUDY_GUIDE.md`, `docs/team/team_ownership.yaml`, and the matching member guide. Then inspect that member's current source files, tests, configs, and results as listed in the registry/guide. Teach the full project before the owned subsystem, and always include negative results and limitations.
+
+Use `docs/team/team_ownership.yaml` as the ownership registry and `docs/team/COMPLETE_PROJECT_STUDY_GUIDE.md` as the shared conceptual baseline. Each member must study the matching `MEMBER_*` guide, but ownership never excuses ignorance of the full pipeline. Ownership tags are review responsibilities, not claims of Git authorship.
+
+Study answers must cite repository paths and distinguish four things: code behavior, test evidence, executed experimental evidence, and future work. Codex may explain or quiz from checked-in sources, but it must not invent metrics, reconstruct missing outputs, or describe development evidence as validation. Any disagreement between a study guide and a frozen contract is resolved in favor of `RESEARCH_CONTRACT.md` and must be corrected in the guide.

@@ -1,4 +1,8 @@
 # AETHER
+
+## Intermediate review demo
+
+The removable localhost review application is documented in [`DEMO_README.md`](DEMO_README.md). It uses twelve explicitly synthetic cases and imports existing AETHER core primitives; research modules do not depend on the demo. Start it from PowerShell with `powershell -ExecutionPolicy Bypass -File scripts/run_review_demo.ps1` after installing the pinned frontend dependencies.
 **Cross-Agent Causal Circuit Discovery and Mechanism-Guided Remediation for Adversarial Trust Failures in MCP/A2A Multi-Agent Systems**
 
 Sprint 4–8 Oct 2026 | Phase 1 deadline: 16 Nov 2026

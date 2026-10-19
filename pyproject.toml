@@ -36,6 +36,11 @@ dev = [
     "mypy>=1.5",
     "ruff>=0.1",
 ]
+demo = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.32,<1",
+    "pydantic>=2.9,<3",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

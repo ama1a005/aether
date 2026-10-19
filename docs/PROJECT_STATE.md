@@ -78,3 +78,11 @@
 ## Next proposed task
 
 Current action: manually close memory-heavy applications or reboot, then rerun the identical MQ-HW1 preflight. If sufficient memory cannot be made available, finalize the Phase-1 pivot. Validation/test and internal instrumentation remain prohibited.
+# Intermediate review demo checkpoint — 2026-10-19
+
+- Added a removable React/Vite + FastAPI localhost demo under `demo/`, with dependency direction `demo -> core`.
+- Frozen twelve synthetic educational cases and twelve generated replay bundles; live deterministic runs are explicitly labelled as model-free.
+- Clean, one-field attack, attacked-message induction, and whole-clean-message rescue routes use existing AETHER mediator validation, metrics, MCP tools, and cross-agent intervention code.
+- Added evidence/status views that retain development, negative, and blocked labels. No validation/test experiment was started.
+- Qwen2.5-1.5B MQ-HW1 remains blocked by verified local host-memory readiness; installed CUDA alone does not clear that gate.
+- Added team ownership, project/member study guides, contribution matrix, and intermediate-review runbook.

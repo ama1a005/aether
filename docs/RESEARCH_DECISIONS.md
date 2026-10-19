@@ -169,3 +169,6 @@
 - **Date:** 2026-10-16
 - **Decision:** Record `BLOCKED_PRE_ACCESS` because available physical RAM was 1.487 GiB, below the frozen 10.5 GiB threshold. Do not terminate user processes or access the model.
 - **Reason:** Installed RAM (15.67 GiB) and disk (13.255 GiB free) passed, but the conjunctive available-memory predicate failed. Pre-model measurement may be repeated only after manual cleanup under the unchanged gate.
+# Decision — removable review layer and evidence labelling (2026-10-19)
+
+The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

@@ -1,0 +1,40 @@
+schema_version: "1.0"
+project: AETHER
+review_scope: intermediate-code-review
+shared_rules:
+  contracts: "Frozen; changes require a schema issue and one teammate approval."
+  results: "Only executed experiments may create quantitative claims."
+  branches: "One member branch per owner."
+members:
+  - id: m1
+    role: Target and protocol owner
+    branch: m1/target-harness
+    primary_paths: [target, configs/experiments]
+    interfaces_consumed: [contracts.CaseRecord, contracts.AttackDelta]
+    interfaces_produced: [contracts.RunTrace, contracts.MediatorMessage]
+    review_demo_responsibility: "Explain the clean sender/tool/receiver path."
+  - id: m2
+    role: Attack corpus and evaluation owner
+    branch: m2/attack-corpus
+    primary_paths: [attacks, data/attack_cases, benchmarks]
+    interfaces_consumed: [contracts.CaseRecord, contracts.RunTrace]
+    interfaces_produced: [contracts.AttackDelta, attack_metrics]
+    review_demo_responsibility: "Explain the one-field attack and ASR boundary."
+  - id: m3
+    role: Mechanistic instrumentation owner
+    branch: m3/mech-interventions
+    primary_paths: [mechanistic, interventions]
+    interfaces_consumed: [model_activations, contracts.RunTrace]
+    interfaces_produced: [contracts.ActivationTrace, intervention_scores]
+    review_demo_responsibility: "Explain hooks, non-interference, and evidence limitations."
+  - id: m4
+    role: Cross-agent causal mediation owner
+    branch: m4/cross-agent-graph
+    primary_paths: [causal, experiments/phase1]
+    interfaces_consumed: [contracts.ActivationTrace, contracts.MediatorMessage]
+    interfaces_produced: [causal_graphs, mediation_recovery]
+    review_demo_responsibility: "Explain message rescue and cross-agent causal claims."
+integration:
+  owner: all
+  paths: [demo, tests/integration, docs/team]
+  rule: "Demo code may import core code; core code must never import demo code."

@@ -57,3 +57,10 @@ results/raw/*.pt
 # Logs
 *.log
 logs/
+
+# Intermediate-review transient live runs (verified replay bundles are tracked)
+demo/artifacts/runs/
+demo/frontend/node_modules/
+demo/frontend/dist/
+demo/frontend/*.tsbuildinfo
+demo/frontend/Thumbs.db
