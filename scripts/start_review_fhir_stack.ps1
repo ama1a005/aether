@@ -27,4 +27,4 @@ for ($attempt = 0; $attempt -lt 30; $attempt++) {
 }
 if (-not $mcpReady) { throw "WSO2 FHIR MCP did not remain running; inspect compose logs." }
 Write-Host "HAPI FHIR: http://127.0.0.1:8080/fhir"
-Write-Host "WSO2 MCP:  http://127.0.0.1:8001/mcp"
+Write-Host "WSO2 MCP:  http://127.0.0.1:8001/mcp/"

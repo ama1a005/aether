@@ -45,13 +45,16 @@ class WSO2FHIRClient:
     """Short-lived, fail-closed client for generic WSO2 FHIR MCP operations."""
 
     def __init__(self, endpoint: str | None = None) -> None:
-        self.endpoint = endpoint or os.getenv("AETHER_FHIR_MCP_ENDPOINT", "http://127.0.0.1:8001/mcp")
+        self.endpoint = endpoint or os.getenv("AETHER_FHIR_MCP_ENDPOINT", "http://127.0.0.1:8001/mcp/")
 
     async def _session(self, operation: str, payload: dict[str, Any] | None = None) -> Any:
         try:
             from mcp import ClientSession
-            from mcp.client.streamable_http import streamablehttp_client
-            async with streamablehttp_client(self.endpoint) as (read, write, _):
+            try:
+                from mcp.client.streamable_http import streamable_http_client as open_streamable_http
+            except ImportError:  # Compatibility with the older SDK bundled by the pinned WSO2 image.
+                from mcp.client.streamable_http import streamablehttp_client as open_streamable_http
+            async with open_streamable_http(self.endpoint) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     initialized = await session.initialize()
                     server = initialized.serverInfo.model_dump(mode="json")
