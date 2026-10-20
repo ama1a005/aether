@@ -1,5 +1,9 @@
 # AETHER Intermediate Review Runbook
 
+## External FHIR MCP startup
+
+Run `scripts/start_review_fhir_stack.ps1`, then `scripts/run_review_demo.ps1 -Mode real_fhir_mcp_deterministic`. Confirm the FHIR MCP Data page names WSO2, Streamable HTTP, and local HAPI R4. Discover MCP Tools must show server-returned schemas. If MCP fails, state it and explicitly select mock or replay; real mode never falls back.
+
 ## Choose and state the execution mode
 
 For a reliable presentation use `scripts/run_review_demo.ps1 -Mode deterministic`. For real execution, complete the setup and qualification in `DEMO_README.md`, then use `-Mode live_model_mcp`. Never describe deterministic fallback or replay as live Qwen/MCP. Live startup preloads the model and fails before serving if CUDA or the pinned local model is unavailable.

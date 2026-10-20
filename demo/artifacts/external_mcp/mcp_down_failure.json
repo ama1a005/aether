@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "dependency": "WSO2 FHIR MCP",
+  "failed_closed": true,
+  "direct_fhir_fallback": false,
+  "mock_fallback": false,
+  "fixture_fallback": false,
+  "git_commit": "fca234b8f98bbf47026d359766b535af18ed69f3",
+  "error": "external WSO2 MCP unavailable at http://wso2-fhir-mcp:8000/mcp: unhandled errors in a TaskGroup (1 sub-exception)"
+}

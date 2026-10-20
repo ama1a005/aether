@@ -1,5 +1,14 @@
 # AETHER Project State
 
+## 2026-10-20 external FHIR MCP integration checkpoint
+
+- Added digest-pinned HAPI FHIR R4 and official WSO2 FHIR MCP services on localhost.
+- Seeded 12 stable synthetic Patient records and 130 associated resources idempotently (142 total).
+- Live WSO2 initialization discovered seven generic FHIR tools; live Patient retrieval for `DEMO-PAT-001` succeeded through MCP.
+- Added fail-closed official-SDK client, FHIR adapter, downstream one-field attack, deterministic pipeline, UI provenance, and startup scripts.
+- Blocker: host `.venv` cannot download `mcp==1.27.1` because the proxy corrupts chunks. Host FastAPI acceptance and all-12 live qualification remain incomplete.
+- The WSO2 image is ARM64-only; Docker Desktop emulation works on this AMD64 host.
+
 ## 2026-10-19 live-demo integration checkpoint
 
 - Deterministic review demo preserved at Git checkpoint `0d7dfc2`.

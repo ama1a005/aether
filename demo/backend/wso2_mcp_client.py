@@ -48,10 +48,10 @@ class WSO2FHIRClient:
         self.endpoint = endpoint or os.getenv("AETHER_FHIR_MCP_ENDPOINT", "http://127.0.0.1:8001/mcp")
 
     async def _session(self, operation: str, payload: dict[str, Any] | None = None) -> Any:
-        from mcp import ClientSession
-        from mcp.client.streamable_http import streamable_http_client
         try:
-            async with streamable_http_client(self.endpoint) as (read, write, _):
+            from mcp import ClientSession
+            from mcp.client.streamable_http import streamablehttp_client
+            async with streamablehttp_client(self.endpoint) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     initialized = await session.initialize()
                     server = initialized.serverInfo.model_dump(mode="json")

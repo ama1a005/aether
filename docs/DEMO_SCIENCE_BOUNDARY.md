@@ -12,3 +12,5 @@
 | Internal DCMG | Not established; specificity hardening retained zero internal candidates |
 
 The application is software-review evidence, not medical validation or held-out research evaluation. Validation and test splits remain unopened. All case screens display the synthetic/non-clinical notice.
+
+The local HAPI FHIR representation and WSO2 Streamable HTTP MCP traffic are real software/protocol operations over wholly synthetic patients. The controlled AETHER attack occurs after clean MCP retrieval and does not alter HAPI. Deterministic agents are rules, not model reasoning. This configuration has no clinical validation.

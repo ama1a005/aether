@@ -1,0 +1,640 @@
+{
+  "schema_version": "aether.external-mcp-acceptance.v1",
+  "status": "MCP_RETRIEVAL_VERIFIED",
+  "server": {
+    "name": "FHIR MCP Server",
+    "version": "1.9.1"
+  },
+  "transport": "Streamable HTTP",
+  "mcp_endpoint": "http://127.0.0.1:8000/mcp",
+  "fhir_endpoint": "http://hapi-fhir:8080/fhir",
+  "tools": [
+    "get_capabilities",
+    "search",
+    "read",
+    "create",
+    "update",
+    "delete",
+    "get_user"
+  ],
+  "wso2_image_digest": "sha256:2028481e78580416cf31ee50e769fe981e9ecbf1f91419ea6e0aeed88cf03e79",
+  "hapi_image_digest": "sha256:e60b0a2063db0c8ee65fc34206aed9df232a39d5e29ee37fdd9df74551895cd6",
+  "git_commit": "fca234b8f98bbf47026d359766b535af18ed69f3",
+  "uncommitted_diff": true,
+  "utc_timestamp": "2026-10-20T04:15:22.675082+00:00",
+  "runtime_seconds": 62.157816433000335,
+  "records": [
+    {
+      "case_id": "DEMO-PAT-001",
+      "patient": 1,
+      "observations": 9,
+      "conditions": 2,
+      "medications": 1,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-001"
+          },
+          "elapsed_ms": 180.29451100028382,
+          "response_sha256": "f2fdd8f7db59d6bbfe1a08cf9bdc0deae6eb239d7fae05f25ddb88220556f2d6"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-001"
+            }
+          },
+          "elapsed_ms": 227.51556200000778,
+          "response_sha256": "45c6befd9cc638a65d650830bafaec8b03c8e08181bbdae904a844890f365cb9"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-001"
+            }
+          },
+          "elapsed_ms": 149.83968100023048,
+          "response_sha256": "b479118d81f369b0ebadd9e140f2ead9b506cc474c161d6c4daf01d9c240577a"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-001"
+            }
+          },
+          "elapsed_ms": 194.9114950002695,
+          "response_sha256": "cfdf173d47310c8061ac7da56502f81d974fc8153f6911892cef5db7b9a4aef9"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-002",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 0,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-002"
+          },
+          "elapsed_ms": 152.27221199984342,
+          "response_sha256": "2afcd39529fb951ca31664552162ffd3b1c308f01d2c526c02d1845a559ad58d"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-002"
+            }
+          },
+          "elapsed_ms": 189.87545399977535,
+          "response_sha256": "0c043a364d4e5894bbb583ec7e0179af21c9cfed058ce6e262c0307dddbca97d"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-002"
+            }
+          },
+          "elapsed_ms": 136.8019360006656,
+          "response_sha256": "2885cda128e217ea6ded366c1ef83e1625a3060bac3222f0b12b2a6a91f8344c"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-002"
+            }
+          },
+          "elapsed_ms": 136.736304999431,
+          "response_sha256": "5d0cc3204716e7d1cecc0da8a135874bba75e7b4e12f539679697abe4ddf7be8"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-003",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 1,
+      "medications": 2,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-003"
+          },
+          "elapsed_ms": 182.56410199956008,
+          "response_sha256": "86532f24d0db4e70d4bc44760c69706fa8bec788114469e383c2fb465f107b9d"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-003"
+            }
+          },
+          "elapsed_ms": 145.34807200016076,
+          "response_sha256": "274a89777ad2a311eae0df43c0bff9285aca0c9ef142568cb89c072bc585d2c9"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-003"
+            }
+          },
+          "elapsed_ms": 156.01863299980323,
+          "response_sha256": "d54ce5d847e57ab2aad4f98020d44f617cb0d9d3a330db7a23907288168dfa35"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-003"
+            }
+          },
+          "elapsed_ms": 173.92475599990576,
+          "response_sha256": "025e437876d486c7307fd5fc79c3d330eefa9cf760ac31e0df359ee9ff7f682f"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-004",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 0,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-004"
+          },
+          "elapsed_ms": 184.3787350007915,
+          "response_sha256": "73038db3f5e33f7bfe92a60e56d2772523f00fdba5ac11eed5dcc2408a2f72a9"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-004"
+            }
+          },
+          "elapsed_ms": 158.64572699956625,
+          "response_sha256": "779b7166e5feffa02e9a81ee234f4ce2b500203914e836980eb8dc7b608b2e14"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-004"
+            }
+          },
+          "elapsed_ms": 131.60467499983497,
+          "response_sha256": "3ecc11055186d781f69276e18a06954bb517fa698b11a75894deec743c444491"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-004"
+            }
+          },
+          "elapsed_ms": 144.25316899996687,
+          "response_sha256": "9b11e057e892029608eec2f7bedc50680628b4e39f6bc18c0e3b8f3080ea3e77"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-005",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 1,
+      "medications": 1,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-005"
+          },
+          "elapsed_ms": 187.96282299990708,
+          "response_sha256": "26c9be0a478361eceaf9bcc6f94e136cef64325f7f3210d100ca0300459c6c68"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-005"
+            }
+          },
+          "elapsed_ms": 204.59192100042856,
+          "response_sha256": "cde9926d583ab72ca38e3dd754d227738740784315a3dbdad55a9630b2542340"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-005"
+            }
+          },
+          "elapsed_ms": 137.03170099961426,
+          "response_sha256": "ba595de5d71f97991d9bfa9929a3dbe18ed834b6825e82e21c7cefa172cb3867"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-005"
+            }
+          },
+          "elapsed_ms": 226.03830000025482,
+          "response_sha256": "3b3386176f8d2eb8c1c8af65680ea2cdeb3b5d746a56f33e28372dfe2421dfaa"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-006",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 0,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-006"
+          },
+          "elapsed_ms": 177.8476839999712,
+          "response_sha256": "94b95c553d3500e9649f370051d7ea8c6741fdb25f21150b6dfbbe804db3bf5d"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-006"
+            }
+          },
+          "elapsed_ms": 148.74214000064967,
+          "response_sha256": "a4bcbfeae42b2f7f64eb1d9db5956129ab5a92ab5031d7124e6d7650ca20cc44"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-006"
+            }
+          },
+          "elapsed_ms": 235.3391799997553,
+          "response_sha256": "0f5b37aacbb7205d27e269eb27113572174a83b5f5742362dede36325f5ce671"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-006"
+            }
+          },
+          "elapsed_ms": 161.56976700040104,
+          "response_sha256": "d6b997006d3b2fd6c550cc88b0d891180b6442afd33c11c68f737b0e2dbcfa67"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-007",
+      "patient": 1,
+      "observations": 7,
+      "conditions": 1,
+      "medications": 1,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-007"
+          },
+          "elapsed_ms": 156.1486379996495,
+          "response_sha256": "9c743ccadcee64a2cca3fe266199d63bd7649e4b44b8ec1a1d9b4823a2f2167e"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-007"
+            }
+          },
+          "elapsed_ms": 205.2910209995389,
+          "response_sha256": "810126222f6256b095608424f2ed909e887bc88da844307504a9af2fd6407896"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-007"
+            }
+          },
+          "elapsed_ms": 233.09027300001617,
+          "response_sha256": "f7009fd0ed55e1afb52dad310f8300f47c3e8f09db369f536afe7053edb1f94f"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-007"
+            }
+          },
+          "elapsed_ms": 132.44000600025174,
+          "response_sha256": "493bb0440c0c2ab800f1053394d82057de4f7da54cec51e5b9fe7600fcf6b77b"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-008",
+      "patient": 1,
+      "observations": 6,
+      "conditions": 1,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-008"
+          },
+          "elapsed_ms": 171.8731419996402,
+          "response_sha256": "542dbaec71092867c71fa2b2dd49b6f4529d20b85c3cf9fa99af87faec8436b5"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-008"
+            }
+          },
+          "elapsed_ms": 193.85185000010097,
+          "response_sha256": "049dba57e7ee0a2fd5c183c2fadcc247729fbbaac4b000958f1b057e32510f44"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-008"
+            }
+          },
+          "elapsed_ms": 194.62918200042623,
+          "response_sha256": "ee30eb3fd7f27be2cf77d76719228f0f5ab5d9ab3cfd1c3dcb0ec8f5d914e79e"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-008"
+            }
+          },
+          "elapsed_ms": 135.31103400055144,
+          "response_sha256": "cee85c1c12a8b716ab4782ae82ac325d1c2cabf84bee93e6f9d225435ab6c7e0"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-009",
+      "patient": 1,
+      "observations": 6,
+      "conditions": 1,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-009"
+          },
+          "elapsed_ms": 187.49223400027404,
+          "response_sha256": "5f4b582524fefc69d4adc00249c48de6b0c93b480b07afd49bc1e4ae32faa294"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-009"
+            }
+          },
+          "elapsed_ms": 225.04800299975614,
+          "response_sha256": "f1cbc1fc02017d477d0186243f9bfed8631ce9b420816b7ba720a724ee2c2deb"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-009"
+            }
+          },
+          "elapsed_ms": 169.69362500003626,
+          "response_sha256": "68215e35cafc29f9902bb656f895980d0e262703d0588ab317443ca44d8eadbb"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-009"
+            }
+          },
+          "elapsed_ms": 131.83755099998962,
+          "response_sha256": "849f5e4def618b19128bdee69e0bd5cfb690c0e852fbf5c1c01b12e950af9baf"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-010",
+      "patient": 1,
+      "observations": 8,
+      "conditions": 1,
+      "medications": 1,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-010"
+          },
+          "elapsed_ms": 201.22247600011178,
+          "response_sha256": "10d2358accba94f892b12d2dc39a0f6025ae27bcceff6ec9363f6142719be8f2"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-010"
+            }
+          },
+          "elapsed_ms": 162.61794399997598,
+          "response_sha256": "1aec8346194a76629ea40f7cd2a61b337e55d0a11cb8582705d3840f0babcda6"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-010"
+            }
+          },
+          "elapsed_ms": 500.8644479994473,
+          "response_sha256": "cc11766198f0058be78843e918a308a994204bc4326e0412d0ce5f85b68f2db6"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-010"
+            }
+          },
+          "elapsed_ms": 191.44577400038543,
+          "response_sha256": "1cf49a479b0293db28b7ba3ca23793fe71f59be4f6614b8a23e134f468ea0cca"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-011",
+      "patient": 1,
+      "observations": 7,
+      "conditions": 2,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-011"
+          },
+          "elapsed_ms": 186.97097699987353,
+          "response_sha256": "8adaf81883cd3a62b8dd81f986c059bae6642bb42fbd52964a5514055040a2dd"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-011"
+            }
+          },
+          "elapsed_ms": 169.60958300023776,
+          "response_sha256": "bca22fff7c1d37012f334d1906bfd31c7e5bf9f2d3850ee1bdd343474e9ef4f0"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-011"
+            }
+          },
+          "elapsed_ms": 134.6625739997762,
+          "response_sha256": "501c5716c964fb4509fd187b0e08185218dc92923c5edaff2d083bc02562b47d"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-011"
+            }
+          },
+          "elapsed_ms": 131.97621000017534,
+          "response_sha256": "4be4d1884360b1c3c86463f61dc57ca50f9dba488ef44eb7dca7680031f8e7b6"
+        }
+      ]
+    },
+    {
+      "case_id": "DEMO-PAT-012",
+      "patient": 1,
+      "observations": 6,
+      "conditions": 0,
+      "medications": 0,
+      "calls": [
+        {
+          "tool": "read",
+          "arguments": {
+            "type": "Patient",
+            "id": "aether-demo-pat-012"
+          },
+          "elapsed_ms": 163.22135100017476,
+          "response_sha256": "29aa7e39165d14c3b902d02f6d6851ac6fa5549634bb41e5e0677f7fbd158a4a"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Observation",
+            "searchParam": {
+              "patient": "aether-demo-pat-012"
+            }
+          },
+          "elapsed_ms": 247.9933410004378,
+          "response_sha256": "a58931efb7076d82ddcd4eb1b63c3ec2404b10e8267b3f1642f68083a77b1027"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "Condition",
+            "searchParam": {
+              "patient": "aether-demo-pat-012"
+            }
+          },
+          "elapsed_ms": 179.0716590003285,
+          "response_sha256": "7dcd7bd2a6014f99a6b5852f35f92c50296af5359c5ac8adb676a77c4730ef5e"
+        },
+        {
+          "tool": "search",
+          "arguments": {
+            "type": "MedicationRequest",
+            "searchParam": {
+              "patient": "aether-demo-pat-012"
+            }
+          },
+          "elapsed_ms": 149.68843499991635,
+          "response_sha256": "635844071f47b958ce00a1af84ba0faa9336c2a05632298f5d7b2cb920bb4983"
+        }
+      ]
+    }
+  ]
+}

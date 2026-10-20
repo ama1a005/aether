@@ -4,6 +4,10 @@
 
 AETHER studies whether bounded adversarial influence travels through a sender, structured message, receiver, and outcome, and whether interventions recover clean behavior. The attack subsystem supplies controlled contrasts; it is necessary infrastructure, while novelty rests in cross-agent causal testing.
 
+## External FHIR MCP attack boundary
+
+Distinguish raw FHIR, clean AETHER evidence, and attacked AETHER evidence. The attack occurs after MCP retrieval and flips only the declared AETHER `risk_flag`; it does not poison WSO2/HAPI and is not MCPTox metadata poisoning.
+
 ## B. Member responsibility
 
 Member 2 owns attack definitions, corpus provenance, eligibility, and metrics. Study `attacks/`, `data/attack_cases/`, `benchmarks/REGISTRY.yaml`, and the metric definitions in `RESEARCH_CONTRACT.md`. An attack result is meaningful only relative to a functioning clean target and an explicit threat model.

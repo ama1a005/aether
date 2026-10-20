@@ -95,3 +95,7 @@ Resolve live-demo dependencies through a verified online or offline wheelhouse, 
 - message_id and tool_call_ids use uuid4() — non-deterministic (by design — test updated accordingly)
 - PTB-XL not downloaded — placeholder raises NotImplementedError
 - Real model transformers dependency not yet installed
+
+## Current bounded task — external WSO2 FHIR MCP review integration (2026-10-20)
+
+Replace the custom MCP primary path with digest-pinned WSO2 FHIR MCP over Streamable HTTP and local HAPI FHIR R4. Preserve mock/replay only as explicit modes. Deterministic agents are primary; Qwen is optional. Implementation and partial live acceptance are complete. Host MCP SDK acquisition and full live 12-case qualification are blocked by the package proxy.

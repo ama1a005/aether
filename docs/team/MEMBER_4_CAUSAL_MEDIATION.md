@@ -4,6 +4,10 @@
 
 AETHER's current defensible research focus is a causal account of how a bounded attack propagates from sender through an explicit mediator to receiver and outcome. The other three subsystems create trustworthy inputs; this subsystem represents hypotheses and tests them.
 
+## MCP evidence boundary
+
+FHIR retrieval and adaptation occur before Agent A. The mediator remains the Agent A-to-Agent B boundary and message rescue patches it. BVP message evidence does not imply an internal neural mechanism.
+
 ## B. Member responsibility
 
 Member 4 owns the cross-agent candidate graph, message-bridge interventions, mediation metrics, and claim boundary. Study `causal/candidate_graph/cross_agent_graph.py`, the mediation modules under `causal/`, and `experiments/phase1/cross_agent_smoke.py`.

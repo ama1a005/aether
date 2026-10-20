@@ -4,6 +4,10 @@
 
 AETHER moves from behavioral attack measurement to causal localization across two agents. Mechanistic instrumentation observes and perturbs internal model state; it becomes research evidence only when aligned to the frozen protocol and outcome metric.
 
+## Runtime separation
+
+MCP transport is independent of model inference. Real WSO2/HAPI traffic can feed deterministic agents. Qwen is optional; CUDA/package status must not be conflated with MCP connectivity.
+
 ## B. Member responsibility
 
 Member 3 owns activation capture, non-interference, component interventions, and circuit evidence. Study `mechanistic/`, `interventions/`, and `experiments/phase1/single_agent_circuit_smoke.py`. The central obligation is causal precision: observing an activation is not the same as showing that it changes behavior.

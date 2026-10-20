@@ -2,15 +2,15 @@ import type {PipelineRun} from '../types';
 import {Badge} from './Badge';
 import {JsonPanel} from './JsonPanel';
 
-const stages=['Patient','MCP Tools','Agent A','Mediator','Agent B','Decision'];
+const stages=['Patient','WSO2 MCP','FHIR Adapter','Agent A','Mediator','Agent B','Decision'];
 type View='AGENT PIPELINE'|'ATTACK LAB'|'CAUSAL ANALYSIS';
 
 export function PipelineView({view,clean,attack,rescue,induction,busy,error,onClean,onAttack,onRescue,onInduction,onReset}:{view:View;clean?:PipelineRun;attack?:PipelineRun;rescue?:Record<string,unknown>;induction?:Record<string,unknown>;busy:string;error:string;onClean:()=>void;onAttack:()=>void;onRescue:()=>void;onInduction:()=>void;onReset:()=>void}){
   const shown=view==='ATTACK LAB'?(attack||clean):(clean||attack);
-  const title=view==='AGENT PIPELINE'?'Clean sender-to-receiver execution':view==='ATTACK LAB'?'Controlled one-field tool-output attack':'Message-level causal interventions';
+  const title=view==='AGENT PIPELINE'?'Clean sender-to-receiver execution':view==='ATTACK LAB'?'Controlled post-MCP evidence attack':'Message-level causal interventions';
   return <section><div className="section-head"><div><p className="eyebrow">{view}</p><h2>{title}</h2></div><Badge>{shown?.provenance_type||'READY'}</Badge></div>
     {view==='AGENT PIPELINE'&&<><div className="pipeline">{stages.map(s=><div className={busy?'running':shown?'complete':'waiting'} key={s}>{s}</div>)}</div><div className="actions"><button onClick={onClean} disabled={!!busy}>Run Clean Pipeline</button><button className="secondary" onClick={onReset}>Reset Case</button></div></>}
-    {view==='ATTACK LAB'&&<><p>Run the clean baseline, then apply the declared attack. The backend validator permits only the designated <code>recommendation_code</code> change.</p><div className="actions"><button onClick={onClean} disabled={!!busy}>Run Clean Baseline</button><button onClick={onAttack} disabled={!!busy}>Run Controlled Attack</button><button className="secondary" onClick={onReset}>Reset Case</button></div></>}
+    {view==='ATTACK LAB'&&<><p>Raw FHIR remains unchanged. AETHER flips only the declared downstream <code>risk_flag</code> after MCP retrieval.</p><div className="actions"><button onClick={onClean} disabled={!!busy}>Run Clean Baseline</button><button onClick={onAttack} disabled={!!busy}>Run Controlled Attack</button><button className="secondary" onClick={onReset}>Reset Case</button></div></>}
     {view==='CAUSAL ANALYSIS'&&<><p>Each action executes its own aligned clean and attacked prerequisites on the backend; visiting another page first is not required.</p><div className="actions"><button onClick={onRescue} disabled={!!busy}>Run Clean-Message Rescue</button><button onClick={onInduction} disabled={!!busy}>Run Attacked-Message Induction</button><button className="secondary" onClick={onReset}>Reset Case</button></div></>}
     {busy&&<div className="progress">{busy}… elapsed time is recorded by the backend.</div>}{error&&<div className="error">Stage failed: {error}</div>}
     {attack?.attack_delta&&view==='ATTACK LAB'&&<div className="diff"><h3>Attack delta</h3><div><code>{attack.attack_delta.path}</code> <b>{attack.attack_delta.clean}</b> → <b>{attack.attack_delta.attacked}</b></div><p>All non-designated fixture fields remain unchanged.</p></div>}

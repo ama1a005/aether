@@ -8,6 +8,8 @@ AETHER uses a paired sender/message/receiver protocol as an instrument for measu
 
 Member 1 owns the executable boundary from synthetic case to sender message and receiver outcome. Study `target/case_loader.py`, `target/mcp/tools.py`, `target/runner.py`, and the frozen types in `contracts/`. The key responsibility is reproducibility: the same inputs and configuration must yield an auditable trace, with failures exposed rather than replaced by plausible defaults.
 
+For the review path, understand FHIR resources, HAPI FHIR R4, WSO2 FHIR MCP, Streamable HTTP tool discovery, generic `read`/`search`, and the AETHER FHIR adapter. The frontend never calls FHIR directly.
+
 Inputs are validated cases/configuration/model settings; outputs are tool events, `MediatorMessage`, receiver decision, `RunTrace`, and manifest-linked raw output. Member 1 depends on frozen contracts and hands aligned traces to M2–M4.
 
 ## C. Code map and D. execution flow

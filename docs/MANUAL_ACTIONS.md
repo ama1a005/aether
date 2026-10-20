@@ -1,5 +1,9 @@
 # Manual Actions
 
+## 2026-10-20 — external MCP host dependency
+
+To clear the final gate, provide a verified Windows/Python 3.11 wheelhouse for `mcp[cli]==1.27.1` and dependencies, or fix the proxy path producing `InvalidChunkLength`. Docker Desktop must run. Do not disable TLS verification. The WSO2 image currently relies on ARM64 emulation.
+
 ## 2026-10-19 — demo GPU environment blocked by package-download proxy
 
 The first download attempt failed TLS certificate validation. Pip's verified Windows trust-store mode fixed that, but repeated PyPI transfers then failed with `InvalidChunkLength`, indicating a proxy/network response corruption. CUDA and the RTX 2050 are visible. Do not bypass verification with `--trusted-host`.

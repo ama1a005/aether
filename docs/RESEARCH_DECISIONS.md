@@ -1,5 +1,9 @@
 # Research Decisions
 
+## 2026-10-20 — external FHIR MCP review boundary
+
+The primary review path uses official WSO2 FHIR MCP and local HAPI FHIR R4. Direct FHIR is allowed only for setup seeding. Interactive real mode fails closed. Attacks modify AETHER evidence after retrieval; WSO2/HAPI remain clean. Deterministic agents are primary and Qwen is optional.
+
 ## 2026-10-19 — isolate review-demo GPU/MCP runtime
 
 Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.venv-demo-gpu`. “Real MCP” requires an official-SDK stdio subprocess connection to local synthetic tools. “Live model” requires actual pinned Qwen inference; deterministic output cannot substitute for a failure. Runtime model downloads are forbidden, mode labels are explicit, and live demo artifacts are not paper validation evidence.

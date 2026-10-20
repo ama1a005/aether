@@ -65,7 +65,7 @@ def test_frontend_api_contracts() -> None:
     client = TestClient(app)
     assert client.get("/api/demo/health").json()["case_count"] == 12
     assert len(client.get("/api/demo/cases").json()) == 12
-    clean = client.post("/api/demo/pipeline/clean", json={"case_id":"DEMO-PAT-001"})
+    clean = client.post("/api/demo/pipeline/clean", json={"case_id":"DEMO-PAT-001", "execution_mode":"deterministic"})
     assert clean.status_code == 200 and clean.json()["provenance_type"] == "LIVE EXECUTION"
     assert client.get("/api/demo/evidence").status_code == 200
     assert client.get("/api/demo/system-status").status_code == 200

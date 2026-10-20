@@ -1,5 +1,16 @@
 # AETHER Intermediate Review Demo
 
+## Primary external FHIR MCP mode
+
+The intended review path is `real_fhir_mcp_deterministic`: official WSO2 FHIR MCP over Streamable HTTP, local HAPI FHIR R4, and deterministic AETHER agents.
+
+```powershell
+.\scripts\start_review_fhir_stack.ps1
+.\scripts\run_review_demo.ps1 -Mode real_fhir_mcp_deterministic
+```
+
+Images must be pulled once; subsequent review execution is local. See `docs/EXTERNAL_MCP_INTEGRATION.md`. Mock mode is an explicit emergency fallback and never activates automatically.
+
 ## Execution modes
 
 - **Live Qwen + real MCP** uses `.venv-demo-gpu`, pinned CUDA PyTorch, one fp16 GPU model, and the independent `aether-clinical-tools` MCP stdio subprocess. Failure returns HTTP 503; it never switches mode automatically.
