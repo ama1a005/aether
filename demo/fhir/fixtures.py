@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import Any
 
 from demo.backend.repository import load_cases
@@ -49,7 +48,7 @@ def resources_for_case(case: Any) -> list[dict[str, Any]]:
         "identifier": [{"system": "https://aether.invalid/demo-case-id", "value": case.case_id}],
         "name": [{"use": "official", "family": family, "given": list(reversed(given))}],
         "gender": {"M": "male", "F": "female"}.get(case.sex, "other"),
-        "birthDate": f"{date.today().year - case.age}-01-01",
+        "birthDate": f"{2026 - case.age}-01-01",
     }, {
         "resourceType": "Encounter", "id": f"{pid}-encounter", "meta": _meta(), "status": "finished",
         "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB"},

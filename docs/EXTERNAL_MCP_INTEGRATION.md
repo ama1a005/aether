@@ -20,7 +20,18 @@ Compose is `demo/external_mcp/docker-compose.review.yml`. HAPI is `127.0.0.1:808
 
 ## Current limitation
 
-The package proxy corrupts the host download of `mcp==1.27.1`. Live discovery and Patient retrieval were verified by executing the checked-in AETHER adapter inside the official image, which contains that SDK. Host FastAPI acceptance and all-12 live qualification remain blocked until a verified Windows wheel set is installed. No direct-FHIR or mock fallback is enabled in real mode.
+As of 2026-10-21, the host has `mcp==1.27.1` installed. The remaining failure is
+host-to-container HTTP framing: native curl and Python received
+`Transfer-Encoding: chunked` followed by an unframed JSON body. The same
+initialization inside the WSO2 container returned valid `Content-Length: 383` and
+JSON. Restarting only WSO2 did not clear the failure. The precise interfering
+component is not yet established; do not attribute it to RAM or ARM emulation.
+Host FastAPI external-MCP acceptance remains blocked. No direct-FHIR or mock
+fallback is enabled in real mode.
 
-Optional proof: run MCP Inspector with Streamable HTTP URL `http://127.0.0.1:8001/mcp`.
+Correction: the inspected upstream-main dependency declaration is not the
+installed SDK version in the pinned image. That image reports server version
+1.9.1 and exposes the older SDK transport entry point.
+
+Optional proof: run MCP Inspector with Streamable HTTP URL `http://127.0.0.1:8001/mcp/`.
 

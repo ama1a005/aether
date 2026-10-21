@@ -50,7 +50,7 @@ def verify(endpoint: str) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--endpoint", default="http://127.0.0.1:8001/mcp")
+    parser.add_argument("--endpoint", default="http://127.0.0.1:8001/mcp/")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     result = verify(args.endpoint)

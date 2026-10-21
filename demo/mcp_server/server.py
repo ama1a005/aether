@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from mcp.server.mcpserver import MCPServer
+from mcp.server.fastmcp import FastMCP
 
 from demo.backend.repository import get_case
 from demo.backend.tools import TOOLS
 
 SERVER_NAME = "aether-clinical-tools"
-mcp = MCPServer(
+mcp = FastMCP(
     SERVER_NAME,
     instructions="Synthetic AETHER review fixtures only; never use for clinical care.",
 )

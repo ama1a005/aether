@@ -1,5 +1,14 @@
 # AETHER Project State
 
+## 2026-10-21 reliability repairs
+
+Current status supersedes earlier demo completion claims. Fixed SDK incompatibility,
+missing induction, unaligned rescue snapshots, unsafe missing-risk defaults,
+two-field attack mutation, invisible boolean UI delta, and stale-server startup.
+Mock demo: 12 cases x 4 HTTP actions passed; frontend build and tests passed.
+External WSO2 host transport remains blocked despite successful in-container HTTP
+initialization. Qwen-over-FHIR remains unqualified. See `RELIABILITY_CHECKPOINT.md`.
+
 ## 2026-10-20 external FHIR MCP integration checkpoint
 
 - Added digest-pinned HAPI FHIR R4 and official WSO2 FHIR MCP services on localhost.

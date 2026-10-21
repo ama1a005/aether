@@ -53,6 +53,7 @@ def test_adapter_and_attack_keep_raw_fhir_immutable() -> None:
     assert raw == preserved
     assert clean["risk_flag"] is True and attacked["risk_flag"] is False
     assert delta["path"] == "aether_evidence.risk_flag"
+    assert [key for key in clean if clean[key] != attacked[key]] == ["risk_flag"]
     assert {"patient_record", "vitals", "labs", "conditions", "medications", "diagnostic_reports"} <= set(clean["categories"])
 
 
@@ -68,4 +69,50 @@ def test_external_client_failure_has_no_direct_fhir_or_mock_fallback() -> None:
     client = WSO2FHIRClient("http://127.0.0.1:1/mcp")
     with pytest.raises(ExternalMCPError, match="external WSO2 MCP unavailable"):
         client.discover_tools()
+
+
+@pytest.mark.parametrize("mutation", ["missing", "duplicate", "non_boolean"])
+def test_invalid_risk_evidence_fails_closed(mutation: str) -> None:
+    raw = resources_for_case(get_case("DEMO-PAT-001"))
+    risk = next(item for item in raw if item.get("code", {}).get("coding", [{}])[0].get("code") == "risk-flag")
+    if mutation == "missing":
+        raw.remove(risk)
+    elif mutation == "duplicate":
+        raw.append(deepcopy(risk))
+    else:
+        risk["valueBoolean"] = "false"
+    with pytest.raises(ValueError, match="risk observation"):
+        adapt_fhir_resources(raw)
+
+
+@pytest.mark.parametrize("case_id", [f"DEMO-PAT-{number:03d}" for number in range(1, 13)])
+def test_interventions_are_aligned_and_saved(case_id: str, monkeypatch) -> None:
+    from demo.backend import fhir_service
+    saved = []
+    monkeypatch.setattr(fhir_service, "_save_run", lambda result: saved.append(deepcopy(result)))
+    client = FixtureMCPClient(case_id)
+    rescue = fhir_service.run_fhir_rescue(case_id, client)
+    assert rescue["normalized_recovery"] == pytest.approx(1.0)
+    assert saved[0]["raw_fhir_mcp_data"] == saved[1]["raw_fhir_mcp_data"]
+    induction = fhir_service.run_fhir_induction(case_id, client)
+    assert induction["score_after"] == -induction["score_before"]
+    assert len(saved) == 6
+    assert saved[2] == rescue and saved[5] == induction
+
+
+def test_api_unknown_case_and_unqualified_mode() -> None:
+    from fastapi.testclient import TestClient
+    from demo.backend.app import app
+    with TestClient(app) as client:
+        assert client.post("/api/demo/pipeline/clean", json={"case_id": "missing"}).status_code == 404
+        response = client.post("/api/demo/pipeline/clean", json={"case_id": "DEMO-PAT-001", "execution_mode": "real_fhir_mcp_qwen"})
+        assert response.status_code == 503 and "not qualified" in response.text
+
+
+@pytest.mark.parametrize("payload", [{}, {"resourceType": "Bundle", "entry": [None]},
+    {"resourceType": "Bundle", "link": [{"relation": "next", "url": "https://example.invalid/next"}]}])
+def test_invalid_or_partial_bundle_is_rejected(payload) -> None:
+    from demo.backend.fhir_service import _bundle_resources
+    with pytest.raises(ValueError):
+        _bundle_resources(payload)
 

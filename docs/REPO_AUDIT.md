@@ -1,5 +1,12 @@
 # AETHER Repository Audit
 
+## 2026-10-21 verification addendum (not a new audit)
+
+See `RELIABILITY_CHECKPOINT.md` for executed checks and repairs. External-MCP
+in-container retrieval is not equivalent to a working host demo. CI now includes
+the demo dependency snapshot, stdio integration, opt-in model-free demo tests,
+and frontend tests/build; no remote CI execution is claimed.
+
 **Audit date:** 2026-10-11  
 **Branch:** `main` at `8927181`  
 **Mode:** single builder (temporary project rule)

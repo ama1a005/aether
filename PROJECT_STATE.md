@@ -1,4 +1,11 @@
 # PROJECT_STATE.md
+## Current reliability checkpoint: 2026-10-21
+
+The sprint snapshot below is historical, not a claim that all current modes work.
+See `docs/RELIABILITY_CHECKPOINT.md` and `docs/PROJECT_STATE.md`. The explicit mock
+review demo passes all 48 HTTP actions. External WSO2 host transport is still
+blocked by malformed HTTP framing; Qwen-over-FHIR is not qualified.
+
 **Last updated:** 2026-10-08 23:30 IST  
 **Sprint:** 4–8 October 2026 | **Review:** 8 October 2026  
 **Status: SPRINT COMPLETE — ALL REVIEW EVIDENCE READY**

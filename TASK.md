@@ -1,6 +1,10 @@
 # TASK.md — AETHER Sprint Task Board
 
-## Current bounded task — real demo runtime (2026-10-19)
+## Current bounded task — reliability verification (2026-10-21)
+
+Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.
+
+## Historical task — real demo runtime (2026-10-19)
 
 Resolve live-demo dependencies through a verified online or offline wheelhouse, then run CUDA, MCP, pinned-model, single-case, rescue, and 12-case acceptance in fail-fast order. Do not modify the research environment or claim live readiness before every gate succeeds.
 

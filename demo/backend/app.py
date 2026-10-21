@@ -48,7 +48,8 @@ def _case(case_id: str):
 
 @app.get("/api/demo/health")
 def health() -> dict:
-    return {"status":"ok","bind_policy":"localhost_only","case_count":len(load_cases()),"model_loaded":model_status()["ready"]}
+    return {"status":"ok", "service":"aether-review-demo", "process_id":os.getpid(), "instance_id":os.getenv("AETHER_DEMO_INSTANCE_ID"),
+            "bind_policy":"localhost_only","case_count":len(load_cases()),"model_loaded":model_status()["ready"]}
 
 
 @app.get("/api/demo/cases")
@@ -84,7 +85,7 @@ def fhir_case(case_id: str):
 @app.post("/api/demo/tools/run")
 def tools_run(request: CaseRequest):
     case = _case(request.case_id)
-    if request.execution_mode == "real_fhir_mcp_deterministic":
+    if request.execution_mode in ("real_fhir_mcp_deterministic", "real_fhir_mcp_qwen"):
         try:
             from demo.backend.fhir_service import fetch_case
             return fetch_case(request.case_id)
@@ -102,13 +103,15 @@ def tools_run(request: CaseRequest):
 
 
 def _execute(request: CaseRequest, action: str):
+    _case(request.case_id)
     if request.execution_mode == "real_fhir_mcp_deterministic":
         try:
-            from demo.backend.fhir_service import run_fhir_pipeline, run_fhir_rescue
+            from demo.backend.fhir_service import run_fhir_pipeline, run_fhir_rescue, run_fhir_induction
             if action == "clean": return run_fhir_pipeline(request.case_id, False)
             if action == "attack": return run_fhir_pipeline(request.case_id, True)
             if action == "rescue": return run_fhir_rescue(request.case_id)
-            raise ValueError("induction is not exposed in primary FHIR mode")
+            if action == "induction": return run_fhir_induction(request.case_id)
+            raise ValueError(f"Unknown pipeline action: {action}")
         except (RuntimeError, OSError, ValueError, ImportError) as exc:
             raise HTTPException(503, f"external WSO2 MCP pipeline failed: {exc}") from exc
     if request.execution_mode in ("deterministic", "mock_deterministic"):

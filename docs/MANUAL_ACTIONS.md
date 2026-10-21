@@ -1,5 +1,16 @@
 # Manual Actions
 
+## 2026-10-21 current action
+
+The demo is running at `http://127.0.0.1:8000/?mode=mock_deterministic` in explicit
+mock mode. No RAM upgrade or CUDA reinstall is justified by the observed transport
+failure. Host MCP SDK is now installed; the older missing-wheel gate below is
+historical. External mode still requires diagnosing the host-to-Docker malformed
+chunked response. A Docker Desktop restart would affect other workloads and has
+not been performed; save those workloads before choosing that diagnostic step.
+Do not disable security software or TLS verification. Qwen qualification remains
+a separate task. See `RELIABILITY_CHECKPOINT.md`.
+
 ## 2026-10-20 — external MCP host dependency
 
 To clear the final gate, provide a verified Windows/Python 3.11 wheelhouse for `mcp[cli]==1.27.1` and dependencies, or fix the proxy path producing `InvalidChunkLength`. Docker Desktop must run. Do not disable TLS verification. The WSO2 image currently relies on ARM64 emulation.

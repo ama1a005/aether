@@ -1,5 +1,15 @@
 # Research Decisions
 
+## 2026-10-21 demo reliability boundary
+
+The synthetic risk observation is a predeclared fixture rule, not clinical
+inference. Attack changes only the adapted `risk_flag`; raw FHIR is unchanged.
+Rescue/induction share one retrieval snapshot. Missing/invalid risk evidence and
+partial paginated retrieval fail closed. Deterministic substitution demonstrates
+message-level behavior, not neural-circuit causality. External transport errors
+remain visible; no mock fallback is inserted. No frozen contract or research
+metric changed, and no new model/benchmark experiment was run.
+
 ## 2026-10-20 — external FHIR MCP review boundary
 
 The primary review path uses official WSO2 FHIR MCP and local HAPI FHIR R4. Direct FHIR is allowed only for setup seeding. Interactive real mode fails closed. Attacks modify AETHER evidence after retrieval; WSO2/HAPI remain clean. Deterministic agents are primary and Qwen is optional.

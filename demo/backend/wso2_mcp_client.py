@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
+from datetime import timedelta
 from hashlib import sha256
 import json
 import os
@@ -55,7 +56,7 @@ class WSO2FHIRClient:
             except ImportError:  # Compatibility with the older SDK bundled by the pinned WSO2 image.
                 from mcp.client.streamable_http import streamablehttp_client as open_streamable_http
             async with open_streamable_http(self.endpoint) as (read, write, _):
-                async with ClientSession(read, write) as session:
+                async with ClientSession(read, write, read_timeout_seconds=timedelta(seconds=15)) as session:
                     initialized = await session.initialize()
                     server = initialized.serverInfo.model_dump(mode="json")
                     if operation == "list_tools":
@@ -70,13 +71,19 @@ class WSO2FHIRClient:
         except ExternalMCPError:
             raise
         except Exception as exc:
-            raise ExternalMCPError(f"external WSO2 MCP unavailable at {self.endpoint}: {exc}") from exc
+            def detail(error: BaseException) -> str:
+                children = getattr(error, "exceptions", ())
+                return "; ".join(detail(child) for child in children) if children else f"{type(error).__name__}: {error}"
+            raise ExternalMCPError(f"external WSO2 MCP unavailable at {self.endpoint}: {detail(exc)}") from exc
 
     def _run(self, operation: str, payload: dict[str, Any] | None = None) -> Any:
         try:
             asyncio.get_running_loop()
         except RuntimeError:
-            return asyncio.run(self._session(operation, payload))
+            try:
+                return asyncio.run(asyncio.wait_for(self._session(operation, payload), timeout=25))
+            except TimeoutError as exc:
+                raise ExternalMCPError(f"external WSO2 MCP timed out after 25 seconds at {self.endpoint}") from exc
         raise ExternalMCPError("synchronous external MCP adapter cannot run inside an active event loop")
 
     def discover_tools(self) -> dict[str, Any]:

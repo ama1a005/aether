@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import AsyncExitStack
+from datetime import timedelta
 from pathlib import Path
 import sys
 from time import perf_counter
@@ -16,7 +18,8 @@ class MCPToolError(RuntimeError):
 
 
 async def _run(case: DemoPatientCase, names: list[str]) -> list[ToolExecution]:
-    from mcp import Client, StdioServerParameters
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
 
     root = Path(__file__).parents[2]
     env = {"PYTHONPATH": str(root)}
@@ -27,7 +30,10 @@ async def _run(case: DemoPatientCase, names: list[str]) -> list[ToolExecution]:
         env=env,
     )
     rows: list[ToolExecution] = []
-    async with Client(parameters) as client:
+    async with AsyncExitStack() as stack:
+        read, write = await stack.enter_async_context(stdio_client(parameters))
+        client = await stack.enter_async_context(ClientSession(read, write, read_timeout_seconds=timedelta(seconds=15)))
+        await client.initialize()
         listed = await client.list_tools()
         available = {tool.name for tool in listed.tools}
         missing = set(names) - available
@@ -36,9 +42,9 @@ async def _run(case: DemoPatientCase, names: list[str]) -> list[ToolExecution]:
         for name in names:
             started = perf_counter()
             result = await client.call_tool(name, {"case_id": case.case_id})
-            if result.is_error or result.structured_content is None:
+            if result.isError or result.structuredContent is None:
                 raise MCPToolError(f"MCP tool {name} failed: {result.content}")
-            envelope = dict(result.structured_content)
+            envelope = dict(result.structuredContent)
             if envelope.get("server") != "aether-clinical-tools" or envelope.get("transport") != "stdio":
                 raise MCPToolError(f"invalid MCP provenance from {name}: {envelope}")
             rows.append(

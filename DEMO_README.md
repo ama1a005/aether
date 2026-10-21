@@ -1,5 +1,25 @@
 # AETHER Intermediate Review Demo
 
+## Current verified entry point (2026-10-21)
+
+Use `./scripts/run_review_demo.ps1 -Mode mock_deterministic` for the verified
+model-free demo. The launcher builds the UI and serves UI plus API at
+`http://127.0.0.1:8000/?mode=mock_deterministic`. It refuses occupied port 8000;
+identify and stop only your previous demo process before retrying. Logs are in
+`.local/demo/`. It prints the backend PID and stop command.
+
+All 12 cases passed clean/attack/rescue/induction HTTP checks (48 actions).
+This explicit mock mode is **not** external MCP traffic or Qwen inference.
+The real external WSO2 mode currently fails on host-to-container HTTP framing;
+its launcher now requires a successful MCP handshake instead of assuming that
+a running container is ready. Qwen-over-FHIR is unqualified and disabled in the UI.
+See `docs/RELIABILITY_CHECKPOINT.md` for verification and remaining limits.
+
+For the tested Windows Python 3.11 dependency set, install
+`requirements-demo-lock.txt` into `.venv`, then `pip install --no-deps -e .`.
+The lock records the current working environment; a fresh network install and
+remote CI run have not been verified in this checkpoint.
+
 ## Primary external FHIR MCP mode
 
 The intended review path is `real_fhir_mcp_deterministic`: official WSO2 FHIR MCP over Streamable HTTP, local HAPI FHIR R4, and deterministic AETHER agents.
@@ -26,7 +46,7 @@ py -3.11 -m venv .venv-demo-gpu
 .\scripts\setup_demo_gpu.ps1
 .\.venv-demo-gpu\Scripts\python.exe scripts\download_demo_model.py
 .\.venv-demo-gpu\Scripts\python.exe scripts\qualify_demo_live.py
-.\scripts\run_review_demo.ps1 -Mode live_model_mcp
+# Legacy stdio/Qwen qualification is separate from the current review launcher.
 ```
 
 The download script is the only model-download step. Runtime loading pins `Qwen/Qwen2.5-0.5B-Instruct` revision `7ae557604adf67be50417f59c2c2f167def9a775` and uses `local_files_only=True`. Set `AETHER_DEMO_MODEL_CACHE` to use an external cache. Use `-Mode deterministic` until live qualification succeeds.
@@ -65,7 +85,7 @@ cd ..\..
 .\scripts\run_review_demo.ps1
 ```
 
-The script starts the API and Vite UI on loopback and opens `http://127.0.0.1:5173`. No login, cloud service, API key, or real patient information is used.
+The script builds the frontend and serves it with the API on loopback at `http://127.0.0.1:8000`. No login, cloud service, API key, or real patient information is used. The default external-MCP mode requires a working WSO2 handshake; choose `-Mode mock_deterministic` explicitly for the model-free fixture demo.
 
 ## Provenance modes
 

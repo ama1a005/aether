@@ -1,5 +1,15 @@
 # Experiment Ledger
 
+## REVIEW-RELIABILITY-20261021 (engineering verification, not a scientific experiment)
+
+Executed all 48 mock HTTP actions over DEMO-PAT-001..012; verified clean correctness
+and rescue recovery. Real stdio MCP integration passed with the installed SDK.
+External WSO2 host initialization failed on HTTP framing, including after a
+stateless-container restart; in-container initialization returned valid JSON.
+No external all-12 pipeline qualification or Qwen experiment is claimed. Test and
+smoke results are summarized in `RELIABILITY_CHECKPOINT.md`; historical research
+artifacts are preserved, not replaced by test-generated timestamp updates.
+
 ## DEMO-LIVE-QWEN05-MCP-12 — NOT RUN (2026-10-19)
 
 - Scope: 12 fixed synthetic cases, clean/attack and qualifying rescue.
