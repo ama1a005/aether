@@ -16,8 +16,10 @@ def compute_attack_effect(attacked_score: float, clean_score: float) -> float:
     return attacked_score - clean_score
 
 def compute_faithfulness(delta_full: float, delta_circuit: float, eps: float = 1e-6) -> float:
-    f = 1.0 - abs(delta_full - delta_circuit) / (abs(delta_full) + eps)
-    return max(0.0, min(1.0, f))
+    """Apply the frozen formula without hiding negative recovery by clipping."""
+    if not all(math.isfinite(value) for value in (delta_full, delta_circuit, eps)) or eps <= 0:
+        raise ValueError("Faithfulness inputs must be finite and epsilon positive")
+    return 1.0 - abs(delta_full - delta_circuit) / (abs(delta_full) + eps)
 
 def compute_necessity(score_full: float, score_ablated: float) -> float:
     return score_full - score_ablated

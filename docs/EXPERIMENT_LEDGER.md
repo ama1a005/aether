@@ -1,5 +1,19 @@
 # Experiment Ledger
 
+## P0_search_20261021_baselines_0 — synthetic acceptance (executed 2026-10-22)
+
+- Evidence class: software acceptance on a declared multiplicative toy system.
+- Executed methods: budgeted greedy, beam, receiver-only restriction, and exact
+  region/count-matched random controls.
+- Outcome: all five predeclared acceptance checks passed; raw mask evaluations,
+  forward costs, and a full hashed manifest were written to ignored `.local/`.
+- Tests: 232 model-independent unit/integration tests passed with 5 expected
+  opt-in skips; focused search/remediation/preflight suite passed 40/40.
+- Interpretation: validates mechanics and provenance only. It is not model,
+  benchmark, validation, test, or DCMG superiority evidence.
+- MQ-HW1 was measured separately and remained `BLOCKED_PRE_ACCESS`; model access
+  count stayed zero.
+
 ## REVIEW-RELIABILITY-20261021 (engineering verification, not a scientific experiment)
 
 Executed all 48 mock HTTP actions over DEMO-PAT-001..012; verified clean correctness

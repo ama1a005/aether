@@ -1,5 +1,24 @@
 # Manual Actions
 
+## 2026-10-22 — tests on the higher-memory laptop
+
+Checkout branch `lm`, create the Python 3.11 environment, and install the locked
+dependencies. Run the model-independent portable suite with:
+
+```powershell
+.\scripts\run_other_laptop_checks.ps1
+```
+
+If the pinned Qwen2.5-0.5B and GPT-2 snapshots from their registries are present,
+add `-IncludeQwen05Tests -IncludeGPT2Tests`. Check the larger-model resource gate
+with `-CheckMQHW1 -CacheDrive <model-cache-drive>`; failure writes
+`.local/portable-mq-hw1.json` and performs no model access.
+
+The frozen files name Qwen2.5-1.5B but do not pin its exact repository revision.
+Do not download or execute it merely because the hardware gate passes. Freeze
+the revision and snapshot provenance prospectively before the single authorized
+model-access campaign. Validation and test splits remain locked.
+
 ## 2026-10-21 current action
 
 The demo is running at `http://127.0.0.1:8000/?mode=mock_deterministic` in explicit

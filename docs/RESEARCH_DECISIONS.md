@@ -1,5 +1,31 @@
 # Research Decisions
 
+## RD-029 — Use auditable deterministic search before optional RL (2026-10-22)
+
+- **Decision:** implement greedy and beam DCMG search with one shared query
+  accounting model, receiver-only scope, and region/count-matched random controls.
+- **Reason:** `Phase1Project.md` makes random, greedy, and beam mandatory while RL
+  is optional. The model qualification gate is still closed, so synthetic
+  acceptance validates software mechanics without creating empirical model claims.
+- **Boundary:** a search result is a measured candidate under its evaluator and
+  budget. Causal and BVP claims still require executed interventions and controls.
+
+## RD-030 — Preserve the signed frozen faithfulness formula (2026-10-22)
+
+- **Decision:** remove implementation clipping from `compute_faithfulness`.
+- **Reason:** the frozen contract defines `1 - |Delta_full-Delta_C| / (|Delta_full|+epsilon)`.
+  Wrong-direction effects and large overshoot can be negative and must remain
+  visible rather than collapsing to the same zero as no recovery.
+- **Compatibility:** no historical result file is rewritten. The correction
+  applies to new runs and is covered by explicit wrong-direction tests.
+
+## RD-031 — Keep the entire feasible repair frontier (2026-10-22)
+
+- **Decision:** select all feasible non-dominated repairs from comparable
+  validation measurements. Reject test measurements and mismatched cohorts.
+- **Reason:** security, utility, failure rate, latency, intervention cost, and
+  repair location cannot be collapsed into one defensible default weight.
+
 ## 2026-10-21 demo reliability boundary
 
 The synthetic risk observation is a predeclared fixture rule, not clinical

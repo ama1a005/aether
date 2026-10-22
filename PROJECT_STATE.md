@@ -1,4 +1,13 @@
 # PROJECT_STATE.md
+## Current Phase-1 implementation checkpoint: 2026-10-22
+
+Development continues on branch `lm`. Budgeted greedy/beam search, matched
+random controls, receiver-only scope, strict Pareto repair selection, portable
+checks, and synthetic manifest-backed acceptance are implemented. The local
+model-independent suite passes. Qwen2.5-1.5B remains blocked before access by
+the frozen MQ-HW1 memory gate; its exact revision is also not yet frozen. See
+`docs/PROJECT_STATE.md` for evidence and boundaries.
+
 ## Current reliability checkpoint: 2026-10-21
 
 The sprint snapshot below is historical, not a claim that all current modes work.

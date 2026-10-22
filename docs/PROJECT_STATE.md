@@ -1,5 +1,31 @@
 # AETHER Project State
 
+## 2026-10-22 Phase-1 search/remediation implementation checkpoint
+
+- Work continues on branch `lm`; future repository pushes for this work target `lm`.
+- Added deterministic query-budgeted greedy and beam search over typed sender,
+  message, and receiver candidates, plus an explicit receiver-only restriction.
+- Added exact region/count-matched random controls, raw per-query evidence,
+  forward-pass accounting, fail-closed metric validation, and one-step local
+  minimality verification. The implementation makes no global-minimality claim.
+- Added strict validation-evidence Pareto selection across security, benign
+  utility, failure, latency, forward-pass, internal-component, and message costs.
+  It preserves the full non-dominated set and refuses test-split measurements,
+  incomparable cohorts, missing provenance, and invalid metrics.
+- Corrected `compute_faithfulness` to implement the frozen equation without
+  clipping negative wrong-direction/overshoot values to zero. Historical result
+  artifacts were not rewritten; future experiments use the corrected function.
+- Added a model-free synthetic search acceptance runner that saves every query,
+  raw outputs, costs, checks, and a hashed run manifest under ignored `.local/`.
+- Added a portable Windows test runner and a model-free MQ-HW1 preflight command.
+- Model-independent unit/integration verification: 232 passed, 5 expected skips;
+  focused search/remediation/preflight verification: 40 passed.
+- Current MQ-HW1 measurement remains `BLOCKED_PRE_ACCESS`; this workstation had
+  0.522 GiB available RAM against the frozen 10.5 GiB minimum. No model was accessed.
+- The Qwen2.5-1.5B exact revision is not frozen in current config. Passing MQ-HW1
+  alone therefore does not authorize download; model revision/provenance must be
+  fixed before the one model-access campaign.
+
 ## 2026-10-21 reliability repairs
 
 Current status supersedes earlier demo completion claims. Fixed SDK incompatibility,

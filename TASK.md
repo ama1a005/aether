@@ -1,6 +1,26 @@
 # TASK.md — AETHER Sprint Task Board
 
-## Current bounded task — reliability verification (2026-10-21)
+## Current bounded task — Phase 1 search baseline completion on lm
+
+User authorization: continue Phase1Project.md; all future pushes target `lm`.
+Scope: additive budgeted greedy/beam search, typed matched-random controls and
+receiver-only scope in `discovery/`; synthetic acceptance runner/config with
+automatic manifests; substantive unit/integration tests; completion ledger.
+Acceptance: strict query budget, deterministic tie-breaking and random seeds,
+finite evaluation validation, cache isolation, honest local-minimality status,
+raw outputs/costs retained, locked test rejected, manifest hashes verified.
+Follow-on bounded scope: strict tri-location Pareto selection from supplied
+validation measurements in `remediation/selector/frontier.py`, with feasibility,
+cohort consistency, cost and missing-data tests. This supplies selection code;
+it does not authorize reading or executing locked validation/test examples.
+Correct any confirmed shared-metric implementation mismatch with the frozen
+formula, while preserving original recorded results and documenting the correction.
+The failed balanced-model gate and frozen MQ-HW1 threshold remain binding.
+Do not access held-out cases or launch unqualified internal model experiments.
+Preserve frozen contracts and historical results. Run unit/integration/regression
+checks and the new synthetic acceptance command before committing on `lm`.
+
+## Historical task — reliability verification (2026-10-21)
 
 Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.
 

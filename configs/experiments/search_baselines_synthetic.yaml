@@ -1,0 +1,10 @@
+experiment_id: P0_search_20261021_baselines_0
+evidence_class: synthetic_acceptance_only
+seed: 0
+split: synthetic
+max_queries: 64
+faithfulness_threshold: 0.99
+max_benign_damage: 0.0
+beam_width: 3
+random_samples: 32
+output_root: .local/search_acceptance
