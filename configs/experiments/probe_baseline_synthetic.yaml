@@ -1,0 +1,10 @@
+experiment_id: P0_probe_20261022_synthetic_0
+evidence_class: synthetic_acceptance_only
+seed: 17
+split: synthetic_development
+fit_samples: 80
+evaluation_samples: 40
+noise_features: 3
+l2: 0.1
+permutation_seeds: [101, 202, 303, 404, 505]
+output_root: .local/probe_acceptance

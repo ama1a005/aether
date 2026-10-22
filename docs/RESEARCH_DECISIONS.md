@@ -1,5 +1,15 @@
 # Research Decisions
 
+## RD-030 — Treat linear probes as leakage-controlled correlation baselines (2026-10-22)
+
+- **Decision:** fit deterministic L2 logistic probes on development data only,
+  standardize from the fit partition only, require disjoint sample identities
+  and identical ordered feature identities, and compare against seeded label
+  permutations. Validation and test evaluation remain locked.
+- **Boundary:** AUROC or PR-AUC from a probe is predictive correlation, not an
+  intervention or causal edge. Synthetic acceptance verifies software mechanics
+  only and cannot support a model, benchmark, or DCMG superiority claim.
+
 ## RD-029 — Use auditable deterministic search before optional RL (2026-10-22)
 
 - **Decision:** implement greedy and beam DCMG search with one shared query

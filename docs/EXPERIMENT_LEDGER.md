@@ -1,5 +1,16 @@
 # Experiment Ledger
 
+## P0_probe_20261022_synthetic_0 — synthetic acceptance (executed 2026-10-22)
+
+- Evidence class: software acceptance on generated development arrays containing
+  one declared linear signal and independent Gaussian nuisance features.
+- Outcome: the fitted probe exceeded all five seeded label-permutation controls
+  on AUROC and PR-AUC; identity/provenance checks passed. Raw metrics and a full
+  hashed manifest were written to ignored `.local/`.
+- Interpretation: validates probe, metric, leakage-guard, and manifest mechanics
+  only. No model activations, external benchmark, validation data, or test data
+  were accessed, and no causal claim is made.
+
 ## P0_search_20261021_baselines_0 — synthetic acceptance (executed 2026-10-22)
 
 - Evidence class: software acceptance on a declared multiplicative toy system.

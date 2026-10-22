@@ -1,5 +1,12 @@
 # Manual Actions
 
+## No manual action for the probe-baseline milestone
+
+The correlational probe implementation and synthetic acceptance are CPU-light.
+The real activation-probe experiment must wait for an approved, qualified model
+run and prospectively selected activation features; do not manually copy arrays
+or metrics into result files.
+
 ## 2026-10-22 — tests on the higher-memory laptop
 
 Checkout branch `lm`, create the Python 3.11 environment, and install the locked

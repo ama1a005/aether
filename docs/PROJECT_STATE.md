@@ -1,5 +1,17 @@
 # AETHER Project State
 
+## 2026-10-22 Phase-1 probe-baseline implementation checkpoint
+
+- Added a deterministic L2 logistic linear-probe baseline with development-only
+  fitting, train-only standardization, immutable sample/feature provenance,
+  disjoint fit/evaluation identities, and an explicit test-split lock.
+- Added tie-invariant AUROC/PR-AUC calculation and seeded label-permutation
+  controls. Probe prediction is documented as correlational rather than causal.
+- Added a model-free synthetic acceptance runner with raw metrics, permutation
+  controls, split/identity checks, and an automatic hashed run manifest.
+- No model activations were loaded and no validation or test examples were used.
+  A real activation-probe comparison remains unexecuted.
+
 ## 2026-10-22 Phase-1 search/remediation implementation checkpoint
 
 - Work continues on branch `lm`; future repository pushes for this work target `lm`.

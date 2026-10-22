@@ -20,6 +20,12 @@ Do not access held-out cases or launch unqualified internal model experiments.
 Preserve frozen contracts and historical results. Run unit/integration/regression
 checks and the new synthetic acceptance command before committing on `lm`.
 
+Follow-on bounded task: implement the mandatory NARCBench-style correlational
+linear-probe baseline as reusable evaluation code. Require disjoint sample IDs,
+development-only fitting by default, train-only standardization, deterministic
+L2 logistic fitting, AUROC/PR-AUC, constant-feature safety, and seeded label
+permutation controls. Do not load activations or execute validation/test here.
+
 ## Historical task — reliability verification (2026-10-21)
 
 Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.
