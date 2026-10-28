@@ -60,6 +60,24 @@ def test_attack_store_list_family(temp_store):
     assert len(fam1_specs) == 2
     assert all(s.family == "fam1" for s in fam1_specs)
 
+
+def test_phase1_corpus_adds_deterministic_implicit_preference_family(temp_store):
+    builder = CorpusBuilder(seed=42)
+    specs = builder.build_phase1_corpus(temp_store, n_per_family=3)
+    assert len(specs) == 12
+    implicit = [spec for spec in specs if spec.family == "implicit_preference_manipulation"]
+    assert len(implicit) == 3
+    assert all(spec.target_surface == "mcp_tool_description" for spec in implicit)
+    assert all(spec.metadata["explicit_command"] is False for spec in implicit)
+    assert all("DO_NOT_ESCALATE" not in spec.adversarial_payload["description"] for spec in implicit)
+    assert builder.build_phase1_corpus(temp_store, 3)[-3:] == implicit
+
+
+@pytest.mark.parametrize("count", [0, -1, 1.5, True])
+def test_phase1_corpus_rejects_invalid_family_count(temp_store, count):
+    with pytest.raises(ValueError, match="positive integer"):
+        CorpusBuilder().build_phase1_corpus(temp_store, count)
+
 def test_mcptox_adapter_mapping():
     adapter = MCPToxAdapter()
     mcptox_attack = {

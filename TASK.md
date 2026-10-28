@@ -48,6 +48,18 @@ mandatory scheduled deliverables: path/residual/head/SAE interventions, implicit
 preference manipulation, AgentDojo, Agent C, red-team orchestration, and the
 external benchmark summary. Each receives its own bounded implementation task.
 
+## Current bounded task — mandatory advanced intervention library
+
+Implement additive, architecture-neutral path, residual-stream, head-output,
+and SAE-feature patching without changing frozen contracts or legacy operators.
+Every intervention must require explicit component identity, token positions,
+clean/attacked source label, and operator-specific head/feature indices. Fail
+closed on shape, dtype/device, index, module-path, duplicate-target, and codec
+errors. Preserve tuple outputs and remove hooks on both success and failure.
+Add deterministic tiny-model unit/integration acceptance and metadata tests.
+This task verifies intervention mechanics only; do not load a model or access
+validation/test data.
+
 ## Historical task — reliability verification (2026-10-21)
 
 Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.

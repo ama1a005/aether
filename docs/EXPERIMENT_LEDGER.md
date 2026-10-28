@@ -1,5 +1,14 @@
 # Experiment Ledger
 
+## P0_mech_20261028_advanced_ops_0 — synthetic acceptance
+
+- Evidence class: toy-model software acceptance for residual, head-output,
+  SAE-feature, and ordered path patching.
+- Raw baseline/patched outputs, exact intervention addresses, source labels, and
+  a hashed manifest are written automatically under ignored `.local/`.
+- Interpretation: operator mechanics only; no localization, model, validation,
+  test, or external-benchmark result is claimed.
+
 ## P0_rl_20261028_ppo_0 — synthetic acceptance
 
 - Evidence class: software acceptance on a declared three-node heterogeneous

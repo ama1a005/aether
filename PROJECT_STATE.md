@@ -7,6 +7,10 @@ a typed heterogeneous pruning environment and masked PPO implementation; its
 model-free acceptance is in progress. RL is a prior-art baseline, not the
 project novelty. Qualification and held-out split gates remain unchanged.
 
+Advanced path/residual/head/SAE intervention mechanics and the fourth implicit-
+preference attack-family generator are now implemented with synthetic/unit
+acceptance. Real-model and benchmark evaluation remain unexecuted.
+
 Development continues on branch `lm`. Budgeted greedy/beam search, matched
 random controls, receiver-only scope, strict Pareto repair selection, a
 leakage-resistant correlational linear-probe baseline, portable checks, and

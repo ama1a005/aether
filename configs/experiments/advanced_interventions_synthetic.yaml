@@ -1,0 +1,5 @@
+experiment_id: P0_mech_20261028_advanced_ops_0
+evidence_class: synthetic_acceptance_only
+seed: 23
+split: synthetic
+output_root: .local/advanced_intervention_acceptance

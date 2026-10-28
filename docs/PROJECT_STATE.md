@@ -1,5 +1,16 @@
 # AETHER Project State
 
+## 2026-10-28 advanced interventions and fourth-family checkpoint
+
+- Added strict residual-stream, attention-head-output, SAE-feature, and ordered
+  multi-site path patching with explicit token/head/feature addresses and source
+  provenance. Hooks are removed on success and failure; tuple outputs survive.
+- Added manifest-backed synthetic acceptance covering all advanced operators.
+- Added the mandatory implicit-preference-manipulation family through a new
+  Phase 1 corpus builder while preserving the historical three-family review
+  corpus and artifacts. This family is implemented but not yet model-evaluated.
+- No real model, validation split, test split, or external benchmark was used.
+
 ## 2026-10-28 mandatory Phase-1 RL implementation checkpoint
 
 - All features formerly marked optional in Phase 1 are now mandatory scheduled
