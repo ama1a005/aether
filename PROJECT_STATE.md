@@ -11,6 +11,9 @@ Advanced path/residual/head/SAE intervention mechanics and the fourth implicit-
 preference attack-family generator are now implemented with synthetic/unit
 acceptance. Real-model and benchmark evaluation remain unexecuted.
 
+The mandatory Agent C policy/review path is also implemented additively with a
+manifest-backed deterministic acceptance; the two-agent baseline is preserved.
+
 Development continues on branch `lm`. Budgeted greedy/beam search, matched
 random controls, receiver-only scope, strict Pareto repair selection, a
 leakage-resistant correlational linear-probe baseline, portable checks, and

@@ -1,0 +1,5 @@
+experiment_id: P0_target_20261028_three_agent_0
+evidence_class: synthetic_acceptance_only
+seed: 31
+split: synthetic
+output_root: .local/three_agent_acceptance

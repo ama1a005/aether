@@ -1,5 +1,12 @@
 # Experiment Ledger
 
+## P0_target_20261028_three_agent_0 — synthetic acceptance
+
+- Evidence class: deterministic software acceptance for the additive A→B→C path.
+- Agent C records mediator-policy reasons and one declared clean verification
+  tool call while preserving Agent B's raw decision.
+- This is not model, validation, test, benchmark, or clinical evidence.
+
 ## P0_mech_20261028_advanced_ops_0 — synthetic acceptance
 
 - Evidence class: toy-model software acceptance for residual, head-output,

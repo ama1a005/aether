@@ -1,5 +1,13 @@
 # AETHER Project State
 
+## 2026-10-28 mandatory Agent C checkpoint
+
+- Added an additive policy/review Agent C with an explicit clean verification-
+  tool condition, frozen threshold, auditable reasons, and raw tool-call records.
+- Added deterministic A→B→C orchestration while preserving Agent B's raw output
+  and the separately runnable two-agent baseline.
+- Manifest-backed synthetic acceptance passed without model/validation/test use.
+
 ## 2026-10-28 advanced interventions and fourth-family checkpoint
 
 - Added strict residual-stream, attention-head-output, SAE-feature, and ordered

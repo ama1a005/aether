@@ -60,6 +60,15 @@ Add deterministic tiny-model unit/integration acceptance and metadata tests.
 This task verifies intervention mechanics only; do not load a model or access
 validation/test data.
 
+## Current bounded task — mandatory Agent C review path
+
+Add an explicit policy/review Agent C that consumes Agent B's decision and the
+serialized mediator, optionally performs the declared clean verification-tool
+call, and emits an auditable reviewed decision without consulting ground truth.
+Preserve the two-agent path as a separately runnable baseline. Add deterministic
+three-agent orchestration, raw review reasons/tool calls, unit/integration tests,
+and synthetic-only acceptance. Do not change frozen contracts.
+
 ## Historical task — reliability verification (2026-10-21)
 
 Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.
