@@ -25,7 +25,7 @@ The document defines:
 
 - the research problem and exact project identity;
 - what is and is not claimed as novel;
-- the major contribution and optional extensions;
+- the major contribution and dependency-ordered extensions;
 - the literature position and closest prior art;
 - the threat model and experimental assumptions;
 - the complete software architecture;
@@ -111,7 +111,7 @@ This distinction is binding for implementation and writing.
 - activation capture;
 - activation patching/ablation/intervention machinery;
 - receiver-only circuit/mechanism discovery;
-- random, greedy, beam and optional MechRL-style/RL search infrastructure;
+- random, greedy, beam and mandatory MechRL-style/RL search infrastructure;
 - activation steering and other receiver-side repair primitives;
 - message sanitization/patching;
 - rollback/replay/recovery primitives;
@@ -166,7 +166,7 @@ The architecture correction does **not** change the major project deadlines or r
 
 ### Catch-up rule for dated milestones
 
-A calendar date that has already passed is treated as a **checkpoint, not permission to fabricate completion**. Any unfinished task must be marked honestly in `PROJECT_STATE.md` and rolled into the next active dependency block. Optional features are dropped before mandatory causal validation, standardized baselines, or paper reproducibility are sacrificed.
+A calendar date that has already passed is treated as a **checkpoint, not permission to fabricate completion**. Any unfinished task must be marked honestly in `PROJECT_STATE.md` and rolled into the next active dependency block. Declared Phase 1 features remain mandatory and are dependency-ordered; blocked work is reported rather than silently dropped, and causal validation, standardized baselines, and paper reproducibility remain gates.
 
 The fixed late-Phase-1 protection gates remain especially important:
 
@@ -333,7 +333,7 @@ This section is intentionally hostile to AETHER's own novelty. A contribution is
 
 **PropGuard (2026 preprint)** is especially important. Its full text models multi-agent executions as response/full-state spatio-temporal graphs, uses a GE-GRPO-trained inspector to explore compact suspicious propagation subgraphs, verifies harmful propagation, and performs source-guided remediation. Its graph nodes contain responses, received messages, memory, and tool observations rather than per-layer neural activations. This leaves a possible internal-component distinction for AETHER, but eliminates any claim of novelty for "RL + multi-agent propagation graph + compact subgraph + remediation."
 
-**Implication for AETHER:** RL is optional search machinery. The scientific comparison is whether internal-component interventions on both sides of a message add value beyond PropGuard/CASPIAN-style trace/state propagation analysis.
+**Implication for AETHER:** RL is mandatory comparison machinery but is not the novelty. The scientific comparison is whether internal-component interventions on both sides of a message add value beyond PropGuard/CASPIAN-style trace/state propagation analysis.
 
 ## 4.3 Cross-agent causal attribution already exists
 
@@ -536,7 +536,7 @@ The locked test set is then used once for final comparison against:
 - fixed whole-message repair/filter;
 - fixed receiver intervention;
 - trace-level causal repair/replay where reproducible;
-- optionally a fixed sender intervention.
+- a fixed sender intervention.
 
 ### Publication-safe claim
 
@@ -663,7 +663,7 @@ The project uses hypotheses that can fail. No hypothesis is converted into a nov
 
 ## H5 — Complex search algorithms are justified only if they improve the quality–cost trade-off
 
-**Independent variable:** DCMG search method: random, greedy, beam, optional RL/MechRL-style policy, and Phase 2 hierarchical search if implemented.  
+**Independent variable:** DCMG search method: random, greedy, beam, and a mandatory RL/MechRL-style policy; hierarchical search remains Phase 2.
 **Dependent variables:** causal-quality metric(s), compactness, number of intervention evaluations/forward passes, wall-clock time, and stability across seeds.  
 **Protocol:** identical candidate graph and evaluation data, with equal or explicitly reported budgets.  
 **Expected result:** a complex search method is retained only if it offers reproducible benefit over simpler search.  
@@ -751,15 +751,15 @@ Responsibilities:
 Responsibilities:
 
 - consume Agent A's message;
-- optionally call one additional MCP tool;
+- call one additional MCP tool in the declared Agent-B tool-use condition;
 - produce a constrained decision:
   - `ESCALATE`,
   - `DO_NOT_ESCALATE`,
-  - optionally confidence/logit proxy.
+  - confidence/logit proxy.
 
 The binary decision makes attack success easy to label.
 
-### Optional Agent C — Policy/Review Agent
+### Mandatory Phase 1 Agent C — Policy/Review Agent
 
 Only add if needed in Phase 2. Phase 1 should not require three agents for the main claim.
 
@@ -838,14 +838,14 @@ LAYER 1 — TARGET / AGENT EXECUTION
             ↓
     Receiver Agent B
             ↓
-    optional policy/review/escalation component
+    policy/review/escalation component
             ↓
     objective behavioral outcome
 
 LAYER 2 — ADVERSARIAL TESTING
     standardized MCPTox/TAMAS-derived conditions
     + existing deterministic attack corpus
-    + optional Recon → Planner → Exploit → Debrief orchestration
+    + Recon → Planner → Exploit → Debrief orchestration
     + tool-description poisoning
     + tool-output poisoning
     + A2A/message tampering
@@ -867,7 +867,7 @@ LAYER 4 — EXISTING MECHANISTIC / ATTRIBUTION METHODS
     activation/probe baselines
     trace/message counterfactual attribution
     random / greedy / beam search
-    optional MechRL-style / RL search
+    mandatory MechRL-style / RL search
 
 LAYER 5 — NEW PHASE 1 RESEARCH ADD-ON
     sender internal candidates
@@ -892,7 +892,7 @@ LAYER 6 — SEARCH / EXPLANATION
     random baseline
     greedy search
     beam search
-    optional RL search if it earns its cost
+    mandatory RL baseline; primary-method status still depends on evidence
     compact mechanism under declared graph/operator/budget
 
 LAYER 7 — REMEDIATION LIBRARY
@@ -936,7 +936,7 @@ LAYER 9 — STANDARDIZED EVALUATION
 | patching/ablation/intervention engine | yes | required causal machinery |
 | receiver-only circuit discovery | yes | important baseline and platform diagnostic |
 | random/greedy/beam search | yes | mandatory search baselines |
-| MechRL-style/RL search | yes, optional | comparison method; retained only if useful |
+| MechRL-style/RL search | yes, mandatory Phase 1 | comparison method; headline status depends on evidence |
 | activation steering | yes | one remediation candidate |
 | rollback/replay/recovery | yes | remediation candidate / system feature |
 | remediation selector | yes | upgraded to constrained tri-location/Pareto evaluation |
@@ -1200,7 +1200,7 @@ Required Phase 1 operators:
 - mean or resample ablation from a matched clean/control distribution;
 - zero ablation as an efficiency/sensitivity baseline.
 
-Optional:
+Mandatory Phase 1 advanced operators:
 
 - path patching;
 - residual-stream patching;
@@ -1304,7 +1304,7 @@ Tool returns adversarial but syntactically valid content.
 
 Structured field or evidence statement altered before receiver consumption.
 
-## 15.2 Optional Phase 1 fourth class
+## 15.2 Mandatory Phase 1 fourth class
 
 ### A4 — Implicit preference manipulation
 
@@ -1367,7 +1367,7 @@ Use official or pinned releases without semantic modification when reporting ben
 2. **TAMAS (ACL 2026)** — standardized multi-agent adversarial robustness with 300 adversarial instances, six attack types, 211 tools, five scenarios, and 100 harmless tasks.
 3. **BFCL (ICML 2025; pinned evaluator/tooling)** — benign tool/function-calling competence.
 
-**Optional Phase 1 / recommended Phase 2 cross-check:**
+**Mandatory Phase 1 external cross-check:**
 
 4. **AgentDojo (NeurIPS 2024)** — tool-using agent robustness to untrusted data/prompt injection; 97 realistic tasks and 629 security cases in the published benchmark.
 
@@ -1472,7 +1472,7 @@ Do not silently change tool schemas or scoring rules and continue calling the re
 
 AgentDojo is a NeurIPS 2024 Datasets & Benchmarks framework with 97 realistic tasks and 629 security test cases in the published version.
 
-Phase 1: optional but valuable pilot if it does not delay TAMAS/MCPTox/DCMG.
+Phase 1: mandatory external security/utility cross-check, scheduled after the dependency-gating benchmark foundations.
 
 Phase 2: recommended external cross-check for indirect prompt injection and utility preservation.
 
@@ -1885,7 +1885,7 @@ Purpose: closest mechanistic baseline.
 
 ## B5 — Receiver-only MechRL-style search
 
-Strong optional Phase 1 / recommended Phase 2 baseline if stable and budget permits.
+Mandatory Phase 1 baseline. Instability or resource limits are reported outcomes, not grounds for omission.
 
 ## B6 — Whole-message intervention
 
@@ -1949,7 +1949,7 @@ Determines whether sophisticated search is necessary.
 
 ## ABL7 — RL vs deterministic search
 
-Only if RL is implemented; compare at matched query/compute budget.
+Mandatory; compare at matched query/compute budget.
 
 ## ABL8 — intervention operator
 
@@ -2287,7 +2287,7 @@ M4.8 distributed causal-quality checker
 
 - reproduce simple single-agent environment;
 - implement stable reward;
-- optionally extend from receiver-only nodes to the full sender/message/receiver DCMG candidate set.
+- extend from receiver-only nodes to the full sender/message/receiver DCMG candidate set.
 
 ### Phase 2 scope
 
@@ -4098,7 +4098,7 @@ Rows:
 - receiver greedy;
 - receiver RL;
 - DCMG greedy;
-- DCMG RL if ready and justified by matched-budget results.
+- DCMG RL, with primary-method status determined by matched-budget results.
 
 ## Table 3 — Ablation
 
@@ -4190,7 +4190,7 @@ The project must remain gradable even if difficult methods fail.
 
 ## Tier 3 — strong Phase 1 / Phase 2
 
-- optional RL DCMG search;
+- RL DCMG search;
 - generalization;
 - memory attacks;
 - gated defense.
@@ -4707,7 +4707,7 @@ reproducible repository
 → paper
 ```
 
-Optional platform breadth is postponed rather than weakening the evidence required for the Phase 1 paper.
+Mandatory platform breadth is dependency-ordered rather than allowed to weaken the evidence required for the Phase 1 paper.
 
 
 # 64. Detailed operational plan from October 9 to November 16
@@ -5875,7 +5875,7 @@ This ordering matters because the paper must show that the DCMG/BVP causal repre
 
 ## 81.3 Phase 1 RL rule
 
-RL is not mandatory as the headline algorithm if it fails to outperform simpler search by the method-freeze date. The primary research hypothesis concerns incremental causal resolution from explicit distributed mediation; PPO/GRPO/RL is only one possible search implementation.
+RL is mandatory as a Phase 1 baseline but does not automatically become the headline algorithm. The primary research hypothesis concerns incremental causal resolution from explicit distributed mediation; PPO/GRPO/RL remains prior-art search machinery and must earn any primary-method role through matched-budget evidence.
 
 The paper may present:
 
@@ -6003,7 +6003,7 @@ Compare:
 - random;
 - greedy;
 - ACDC/established method where practical;
-- MechRL-style search if implemented.
+- MechRL-style search.
 
 Output:
 
@@ -6048,7 +6048,7 @@ Methods:
 
 - receiver probe;
 - receiver greedy causal discovery;
-- optional receiver MechRL-style discovery.
+- receiver MechRL-style discovery.
 
 Output:
 

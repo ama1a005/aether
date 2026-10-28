@@ -1,5 +1,16 @@
 # Experiment Ledger
 
+## P0_rl_20261028_ppo_0 — synthetic acceptance
+
+- Evidence class: software acceptance on a declared three-node heterogeneous
+  sender/message/receiver path with nuisance candidates.
+- Methods: matched-budget random, greedy, beam, masked PPO, and PPO reward
+  ablations removing size, cost, and feasible-stop terms.
+- Claim boundary: this verifies mechanics only. It is not real-model evidence,
+  held-out evidence, an RL superiority result, or an RL novelty claim.
+- Exact execution outcome and run directory are recorded only when the smoke
+  command is executed; no result number is entered manually here.
+
 ## P0_probe_20261022_synthetic_0 — synthetic acceptance (executed 2026-10-22)
 
 - Evidence class: software acceptance on generated development arrays containing

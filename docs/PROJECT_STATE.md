@@ -1,5 +1,22 @@
 # AETHER Project State
 
+## 2026-10-28 mandatory Phase-1 RL implementation checkpoint
+
+- All features formerly marked optional in Phase 1 are now mandatory scheduled
+  deliverables; Phase 2 remains deferred.
+- Added a typed sender/message/receiver pruning MDP with masked node-removal and
+  stop actions, persistent unique-mask query accounting, raw evaluator records,
+  explicit feasibility constraints, and decomposed reward terms.
+- Added a dependency-free PyTorch PPO actor-critic with GAE, clipped policy loss,
+  value loss, entropy regularization, gradient clipping, deterministic isolated
+  RNG state, and non-finite-loss rejection.
+- Added matched synthetic random/greedy/beam/PPO comparison and size/cost/stop
+  reward ablations with an automatic manifest. This is software acceptance only;
+  no model, validation, or test data was accessed.
+- Remaining Phase 1 mandatory work follows after this checkpoint: real qualified
+  receiver/DCMG RL comparisons, advanced interventions, fourth attack family,
+  AgentDojo, Agent C, red-team orchestration, and external benchmark reporting.
+
 ## 2026-10-22 Phase-1 probe-baseline implementation checkpoint
 
 - Added a deterministic L2 logistic linear-probe baseline with development-only

@@ -1,0 +1,22 @@
+experiment_id: P0_rl_20261028_ppo_0
+evidence_class: synthetic_acceptance_only
+seed: 7
+split: synthetic
+max_queries: 32
+faithfulness_threshold: 0.99
+max_benign_damage: 0.0
+beam_width: 3
+random_samples: 32
+training_steps: 128
+rollout_steps: 32
+update_epochs: 2
+hidden_size: 64
+learning_rate: 0.0003
+reward:
+  effect: 1.0
+  benign: 1.0
+  size: 0.1
+  cost: 0.001
+  feasible_stop_bonus: 0.25
+ablations: [no_size, no_cost, no_stop_bonus]
+output_root: .local/rl_acceptance

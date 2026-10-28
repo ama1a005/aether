@@ -1,5 +1,15 @@
 # Research Decisions
 
+## RD-032 — Make all declared Phase 1 features mandatory and implement RL first (2026-10-28)
+
+- **Decision:** former Phase 1 optional features are mandatory dependency-ordered
+  deliverables. PPO search is implemented first with typed heterogeneous actions,
+  a stop action, a global unique-mask query budget, explicit reward components,
+  reward ablations, and matched deterministic baselines.
+- **Claim boundary:** RL remains prior art and cannot be described as AETHER's
+  novelty. Synthetic acceptance is software evidence only. Model, validation,
+  and test gates remain binding; blocked work is reported rather than omitted.
+
 ## RD-030 — Treat linear probes as leakage-controlled correlation baselines (2026-10-22)
 
 - **Decision:** fit deterministic L2 logistic probes on development data only,
@@ -10,17 +20,18 @@
   intervention or causal edge. Synthetic acceptance verifies software mechanics
   only and cannot support a model, benchmark, or DCMG superiority claim.
 
-## RD-029 — Use auditable deterministic search before optional RL (2026-10-22)
+## RD-029 — Use auditable deterministic search before RL (2026-10-22; superseded 2026-10-28)
 
 - **Decision:** implement greedy and beam DCMG search with one shared query
   accounting model, receiver-only scope, and region/count-matched random controls.
-- **Reason:** `Phase1Project.md` makes random, greedy, and beam mandatory while RL
-  is optional. The model qualification gate is still closed, so synthetic
+- **Reason:** The original decision made random, greedy, and beam mandatory while
+  deferring RL. User direction on 2026-10-28 now makes RL a mandatory Phase 1
+  baseline. The model qualification gate is still closed, so synthetic
   acceptance validates software mechanics without creating empirical model claims.
 - **Boundary:** a search result is a measured candidate under its evaluator and
   budget. Causal and BVP claims still require executed interventions and controls.
 
-## RD-030 — Preserve the signed frozen faithfulness formula (2026-10-22)
+## RD-031 — Preserve the signed frozen faithfulness formula (2026-10-22)
 
 - **Decision:** remove implementation clipping from `compute_faithfulness`.
 - **Reason:** the frozen contract defines `1 - |Delta_full-Delta_C| / (|Delta_full|+epsilon)`.
@@ -48,7 +59,7 @@ metric changed, and no new model/benchmark experiment was run.
 
 ## 2026-10-20 — external FHIR MCP review boundary
 
-The primary review path uses official WSO2 FHIR MCP and local HAPI FHIR R4. Direct FHIR is allowed only for setup seeding. Interactive real mode fails closed. Attacks modify AETHER evidence after retrieval; WSO2/HAPI remain clean. Deterministic agents are primary and Qwen is optional.
+The primary review path uses official WSO2 FHIR MCP and local HAPI FHIR R4. Direct FHIR is allowed only for setup seeding. Interactive real mode fails closed. Attacks modify AETHER evidence after retrieval; WSO2/HAPI remain clean. Deterministic agents remain the reliable review path; Qwen execution is a mandatory but qualification-gated Phase 1 deliverable.
 
 ## 2026-10-19 — isolate review-demo GPU/MCP runtime
 

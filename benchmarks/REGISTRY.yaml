@@ -103,4 +103,4 @@ official_evaluator: true
 role: external_security_benchmark
 allowed_splits: [test]
 modifications: none
-notes: "97 tasks, 629 security test cases. Phase 1: optional. Phase 2: mandatory external generalization benchmark."
+notes: "97 tasks, 629 security test cases. Mandatory Phase 1 cross-check and Phase 2 external generalization benchmark; execution remains dependency-gated."

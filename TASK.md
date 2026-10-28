@@ -26,6 +26,28 @@ development-only fitting by default, train-only standardization, deterministic
 L2 logistic fitting, AUROC/PR-AUC, constant-feature safety, and seeded label
 permutation controls. Do not load activations or execute validation/test here.
 
+## Current bounded task — mandatory Phase 1 RL search baseline
+
+User direction: every feature previously labelled optional in Phase 1 is now a
+must-build deliverable. Phase 2 scope remains deferred. Implement RL first as a
+reproducible comparison method; the frozen contract still forbids claiming RL
+itself as novel.
+
+Build a typed sender/message/receiver pruning environment with a stop action,
+strict global intervention-query accounting, raw query retention, deterministic
+seeding, explicit reward components, and development/synthetic-only split locks.
+Implement a dependency-free PyTorch PPO actor-critic with masked categorical
+actions, clipped objective, value loss, entropy term, gradient clipping, and
+finite-value checks. Compare PPO with random, greedy, and beam on the same mock
+candidate graph and evaluator under declared budgets. Add reward ablations,
+unit/integration tests, an automatic run manifest, and honest convergence/cost
+reporting. Do not access a model, validation data, or test data in this task.
+
+After the RL checkpoint, convert the remaining former Phase 1 optional items to
+mandatory scheduled deliverables: path/residual/head/SAE interventions, implicit
+preference manipulation, AgentDojo, Agent C, red-team orchestration, and the
+external benchmark summary. Each receives its own bounded implementation task.
+
 ## Historical task — reliability verification (2026-10-21)
 
 Repair reproducible demo/runtime defects, verify external MCP and all twelve demo cases, run existing tests and smoke checks, and document unresolved limits. No new research experiments, benchmark downloads, or frozen-contract changes. Preserve historical artifacts.
@@ -128,4 +150,4 @@ Resolve live-demo dependencies through a verified online or offline wheelhouse, 
 
 ## Current bounded task — external WSO2 FHIR MCP review integration (2026-10-20)
 
-Replace the custom MCP primary path with digest-pinned WSO2 FHIR MCP over Streamable HTTP and local HAPI FHIR R4. Preserve mock/replay only as explicit modes. Deterministic agents are primary; Qwen is optional. Implementation and partial live acceptance are complete. Host MCP SDK acquisition and full live 12-case qualification are blocked by the package proxy.
+Replace the custom MCP primary path with digest-pinned WSO2 FHIR MCP over Streamable HTTP and local HAPI FHIR R4. Preserve mock/replay only as explicit modes. Deterministic agents remain the reliable primary path; Qwen execution is a mandatory but qualification-gated Phase 1 deliverable. Implementation and partial live acceptance are complete. Host MCP SDK acquisition and full live 12-case qualification are blocked by the package proxy.

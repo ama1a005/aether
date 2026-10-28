@@ -1,6 +1,12 @@
 # PROJECT_STATE.md
 ## Current Phase-1 implementation checkpoint: 2026-10-22
 
+As of 2026-10-28, all features previously labelled optional in Phase 1 are
+mandatory dependency-ordered deliverables. The first RL milestone now includes
+a typed heterogeneous pruning environment and masked PPO implementation; its
+model-free acceptance is in progress. RL is a prior-art baseline, not the
+project novelty. Qualification and held-out split gates remain unchanged.
+
 Development continues on branch `lm`. Budgeted greedy/beam search, matched
 random controls, receiver-only scope, strict Pareto repair selection, a
 leakage-resistant correlational linear-probe baseline, portable checks, and
