@@ -14,6 +14,7 @@ import yaml
 
 from discovery.budgeted import Candidate, Evaluation, SearchConfig, random_control, search
 from discovery.rl.ppo import PPOConfig, RewardWeights, ppo_search_with_trace
+from discovery.rl.policy import evaluate_policy, load_policy, save_policy
 from experiments.manifest import create_run_manifest, write_run_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -73,6 +74,14 @@ def run(config_path: Path, output_root: Path | None = None) -> Path:
     run_id = f"{config['experiment_id']}_{uuid4().hex}"
     destination = (output_root or ROOT / config["output_root"]) / run_id
     destination.mkdir(parents=True, exist_ok=False)
+    checkpoint = destination / "ppo_policy.json"
+    save_policy(ppo.policy, checkpoint)
+    results["ppo_frozen_policy"] = evaluate_policy(
+        load_policy(checkpoint), CANDIDATES, evaluate_mask, search_config)
+    checks["frozen_policy_respects_query_budget"] = (
+        results["ppo_frozen_policy"].queries <= search_config.max_queries)
+    checks["frozen_policy_raw_queries_retained"] = all(
+        record.evaluation.raw_outputs for record in results["ppo_frozen_policy"].records)
     output = destination / "results.json"
     payload = {"run_id": run_id, "utc_timestamp": datetime.now(timezone.utc).isoformat(),
                "evidence_class": config["evidence_class"], "checks": checks,
@@ -96,7 +105,8 @@ def run(config_path: Path, output_root: Path | None = None) -> Path:
         search_config={"shared": asdict(search_config), "ppo": asdict(ppo_config),
                        "reward": asdict(weights), "ablations": config["ablations"]},
         intervention_config={"operator": "zero_excluded_nodes", "query_unit": "unique_mask"},
-        artifact_paths=[output, ROOT / "discovery/rl/ppo.py"],
+        artifact_paths=[output, checkpoint, ROOT / "discovery/rl/ppo.py",
+                        ROOT / "discovery/rl/policy.py"],
         timing_seconds={"execution": perf_counter() - started}, repository=ROOT)
     write_run_manifest(manifest, destination / "manifest.json")
     if not all(checks.values()):

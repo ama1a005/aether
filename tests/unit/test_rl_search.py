@@ -2,6 +2,7 @@
 
 import pytest
 import torch
+import numpy as np
 
 from discovery.budgeted import Candidate, Evaluation, SearchConfig
 from discovery.rl.ppo import (CausalPruningEnv, PPOConfig, RewardWeights, ppo_search,
@@ -11,6 +12,28 @@ from discovery.rl.ppo import (CausalPruningEnv, PPOConfig, RewardWeights, ppo_se
 CANDIDATES = tuple(Candidate(identifier, region) for identifier, region in (
     ("S", "sender"), ("SN", "sender"), ("M", "message"),
     ("MN", "message"), ("R", "receiver"), ("RN", "receiver")))
+
+
+@pytest.mark.parametrize("terminated,expected_return", [(False, 2.8), (True, 1.0)])
+def test_gae_bootstraps_rollout_cutoff_but_not_terminal(monkeypatch, terminated, expected_return):
+    from discovery.rl.ppo import _ActorCritic, _update
+    model = _ActorCritic(1, 2, 2)
+    with torch.no_grad():
+        for parameter in model.parameters():
+            parameter.zero_()
+    observed_errors = []
+    original_square = torch.square
+
+    def capture_value_error(value):
+        observed_errors.append(value.detach().clone())
+        return original_square(value)
+
+    monkeypatch.setattr(torch, "square", capture_value_error)
+    transitions = [(np.zeros(1, dtype=np.float32), np.ones(2, dtype=bool),
+                    0, -np.log(2), 0.0, terminated, 1.0)]
+    _update(model, torch.optim.Adam(model.parameters()), transitions,
+            PPOConfig(gamma=0.9, update_epochs=1), bootstrap_value=2.0)
+    assert observed_errors[0].item() == pytest.approx(-expected_return)
 
 
 def evaluator(mask: tuple[str, ...]) -> Evaluation:
@@ -26,10 +49,15 @@ def test_environment_has_typed_removals_stop_and_global_query_ledger():
     assert env.action_mask().tolist() == [True] * 7
     noise = next(index for index, item in enumerate(env.ids) if item == "MN")
     _, reward, done, breakdown = env.step(noise)
-    assert reward > 0 and breakdown.size < 0 and not done
+    assert reward > 0 and breakdown.size > 0 and not done
     assert len(env.cache) == 2
     env.reset()
-    env.step(noise)
+    _, _, _, cached_breakdown = env.step(noise)
+    assert cached_breakdown.cost == 0.0
+    assert breakdown.cost == pytest.approx(-0.004)
+    assert breakdown.total == pytest.approx(sum((breakdown.effect, breakdown.benign,
+                                                 breakdown.size, breakdown.cost,
+                                                 breakdown.feasible_stop)))
     assert len(env.cache) == 2  # repeated episode uses measured cache
     _, stop_reward, done, stopped = env.step(env.stop_action)
     assert done and stop_reward == stopped.feasible_stop > 0

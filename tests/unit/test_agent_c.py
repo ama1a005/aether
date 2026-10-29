@@ -49,3 +49,14 @@ def test_agent_c_configuration_and_input_fail_closed():
         AgentC("c", {"risk_score_threshold": 2})
     with pytest.raises(ValueError, match="invalid decision"):
         AgentC("c", {}).run("UNKNOWN", message(), case())
+
+
+@pytest.mark.parametrize("score", [float("nan"), float("inf"), -0.1, 1.1, True])
+def test_invalid_verification_score_is_not_treated_as_reassuring(score):
+    class InvalidTool:
+        def call_tool(self, *args, **kwargs):
+            return {"risk_score": score}
+
+    agent = AgentC("c", {"use_verification_tool": True}, InvalidTool())
+    with pytest.raises((ValueError, TypeError)):
+        agent.run("DO_NOT_ESCALATE", message(), case())

@@ -1,6 +1,40 @@
 # TASK.md — AETHER Sprint Task Board
 
-## Current bounded task — Phase 1 search baseline completion on lm
+## Bounded follow-on — portable PPO policy evaluation
+
+## Authorized build batch — orchestration and portable experiments
+
+Implement bounded recon/planner/execution/debrief with an explicit backend,
+four-family surface validation, fixed pre-output eligibility, raw error records,
+query budgets, safe resume, structured logs and reproducibility manifests.
+Add an executable rule-based acceptance backend without silently upgrading
+implicit attacks into explicit commands. Build reusable multi-seed search
+comparisons and local benchmark input adapters with explicit compatibility
+limits. Test offline; no dataset/model downloads or locked-split execution.
+Preserve historical artifacts, user frontend edits and frozen contracts.
+
+Save validated JSON policy weights, reload without pickle, and evaluate a frozen
+policy with a fresh query ledger. Report its terminal choice separately from
+best-visited training search. Preserve development/synthetic split locks and
+include the checkpoint in synthetic acceptance manifests.
+Also remove the confirmed missing-fixture fabrication fallback and isolate
+case-loader random state, with regression tests preserving synthetic behavior.
+
+## Current bounded task — Phase 1 conformance audit (2026-10-29)
+
+Follow-on authorized implementation: correct transition reward accounting and
+intervention validation, preserve SAE reconstruction residuals, and implement
+staged path mediation with explicit off-path freezes. Test on branching toy
+models before real-model wiring. Bigger-computer experiments remain pending.
+
+Cross-check Phase1Project.md and build documentation against implemented code,
+tests and executed evidence. Treat every Phase 1 addition as mandatory. Correct
+confirmed numerical and fail-closed defects, document remaining scientific and
+integration gaps, and compare Qwen execution options against frozen MQ-HW1.
+Preserve historical artifacts and unrelated frontend edits. Do not weaken gates
+or report toy acceptance as complete real-model validation.
+
+## Previous bounded task — Phase 1 search baseline completion on lm
 
 User authorization: continue Phase1Project.md; all future pushes target `lm`.
 Scope: additive budgeted greedy/beam search, typed matched-random controls and

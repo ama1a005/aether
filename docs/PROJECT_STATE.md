@@ -1,5 +1,29 @@
 # AETHER Project State
 
+## 2026-10-29 follow-up code repairs
+
+PPO query costs and reward decomposition corrected. Advanced intervention inputs
+and hook execution validated; SAE reconstruction residuals preserved. Added
+staged mediator replay with explicit off-path freezes and a bypass control.
+Replaced placeholder discovery tests. Regression outputs are now isolated in
+temporary workspaces. Verification: 297 unit/integration passed, 5 skipped;
+6 regression passed with tracked historical artifacts unchanged. This resolves
+specific audit findings, not the complete Phase 1 implementation backlog.
+
+## 2026-10-29 conformance audit
+
+See PHASE1_CONFORMANCE_AUDIT.md and QWEN_EXECUTION_OPTIONS.md. Earlier advanced
+operator completion wording describes generic tensor mechanics only: true path
+isolation, trained SAE evaluation and real-model comparisons remain incomplete.
+PPO rollout cutoffs now bootstrap the value; Agent C rejects invalid tool scores.
+Local verification: 284 unit/integration passes, 5 skips; 6 regression passes;
+2 explicitly enabled demo E2E passes; 4 frontend passes and successful build.
+The five default skips include two demo tests (separately passed), two Qwen tests,
+and one GPT-2 test. Dependencies passed pip check. Current available RAM was
+2.193 GiB of 15.67 GiB; this is a transient inventory, not a full MQ-HW1 campaign.
+Historical regression artifacts were restored; generated copies are in ignored
+.local/audit-20261029-generated. User frontend edits were preserved.
+
 ## 2026-10-28 mandatory Agent C checkpoint
 
 - Added an additive policy/review Agent C with an explicit clean verification-
@@ -190,3 +214,42 @@ Current action: manually close memory-heavy applications or reboot, then rerun t
 - Added evidence/status views that retain development, negative, and blocked labels. No validation/test experiment was started.
 - Qwen2.5-1.5B MQ-HW1 remains blocked by verified local host-memory readiness; installed CUDA alone does not clear that gate.
 - Added team ownership, project/member study guides, contribution matrix, and intermediate-review runbook.
+# Saved-policy implementation update — 2026-10-29
+
+Validated JSON PPO checkpoints and fresh-ledger frozen-policy inference now
+work, with regression tests for terminal failure reporting, RNG isolation,
+candidate mismatch, nonfinite parameters and optimizer-free evaluation.
+The smoke manifest includes the policy artifact and inference implementation.
+The executed synthetic run `P0_rl_20261028_ppo_0_ffe014d1f6ff49b7b7dfef926785e876`
+is saved under `.local/rl-policy-acceptance/`. Training search retained M/R/S;
+frozen inference retained M, failed feasibility and consumed 6 queries. This
+does not establish policy competence or generalization. Missing fixture cases
+now raise instead of being fabricated; synthetic loading preserves global RNG.
+Full suite: 306 passed, 5 skipped (3 real-model and 2 opt-in demo tests).
+No model or benchmark was downloaded or executed. No GitHub push was made.
+# Offline orchestration and adapter update — 2026-10-29
+
+The four-family red-team workflow now performs capability recon, pre-output
+eligibility planning, budgeted clean/attack execution and deterministic debrief.
+It persists started attempts before target access, refuses uncertain replay,
+retains errors in denominators, emits structured events, and hashes raw attempts
+in the run manifest. The explicit rule-agent acceptance run made 16 target calls
+for 8 eligible synthetic attempts with no execution errors. Its overall ASR was
+5/8; implicit preference was 0/2. These are executed rule-target measurements,
+not Qwen or external-benchmark evidence.
+An explicit `demo_mcp_stdio` backend now performs real MCP initialization,
+tool discovery and tool calls through the official SDK before the same rule
+agents run. Its full run
+`P0_attack_20261029_mcp_orchestration_0_bb7590de80c74313b78b7a6b0d355257`
+completed 16 calls and 8 eligible attempts without execution errors. It retained
+the same 5/8 synthetic outcome, including 0/2 implicit attacks. The adapter is
+owned by `demo/`, preserving the removable-demo dependency boundary. MCP mode
+is still a synthetic demo-fixture transport check, not external WSO2 or Qwen.
+
+The PTB-XL v1.0.3 adapter now derives structured diagnostic superclasses from
+official metadata, reads no waveforms/reports, requires an explicit data path,
+and locks fold 10 by default. BFCL and AgentDojo exact-version native command
+plans are present; they use official evaluators and label partial BFCL results as
+non-leaderboard. Neither package/dataset has been installed or executed here.
+Matched greedy/beam/random/PPO/frozen-policy multi-seed comparison code is also
+implemented with fresh evaluator instances per method and raw per-seed rows.

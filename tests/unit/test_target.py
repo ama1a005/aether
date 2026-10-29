@@ -20,6 +20,19 @@ def test_case_loader_synthetic():
         assert c.ground_truth_decision in ['ESCALATE', 'DO_NOT_ESCALATE']
         assert 'heart_rate' in c.features
 
+
+def test_case_loader_fails_closed_and_preserves_rng(tmp_path):
+    import random
+    state = random.getstate()
+    CaseLoader('synthetic').load_cases(3, seed=42)
+    assert state == random.getstate()
+    with pytest.raises(FileNotFoundError):
+        CaseLoader('fixture', str(tmp_path)).load_cases(1, seed=42)
+    with pytest.raises(ValueError, match="Unsupported"):
+        CaseLoader('typo')
+    with pytest.raises(ValueError, match="count"):
+        CaseLoader('synthetic').load_cases(-1, seed=42)
+
 def test_case_loader_fixture(tmp_path):
     fixture_dir = tmp_path / "fixtures"
     fixture_dir.mkdir()

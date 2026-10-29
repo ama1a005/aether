@@ -1,0 +1,6 @@
+experiment_id: P0_attack_20261029_orchestration_0
+backend: rule_based
+split: synthetic
+seed: 0
+max_target_calls: 16
+n_per_family: 2

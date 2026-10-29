@@ -1,5 +1,47 @@
 # PROJECT_STATE.md
-## Current Phase-1 implementation checkpoint: 2026-10-22
+## Offline completion batch: 2026-10-29
+
+Red-team recon/planning/execution/debrief, exact-version BFCL/AgentDojo native
+command plans, a structured PTB-XL v1.0.3 metadata adapter, and matched multi-seed
+search comparison code are implemented. The executed rule-target campaign made
+16 calls across 8 eligible attempts and retained all raw attempts/manifests under
+`.local/red-team-acceptance`; its numbers are synthetic software evidence only.
+The demo-owned MCP stdio campaign also completed all 16 calls without errors in
+run `P0_attack_20261029_mcp_orchestration_0_bb7590de80c74313b78b7a6b0d355257`.
+External benchmark packages/data and qualified Qwen remain unexecuted.
+
+## Saved-policy checkpoint: 2026-10-29
+
+PPO JSON checkpoint save/load and independent deterministic inference are
+implemented. The synthetic acceptance separately reports the terminal policy
+choice, including infeasibility. Executed run
+`P0_rl_20261028_ppo_0_ffe014d1f6ff49b7b7dfef926785e876` found M/R/S during
+training but frozen inference retained M and was infeasible (6 queries).
+This is a negative policy result, not learned-policy acceptance.
+Case loading now fails on missing fixtures and does not reset global RNG.
+Latest complete suite: 306 passed, 5 skipped, including 6 passing regressions.
+Phase 1 code and scientific acceptance remain incomplete; consult the audit.
+
+## Latest code verification: 2026-10-29
+
+Follow-up fixes: additive PPO rewards and actual query costs; strict intervention
+validation; SAE residual preservation; staged mediator replay with explicit
+off-path freezes; meaningful discovery tests; isolated regression outputs.
+297 unit/integration tests passed, 5 skipped; 6 regression passed. Full project
+code remains incomplete; see docs/PHASE1_CONFORMANCE_AUDIT.md for remaining work.
+
+## Current Phase-1 conformance review: 2026-10-29
+
+Phase 1 remains incomplete. See docs/PHASE1_CONFORMANCE_AUDIT.md for the
+requirement matrix and corrections to earlier completion claims: simultaneous
+node replacement is not path isolation, identity-codec SAE tests do not validate
+a trained SAE, and synthetic PPO search does not establish policy superiority.
+The audit fixes PPO cutoff bootstrapping and invalid Agent C verification scores.
+Checks: 284 unit/integration passed, 5 skipped; 6 regression passed; 2 opt-in
+demo E2E passed; 4 frontend tests and production build passed. Remote CI and
+real-model qualification are not established by these local checks.
+
+## Previous Phase-1 implementation checkpoint: 2026-10-22
 
 As of 2026-10-28, all features previously labelled optional in Phase 1 are
 mandatory dependency-ordered deliverables. The first RL milestone now includes

@@ -5,19 +5,28 @@ from typing import List, Tuple
 from contracts.schemas import PatientCase, AttackSpec
 
 class CaseLoader:
-    def __init__(self, source: str, fixture_dir: str = 'tests/fixtures'):
+    def __init__(self, source: str, fixture_dir: str = 'tests/fixtures',
+                 ptbxl_root: str | None = None, ptbxl_folds: tuple[int, ...] = (1,)):
+        """Select an explicit supported case source."""
+        if source not in {'synthetic', 'fixture', 'ptbxl'}:
+            raise ValueError(f"Unsupported case source: {source}")
         self.source = source
         self.fixture_dir = fixture_dir
+        self.ptbxl_root = ptbxl_root
+        self.ptbxl_folds = ptbxl_folds
 
     def load_cases(self, n: int, seed: int) -> List[PatientCase]:
-        random.seed(seed)
+        """Load cases deterministically without altering process random state."""
+        if type(n) is not int or n < 0:
+            raise ValueError("Case count must be a nonnegative integer")
+        rng = random.Random(seed)
         cases = []
         
         if self.source == 'synthetic':
             superclasses = ['NORM', 'MI', 'HYP', 'CD', 'STTC']
             for i in range(n):
-                hr = random.randint(50, 150)
-                ecg_class = random.choice(superclasses)
+                hr = rng.randint(50, 150)
+                ecg_class = rng.choice(superclasses)
                 features = {
                     'heart_rate': hr,
                     'ecg_superclass': ecg_class
@@ -25,7 +34,7 @@ class CaseLoader:
                 
                 if ecg_class in ['MI', 'STTC']:
                     decision = 'ESCALATE'
-                    features['st_deviation_mv'] = random.uniform(0.2, 0.5)
+                    features['st_deviation_mv'] = rng.uniform(0.2, 0.5)
                 else:
                     decision = 'DO_NOT_ESCALATE'
                     
@@ -47,16 +56,14 @@ class CaseLoader:
                         case_copy.case_id = f"{base_case.case_id}_{i}"
                         cases.append(case_copy)
             else:
-                # Fallback if fixture doesn't exist during test
-                for i in range(n):
-                    cases.append(PatientCase(
-                        case_id=f"fixture_case_{i}",
-                        features={'heart_rate': 80},
-                        ground_truth_decision='DO_NOT_ESCALATE',
-                        source_dataset='fixture'
-                    ))
+                raise FileNotFoundError(f"Required patient fixture is missing: {fixture_path}")
         elif self.source == 'ptbxl':
-            raise NotImplementedError('PTB-XL adapter not yet implemented — use synthetic or fixture')
+            if self.ptbxl_root is None:
+                raise ValueError('ptbxl_root is required; no dataset path is inferred')
+            from pathlib import Path
+            from benchmarks.ptbxl import load_ptbxl_cases
+            cases = load_ptbxl_cases(Path(self.ptbxl_root), folds=self.ptbxl_folds,
+                                     n=n, seed=seed)
             
         return cases
 

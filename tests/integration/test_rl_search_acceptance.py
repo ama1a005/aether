@@ -11,7 +11,12 @@ def test_rl_acceptance_writes_comparison_ablation_and_manifest(tmp_path: Path):
     result = json.loads((destination / "results.json").read_text(encoding="utf-8"))
     manifest = json.loads((destination / "manifest.json").read_text(encoding="utf-8"))
     assert all(result["checks"].values())
-    assert set(result["results"]) == {"greedy", "beam", "ppo", "matched_random"}
+    assert set(result["results"]) == {"greedy", "beam", "ppo", "matched_random", "ppo_frozen_policy"}
+    from discovery.rl.policy import load_policy
+    assert load_policy(destination / "ppo_policy.json")["schema_version"] == 1
+    frozen = result["results"]["ppo_frozen_policy"]
+    assert frozen["queries"] <= 32
+    assert frozen["retained"] == frozen["records"][-1]["retained"]
     assert set(result["reward_ablations"]) == {"no_size", "no_cost", "no_stop_bonus"}
     assert len(result["ppo_training_trace"]) == 128
     assert all(len(trace) == 128 for trace in result["reward_ablation_training_traces"].values())

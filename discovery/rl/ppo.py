@@ -99,10 +99,11 @@ class PPOOutcome:
 
     result: SearchResult
     training_trace: tuple[PPOTraceRecord, ...]
+    policy: dict[str, object]
 
 
 class CausalPruningEnv:
-    """Typed node-pruning MDP backed exclusively by measured interventions."""
+    """Partially observed node pruning backed by measured interventions."""
 
     def __init__(self, candidates: Sequence[Candidate], evaluator: Callable[[tuple[str, ...]], Evaluation],
                  search: SearchConfig, rewards: RewardWeights) -> None:
@@ -180,19 +181,22 @@ class CausalPruningEnv:
             raise ValueError("Action index is invalid")
         if not self.action_mask()[action]:
             raise ValueError("Action is masked")
-        previous_utility, _ = self._utility(self.mask, self.current)
+        _, previous_terms = self._utility(self.mask, self.current)
         if action == self.stop_action:
             self.done = True
             bonus = self.rewards.feasible_stop_bonus if self.feasible(self.current) else 0.0
             breakdown = RewardBreakdown(0.0, 0.0, 0.0, 0.0, bonus, bonus)
             return self.observation(), bonus, True, breakdown
         child = tuple(item for item in self.mask if item != self.ids[action])
+        cached = child in self.cache
         evaluation = self._query(child)
-        utility, terms = self._utility(child, evaluation)
+        _, terms = self._utility(child, evaluation)
         self.mask, self.current = child, evaluation
         self.done = not child or not self.action_mask()[:-1].any()
-        delta = utility - previous_utility
-        breakdown = RewardBreakdown(terms[0], terms[1], terms[2], terms[3], 0.0, delta)
+        effect, benign, size = (terms[i] - previous_terms[i] for i in range(3))
+        cost = 0.0 if cached else -self.rewards.cost * evaluation.forward_passes
+        delta = effect + benign + size + cost
+        breakdown = RewardBreakdown(effect, benign, size, cost, 0.0, delta)
         return self.observation(), delta, self.done, breakdown
 
 
@@ -264,10 +268,14 @@ def _ppo_search(candidates: Sequence[Candidate], evaluator: Callable[[tuple[str,
             state = next_state
         if len(transitions) < ppo_config.rollout_steps:
             continue
-        _update(model, optimizer, transitions, ppo_config)
+        with torch.no_grad():
+            bootstrap = 0.0 if done else float(model(torch.from_numpy(state).unsqueeze(0))[1].item())
+        _update(model, optimizer, transitions, ppo_config, bootstrap)
         transitions.clear()
     if transitions:
-        _update(model, optimizer, transitions, ppo_config)
+        with torch.no_grad():
+            bootstrap = 0.0 if done else float(model(torch.from_numpy(state).unsqueeze(0))[1].item())
+        _update(model, optimizer, transitions, ppo_config, bootstrap)
     feasible = [mask for mask, value in env.cache.items() if env.feasible(value)]
     rank = lambda mask: (len(mask), -env.cache[mask].faithfulness,
                          env.cache[mask].benign_damage, mask)
@@ -275,14 +283,22 @@ def _ppo_search(candidates: Sequence[Candidate], evaluator: Callable[[tuple[str,
     records = tuple(QueryRecord(mask, value) for mask, value in env.cache.items())
     result = SearchResult("ppo", best, env.cache[best], bool(feasible), "training_steps_complete",
                           None, len(records), sum(item.evaluation.forward_passes for item in records), records)
-    return PPOOutcome(result, tuple(trace))
+    policy = {
+        "schema_version": 1,
+        "candidates": [{"id": item.id, "region": item.region} for item in env.candidates],
+        "training_config": vars(ppo_config),
+        "reward_weights": vars(reward_weights),
+        "state_dict": {key: value.detach().cpu().tolist()
+                       for key, value in model.state_dict().items()},
+    }
+    return PPOOutcome(result, tuple(trace), policy)
 
 
 def _update(model: _ActorCritic, optimizer: torch.optim.Optimizer,
             transitions: list[tuple[np.ndarray, np.ndarray, int, float, float, bool, float]],
-            config: PPOConfig) -> None:
+            config: PPOConfig, bootstrap_value: float = 0.0) -> None:
     rewards = np.asarray([item[6] for item in transitions], dtype=np.float32)
-    values = np.asarray([item[4] for item in transitions] + [0.0], dtype=np.float32)
+    values = np.asarray([item[4] for item in transitions] + [bootstrap_value], dtype=np.float32)
     dones = np.asarray([item[5] for item in transitions], dtype=np.float32)
     advantages = np.zeros_like(rewards)
     estimate = 0.0
@@ -312,5 +328,5 @@ def _update(model: _ActorCritic, optimizer: torch.optim.Optimizer,
             raise RuntimeError("PPO optimization produced a non-finite loss")
         optimizer.zero_grad()
         loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), config.max_gradient_norm)
+        nn.utils.clip_grad_norm_(model.parameters(), config.max_gradient_norm, error_if_nonfinite=True)
         optimizer.step()

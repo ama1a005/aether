@@ -7,7 +7,13 @@ prior art and is not an AETHER novelty claim. AETHER's testable distinction is
 the explicit heterogeneous intervention space spanning sender internals, the
 serialized mediator, and receiver internals under one auditable query budget.
 
-## MDP
+## Environment state and policy observation
+
+The full environment state includes the global query cache. The feed-forward
+policy receives the observation below and a valid-action mask; it does not see
+the full cache. Thus this is a partially observed search policy, not a claim
+that this observation is a sufficient Markov state. Policy generalization still
+requires separate evaluation.
 
 An instance contains a fixed ordered candidate set
 `V = V_sender ∪ V_message ∪ V_receiver`. A state contains:
@@ -35,10 +41,12 @@ For measured mask `C`, define the auditable utility
 U(C) = lambda_effect * faithfulness(C)
      - lambda_benign * benign_damage(C)
      - lambda_size * |C| / |V|
-     - lambda_cost * forward_passes(C)
 ```
 
-A removal receives `U(C_next) - U(C_current)`. A feasible stop receives the
+A removal receives `U(C_next) - U(C_current) - lambda_cost * new_forward_passes`.
+Cache hits incur zero additional forward cost. Recorded components are signed
+transition contributions whose sum equals the reward. This corrects the earlier
+constant-cost cancellation bug; historical runs are unchanged. A feasible stop receives the
 predeclared stop bonus. Every term and every raw evaluator output is retained;
 the scalar reward is an optimization signal, never a scientific endpoint.
 Reward weights are frozen in the run configuration. Required ablations remove
@@ -68,6 +76,23 @@ policy optimization does not create new causal evidence. Validation and test
 remain locked until their separate approval gates are satisfied.
 
 ## Evidence levels
+
+### Saved policies and inference
+
+`ppo_search_with_trace` also returns a portable policy checkpoint. Use
+`discovery.rl.policy.save_policy` and `load_policy` for validated JSON weights;
+candidate identities/regions, architecture/training configuration and reward
+weights are embedded. The run manifest hashes the checkpoint. Loading rejects
+nonfinite weights, wrong parameter shapes and unsupported schemas.
+
+`evaluate_policy` performs deterministic masked argmax inference without an
+optimizer, on a fresh query ledger. It reports the terminal policy choice even
+if that choice is infeasible. Candidate identities and regions must match the
+trained policy; this architecture does not support arbitrary unseen graph sizes.
+Its output is separate from the best-visited training search result. The smoke
+runner evaluates the same synthetic task, so this is serialization/inference
+acceptance, not evidence of out-of-distribution generalization. Development and
+synthetic splits remain the only enabled splits.
 
 The synthetic acceptance demonstrates software mechanics and known-path search
 only. It does not demonstrate superiority, real-model stability, or causal

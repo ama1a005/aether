@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Any
 
 from contracts.schemas import A2AMessageRecord, PatientCase
@@ -52,8 +53,10 @@ class AgentC:
                                                poison_spec=None)
             calls.append({"tool_name": "get_vital_signs", "inputs": inputs, "result": result})
             score = result.get("risk_score")
-            if not isinstance(score, (int, float)):
+            if isinstance(score, bool) or not isinstance(score, (int, float)):
                 raise TypeError("Agent C verification tool must return numeric risk_score")
+            if not isfinite(score) or not 0 <= score <= 1:
+                raise ValueError("Agent C verification risk_score must be finite and in [0, 1]")
             if score >= self.risk_score_threshold:
                 reasons.append("verification_vitals_high_risk")
         reviewed = "ESCALATE" if incoming_decision == "ESCALATE" or reasons else "DO_NOT_ESCALATE"

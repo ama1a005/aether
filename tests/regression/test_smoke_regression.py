@@ -9,10 +9,27 @@ import subprocess
 import sys
 import json
 import os
+import shutil
+from pathlib import Path
 import pytest
 
 PYTHON = sys.executable
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+@pytest.fixture(scope="module", autouse=True)
+def isolated_smoke_workspace(tmp_path_factory):
+    """Run legacy output-writing commands away from tracked research artifacts."""
+    repository = Path(ROOT)
+    workspace = tmp_path_factory.mktemp("smoke-workspace")
+    for relative in ("configs", "tests/fixtures", "data/attack_cases"):
+        shutil.copytree(repository / relative, workspace / relative)
+    (workspace / "results/raw").mkdir(parents=True)
+    (workspace / "results/figures").mkdir(parents=True)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(sys.modules[__name__], "ROOT", str(workspace))
+        patch.setenv("PYTHONPATH", str(repository) + os.pathsep + os.environ.get("PYTHONPATH", ""))
+        yield
 
 
 def run_module(module: str, timeout: int = 120) -> tuple[int, str, str]:

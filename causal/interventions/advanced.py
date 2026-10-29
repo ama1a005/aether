@@ -71,15 +71,20 @@ def _validate_indices(name: str, values: tuple[int, ...], *, required: bool) -> 
 
 
 def _validate_pair(destination: torch.Tensor, source: torch.Tensor) -> None:
+    if not isinstance(destination, torch.Tensor) or not isinstance(source, torch.Tensor):
+        raise TypeError("Source and destination must be tensors")
     if destination.shape != source.shape:
         raise ValueError("Source and destination activation shapes differ")
     if destination.dtype != source.dtype or destination.device != source.device:
         raise ValueError("Source and destination dtype/device must match exactly")
     if destination.ndim < 3:
         raise ValueError("Interventions require [batch, tokens, hidden...] activations")
+    if not destination.is_floating_point() or not torch.isfinite(destination).all() or not torch.isfinite(source).all():
+        raise ValueError("Activations must be finite floating-point tensors")
 
 
 def _validate_bounds(values: Sequence[int], limit: int, name: str) -> None:
+    _validate_indices(name, tuple(values), required=True)
     if any(value >= limit for value in values):
         raise IndexError(f"{name} index exceeds activation bounds")
 
@@ -99,6 +104,8 @@ def head_output_patch(destination: torch.Tensor, source: torch.Tensor, token_pos
     """Patch selected concatenated attention-head outputs at selected tokens."""
     _validate_pair(destination, source)
     _validate_bounds(token_positions, destination.shape[1], "token")
+    if type(num_heads) is not int or num_heads < 1 or destination.ndim != 3:
+        raise ValueError("Head patch requires positive num_heads and [batch, tokens, hidden]")
     if destination.shape[-1] % num_heads:
         raise ValueError("Hidden dimension is not divisible by num_heads")
     _validate_bounds(head_indices, num_heads, "head")
@@ -120,16 +127,20 @@ def sae_feature_patch(destination: torch.Tensor, source: torch.Tensor, token_pos
     source_tokens = source[:, list(token_positions), ...]
     destination_features = codec.encode(destination_tokens)
     source_features = codec.encode(source_tokens)
-    if destination_features.shape != source_features.shape or destination_features.ndim < 2:
+    _validate_pair(destination_features, source_features)
+    if destination_features.shape[:-1] != destination_tokens.shape[:-1]:
         raise ValueError("SAE codec returned incompatible feature tensors")
     _validate_bounds(feature_indices, destination_features.shape[-1], "feature")
     patched_features = destination_features.clone()
     patched_features[..., list(feature_indices)] = source_features[..., list(feature_indices)]
     decoded = codec.decode(patched_features)
-    if decoded.shape != destination_tokens.shape or decoded.dtype != destination.dtype:
-        raise ValueError("SAE decode must preserve selected activation shape and dtype")
+    reconstructed = codec.decode(destination_features)
+    _validate_pair(destination_tokens, decoded)
+    _validate_pair(destination_tokens, reconstructed)
     patched = destination.clone()
-    patched[:, list(token_positions), ...] = decoded
+    # Keep the original reconstruction residual: only the selected latent delta
+    # should change behavior, not an unrelated autoencoder reconstruction error.
+    patched[:, list(token_positions), ...] = destination_tokens + (decoded - reconstructed)
     return patched
 
 
@@ -153,6 +164,8 @@ def intervention_hooks(model: nn.Module, targets: Sequence[InterventionTarget],
     """Install a multi-site path patch and always remove every registered hook."""
     if not targets or len({target.component_id for target in targets}) != len(targets):
         raise ValueError("Path patch targets must be nonempty and component-unique")
+    if len({target.module_path for target in targets}) != len(targets):
+        raise ValueError("Duplicate module targets require an explicit composition operator")
     missing = {target.component_id for target in targets} - source_activations.keys()
     if missing:
         raise ValueError(f"Missing source activations: {sorted(missing)}")
@@ -187,6 +200,9 @@ def intervention_hooks(model: nn.Module, targets: Sequence[InterventionTarget],
         for target in targets:
             handles.append(_resolve_module(model, target.module_path).register_forward_hook(make_hook(target)))
         yield records
+        missing_firings = {target.component_id for target in targets} - {r.component_id for r in records}
+        if missing_firings:
+            raise RuntimeError(f"Intervention targets did not execute: {sorted(missing_firings)}")
     finally:
         for handle in handles:
             handle.remove()
@@ -195,7 +211,7 @@ def intervention_hooks(model: nn.Module, targets: Sequence[InterventionTarget],
 def execute_path_patch(model: nn.Module, inputs: torch.Tensor, targets: Sequence[InterventionTarget],
                        source_activations: dict[str, torch.Tensor],
                        sae_codecs: dict[str, SAECodec] | None = None) -> tuple[object, tuple[InterventionRecord, ...]]:
-    """Execute an ordered multi-component intervention path under no-grad mode."""
+    """Execute simultaneous node patches; this alone does not isolate a path."""
     with intervention_hooks(model, targets, source_activations, sae_codecs) as records:
         with torch.no_grad():
             output = model(inputs)

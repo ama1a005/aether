@@ -102,14 +102,14 @@ The four-person ownership table below remains the intended team split once all m
 - held-out non-dominated tri-location repair comparison;
 - statistics, negative controls, ablations and full provenance.
 
-### Tier P1-B — strong additions if Tier P1-A is already stable
+### Tier P1-B — mandatory additions, scheduled after Tier P1-A dependencies
 
 - NARCBench official/released-activation reproduction rather than only a probe-style baseline;
 - AgentDojo pilot;
 - second attack family for held-out generalization;
 - message span/field localization beyond whole-message intervention;
 - receiver-only MechRL/PPO baseline;
-- heterogeneous sender/receiver if instrumentation is already reliable.
+- heterogeneous sender/receiver after instrumentation acceptance.
 
 ### Tier P1-C — explicitly deferred to Phase 2
 
