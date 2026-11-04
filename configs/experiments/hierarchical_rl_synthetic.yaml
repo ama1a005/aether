@@ -1,0 +1,20 @@
+experiment_id: P0_rl_20261105_hierarchical_graph_0
+evidence_class: synthetic_acceptance_only
+split: synthetic
+seeds: [7, 9, 11]
+max_queries: 64
+faithfulness_threshold: 0.99
+max_benign_damage: 0.0
+training_steps: 256
+rollout_steps: 32
+update_epochs: 2
+hidden_size: 32
+learning_rate: 0.0003
+node_operators: [prune]
+reward:
+  effect: 1.0
+  benign: 1.0
+  size: 0.1
+  cost: 0.001
+  feasible_stop_bonus: 0.25
+output_root: .local/hierarchical_rl_acceptance

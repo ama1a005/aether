@@ -21,6 +21,6 @@ Current tests prove software behavior on constructed inputs only. They do not
 prove Qwen competence, causal validity, benchmark scores or generalization.
 Historical negative results remain unchanged. Locked splits remain inaccessible.
 
-Current verification: Python 3.11.9, **328 passed and 5 gated skips**; regression
+Current verification: Python 3.11.9, **333 passed and 5 gated skips**; regression
 tests execute every existing smoke command. Root `PROJECT_STATE.md` is the
 authoritative remaining-work record.

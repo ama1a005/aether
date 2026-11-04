@@ -1,5 +1,17 @@
 # AETHER current bounded task
 
+## Graph-aware hierarchical RL hardening — 2026-11-05
+
+Add an additive AETHER-specific constrained search environment whose actions
+explicitly encode operation, sender/message/receiver/bridge region, target and
+intervention operator. The policy must consume DCMG adjacency, node/edge type
+features, current causal measurements, remaining budget and the complete bounded
+query ledger. Support node pruning/intervention, explicit edge cuts and stop;
+preserve the existing flat PPO as a baseline. Verify behavior on branching
+synthetic graphs only. This is methodological hardening under N2, not permission
+to claim PPO or RL circuit discovery as new, alter frozen contracts, access
+locked splits, load a model, or fabricate research evidence.
+
 ## Model-independent Phase 1 completion — 2026-11-04
 
 Implement and verify every Phase 1 component that does not require loading the

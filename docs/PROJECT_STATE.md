@@ -3,6 +3,15 @@
 > Historical implementation ledger. The authoritative current status and test
 > count are in the root `PROJECT_STATE.md`.
 
+## 2026-11-05 graph-aware hierarchical RL hardening
+
+Added an additive DCMG environment with message-passing state encoding and
+factorized operation/region/target/operator actions. Node interventions, explicit
+edge cuts and stop share one global query ledger; the method reserves declared
+budget for a separately reported local-repair/minimality audit. The legacy flat
+PPO remains the matched baseline. Multi-seed branching tests are synthetic
+software acceptance, not evidence that RL or PPO is novel or superior.
+
 ## 2026-10-29 follow-up code repairs
 
 PPO query costs and reward decomposition corrected. Advanced intervention inputs

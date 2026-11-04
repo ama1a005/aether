@@ -13,6 +13,11 @@
 - Greedy, beam, matched-random, receiver-only, full cross-agent and PPO search.
   PPO now observes the complete bounded query ledger and its saved policy passes
   the synthetic acceptance task.
+- An additive graph-aware hierarchical PPO environment factorizes operation,
+  region, target and operator actions over explicit DCMG adjacency. It supports
+  node interventions, bridge/internal edge cuts and stop under one query budget,
+  with a separately identified deterministic local-repair phase. Three-seed
+  branching-graph acceptance is synthetic software evidence only.
 - Trained-SAE NPZ loading with hashes, model/component provenance,
   normalization metadata and reconstruction gates.
 - A measured evaluator joining intervention executions to search while retaining
@@ -25,7 +30,7 @@
 
 ## Verification
 
-Python 3.11.9: **328 passed, 5 skipped**. The gated skips are two real-Qwen
+Python 3.11.9: **333 passed, 5 skipped**. The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
 

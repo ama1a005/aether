@@ -9,7 +9,7 @@ candidate_scope:
   attention_site: pre_o_proj
   include_mlp: true
 search:
-  methods: [greedy, beam, random, ppo, receiver_only, full_cross_agent]
+  methods: [greedy, beam, random, ppo, hierarchical_graph_ppo_repair, receiver_only, full_cross_agent]
   max_queries: 128
   beam_width: 8
   faithfulness_threshold: 0.8
