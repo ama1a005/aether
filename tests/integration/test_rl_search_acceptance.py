@@ -13,7 +13,7 @@ def test_rl_acceptance_writes_comparison_ablation_and_manifest(tmp_path: Path):
     assert all(result["checks"].values())
     assert set(result["results"]) == {"greedy", "beam", "ppo", "matched_random", "ppo_frozen_policy"}
     from discovery.rl.policy import load_policy
-    assert load_policy(destination / "ppo_policy.json")["schema_version"] == 1
+    assert load_policy(destination / "ppo_policy.json")["schema_version"] == 2
     frozen = result["results"]["ppo_frozen_policy"]
     assert frozen["queries"] <= 32
     assert frozen["retained"] == frozen["records"][-1]["retained"]

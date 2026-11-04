@@ -103,7 +103,11 @@ class PPOOutcome:
 
 
 class CausalPruningEnv:
-    """Partially observed node pruning backed by measured interventions."""
+    """Fully observed node pruning backed by measured interventions.
+
+    The complete bounded query cache is encoded because cache membership changes
+    query cost and action affordability.
+    """
 
     def __init__(self, candidates: Sequence[Candidate], evaluator: Callable[[tuple[str, ...]], Evaluation],
                  search: SearchConfig, rewards: RewardWeights) -> None:
@@ -147,15 +151,24 @@ class CausalPruningEnv:
                 and evaluation.benign_damage <= self.search.max_benign_damage)
 
     def observation(self) -> np.ndarray:
-        """Return retained bits, region counts, metrics, and remaining budget."""
+        """Return current state plus the complete padded intervention ledger."""
         retained = set(self.mask)
         bits = [float(item in retained) for item in self.ids]
         counts = [sum(item.id in retained and item.region == region for item in self.candidates)
                   / max(1, sum(item.region == region for item in self.candidates))
                   for region in ("sender", "message", "receiver")]
         budget = (self.search.max_queries - len(self.cache)) / self.search.max_queries
+        cache_rows: list[float] = []
+        for mask, evaluation in sorted(self.cache.items()):
+            members = set(mask)
+            cache_rows.extend(float(item in members) for item in self.ids)
+            cache_rows.extend((float(evaluation.faithfulness),
+                               float(evaluation.benign_damage),
+                               float(evaluation.forward_passes), 1.0))
+        row_width = len(self.ids) + 4
+        cache_rows.extend([0.0] * ((self.search.max_queries - len(self.cache)) * row_width))
         return np.asarray(bits + counts + [self.current.faithfulness,
-                          self.current.benign_damage, budget], dtype=np.float32)
+                          self.current.benign_damage, budget] + cache_rows, dtype=np.float32)
 
     def action_mask(self) -> np.ndarray:
         """Mask removed nodes and unaffordable unseen interventions."""
@@ -284,10 +297,12 @@ def _ppo_search(candidates: Sequence[Candidate], evaluator: Callable[[tuple[str,
     result = SearchResult("ppo", best, env.cache[best], bool(feasible), "training_steps_complete",
                           None, len(records), sum(item.evaluation.forward_passes for item in records), records)
     policy = {
-        "schema_version": 1,
+        "schema_version": 2,
         "candidates": [{"id": item.id, "region": item.region} for item in env.candidates],
         "training_config": vars(ppo_config),
         "reward_weights": vars(reward_weights),
+        "max_queries": search_config.max_queries,
+        "observation_size": len(env.observation()),
         "state_dict": {key: value.detach().cpu().tolist()
                        for key, value in model.state_dict().items()},
     }

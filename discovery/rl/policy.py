@@ -12,8 +12,8 @@ from discovery.budgeted import Candidate, Evaluation, QueryRecord, SearchConfig,
 from discovery.rl.ppo import CausalPruningEnv, PPOConfig, RewardWeights, _ActorCritic
 
 
-def _restore(checkpoint: dict[str, object]) -> tuple[_ActorCritic, tuple[Candidate, ...], RewardWeights]:
-    if checkpoint.get("schema_version") != 1:
+def _restore(checkpoint: dict[str, object]) -> tuple[_ActorCritic, tuple[Candidate, ...], RewardWeights, int]:
+    if checkpoint.get("schema_version") != 2:
         raise ValueError("Unsupported PPO checkpoint schema")
     candidates = tuple(Candidate(**item) for item in checkpoint["candidates"])
     if not candidates or tuple(sorted(candidates, key=lambda item: item.id)) != candidates:
@@ -22,8 +22,15 @@ def _restore(checkpoint: dict[str, object]) -> tuple[_ActorCritic, tuple[Candida
         raise ValueError("Duplicate checkpoint candidate IDs")
     config = PPOConfig(**checkpoint["training_config"])
     rewards = RewardWeights(**checkpoint["reward_weights"])
+    max_queries = checkpoint.get("max_queries")
+    observations = checkpoint.get("observation_size")
+    if type(max_queries) is not int or max_queries < 1:
+        raise ValueError("Checkpoint query budget is invalid")
+    expected_observations = len(candidates) + 6 + max_queries * (len(candidates) + 4)
+    if observations != expected_observations:
+        raise ValueError("Checkpoint observation/cache configuration is invalid")
     with torch.random.fork_rng(devices=[]):
-        model = _ActorCritic(len(candidates) + 6, len(candidates) + 1, config.hidden_size)
+        model = _ActorCritic(observations, len(candidates) + 1, config.hidden_size)
     state = {key: torch.tensor(value, dtype=torch.float32)
              for key, value in checkpoint["state_dict"].items()}
     if any(not torch.isfinite(value).all() for value in state.values()):
@@ -31,7 +38,7 @@ def _restore(checkpoint: dict[str, object]) -> tuple[_ActorCritic, tuple[Candida
     model.load_state_dict(state, strict=True)
     model.eval()
     model.requires_grad_(False)
-    return model, candidates, rewards
+    return model, candidates, rewards, max_queries
 
 
 def save_policy(checkpoint: dict[str, object], path: str | Path) -> None:
@@ -58,9 +65,11 @@ def evaluate_policy(checkpoint: dict[str, object], candidates: Sequence[Candidat
     """
     if config.split not in {"development", "synthetic"}:
         raise PermissionError("Frozen-policy evaluation requires development or synthetic data")
-    model, expected, rewards = _restore(checkpoint)
+    model, expected, rewards, max_queries = _restore(checkpoint)
     if tuple(sorted(candidates, key=lambda item: item.id)) != expected:
         raise ValueError("Policy candidate identities and regions do not match")
+    if config.max_queries != max_queries:
+        raise ValueError("Policy query budget does not match evaluation configuration")
     env = CausalPruningEnv(expected, evaluator, config, rewards)
     with torch.no_grad():
         while not env.done:

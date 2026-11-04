@@ -45,7 +45,8 @@ def evaluator(mask: tuple[str, ...]) -> Evaluation:
 def test_environment_has_typed_removals_stop_and_global_query_ledger():
     env = CausalPruningEnv(CANDIDATES, evaluator, SearchConfig(max_queries=8, split="synthetic"),
                            RewardWeights())
-    assert len(env.observation()) == len(CANDIDATES) + 6
+    assert len(env.observation()) == (len(CANDIDATES) + 6 +
+                                      8 * (len(CANDIDATES) + 4))
     assert env.action_mask().tolist() == [True] * 7
     noise = next(index for index, item in enumerate(env.ids) if item == "MN")
     _, reward, done, breakdown = env.step(noise)

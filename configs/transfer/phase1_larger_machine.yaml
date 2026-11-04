@@ -1,0 +1,17 @@
+schema_version: 1
+minimum_ram_gib: 24
+minimum_available_ram_gib: 16
+minimum_disk_free_gib: 30
+require_cuda: true
+packages:
+  torch: "2.14.1"
+  transformers: "5.19.0"
+lock_files:
+  requirements-demo-lock.txt: a912c00374ac0b1678fdfc5d1c4f0060e5a4be30048f62e9932141342a2bf589
+model:
+  id: Qwen/Qwen2.5-1.5B-Instruct
+  revision: pending
+  cache_path: .cache/huggingface/Qwen2.5-1.5B-Instruct
+output_directories:
+  - results/phase1/development
+  - results/raw/activation_cache

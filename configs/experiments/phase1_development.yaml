@@ -1,0 +1,24 @@
+schema_version: 1
+status: frozen_model_independent_configuration
+split: development
+model_id: Qwen/Qwen2.5-1.5B-Instruct
+model_revision: pending_pin_before_model_access
+seeds: [0, 1, 2, 3, 4]
+candidate_scope:
+  components: [sender, message, receiver]
+  attention_site: pre_o_proj
+  include_mlp: true
+search:
+  methods: [greedy, beam, random, ppo, receiver_only, full_cross_agent]
+  max_queries: 128
+  beam_width: 8
+  faithfulness_threshold: 0.8
+  benign_damage_budget: 0.1
+interventions: [zero, mean, resample, patch_clean_to_attack, patch_attack_to_clean, edge_cut]
+controls: [random_component, irrelevant_token, clean_clean_patch, shuffled_pairing]
+artifacts:
+  root: results/phase1/development
+  manifest: manifest.json
+  outcomes: outcomes.json
+  raw_outputs: raw_outputs.jsonl
+locked_splits: [validation, test]

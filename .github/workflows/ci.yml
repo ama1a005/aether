@@ -20,6 +20,8 @@ jobs:
           python -m pip check
       - name: Run complete test suite
         run: python -m pytest tests/unit tests/integration tests/regression -ra
+      - name: Validate configs, manifests, and artifact policy
+        run: python scripts/validate_repository.py
       - name: Model-free demo end-to-end
         env:
           AETHER_RUN_DEMO_E2E: "1"

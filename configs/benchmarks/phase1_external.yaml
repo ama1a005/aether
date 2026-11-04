@@ -1,0 +1,22 @@
+schema_version: 1
+status: proposed_pins_pending_official_package_compatibility_check
+split: development
+bfcl:
+  package: bfcl_eval
+  package_version: "2026.3.23"
+  model: Qwen/Qwen2.5-1.5B-Instruct
+  categories: [simple, multiple, parallel, irrelevance]
+  partial_evaluation: false
+  output_dir: results/external/bfcl/development
+agentdojo:
+  package: agentdojo
+  package_version: "0.1.35"
+  benchmark_version: v1.2.2
+  suite: workspace
+  model: Qwen/Qwen2.5-1.5B-Instruct
+  user_tasks: [user_task_0, user_task_1, user_task_2, user_task_3, user_task_4]
+  injection_tasks: [injection_task_0, injection_task_1, injection_task_2, injection_task_3, injection_task_4]
+  output_dir: results/external/agentdojo/development
+imports:
+  mcptox: {input: results/external/mcptox/raw.json, output: results/external/mcptox/summary.json}
+  tamas: {input: results/external/tamas/raw.json, output: results/external/tamas/summary.json}

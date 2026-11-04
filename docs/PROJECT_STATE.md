@@ -1,5 +1,8 @@
 # AETHER Project State
 
+> Historical implementation ledger. The authoritative current status and test
+> count are in the root `PROJECT_STATE.md`.
+
 ## 2026-10-29 follow-up code repairs
 
 PPO query costs and reward decomposition corrected. Advanced intervention inputs
