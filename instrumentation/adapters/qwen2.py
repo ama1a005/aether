@@ -21,6 +21,7 @@ class Qwen2ModelAdapter(ModelAdapter):
         dtype: torch.dtype = torch.float32,
         device: str = "cpu",
         local_files_only: bool = False,
+        low_cpu_mem_usage: bool = True,
     ) -> None:
         self.model_id = model_id
         self.revision = revision
@@ -28,6 +29,7 @@ class Qwen2ModelAdapter(ModelAdapter):
         self.dtype = dtype
         self.device = device
         self.local_files_only = local_files_only
+        self.low_cpu_mem_usage = low_cpu_mem_usage
         self.model: Any = None
         self.tokenizer: Any = None
         self.activations: dict[str, torch.Tensor] = {}
@@ -55,6 +57,7 @@ class Qwen2ModelAdapter(ModelAdapter):
             local_files_only=self.local_files_only,
             trust_remote_code=False,
             dtype=self.dtype,
+            low_cpu_mem_usage=self.low_cpu_mem_usage,
             attn_implementation="eager",
         ).to(self.device)
         self.model.eval()

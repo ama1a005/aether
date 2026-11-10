@@ -234,6 +234,14 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Date:** 2026-10-16
 - **Decision:** Record `BLOCKED_PRE_ACCESS` because available physical RAM was 1.487 GiB, below the frozen 10.5 GiB threshold. Do not terminate user processes or access the model.
 - **Reason:** Installed RAM (15.67 GiB) and disk (13.255 GiB free) passed, but the conjunctive available-memory predicate failed. Pre-model measurement may be repeated only after manual cleanup under the unchanged gate.
+
+## RD-029 — Pin the sole MQ replacement-model revision
+
+- **Date:** 2026-11-10
+- **Decision:** Freeze `Qwen/Qwen2.5-1.5B-Instruct` at [official Hugging Face commit `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/commit/989aa7980e4cf806f80c7fef2b1adb7bc71aa306) for the one already authorized MQ-HW1/MQ-G1/MQ-G2 campaign. Use CPU float32, unquantized, no offload, `low_cpu_mem_usage=True`, and the existing frozen V2.1 task and thresholds.
+- **Reason:** The protocol and case/gate hashes were already prospectively frozen; the missing reproducibility item was an immutable model/tokenizer revision. This selects the official revision shown on the publisher's model history and does not introduce a second candidate or change any outcome rule. Its snapshot will be hashed before execution.
+- **Execution status:** Not run. The repository now contains a gated runner and Kaggle notebook; the model must not be downloaded until the notebook's MQ-HW1 pre-access check passes.
+- **Stop rule:** MQ-G1 failure stops before MQ-G2. Any MQ-G1/G2 failure ends the campaign. Passing both only recommends a separately reviewed instrumentation-acceptance stage; this decision does not authorize internal interventions or locked-split access.
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

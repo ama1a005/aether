@@ -7,20 +7,20 @@ has not yet earned qualification; more RAM cannot guarantee MQ-G1/MQ-G2 pass.
 
 ## Recommended route preserving current experimental choices
 
-Use the other laptop (or an institution-owned workstation) with sufficient
-available RAM. Keep Python 3.11, the locked environment, CPU float32, the same
-prompts/cases/parser/generation parameters, and the frozen numerical gates.
-A 32 GiB RAM machine is a reasonable headroom target, not a measured guarantee.
-Run the model-free preflight on that machine: installed >=15 GiB, available
->=10.5 GiB, cache disk >=12 GiB. Require >=2 GiB available after loading.
+The prepared Kaggle route uses Python 3.11.9, the checked-in lock, CPU float32,
+no quantization/offload, and the frozen prompts/cases/parser/generation parameters.
+Any attached T4 devices remain unused: MQ-HW1 explicitly requires CPU execution.
+The notebook measures the installed/available memory and cache-drive space before
+accessing the model, then requires at least 2 GiB available after loading. It also
+checks cgroup headroom when Kaggle exposes that limit.
 
-Freeze the exact model and tokenizer commit and hashes before execution. Current
-MQ files name Qwen2.5-1.5B-Instruct but do not provide that immutable revision.
-Use low_cpu_mem_usage=True, model.eval(), and the prescribed one-model loading
-policy. Preserve all qualification failures, including resource failures.
-After MQ-G1 and MQ-G2 pass, instrumentation acceptance is still a separate gate.
-Moving hardware requires recording hardware/library differences; bitwise equality
-across CPU platforms must be checked, not assumed.
+RD-029 pins the sole candidate to official Qwen commit
+`989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. The notebook hashes the downloaded
+snapshot and uses `low_cpu_mem_usage=True`, `model.eval()`, and one load attempt.
+The runner evaluates MQ-G1 first and runs MQ-G2 only on MQ-G1 pass. If either
+fails, preserve the result and stop. Passing both permits only a separately
+reviewed instrumentation-acceptance stage. The Kaggle execution and outcomes
+remain pending user action; no model has been downloaded by this preparation.
 
 ## Alternatives and what changes
 

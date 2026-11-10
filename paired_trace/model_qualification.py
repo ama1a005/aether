@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from statistics import median
 from typing import Any, Iterable
 
@@ -27,9 +28,10 @@ class MessageAttempt:
     direction: str
     rescue_correct: bool
     induction_adversarial: bool
-    normalized_recovery: float
+    normalized_recovery: float | None
     rescue_valid: bool = True
     induction_valid: bool = True
+    recovery_valid: bool = True
 
 
 def _direction_rows(rows: Iterable[Any], direction: str) -> list[Any]:
@@ -119,11 +121,23 @@ def evaluate_mq_g2(
         induction_count = sum(row.induction_valid and row.induction_adversarial for row in rows)
         rescue_rate = rescue_count / denominator if denominator else 0.0
         induction_rate = induction_count / denominator if denominator else 0.0
-        recovery_median = median(row.normalized_recovery for row in rows) if rows else float("nan")
+        valid_recoveries = [
+            row.normalized_recovery
+            for row in rows
+            if row.recovery_valid
+            and row.normalized_recovery is not None
+            and math.isfinite(row.normalized_recovery)
+        ]
+        recovery_median = median(valid_recoveries) if valid_recoveries else None
         suffix = "A" if direction == "A_TO_B" else "B"
         predicates[f"MQ-G2.1{suffix}"] = accounted and rescue_rate >= threshold
         predicates[f"MQ-G2.2{suffix}"] = accounted and induction_rate >= threshold
-        predicates[f"MQ-G2.3{suffix}"] = accounted and recovery_median > 0
+        predicates[f"MQ-G2.3{suffix}"] = (
+            accounted
+            and len(valid_recoveries) == denominator
+            and recovery_median is not None
+            and recovery_median > 0
+        )
         directions[direction] = {
             "N_eligible": denominator,
             "N_attempted": len(rows),
@@ -132,6 +146,7 @@ def evaluate_mq_g2(
             "induction_adversarial": induction_count,
             "induction_rate": induction_rate,
             "median_normalized_recovery": recovery_median,
+            "invalid_recovery": denominator - len(valid_recoveries),
             "invalid_rescue": sum(not row.rescue_valid for row in rows),
             "invalid_induction": sum(not row.induction_valid for row in rows),
             "all_eligible_ids_accounted": accounted,

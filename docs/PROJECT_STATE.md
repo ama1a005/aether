@@ -199,6 +199,11 @@ initialization. Qwen-over-FHIR remains unqualified. See `RELIABILITY_CHECKPOINT.
 - Human review authorized one resource-only retry. MQ-HW1 is prospectively defined in additive protocol SHA-256 `18bd44883692e013e735b4b0ae6fcc7599d0c69f59b195de2de7c0aa53d0ca4d` and config SHA-256 `68d2d2d32e3687aa82350f0944073abdcc5c91c5f7480699c51ee59adfbf0d69`; the parent MQ protocol remains unchanged at `64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89`.
 - MQ-HW1 was frozen at commit `9bce5fea523977485a29d0927704a03d2b430487`. The first retry measurement found 15.67 GiB installed, 1.487 GiB available, and 13.255 GiB disk free. Installed RAM and disk passed; available RAM failed the immutable 10.5 GiB threshold. State is `BLOCKED_PRE_ACCESS`; no model access occurred.
 - After manual cleanup, the 2026-10-19 pre-model recheck found 2.814 GiB available RAM and 24.392 GiB free disk. RAM improved but still failed the unchanged 10.5 GiB threshold. State remains `BLOCKED_PRE_ACCESS`; model/tokenizer access and validation/test executions remain zero.
+- On 2026-11-10, the sole 1.5B candidate was pinned to official immutable revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306` under RD-029. This is a prospective revision selection, not a model result.
+- Added `paired_trace.run_model_qualification`: it checks the frozen registry/control/V2.1 hashes, measures MQ-HW1 before model access, prevents a second campaign attempt, runs 24 development pairs for MQ-G1, and runs whole-message MQ-G2 only after MQ-G1 passes. It does not install hooks or execute internal interventions.
+- The runner preserves invalid sender text without passing invalid messages to the receiver, retains all 24 attempts in MQ-G1 denominators, records missing/invalid MQ-G2 continuous recovery as failure, and writes run/environment/snapshot manifests plus raw rows.
+- The Qwen adapter now passes the frozen `low_cpu_mem_usage=True` option to Transformers. Kaggle uses an isolated CPython 3.11.9 CPU-only environment; any attached T4 GPUs remain unused to preserve MQ-HW1.
+- `notebooks/aether_qwen_qualification_cpu.ipynb` is being prepared as the uploadable run path. At this checkpoint no 1.5B snapshot has been downloaded, no MQ-G1/MQ-G2 outcome exists, and no activation/intervention, validation, or test execution occurred.
 
 ## Partial or pending external verification
 
@@ -217,7 +222,7 @@ initialization. Qwen-over-FHIR remains unqualified. See `RELIABILITY_CHECKPOINT.
 
 ## Next proposed task
 
-Current action: manually close memory-heavy applications or reboot, then rerun the identical MQ-HW1 preflight. If sufficient memory cannot be made available, finalize the Phase-1 pivot. Validation/test and internal instrumentation remain prohibited.
+Current action: upload `notebooks/aether_qwen_qualification_cpu.ipynb` to Kaggle with Internet enabled and run it top-to-bottom once. The notebook must stop before downloading Qwen if MQ-HW1 fails. Preserve the resulting archive and do not retry after model access begins. If MQ-G1 or MQ-G2 fails, preserve the negative result and stop; if both pass, request the separately reviewed instrumentation-acceptance stage. Validation/test remain closed.
 # Intermediate review demo checkpoint — 2026-10-19
 
 - Added a removable React/Vite + FastAPI localhost demo under `demo/`, with dependency direction `demo -> core`.

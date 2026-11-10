@@ -1,5 +1,31 @@
 # AETHER current bounded task
 
+## Real Qwen2.5-1.5B qualification on Kaggle — 2026-11-10
+
+Prepare an executable Kaggle path for the already approved MQ-HW1/MQ-G1/MQ-G2
+campaign. Pin the official immutable Qwen2.5-1.5B-Instruct revision, run the
+CPU-float32 pre-access hardware gate before model download, implement a
+single-attempt development-only qualification runner with full raw outputs,
+and provide a clean uploadable notebook. MQ-G2 runs only after MQ-G1 passes.
+Do not run activation capture/interventions, open validation/test, change the
+frozen thresholds/prompts/cases, or describe qualification as causal-circuit
+evidence. Stop after MQ-G2 and report whether a separate instrumentation stage
+is authorized by the frozen protocol.
+
+Acceptance: notebook and runner are syntax-valid; model-free checks pass; case,
+control, and V2.1 hashes match the frozen MQ-G1 config; the snapshot is pinned
+and hashed; every failure is retained; no model is loaded outside Kaggle; the
+repository suite is run. Remote CPU resource availability and actual Qwen gate
+outcomes require the user's Kaggle execution.
+
+## Kaggle notebook reliability repairs — 2026-11-10
+
+Repair the uploadable notebook against observed Linux setup failures. Include pip,
+Linux-compatible demo dependencies, Agg rendering, persistent test logs and
+JUnit output, isolated temporary runtime storage, synthetic PPO training and
+hashed exports. Validate notebook cell execution locally where possible and run
+the repository suite. Remote CUDA execution remains to be verified on Kaggle.
+
 ## Graph-aware hierarchical RL hardening — 2026-11-05
 
 Add an additive AETHER-specific constrained search environment whose actions

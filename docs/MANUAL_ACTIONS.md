@@ -92,7 +92,13 @@ Before `Qwen/Qwen2.5-1.5B-Instruct` may be downloaded or evaluated, approve a pr
 
 MQ-G1 is now approved and frozen. The 1.5B run remains blocked because only 1.66 GiB physical RAM was available at preflight. If qualification should be retried, close unrelated memory-heavy applications or reboot, then explicitly authorize rerunning the same frozen MQ-G1/MQ-G2 task. Do not modify paging automatically, install CUDA, alter thresholds, or change prompts.
 
-## ACTION REQUIRED — MQ-HW1 memory cleanup
+## Historical blocked actions — superseded by the Kaggle action below
+
+The Windows-only MQ-HW1 cleanup instructions below describe the 2026-10-16/19
+local preflight attempts. They are retained as history and are no longer the
+current next step; use the Kaggle instructions at the end of this file.
+
+### Windows MQ-HW1 memory cleanup record
 
 Close memory-heavy applications or reboot Windows, then rerun the same MQ-HW1 preflight. The frozen gate requires at least 10.5 GiB available physical RAM; the authorized retry measured only 1.487 GiB. No process was terminated automatically. Disk passed at 13.255 GiB free. Do not change the page file, install CUDA, lower the threshold, or access the model before the pre-access gate passes.
 
@@ -103,3 +109,11 @@ The 2026-10-19 recheck after cleanup improved available RAM to 2.814 GiB, but th
 - Use `DEMO-PAT-001` for the primary escalation/attack/rescue story, `DEMO-PAT-002` for a DO_NOT_ESCALATE comparison, and a non-ECG case only if time permits.
 - If live execution fails, select Verified Replay and disclose that provenance.
 - Do not attempt Qwen2.5-1.5B MQ-HW1 until host-memory headroom satisfies the retry protocol. CUDA installation by itself is not the missing condition.
+
+## Kaggle Qwen2.5-1.5B qualification — 2026-11-10
+
+1. Upload `notebooks/aether_qwen_qualification_cpu.ipynb` to a private Kaggle notebook and enable Internet. GPU is not required; if T4 GPUs are attached, this frozen run intentionally does not use them.
+2. Run the cells from top to bottom once. Do not edit the model revision, thresholds, prompt, seed, or dataset. MQ-HW1 must pass before the model-download cell.
+3. Preserve `aether-qwen-qualification-results.tar.gz` from Kaggle outputs. The archive includes the preflight, snapshot hash manifest, attempt marker, gate results, raw per-case rows, environment inventory, and logs. Do not reset the attempt marker or rerun after model access begins.
+4. If the preflight blocks, stop before model access. If the model load or qualification fails, preserve the failure and do not tune/retry. MQ-G2 is skipped unless MQ-G1 passes.
+5. If MQ-G1 and MQ-G2 both pass, stop and review the evidence before authorizing a separate instrumentation-acceptance task. This notebook does not produce internal causal-circuit evidence.

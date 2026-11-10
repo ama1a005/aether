@@ -1,6 +1,7 @@
 """Fast lifecycle tests for architecture-specific hook behavior."""
 
 from pathlib import Path
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -140,3 +141,37 @@ def test_head_capture_reconstructs_concat_and_head_patch_is_local() -> None:
     assert not torch.equal(changed[:, 1], baseline[:, 1])
     adapter.remove_hooks()
     assert adapter._handles == []
+
+
+def test_load_forwards_cpu_memory_saving_option(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: dict[str, dict[str, object]] = {}
+
+    class FakeTokenizer:
+        @classmethod
+        def from_pretrained(cls, *_args: object, **_kwargs: object) -> "FakeTokenizer":
+            return cls()
+
+    class FakeModel(nn.Linear):
+        def __init__(self) -> None:
+            super().__init__(1, 1)
+
+    class FakeAutoModel:
+        @classmethod
+        def from_pretrained(cls, *_args: object, **kwargs: object) -> FakeModel:
+            calls["model"] = dict(kwargs)
+            return FakeModel()
+
+    monkeypatch.setitem(
+        sys.modules,
+        "transformers",
+        SimpleNamespace(AutoModelForCausalLM=FakeAutoModel, AutoTokenizer=FakeTokenizer),
+    )
+    adapter = Qwen2ModelAdapter(
+        "fixture", "revision", Path(".cache"), dtype=torch.float32, device="cpu",
+        local_files_only=True, low_cpu_mem_usage=True,
+    )
+    adapter.load()
+    assert calls["model"]["low_cpu_mem_usage"] is True
+    assert calls["model"]["dtype"] is torch.float32
+    assert calls["model"]["attn_implementation"] == "eager"
+    assert adapter.model is not None and adapter.model.training is False

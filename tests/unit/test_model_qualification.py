@@ -109,6 +109,23 @@ def test_mq_g2_missing_or_invalid_runs_are_not_silently_excluded() -> None:
     assert result["directions"]["A_TO_B"]["rescue_rate"] == 5 / 8
 
 
+def test_mq_g2_undefined_recovery_is_counted_and_fails_continuous_gate() -> None:
+    rows, ids = _messages()
+    rows[0] = MessageAttempt(
+        rows[0].case_id,
+        rows[0].direction,
+        rescue_correct=True,
+        induction_adversarial=True,
+        normalized_recovery=None,
+        recovery_valid=False,
+    )
+    result = evaluate_mq_g2(rows, ids)
+    assert result["directions"]["A_TO_B"]["invalid_recovery"] == 1
+    assert result["directions"]["A_TO_B"]["median_normalized_recovery"] == pytest.approx(0.2)
+    assert result["predicates"]["MQ-G2.3A"] is False
+    assert result["overall"] == "FAIL"
+
+
 def test_mq_hw1_thresholds_are_inclusive_and_conjunctive() -> None:
     measurement = {"installed_ram_gib": 15.0, "available_ram_gib": 10.5, "disk_free_gib": 12.0}
     assert evaluate_mq_hw1(measurement, HW_GATE)["overall"] == "PASS"
