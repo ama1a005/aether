@@ -1,5 +1,15 @@
 # Experiment Ledger
 
+## P0_target_20261110_qwen15b_mq — preflight software repair
+
+- Evidence class: cross-platform software fix, not an executed model experiment.
+- The observed Kaggle error came from CRLF/LF byte conversion changing the raw
+  SHA-256 of a frozen text input. The runner now accepts only a match against
+  raw, canonical-LF, or canonical-CRLF hashes and records all forms; content
+  edits still fail closed.
+- Failure occurred before MQ-HW1 hardware checks and before model access. No
+  Qwen weights were downloaded or evaluated from that failed invocation.
+
 ## P0_target_20261028_three_agent_0 — synthetic acceptance
 
 - Evidence class: deterministic software acceptance for the additive A→B→C path.

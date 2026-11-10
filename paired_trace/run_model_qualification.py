@@ -60,6 +60,34 @@ def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def _text_hashes_with_newline_variants(path: Path) -> dict[str, str]:
+    """Return raw, canonical-LF, and canonical-CRLF hashes for a UTF-8 text file."""
+    raw = path.read_bytes()
+    crlf, lf, cr = bytes((13, 10)), bytes((10,)), bytes((13,))
+    canonical_lf = raw.replace(crlf, lf).replace(cr, lf)
+    canonical_crlf = canonical_lf.replace(lf, crlf)
+    return {
+        "raw_sha256": _sha256_bytes(raw),
+        "canonical_lf_sha256": _sha256_bytes(canonical_lf),
+        "canonical_crlf_sha256": _sha256_bytes(canonical_crlf),
+    }
+
+
+def _verify_frozen_text_hash(path: Path, expected: str, label: str) -> dict[str, str]:
+    """Verify frozen content while allowing only LF/CRLF checkout conversion."""
+    observed = _text_hashes_with_newline_variants(path)
+    if expected not in observed.values():
+        raise ValueError(
+            f"frozen input hash mismatch for {label}: expected {expected}; observed {observed}"
+        )
+    return {"expected_frozen_sha256": expected, **observed}
+
+
+def _canonical_text_sha256(path: Path) -> str:
+    """Hash UTF-8 text using LF line endings for cross-platform manifests."""
+    return _text_hashes_with_newline_variants(path)["canonical_lf_sha256"]
+
+
 def _cgroup_memory() -> tuple[float | None, float | None]:
     """Return cgroup memory limit and available GiB when Linux exposes them."""
     root = Path("/sys/fs/cgroup")
@@ -104,7 +132,7 @@ def measure_hardware(cache_path: Path) -> dict[str, Any]:
         "python_executable": sys.executable,
         "cache_path": str(cache_path.resolve()),
         "model_candidate_config": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
-        "model_candidate_config_sha256": sha256_file(MODEL_CONFIG_PATH),
+        "model_candidate_config_sha256": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "model_revision": model_config["revision"],
         "model_accessed": False,
         "measurements": {
@@ -279,16 +307,18 @@ def _write_preflight_manifest(output_root: Path, result: dict[str, Any]) -> None
         "git_commit": _git(["git", "rev-parse", "HEAD"]),
         "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): sha256_file(path)
-            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH, PROTOCOL_PATH)
+            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
+            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
+                         MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
+        "frozen_input_hash_verification": result.get("frozen_input_hash_verification", {}),
         "model_id": model_config["model_id"], "model_revision": model_config["revision"],
         "tokenizer_revision": model_config["revision"],
         "random_seeds": [v21["seed"]], "hardware_measurements": result["measurements"],
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages,
         "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
-        "config_hash": sha256_file(MODEL_CONFIG_PATH), "model_accessed": False,
+        "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH), "model_accessed": False,
         "preflight_decision": result["decision"], "raw_output_path": str(artifact),
         "artifact_paths": {str(artifact): sha256_file(artifact)},
     }
@@ -310,15 +340,28 @@ def _write_failure_manifest(output_root: Path, error: Exception) -> None:
         "git_commit": _git(["git", "rev-parse", "HEAD"]),
         "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): sha256_file(path)
-            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH, PROTOCOL_PATH)
+            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
+            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
+                         MODEL_CONFIG_PATH, PROTOCOL_PATH)
+        },
+        "frozen_input_hash_verification": {
+            key: {
+                "expected_frozen_sha256": expected,
+                **_text_hashes_with_newline_variants(path),
+            }
+            for key, path, expected in (
+                ("semantic_registry_sha256", REGISTRY_PATH, json.loads(G1_PATH.read_text(encoding="utf-8"))["semantic_registry_sha256"]),
+                ("control_mappings_sha256", MAPPING_PATH, json.loads(G1_PATH.read_text(encoding="utf-8"))["control_mappings_sha256"]),
+                ("v2_1_config_sha256", V21_PATH, json.loads(G1_PATH.read_text(encoding="utf-8"))["v2_1_config_sha256"]),
+                ("model_qualification_protocol", PROTOCOL_PATH, json.loads(G2_PATH.read_text(encoding="utf-8"))["parent_protocol_sha256"]),
+            )
         },
         "model_id": model_config["model_id"], "model_revision": model_config["revision"],
         "tokenizer_revision": model_config["revision"], "random_seeds": [v21["seed"]],
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages, "hardware": platform.platform(),
         "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
-        "config_hash": sha256_file(MODEL_CONFIG_PATH),
+        "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "failure": {"exception_type": type(error).__name__, "message": str(error)},
         "raw_output_path": str(output_root / "execution_failure.json"),
         "artifact_paths": {str(path): sha256_file(path) for path in artifacts},
@@ -334,22 +377,26 @@ def _assert_frozen_inputs() -> tuple[dict[str, Any], list[dict[str, Any]], dict[
     v21 = json.loads(V21_PATH.read_text(encoding="utf-8"))
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     _validate_model_candidate(hw_gate["candidate_model_id"])
-    if sha256_file(PROTOCOL_PATH) != g2_gate["parent_protocol_sha256"]:
-        raise ValueError("frozen MQ protocol hash differs from the machine-readable MQ-G2 config")
+    protocol_hash_diagnostics = _verify_frozen_text_hash(
+        PROTOCOL_PATH, g2_gate["parent_protocol_sha256"], "model qualification protocol"
+    )
     if g2_gate["minimum_clean_message_rescue_per_direction"] != g2_gate["minimum_attacked_message_induction_per_direction"]:
         raise ValueError("runner requires the protocol's shared rescue/induction threshold")
     if g2_gate["internal_model_interventions"] != "forbidden":
         raise ValueError("MQ-G2 config must forbid internal-model interventions")
     if g2_gate["split_access_policy"]["validation"] != "forbidden" or g2_gate["split_access_policy"]["test"] != "forbidden":
         raise ValueError("MQ-G2 config must keep validation and test closed")
-    hashes = {
-        "semantic_registry_sha256": sha256_file(REGISTRY_PATH),
-        "control_mappings_sha256": sha256_file(MAPPING_PATH),
-        "v2_1_config_sha256": sha256_file(V21_PATH),
+    input_paths = {
+        "semantic_registry_sha256": REGISTRY_PATH,
+        "control_mappings_sha256": MAPPING_PATH,
+        "v2_1_config_sha256": V21_PATH,
     }
-    for key, observed in hashes.items():
-        if gate[key] != observed:
-            raise ValueError(f"frozen input hash mismatch for {key}: {observed}")
+    hash_diagnostics = {
+        key: _verify_frozen_text_hash(path, gate[key], key)
+        for key, path in input_paths.items()
+    }
+    hash_diagnostics["model_qualification_protocol"] = protocol_hash_diagnostics
+    hashes = {key: gate[key] for key in input_paths}
     cases = [case for case in registry["cases"] if case["split"] == "development"]
     if len(cases) != gate["development_case_count"]:
         raise ValueError("development registry count differs from the frozen MQ-G1 gate")
@@ -366,7 +413,12 @@ def _assert_frozen_inputs() -> tuple[dict[str, Any], list[dict[str, Any]], dict[
     }
     if any(count != gate["per_class_case_count"] for count in direction_counts.values()):
         raise ValueError(f"development directional counts do not match frozen gate: {direction_counts}")
-    return {**gate, "candidate_model_id": hw_gate["candidate_model_id"], "input_hashes": hashes}, cases, v21
+    return {
+        **gate,
+        "candidate_model_id": hw_gate["candidate_model_id"],
+        "input_hashes": hashes,
+        "input_hash_diagnostics": hash_diagnostics,
+    }, cases, v21
 
 
 def run(output_root: Path = OUTPUT_DEFAULT, cache_root: Path | None = None) -> dict[str, Any]:
@@ -707,20 +759,21 @@ def _finalize(
         "utc_timestamp": result["utc_timestamp"], "git_commit": git_commit,
         "uncommitted_diff": bool(diff),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): sha256_file(path)
+            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
             for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
                          MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
+        "frozen_input_hash_verification": _assert_frozen_inputs()[0]["input_hash_diagnostics"],
         "model_id": model_config["model_id"], "model_revision": model_config["revision"],
         "tokenizer_revision": model_config["revision"],
-        "prompt_versions": {str(path): sha256_file(ROOT / path) for path in source_paths},
+        "prompt_versions": {str(path): _canonical_text_sha256(ROOT / path) for path in source_paths},
         "random_seeds": [v21["seed"]],
         "hardware": {"platform": platform.platform(), "cpu_count": os.cpu_count(),
                      "device": "CPU float32", "torch_cuda_available": torch.cuda.is_available()},
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages,
         "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
-        "config_hash": sha256_file(MODEL_CONFIG_PATH),
+        "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "raw_output_path": str(result_path),
         "artifact_paths": {str(path.relative_to(ROOT) if path.is_relative_to(ROOT) else path): sha256_file(path)
                            for path in artifacts},
@@ -744,8 +797,9 @@ def main() -> None:
     if args.preflight_only:
         cache_root = (args.cache or (args.output.resolve() / "hf-cache")).resolve()
         cache_root.mkdir(parents=True, exist_ok=True)
-        _assert_frozen_inputs()
+        frozen_gate, _, _ = _assert_frozen_inputs()
         result = measure_hardware(cache_root)
+        result["frozen_input_hash_verification"] = frozen_gate["input_hash_diagnostics"]
         args.output.resolve().mkdir(parents=True, exist_ok=True)
         _write_json(args.output.resolve() / "hardware_preflight.json", result)
         _log_event(args.output.resolve(), "mq_hw1", "preflight_complete", result["decision"])

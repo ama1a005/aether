@@ -11,6 +11,7 @@ import torch
 
 from paired_trace.run_model_qualification import (
     _assert_frozen_inputs,
+    _verify_frozen_text_hash,
     _score_valid_messages,
     _validate_model_candidate,
     _verify_snapshot_manifest,
@@ -36,6 +37,22 @@ class FakeAdapter:
         logits[0, 0, 1] = 4.0
         logits[0, 0, 2] = 0.0
         return SimpleNamespace(logits=logits)
+
+
+def test_frozen_text_hash_accepts_only_newline_conversion(tmp_path: Path) -> None:
+    content = b"alpha\r\nbeta\r\n"
+    path = tmp_path / "frozen.txt"
+    path.write_bytes(content)
+    expected = hashlib.sha256(b"alpha\nbeta\n").hexdigest()
+
+    diagnostics = _verify_frozen_text_hash(path, expected, "fixture")
+    assert diagnostics["raw_sha256"] == hashlib.sha256(content).hexdigest()
+    assert diagnostics["canonical_lf_sha256"] == expected
+    assert diagnostics["canonical_crlf_sha256"] == hashlib.sha256(content).hexdigest()
+
+    path.write_bytes(b"alpha changed\r\nbeta\r\n")
+    with pytest.raises(ValueError, match="frozen input hash mismatch"):
+        _verify_frozen_text_hash(path, expected, "fixture")
 
 
 def test_runner_uses_exact_development_registry_and_frozen_hashes() -> None:

@@ -3,6 +3,17 @@
 **Current checkpoint:** model-independent Phase 1 implementation, 2026-11-04
 **Development branch:** `lm`
 
+## 2026-11-10 Kaggle Qwen preflight newline portability
+
+The Kaggle preflight rejection was caused by Git converting committed text files
+from CRLF to LF while the frozen hashes had been recorded on Windows. The
+qualification runner now verifies each frozen hash against raw, canonical LF,
+and canonical CRLF bytes. Any content change still fails closed. Reproducibility
+manifests use canonical LF hashes and record the observed hash forms. Updated
+the generated Kaggle notebook to pin the resulting runner source. This is a
+software compatibility fix only; the traceback occurred before hardware
+preflight or model access, so it is not Qwen qualification evidence.
+
 ## Implemented
 
 - Deterministic two-agent and Agent C paths, attack corpus, MCP SDK boundary,

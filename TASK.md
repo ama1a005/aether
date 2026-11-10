@@ -2,6 +2,12 @@
 
 ## Real Qwen2.5-1.5B qualification on Kaggle — 2026-11-10
 
+Portability repair: Kaggle's Git checkout normalizes text files to LF while
+Windows checkouts can use CRLF. The runner verifies frozen hashes across
+newline-only conversions, still rejects content changes, and records canonical
+LF hashes plus diagnostics. Regenerate and use the notebook pinned to the fixed
+runner commit. The reported failure happened before hardware/model access.
+
 Prepare an executable Kaggle path for the already approved MQ-HW1/MQ-G1/MQ-G2
 campaign. Pin the official immutable Qwen2.5-1.5B-Instruct revision, run the
 CPU-float32 pre-access hardware gate before model download, implement a
