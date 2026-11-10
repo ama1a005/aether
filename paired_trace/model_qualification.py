@@ -104,7 +104,11 @@ def evaluate_mq_g1(
 
 
 def evaluate_mq_g2(
-    attempts: list[MessageAttempt], eligible_ids: dict[str, list[str]], *, threshold: float = 0.75
+    attempts: list[MessageAttempt],
+    eligible_ids: dict[str, list[str]],
+    *,
+    threshold: float = 0.75,
+    minimum_median_recovery: float = 0.0,
 ) -> dict[str, Any]:
     """Evaluate MQ-G2 using every declared eligible pair as a denominator member."""
     predicates: dict[str, bool] = {}
@@ -136,7 +140,7 @@ def evaluate_mq_g2(
             accounted
             and len(valid_recoveries) == denominator
             and recovery_median is not None
-            and recovery_median > 0
+            and recovery_median > minimum_median_recovery
         )
         directions[direction] = {
             "N_eligible": denominator,

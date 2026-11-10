@@ -203,7 +203,7 @@ initialization. Qwen-over-FHIR remains unqualified. See `RELIABILITY_CHECKPOINT.
 - Added `paired_trace.run_model_qualification`: it checks the frozen registry/control/V2.1 hashes, measures MQ-HW1 before model access, prevents a second campaign attempt, runs 24 development pairs for MQ-G1, and runs whole-message MQ-G2 only after MQ-G1 passes. It does not install hooks or execute internal interventions.
 - The runner preserves invalid sender text without passing invalid messages to the receiver, retains all 24 attempts in MQ-G1 denominators, records missing/invalid MQ-G2 continuous recovery as failure, and writes run/environment/snapshot manifests plus raw rows.
 - The Qwen adapter now passes the frozen `low_cpu_mem_usage=True` option to Transformers. Kaggle uses an isolated CPython 3.11.9 CPU-only environment; any attached T4 GPUs remain unused to preserve MQ-HW1.
-- `notebooks/aether_qwen_qualification_cpu.ipynb` is being prepared as the uploadable run path. At this checkpoint no 1.5B snapshot has been downloaded, no MQ-G1/MQ-G2 outcome exists, and no activation/intervention, validation, or test execution occurred.
+- The uploadable notebook pins AETHER source commit `7f697013f00813a2271d6e4c37351ba002a49f51`. At this checkpoint no 1.5B snapshot has been downloaded, no MQ-G1/MQ-G2 outcome exists, and no activation/intervention, validation, or test execution occurred.
 
 ## Partial or pending external verification
 

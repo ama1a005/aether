@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
+from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
 import torch
 
 from paired_trace.run_model_qualification import (
     _assert_frozen_inputs,
     _score_valid_messages,
     _validate_model_candidate,
+    _verify_snapshot_manifest,
 )
 from paired_trace.schemas import MediatorMessage
 
@@ -66,3 +70,26 @@ def test_candidate_config_keeps_the_frozen_cpu_float32_policy() -> None:
     assert candidate["dtype"] == "float32"
     assert candidate["quantized"] is False
     assert candidate["low_cpu_mem_usage"] is True
+
+
+def test_snapshot_manifest_is_rehashed_before_model_load(tmp_path: Path) -> None:
+    cache = tmp_path / "hf-cache"
+    snapshot = cache / "models--Qwen--Qwen2.5-1.5B-Instruct" / "snapshots" / ("a" * 40)
+    snapshot.mkdir(parents=True)
+    required = {
+        "config.json": b"{}",
+        "model.safetensors": b"weights fixture",
+        "tokenizer.json": b"{}",
+        "tokenizer_config.json": b"{}",
+    }
+    records = []
+    for name, content in required.items():
+        path = snapshot / name
+        path.write_bytes(content)
+        records.append({"path": name, "size": len(content),
+                        "sha256": hashlib.sha256(content).hexdigest()})
+    manifest = {"resolved_revision": "a" * 40, "snapshot_path": str(snapshot), "files": records}
+    _verify_snapshot_manifest(manifest, cache)
+    (snapshot / "model.safetensors").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="integrity mismatch"):
+        _verify_snapshot_manifest(manifest, cache)

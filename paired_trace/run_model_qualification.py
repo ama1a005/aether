@@ -50,6 +50,7 @@ V21_PATH = ROOT / "configs/experiments/balanced_v2_redesign_v2_1.json"
 REGISTRY_PATH = ROOT / "data/causal_v2/case_registry.json"
 MAPPING_PATH = ROOT / "data/causal_v2/control_mappings.json"
 MODEL_CONFIG_PATH = ROOT / "configs/model_qualification/qwen_1_5b_candidate.json"
+PROTOCOL_PATH = ROOT / "docs/MODEL_QUALIFICATION_PROTOCOL.md"
 OUTPUT_DEFAULT = ROOT / "results/phase1/model_qualification/v2_mq_hw1_kaggle"
 RUN_ID = "P0_target_20261110_qwen15b_mq_seed42"
 EXPERIMENT_ID = "P0_target_20261110_qwen15b_mq"
@@ -155,6 +156,36 @@ def _environment_inventory() -> tuple[list[str], str]:
     return packages, _sha256_bytes(serialized.encode("utf-8"))
 
 
+def _verify_snapshot_manifest(manifest: dict[str, Any], cache_root: Path) -> None:
+    """Re-hash the downloaded snapshot before model construction or tokenizer load."""
+    snapshot = Path(manifest["snapshot_path"]).resolve()
+    cache = cache_root.resolve()
+    if not snapshot.is_relative_to(cache):
+        raise ValueError("model snapshot path is outside the configured Hugging Face cache")
+    if snapshot.name != manifest["resolved_revision"]:
+        raise ValueError("snapshot directory does not match the declared immutable revision")
+    records = manifest.get("files")
+    if not isinstance(records, list) or not records:
+        raise ValueError("snapshot manifest has no file records")
+    expected = {record["path"]: record for record in records}
+    if len(expected) != len(records):
+        raise ValueError("snapshot manifest contains duplicate paths")
+    actual_paths = {path.relative_to(snapshot).as_posix(): path
+                    for path in snapshot.rglob("*") if path.is_file()}
+    if set(actual_paths) != set(expected):
+        raise ValueError("model snapshot file set differs from its hash manifest")
+    for relative, path in actual_paths.items():
+        resolved = path.resolve()
+        if not resolved.is_relative_to(cache):
+            raise ValueError(f"snapshot file resolves outside configured cache: {relative}")
+        record = expected[relative]
+        if path.stat().st_size != record["size"] or sha256_file(path) != record["sha256"]:
+            raise ValueError(f"model snapshot integrity mismatch: {relative}")
+    required = {"config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json"}
+    if not required.issubset(expected):
+        raise ValueError(f"model snapshot lacks required files: {sorted(required - set(expected))}")
+
+
 def _git(command: list[str]) -> str:
     """Run a required git metadata command and return stdout."""
     return subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
@@ -234,12 +265,83 @@ def _log_event(output_root: Path, component: str, event: str, payload: dict[str,
         stream.write(json.dumps(record, sort_keys=True, allow_nan=False) + "\n")
 
 
+def _write_preflight_manifest(output_root: Path, result: dict[str, Any]) -> None:
+    """Record reproducibility metadata even when MQ-HW1 blocks before model access."""
+    model_config = _validate_model_candidate("Qwen/Qwen2.5-1.5B-Instruct")
+    v21 = json.loads(V21_PATH.read_text(encoding="utf-8"))
+    packages, env_hash = _environment_inventory()
+    artifact = output_root / "hardware_preflight.json"
+    payload = {
+        "manifest_version": "1.0.0",
+        "experiment_id": EXPERIMENT_ID,
+        "run_id": RUN_ID,
+        "utc_timestamp": datetime.now(timezone.utc).isoformat(),
+        "git_commit": _git(["git", "rev-parse", "HEAD"]),
+        "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
+        "dataset_manifest_hashes": {
+            str(path.relative_to(ROOT)): sha256_file(path)
+            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH, PROTOCOL_PATH)
+        },
+        "model_id": model_config["model_id"], "model_revision": model_config["revision"],
+        "tokenizer_revision": model_config["revision"],
+        "random_seeds": [v21["seed"]], "hardware_measurements": result["measurements"],
+        "python_version": platform.python_version(), "python_executable": sys.executable,
+        "python_env_hash": env_hash, "python_packages": packages,
+        "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "config_hash": sha256_file(MODEL_CONFIG_PATH), "model_accessed": False,
+        "preflight_decision": result["decision"], "raw_output_path": str(artifact),
+        "artifact_paths": {str(artifact): sha256_file(artifact)},
+    }
+    _write_json(output_root / "preflight_manifest.json", payload)
+
+
+def _write_failure_manifest(output_root: Path, error: Exception) -> None:
+    """Record run identity and hashes for an interrupted/failed model attempt."""
+    model_config = json.loads(MODEL_CONFIG_PATH.read_text(encoding="utf-8"))
+    v21 = json.loads(V21_PATH.read_text(encoding="utf-8"))
+    packages, env_hash = _environment_inventory()
+    artifacts = [
+        path for path in output_root.iterdir()
+        if path.is_file() and path.name != "failure_manifest.json"
+    ]
+    payload = {
+        "manifest_version": "1.0.0", "experiment_id": EXPERIMENT_ID, "run_id": RUN_ID,
+        "utc_timestamp": datetime.now(timezone.utc).isoformat(),
+        "git_commit": _git(["git", "rev-parse", "HEAD"]),
+        "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
+        "dataset_manifest_hashes": {
+            str(path.relative_to(ROOT)): sha256_file(path)
+            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH, PROTOCOL_PATH)
+        },
+        "model_id": model_config["model_id"], "model_revision": model_config["revision"],
+        "tokenizer_revision": model_config["revision"], "random_seeds": [v21["seed"]],
+        "python_version": platform.python_version(), "python_executable": sys.executable,
+        "python_env_hash": env_hash, "python_packages": packages, "hardware": platform.platform(),
+        "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "config_hash": sha256_file(MODEL_CONFIG_PATH),
+        "failure": {"exception_type": type(error).__name__, "message": str(error)},
+        "raw_output_path": str(output_root / "execution_failure.json"),
+        "artifact_paths": {str(path): sha256_file(path) for path in artifacts},
+    }
+    _write_json(output_root / "failure_manifest.json", payload)
+
+
 def _assert_frozen_inputs() -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     """Validate checksums, exact development IDs, and frozen case mappings."""
     gate = json.loads(G1_PATH.read_text(encoding="utf-8"))
     hw_gate = json.loads(HW_PATH.read_text(encoding="utf-8"))
+    g2_gate = json.loads(G2_PATH.read_text(encoding="utf-8"))
     v21 = json.loads(V21_PATH.read_text(encoding="utf-8"))
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    _validate_model_candidate(hw_gate["candidate_model_id"])
+    if sha256_file(PROTOCOL_PATH) != g2_gate["parent_protocol_sha256"]:
+        raise ValueError("frozen MQ protocol hash differs from the machine-readable MQ-G2 config")
+    if g2_gate["minimum_clean_message_rescue_per_direction"] != g2_gate["minimum_attacked_message_induction_per_direction"]:
+        raise ValueError("runner requires the protocol's shared rescue/induction threshold")
+    if g2_gate["internal_model_interventions"] != "forbidden":
+        raise ValueError("MQ-G2 config must forbid internal-model interventions")
+    if g2_gate["split_access_policy"]["validation"] != "forbidden" or g2_gate["split_access_policy"]["test"] != "forbidden":
+        raise ValueError("MQ-G2 config must keep validation and test closed")
     hashes = {
         "semantic_registry_sha256": sha256_file(REGISTRY_PATH),
         "control_mappings_sha256": sha256_file(MAPPING_PATH),
@@ -291,6 +393,10 @@ def run(output_root: Path = OUTPUT_DEFAULT, cache_root: Path | None = None) -> d
     hw = json.loads(hw_path.read_text(encoding="utf-8"))
     if hw["decision"]["overall"] != "PASS" or hw.get("model_accessed") is not False:
         raise RuntimeError("MQ-HW1 preflight did not pass before model access")
+    if marker_payload.get("hardware_preflight_sha256") != sha256_file(hw_path):
+        raise RuntimeError("pre-access hardware report differs from the marker")
+    if marker_payload.get("model_id") != model_config["model_id"] or marker_payload.get("model_revision") != model_config["revision"]:
+        raise RuntimeError("model-access marker does not match the frozen candidate")
     snapshot_manifest_path = Path(marker_payload["snapshot_manifest_path"])
     if not snapshot_manifest_path.is_file():
         raise RuntimeError("pinned model snapshot manifest is missing")
@@ -299,6 +405,7 @@ def run(output_root: Path = OUTPUT_DEFAULT, cache_root: Path | None = None) -> d
         raise RuntimeError("downloaded model snapshot does not match the frozen candidate revision")
     if marker_payload.get("snapshot_manifest_sha256") != sha256_file(snapshot_manifest_path):
         raise RuntimeError("model snapshot manifest hash differs from pre-load marker")
+    _verify_snapshot_manifest(snapshot_manifest, cache_root)
 
     marker_payload = {
         **marker_payload,
@@ -523,6 +630,9 @@ def run(output_root: Path = OUTPUT_DEFAULT, cache_root: Path | None = None) -> d
         g2_attempts,
         eligible_ids,
         threshold=float(g2_gate["minimum_clean_message_rescue_per_direction"]),
+        minimum_median_recovery=float(
+            g2_gate["minimum_median_normalized_clean_message_recovery_per_direction_exclusive"]
+        ),
     )
     _log_event(output_root, "mq_g2", "qualification_complete", g2)
     _write_json(output_root / "mq_g2_rows.json", g2_rows)
@@ -565,7 +675,10 @@ def _finalize(
         "model_access_state": marker["state"], "validation_executions": 0, "test_executions": 0,
         "activation_capture": False, "internal_interventions": False,
         "runtime_seconds": time.perf_counter() - started,
-        "raw_outputs": [str(row_path), str(g1_path)]
+        "raw_outputs": [
+            str(row_path), str(g1_path), str(output_root / "hardware_preflight.json"),
+            str(output_root / "preflight_manifest.json"), str(output_root / "model_access_attempt_started.json"),
+        ]
         + ([str(output_root / "mq_g2_rows.json"), str(output_root / "mq_g2_result.json")] if g2 else [])
         + [str(marker["snapshot_manifest_path"]), str(output_root / "events.jsonl")],
     }
@@ -583,6 +696,7 @@ def _finalize(
     artifacts = [path for path in (row_path, g1_path, output_root / "mq_g2_rows.json",
                                     output_root / "mq_g2_result.json", result_path, packages_path,
                                     output_root / "hardware_preflight.json",
+                                    output_root / "preflight_manifest.json",
                                     output_root / "model_access_attempt_started.json",
                                     output_root / "events.jsonl",
                                     Path(marker["snapshot_manifest_path"])) if path.is_file()]
@@ -594,7 +708,8 @@ def _finalize(
         "uncommitted_diff": bool(diff),
         "dataset_manifest_hashes": {
             str(path.relative_to(ROOT)): sha256_file(path)
-            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH, MODEL_CONFIG_PATH)
+            for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
+                         MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
         "model_id": model_config["model_id"], "model_revision": model_config["revision"],
         "tokenizer_revision": model_config["revision"],
@@ -629,10 +744,12 @@ def main() -> None:
     if args.preflight_only:
         cache_root = (args.cache or (args.output.resolve() / "hf-cache")).resolve()
         cache_root.mkdir(parents=True, exist_ok=True)
+        _assert_frozen_inputs()
         result = measure_hardware(cache_root)
         args.output.resolve().mkdir(parents=True, exist_ok=True)
         _write_json(args.output.resolve() / "hardware_preflight.json", result)
         _log_event(args.output.resolve(), "mq_hw1", "preflight_complete", result["decision"])
+        _write_preflight_manifest(args.output.resolve(), result)
         print(json.dumps(result, indent=2, allow_nan=False))
         if result["decision"]["overall"] != "PASS":
             raise SystemExit(2)
@@ -651,6 +768,7 @@ def main() -> None:
             "message": str(error),
             "traceback": traceback.format_exc(),
         })
+        _write_failure_manifest(output_root, error)
         raise
     print(json.dumps(result, indent=2, allow_nan=False))
 
