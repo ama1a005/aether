@@ -69,6 +69,7 @@ uv_env=os.environ.copy(); uv_env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python
 if not PY.exists(): subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=uv_env)
 subprocess.run([str(PY),'-c','import sys; assert sys.version_info[:3]==(3,11,9); print(sys.executable,sys.version)'],check=True)
 if not REPO.exists(): subprocess.run(['git','clone','--branch','lm','--single-branch',REPOSITORY_URL,str(REPO)],check=True)
+subprocess.run(['git','fetch','--no-tags','origin','lm'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',REPOSITORY_COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==REPOSITORY_COMMIT
 assert not subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip()
