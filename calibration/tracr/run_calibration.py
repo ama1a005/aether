@@ -166,11 +166,23 @@ def main() -> None:
         "packages": packages,
     }
     environment_path.write_text(json.dumps(environment, indent=2), encoding="utf-8")
+    environment_hash = sha256(
+        json.dumps(packages, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    git_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    uncommitted_diff = bool(
+        subprocess.check_output(["git", "diff", "--name-only"], text=True).strip()
+    )
+    run_id = "P0_mech_20261111_tracr_reverse_intervention_seed0"
     result = {
         "experiment_id": "P0_mech_20261111_tracr_reverse_intervention_0",
+        "run_id": run_id,
         "utc_timestamp": datetime.now(timezone.utc).isoformat(),
         "source": config,
         "classification": "known-structure transformer calibration",
+        "model_id": "tracr-compiled-reverse",
+        "model_revision": config["revision"],
+        "seed": 0,
         "cases": cases,
         "compiler_graph": {
             "node_count": len(graph_nodes),
@@ -197,8 +209,25 @@ def main() -> None:
     manifest = {
         "manifest_version": "1.0.0",
         "experiment_id": result["experiment_id"],
+        "run_id": run_id,
         "utc_timestamp": datetime.now(timezone.utc).isoformat(),
-        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "git_commit": git_commit,
+        "uncommitted_diff": uncommitted_diff,
+        "dataset_manifest_hashes": {
+            "config": sha256(config_path.read_bytes()).hexdigest(),
+            "runner": sha256(Path(__file__).read_bytes()).hexdigest(),
+        },
+        "model_id": "tracr-compiled-reverse",
+        "model_revision": config["revision"],
+        "tokenizer_revision": "not_applicable_symbolic_encoder",
+        "prompt_versions": {"rasp_program": config["program"]},
+        "random_seeds": [0],
+        "hardware": platform.platform(),
+        "python_env_hash": environment_hash,
+        "python_packages": packages,
+        "command_line": sys.argv,
+        "config_file": str(config_path),
+        "raw_output_path": str(result_path),
         "source_revision": config["revision"],
         "config_path": str(config_path),
         "config_sha256": sha256(config_path.read_bytes()).hexdigest(),
@@ -206,7 +235,14 @@ def main() -> None:
         "result_sha256": sha256(result_path.read_bytes()).hexdigest(),
         "environment_path": str(environment_path),
         "environment_sha256": sha256(environment_path.read_bytes()).hexdigest(),
+        "artifact_paths": {
+            str(result_path): sha256(result_path.read_bytes()).hexdigest(),
+            str(environment_path): sha256(environment_path.read_bytes()).hexdigest(),
+            str(config_path): sha256(config_path.read_bytes()).hexdigest(),
+        },
         "inputs": inputs,
+        "validation_executions": 0,
+        "test_executions": 0,
     }
     manifest_path = output_dir / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")

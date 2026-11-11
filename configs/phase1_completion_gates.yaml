@@ -103,6 +103,9 @@ gates:
     path: results/calibration/tracr_intervention/summary.json
     expect:
       intervention.performed: true
+      intervention.overall: PASS
+      validation_executions: 0
+      test_executions: 0
   - id: ioi_causal_calibration
     category: calibration
     kind: json

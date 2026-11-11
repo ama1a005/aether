@@ -45,3 +45,11 @@ def test_tracr_intervention_evidence_when_current_config_was_executed() -> None:
     assert summary["intervention"]["overall"] == "PASS"
     assert all(summary["intervention"]["predicates"].values())
     assert summary["validation_executions"] == summary["test_executions"] == 0
+    required = {
+        "run_id", "git_commit", "uncommitted_diff", "dataset_manifest_hashes",
+        "model_id", "model_revision", "tokenizer_revision", "prompt_versions",
+        "random_seeds", "hardware", "python_env_hash", "command_line",
+        "config_file", "raw_output_path", "artifact_paths",
+    }
+    assert required <= set(manifest)
+    assert manifest["uncommitted_diff"] is False
