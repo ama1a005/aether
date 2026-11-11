@@ -1,0 +1,34 @@
+{
+  "protocol_version": "QCI-1.1",
+  "status": "prospectively_frozen_before_any_qci_intervention_execution",
+  "amends": "QCI-1.0 execution accounting only; candidate selection is unchanged",
+  "selection_result": "results/phase1/candidate_selection/qwen15b_qci1/selection.json",
+  "selection_result_sha256": "ded131530370c8b83786d49d3f5a72e6bf307c2cc9939a4389b45bf235e0eba1",
+  "discovery_case_count": 16,
+  "selected_candidate_count": 12,
+  "per_candidate_discovery_operators": {
+    "paired_rescue": 16,
+    "paired_induction": 16,
+    "shuffled_donor_rescue": 16,
+    "irrelevant_position_rescue": 16,
+    "identity_clean_to_clean": 16,
+    "identity_attacked_to_attacked": 16,
+    "passive_hook": 16
+  },
+  "expected_candidate_executions": 1344,
+  "message_positive_control_executions": 32,
+  "maximum_discovery_intervention_executions": 1400,
+  "maximum_total_model_forward_steps": 8000,
+  "sender_generation_max_new_tokens": 4,
+  "shuffled_mapping": "next_case_cyclic_within_attack_direction",
+  "primary_token_position": -1,
+  "irrelevant_token_position": 1,
+  "identity_tolerance": {
+    "absolute": 1e-6,
+    "relative": 1e-5
+  },
+  "failure_policy": "retain raw failure, count it in the denominator, and stop if the budget or provenance check fails",
+  "development_audit": "forbidden_until_discovery_support_assessment_is_complete",
+  "validation": "forbidden",
+  "test": "forbidden"
+}

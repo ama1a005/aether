@@ -122,6 +122,21 @@ def test_generation_step_patch_fires_only_at_declared_step_and_cleans_up() -> No
     assert adapter._handles == []
 
 
+def test_last_token_patch_accepts_stored_final_state_and_is_local() -> None:
+    adapter = adapter_with_dummy_model()
+    site = ComponentSite("L0.mlp_output", 0, "mlp_output", "fixture MLP output")
+    inputs = torch.ones(1, 3, 2)
+    baseline = adapter.model.model.layers[0](inputs)
+    adapter.install_last_token_patch(site, torch.full((1, 2), 8.0))
+    changed = adapter.model.model.layers[0](inputs)
+    assert adapter.intervention_applications == 1
+    assert torch.equal(baseline[:, :2], changed[:, :2])
+    assert not torch.equal(baseline[:, 2], changed[:, 2])
+    adapter.remove_hooks()
+    with pytest.raises(ValueError, match=r"shape \[batch, hidden\]"):
+        adapter.install_last_token_patch(site, torch.ones(1, 1, 2))
+
+
 def test_head_capture_reconstructs_concat_and_head_patch_is_local() -> None:
     adapter = adapter_with_dummy_model()
     attention = adapter.model.model.layers[0].self_attn

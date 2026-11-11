@@ -262,6 +262,27 @@ class Qwen2ModelAdapter(ModelAdapter):
             raise ValueError("Qwen attention head dimensions do not reconstruct o_proj input")
         return heads, head_dim
 
+    def install_last_token_patch(self, site: ComponentSite, source: torch.Tensor) -> None:
+        """Patch one module's final-token output from a stored two-dimensional source."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing an intervention")
+        if source.ndim != 2:
+            raise ValueError("last-token source must have shape [batch, hidden]")
+        self.intervention_applications = 0
+
+        def patch_last(_module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any) -> Any:
+            tensor = output[0] if isinstance(output, tuple) else output
+            if source.shape != tensor[:, -1, :].shape:
+                raise ValueError("last-token source shape does not match target")
+            patched = tensor.clone()
+            patched[:, -1, :] = source.to(device=tensor.device, dtype=tensor.dtype)
+            self.intervention_applications += 1
+            if isinstance(output, tuple):
+                return (patched, *output[1:])
+            return patched
+
+        self._handles.append(self._module_for(site).register_forward_hook(patch_last))
+
     def install_head_capture(self, layer: int) -> None:
         """Capture the exact concatenated per-head tensor entering attention o_proj."""
         if self._handles:

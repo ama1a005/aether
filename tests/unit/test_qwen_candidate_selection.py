@@ -14,6 +14,7 @@ from causal.run_qwen_candidate_selection import _verify_discovery_artifacts
 
 
 PROTOCOL = Path("configs/causal_candidates/qwen_1_5b_dcap1_intervention_v1.json")
+EXECUTION_PROTOCOL = Path("configs/causal_candidates/qwen_1_5b_qci1_execution_v1_1.json")
 
 
 def _artifact(scale: float) -> dict[str, torch.Tensor]:
@@ -34,6 +35,15 @@ def test_protocol_is_frozen_and_keeps_locked_splits_closed() -> None:
     assert protocol["split_access_policy"]["validation"] == "forbidden"
     assert protocol["split_access_policy"]["test"] == "forbidden"
     assert protocol["budget"]["maximum_selected_internal_candidates"] == 12
+
+
+def test_execution_accounting_covers_every_declared_control() -> None:
+    protocol = json.loads(EXECUTION_PROTOCOL.read_text(encoding="utf-8"))
+    per_candidate = sum(protocol["per_candidate_discovery_operators"].values())
+    assert per_candidate * protocol["selected_candidate_count"] == protocol["expected_candidate_executions"]
+    assert protocol["expected_candidate_executions"] <= protocol["maximum_discovery_intervention_executions"]
+    assert protocol["development_audit"].startswith("forbidden")
+    assert protocol["validation"] == protocol["test"] == "forbidden"
 
 
 def test_selection_is_discovery_only_deterministic_and_expands_heads(tmp_path: Path) -> None:
