@@ -97,6 +97,20 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
     assessments = json.loads((root / "candidate_assessments.json").read_text(encoding="utf-8"))
     if len(assessments) != 12 or {row["candidate_id"] for row in assessments} != set(by_candidate):
         raise ValueError("QCI candidate assessments do not cover the executed candidates")
+    supported_from_assessments = sorted(
+        str(row["candidate_id"]) for row in assessments if row.get("status") == "supported"
+    )
+    supported_from_summary = summary.get("supported_candidates")
+    if not isinstance(supported_from_summary, list):
+        raise ValueError("QCI summary supported_candidates is not a list")
+    if sorted(str(candidate) for candidate in supported_from_summary) != supported_from_assessments:
+        raise ValueError("QCI summary support classification differs from candidate assessments")
+    expected_outcome = (
+        "supported_candidates_found" if supported_from_assessments
+        else "no_internal_candidate_passed"
+    )
+    if summary.get("assessment_outcome") != expected_outcome:
+        raise ValueError("QCI assessment outcome differs from frozen support classification")
     ledger = summary["query_ledger"]
     if ledger["executions"] != 1376 or ledger["executions"] > ledger["maximum_executions"]:
         raise ValueError("QCI execution ledger is invalid")
@@ -119,7 +133,11 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
         "candidate_execution_count": len(rows), "candidate_count": len(by_candidate),
         "message_positive_control_count": len(controls),
         "invalid_or_error_count": sum(row.get("status") != "ok" for row in rows),
-        "supported_candidates": summary["supported_candidates"],
+        "supported_candidates": supported_from_assessments,
+        "next_gate": (
+            "ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT"
+            if supported_from_assessments else "STOP_NO_SUPPORTED_CANDIDATE"
+        ),
         "development_audit_executions": 0, "validation_executions": 0, "test_executions": 0,
         "manifest_entry_count": len(manifest["artifact_paths"]),
         "archive_content_entry_count": len(archive_contents),

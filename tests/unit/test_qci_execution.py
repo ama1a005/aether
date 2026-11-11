@@ -52,7 +52,10 @@ def test_budget_and_normalized_effects_fail_closed() -> None:
         rescue_effect(1.0, 1.0, 1.0)
 
 
-def _rows(rescue: float = 0.8, induction: float = 0.8, shuffled: float = 0.1) -> list[dict[str, object]]:
+def _rows(
+    rescue: float = 0.8, induction: float = 0.8, shuffled: float = 0.1,
+    count: int = 16,
+) -> list[dict[str, object]]:
     values = {
         "paired_rescue": rescue, "paired_induction": induction,
         "shuffled_donor_rescue": shuffled, "irrelevant_position_rescue": 0.1,
@@ -61,7 +64,7 @@ def _rows(rescue: float = 0.8, induction: float = 0.8, shuffled: float = 0.1) ->
     }
     rows = []
     for operator, value in values.items():
-        for index in range(16):
+        for index in range(count):
             rows.append({
                 "candidate_id": "module.L22.mlp_output", "case_id": str(index),
                 "operator": operator, "status": "ok", "normalized_effect": value,
@@ -87,3 +90,9 @@ def test_support_requires_effect_specificity_and_noninterference() -> None:
     assessment = assess_candidate(failed, THRESHOLDS)
     assert assessment["status"] == "rejected"
     assert assessment["failed_execution_count"] == 1
+
+
+def test_support_assessment_handles_four_case_development_audit() -> None:
+    assessment = assess_candidate(_rows(count=4), THRESHOLDS, expected_count=4)
+    assert assessment["status"] == "supported"
+    assert assessment["metrics"]["rescue_above_0_25_fraction"] == 1.0

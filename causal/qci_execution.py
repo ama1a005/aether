@@ -102,10 +102,14 @@ def induction_effect(clean: float, attacked: float, intervened: float) -> float:
     return value
 
 
-def _values(rows: list[dict[str, Any]], operator: str) -> list[float]:
+def _values(
+    rows: list[dict[str, Any]], operator: str, expected_count: int = 16
+) -> list[float]:
     selected = [row for row in rows if row.get("operator") == operator]
-    if len(selected) != 16:
-        raise ValueError(f"QCI candidate requires 16 {operator} executions")
+    if len(selected) != expected_count:
+        raise ValueError(
+            f"QCI candidate requires {expected_count} {operator} executions"
+        )
     if any(row.get("status") != "ok" for row in selected):
         raise ValueError(f"QCI {operator} contains failed executions")
     values = [float(row["normalized_effect"]) for row in selected]
@@ -115,7 +119,7 @@ def _values(rows: list[dict[str, Any]], operator: str) -> list[float]:
 
 
 def assess_candidate(
-    rows: list[dict[str, Any]], thresholds: dict[str, Any]
+    rows: list[dict[str, Any]], thresholds: dict[str, Any], expected_count: int = 16
 ) -> dict[str, Any]:
     """Apply the immutable QCI discovery support criteria to one candidate."""
     if not rows:
@@ -131,8 +135,10 @@ def assess_candidate(
     observed = {str(row.get("operator")) for row in rows}
     if observed != expected_operators:
         raise ValueError(f"QCI operator set differs: {sorted(observed)}")
+    if expected_count <= 0:
+        raise ValueError("QCI expected execution count must be positive")
     counts = {operator: sum(row.get("operator") == operator for row in rows) for operator in expected_operators}
-    if any(count != 16 for count in counts.values()):
+    if any(count != expected_count for count in counts.values()):
         raise ValueError(f"QCI operator counts differ: {counts}")
     failures = [row for row in rows if row.get("status") != "ok"]
     if failures:
@@ -144,21 +150,21 @@ def assess_candidate(
             "reasons": ["execution_failure"],
             "failed_execution_count": len(failures),
         }
-    rescue = _values(rows, "paired_rescue")
-    induction = _values(rows, "paired_induction")
-    shuffled = _values(rows, "shuffled_donor_rescue")
-    irrelevant = _values(rows, "irrelevant_position_rescue")
+    rescue = _values(rows, "paired_rescue", expected_count)
+    induction = _values(rows, "paired_induction", expected_count)
+    shuffled = _values(rows, "shuffled_donor_rescue", expected_count)
+    irrelevant = _values(rows, "irrelevant_position_rescue", expected_count)
     identity_rows = [row for row in rows if str(row["operator"]).startswith("identity_")]
     passive_rows = [row for row in rows if row["operator"] == "passive_hook"]
     controls_noninterfering = all(
         row.get("status") == "ok" and bool(row.get("noninterference_pass"))
         for row in identity_rows + passive_rows
-    ) and len(identity_rows) == 32 and len(passive_rows) == 16
+    ) and len(identity_rows) == 2 * expected_count and len(passive_rows) == expected_count
     metrics = {
         "median_rescue": median(rescue),
-        "rescue_above_0_25_fraction": sum(value > 0.25 for value in rescue) / 16,
+        "rescue_above_0_25_fraction": sum(value > 0.25 for value in rescue) / expected_count,
         "median_induction": median(induction),
-        "induction_above_0_25_fraction": sum(value > 0.25 for value in induction) / 16,
+        "induction_above_0_25_fraction": sum(value > 0.25 for value in induction) / expected_count,
         "paired_minus_shuffled_median": median(rescue) - median(shuffled),
         "paired_minus_irrelevant_position": median(rescue) - median(irrelevant),
         "all_raw_effects_expected_direction": all(value >= 0.0 for value in rescue + induction),

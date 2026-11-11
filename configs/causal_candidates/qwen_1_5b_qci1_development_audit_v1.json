@@ -1,0 +1,70 @@
+{
+  "protocol_version": "QCI-A1.0",
+  "status": "prospectively_frozen_before_qci_discovery_results_are_ingested",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "discovery_protocol": "configs/causal_candidates/qwen_1_5b_qci1_execution_v1_1.json",
+  "discovery_result_requirement": "verified_next_gate_ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT",
+  "development_audit_case_ids": [
+    "v2_case_010",
+    "v2_case_011",
+    "v2_case_022",
+    "v2_case_023"
+  ],
+  "candidate_policy": {
+    "eligibility": "discovery_supported_only",
+    "maximum_candidates": 8,
+    "priority": "descending_frozen_activation_aggregate_score_then_region_qualified_candidate_id",
+    "replacement_after_failure": false
+  },
+  "operators_per_candidate_per_case": [
+    "paired_rescue",
+    "paired_induction",
+    "shuffled_donor_rescue",
+    "irrelevant_position_rescue",
+    "identity_clean_to_clean",
+    "identity_attacked_to_attacked",
+    "passive_hook"
+  ],
+  "support_rule": {
+    "threshold_source": "configs/causal_candidates/qwen_1_5b_dcap1_intervention_v1.json#support_thresholds",
+    "thresholds_immutable": true,
+    "expected_case_count": 4,
+    "minimum_expected_direction_cases": 3,
+    "both_attack_directions_represented": true,
+    "all_controls_required": true,
+    "failure_action": "reject_candidate_without_replacement"
+  },
+  "message_positive_controls": {
+    "whole_message_rescue": 4,
+    "whole_message_induction": 4
+  },
+  "budget": {
+    "maximum_candidate_intervention_executions": 224,
+    "maximum_message_control_executions": 8,
+    "maximum_total_executions": 240,
+    "maximum_total_model_forward_steps": 1200,
+    "budget_exhaustion_action": "stop_and_retain_incomplete_run"
+  },
+  "execution": {
+    "device": "cpu",
+    "dtype": "float32",
+    "seed": 42,
+    "primary_token_position": -1,
+    "irrelevant_token_position": 1,
+    "sender_generation_max_new_tokens": 4,
+    "identity_tolerance": {
+      "absolute": 1e-6,
+      "relative": 1e-5
+    }
+  },
+  "split_access_policy": {
+    "development_discovery": "read_verified_support_classification_only",
+    "development_audit": "listed_ids_once_after_verified_support",
+    "validation": "forbidden",
+    "test": "forbidden"
+  },
+  "next_state_if_supported": "READY_FOR_METHOD_FREEZE_REVIEW",
+  "next_state_if_rejected": "STOP_INTERNAL_CAUSAL_CLAIM",
+  "claim_boundary": "Audit may confirm development-only intervention support. It cannot establish validation, test, remediation, search-superiority, benchmark, or publication claims."
+}
