@@ -1,5 +1,13 @@
 # AETHER current bounded task
 
+## QCI-1.1 execution handoff
+
+The discovery-only runner and commit-pinned notebook are complete and tested.
+Execute `notebooks/aether_qwen_causal_interventions_cpu.ipynb` once on Kaggle,
+then hash-verify and ingest the retained archive. Development-audit remains
+closed until the frozen discovery support classification is known; validation
+and test remain forbidden.
+
 ## Prospective Qwen causal-intervention protocol
 
 Following verified DCAP-1 PASS, preserve its metadata and freeze the real-Qwen

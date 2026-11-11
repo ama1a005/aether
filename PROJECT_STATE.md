@@ -1,5 +1,17 @@
 # AETHER project state
 
+## 2026-11-11 QCI-1.1 runner ready for Kaggle execution
+
+The real discovery-only intervention runner and commit-pinned Kaggle notebook
+are implemented. The runner covers 64 selected-source captures, 1,344
+candidate/control executions, 32 whole-message controls, exact sender/message/
+receiver provenance, raw invalid/error denominators, query budgets, immutable
+support classification and zero development-audit/validation/test access. Its
+real preflight verified every input hash and candidate locally, then correctly
+blocked before model access because only 2.69 GiB RAM was available. Kaggle must
+execute `notebooks/aether_qwen_causal_interventions_cpu.ipynb`; no causal
+candidate is accepted until that retained run is verified.
+
 ## 2026-11-11 QCI-1 candidate selection complete
 
 After committing protocol SHA-256
@@ -102,7 +114,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **352 passed, 5 skipped** as of the DCAP-1 notebook checkpoint.
+Python 3.11.9: **368 passed, 5 skipped** as of the QCI-1.1 runner checkpoint
+(349 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.

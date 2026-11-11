@@ -1,5 +1,16 @@
 # Manual Actions
 
+## 2026-11-11 — execute frozen QCI-1.1 on Kaggle
+
+Upload `notebooks/aether_qwen_causal_interventions_cpu.ipynb` from branch `lm`.
+Confirm that it has 11 cells and pins source commit
+`7d5f7cb90215014f457c5fe670c13877e346a734`. Enable Internet and run all cells
+once. Do not interrupt the 1,344-execution intervention cell, delete its marker,
+change candidates/thresholds, or open development-audit, validation, or test.
+Download `aether-qwen-qci-results.tar.gz` and retain any failed archive. This is
+the current external-compute dependency; the local preflight correctly blocks
+on available RAM before model access.
+
 ## Kaggle Qwen2.5-1.5B instrumentation acceptance — 2026-11-11
 
 The qualification archive has been ingested and its inner artifacts verified.
