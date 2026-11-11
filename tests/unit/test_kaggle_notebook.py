@@ -132,3 +132,31 @@ def test_qwen_development_capture_notebook_is_pinned_and_ordered():
     assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
     assert 'torch==2.14.1' in combined and 'download.pytorch.org/whl/cpu' in combined
     assert 'instrumentation.run_qwen_development_capture' in combined
+
+
+def test_qwen_qci_notebook_is_pinned_ordered_and_locked():
+    root = Path(__file__).resolve().parents[2]
+    notebook = json.loads(
+        (root / 'notebooks/aether_qwen_causal_interventions_cpu.ipynb').read_text(encoding='utf-8')
+    )
+    code_cells = [''.join(cell['source']) for cell in notebook['cells']
+                  if cell['cell_type'] == 'code']
+    for index, source in enumerate(code_cells):
+        ast.parse(source, filename=f'qci-notebook-cell-{index}')
+    assert len(notebook['cells']) == 11
+    assert len({cell['id'] for cell in notebook['cells']}) == len(notebook['cells'])
+    assert all(cell['outputs'] == [] and cell['execution_count'] is None
+               for cell in notebook['cells'] if cell['cell_type'] == 'code')
+    preflight = next(i for i, source in enumerate(code_cells) if '--preflight-only' in source)
+    download = next(i for i, source in enumerate(code_cells) if 'snapshot_download' in source)
+    execution = next(i for i, source in enumerate(code_cells)
+                     if "run_logged('qwen-causal-interventions'" in source)
+    archive = next(i for i, source in enumerate(code_cells) if 'archive_contents.json' in source)
+    assert preflight < download < execution < archive
+    combined = '\n'.join(code_cells)
+    assert '7e6018506bbacec47e9c8e9af8e2c50e52f17fba' in combined
+    assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
+    assert 'instrumentation.run_qwen_causal_interventions' in combined
+    assert 'tests/unit/test_qci_execution.py' in combined
+    assert 'aether-qwen-qci-results.tar.gz' in combined
+    assert 'subprocess.Popen' in combined
