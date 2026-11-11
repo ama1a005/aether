@@ -283,6 +283,42 @@ class Qwen2ModelAdapter(ModelAdapter):
 
         self._handles.append(self._module_for(site).register_forward_hook(patch_last))
 
+    def install_generation_position_patch(
+        self,
+        site: ComponentSite,
+        source: torch.Tensor,
+        target_step: int,
+        token_position: int,
+    ) -> None:
+        """Patch one module token position during one explicit generation step."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing an intervention")
+        if source.ndim != 3:
+            raise ValueError("generation-position source must have shape [batch, sequence, hidden]")
+        if target_step < 0:
+            raise ValueError("target generation step must be non-negative")
+        self.intervention_applications = 0
+
+        def patch_position(_module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any) -> Any:
+            if self._active_generation_step != target_step:
+                return None
+            tensor = output[0] if isinstance(output, tuple) else output
+            resolved = token_position if token_position >= 0 else tensor.shape[1] + token_position
+            source_resolved = token_position if token_position >= 0 else source.shape[1] + token_position
+            if resolved < 0 or resolved >= tensor.shape[1] or source_resolved < 0 or source_resolved >= source.shape[1]:
+                raise IndexError("generation-position patch token is outside source or target")
+            if source[:, source_resolved, :].shape != tensor[:, resolved, :].shape:
+                raise ValueError("generation-position source shape does not match target")
+            patched = tensor.clone()
+            patched[:, resolved, :] = source[:, source_resolved, :].to(tensor.device, tensor.dtype)
+            self.intervention_applications += 1
+            self.generation_hook_events.append({"step": target_step, "sequence_length": tensor.shape[1]})
+            if isinstance(output, tuple):
+                return (patched, *output[1:])
+            return patched
+
+        self._handles.append(self._module_for(site).register_forward_hook(patch_position))
+
     def install_head_capture(self, layer: int) -> None:
         """Capture the exact concatenated per-head tensor entering attention o_proj."""
         if self._handles:

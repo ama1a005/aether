@@ -137,6 +137,24 @@ def test_last_token_patch_accepts_stored_final_state_and_is_local() -> None:
         adapter.install_last_token_patch(site, torch.ones(1, 1, 2))
 
 
+def test_generation_position_patch_is_step_and_position_local() -> None:
+    adapter = adapter_with_dummy_model()
+    site = ComponentSite("L0.mlp_output", 0, "mlp_output", "fixture MLP output")
+    inputs = torch.ones(1, 3, 2)
+    source = torch.full((1, 3, 2), 6.0)
+    adapter.install_generation_position_patch(site, source, target_step=0, token_position=1)
+    adapter._active_generation_step = 1
+    baseline = adapter.model.model.layers[0](inputs)
+    adapter._active_generation_step = 0
+    changed = adapter.model.model.layers[0](inputs)
+    assert adapter.intervention_applications == 1
+    assert torch.equal(baseline[:, 0], changed[:, 0])
+    assert not torch.equal(baseline[:, 1], changed[:, 1])
+    assert torch.equal(baseline[:, 2], changed[:, 2])
+    adapter.remove_hooks()
+    adapter._active_generation_step = None
+
+
 def test_head_capture_reconstructs_concat_and_head_patch_is_local() -> None:
     adapter = adapter_with_dummy_model()
     attention = adapter.model.model.layers[0].self_attn
