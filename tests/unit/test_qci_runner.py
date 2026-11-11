@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 import torch
 
 from instrumentation.run_qwen_causal_interventions import (
-    _load_inputs, _normalized_score, _qualified_inputs, math_isclose,
+    _execution_status, _load_inputs, _normalized_score, _qualified_inputs, math_isclose,
 )
 
 
@@ -49,3 +47,8 @@ def test_normalized_receiver_score_and_identity_tolerance() -> None:
     tolerance = {"absolute": 1e-6, "relative": 1e-5}
     assert math_isclose(2.00001, 2.0, tolerance)
     assert not math_isclose(2.1, 2.0, tolerance)
+    assert _execution_status(1.0, False, 1) == "ok"
+    assert _execution_status(1.0, False, 0) == "intervention_application_count_invalid"
+    assert _execution_status(1.0, False, 2) == "intervention_application_count_invalid"
+    assert _execution_status(1.0, True, 0) == "ok"
+    assert _execution_status(None, False, 1) == "invalid_sender_output"

@@ -305,7 +305,7 @@ def _run_one(
             )
         clean, attacked = float(row["clean_receiver_score"]), float(row["attacked_receiver_score"])
         effect = None
-        status = "ok" if score is not None else "invalid_sender_output"
+        status = _execution_status(score, passive, applications)
         if score is not None:
             effect = induction_effect(clean, attacked, score) if operator == "paired_induction" else rescue_effect(clean, attacked, score)
         baseline = clean if target == "clean" else attacked
@@ -349,6 +349,15 @@ def _run_one(
 def math_isclose(value: float, reference: float, tolerance: dict[str, float]) -> bool:
     """Apply the frozen identity/passive absolute and relative tolerance."""
     return abs(value - reference) <= float(tolerance["absolute"]) + float(tolerance["relative"]) * abs(reference)
+
+
+def _execution_status(score: float | None, passive: bool, applications: int) -> str:
+    """Classify validity without hiding missing or repeated active patches."""
+    if score is None:
+        return "invalid_sender_output"
+    if not passive and applications != 1:
+        return "intervention_application_count_invalid"
+    return "ok"
 
 
 def _run_message_controls(
@@ -516,10 +525,37 @@ def main() -> None:
         print(json.dumps(result, indent=2, sort_keys=True))
     except Exception as error:
         arguments.output.mkdir(parents=True, exist_ok=True)
-        _write_json(arguments.output / "execution_failure.json", {
+        failure_path = arguments.output / "execution_failure.json"
+        failure = {
+            "schema_version": "aether.qci-failure.v1",
+            "experiment_id": EXPERIMENT_ID, "run_id": RUN_ID,
             "utc_timestamp": datetime.now(timezone.utc).isoformat(),
             "exception_type": type(error).__name__, "message": str(error),
             "traceback": traceback.format_exc(),
+            "git_commit": _git("rev-parse", "HEAD"),
+            "uncommitted_diff": bool(_git("diff", "--name-only")),
+            "model_id": json.loads(BASE_PROTOCOL_PATH.read_text(encoding="utf-8"))["model_id"],
+            "model_revision": json.loads(BASE_PROTOCOL_PATH.read_text(encoding="utf-8"))["model_revision"],
+            "tokenizer_revision": json.loads(BASE_PROTOCOL_PATH.read_text(encoding="utf-8"))["model_revision"],
+            "random_seeds": [42], "config_file": str(EXECUTION_PROTOCOL_PATH.relative_to(ROOT)),
+            "config_hash": sha256_file(EXECUTION_PROTOCOL_PATH),
+            "selection_hash": sha256_file(SELECTION_PATH),
+            "validation_executions": 0, "test_executions": 0,
+        }
+        _write_json(failure_path, failure)
+        packages, environment_hash = _environment_inventory()
+        _write_json(arguments.output / "failure_manifest.json", {
+            "manifest_version": "1.0.0", "experiment_id": EXPERIMENT_ID,
+            "run_id": RUN_ID, "utc_timestamp": failure["utc_timestamp"],
+            "git_commit": failure["git_commit"], "uncommitted_diff": failure["uncommitted_diff"],
+            "dataset_manifest_hashes": {"selection": failure["selection_hash"]},
+            "model_id": failure["model_id"], "model_revision": failure["model_revision"],
+            "tokenizer_revision": failure["tokenizer_revision"], "prompt_versions": {"qualification": "V2.1"},
+            "random_seeds": [42], "hardware": platform.platform(),
+            "python_env_hash": environment_hash, "python_packages": packages,
+            "command_line": sys.argv, "config_file": failure["config_file"],
+            "raw_output_path": str(failure_path),
+            "artifact_paths": {str(failure_path): sha256_file(failure_path)},
         })
         raise
 
