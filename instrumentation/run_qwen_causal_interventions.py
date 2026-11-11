@@ -99,7 +99,7 @@ def preflight(output_root: Path, cache_root: Path) -> dict[str, Any]:
             "qualification_rows": sha256_file(QUALIFICATION_ROWS_PATH),
         },
         "discovery_case_ids": [row["case_id"] for row in rows],
-        "candidate_ids": [candidate.candidate_id for candidate in candidates],
+        "candidate_ids": [f"{candidate.agent}.{candidate.candidate_id}" for candidate in candidates],
         "validation_executions": 0, "test_executions": 0, "model_accessed": False,
         "hardware": hardware,
         "decision": {"inputs_verified": True, "hardware_pass": decision,
@@ -314,7 +314,8 @@ def _run_one(
         if operator.startswith("identity_") or passive:
             noninterference = score is not None and math_isclose(score, baseline, tolerance)
         return {
-            "candidate_id": candidate.candidate_id, "agent": candidate.agent,
+            "candidate_id": f"{candidate.agent}.{candidate.candidate_id}",
+            "component_id": candidate.candidate_id, "agent": candidate.agent,
             "family": candidate.family, "layer": candidate.layer, "head": candidate.head,
             "component_type": candidate.component_type, "case_id": row["case_id"],
             "direction": row["direction"], "operator": operator,
@@ -330,7 +331,8 @@ def _run_one(
     except Exception as error:
         adapter.remove_hooks()
         return {
-            "candidate_id": candidate.candidate_id, "agent": candidate.agent,
+            "candidate_id": f"{candidate.agent}.{candidate.candidate_id}",
+            "component_id": candidate.candidate_id, "agent": candidate.agent,
             "family": candidate.family, "layer": candidate.layer, "head": candidate.head,
             "component_type": candidate.component_type, "case_id": row["case_id"],
             "direction": row["direction"], "operator": operator,
@@ -459,7 +461,8 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
     assessments = []
     for candidate in candidates:
         assessments.append(assess_candidate(
-            [row for row in all_results if row["candidate_id"] == candidate.candidate_id],
+            [row for row in all_results
+             if row["candidate_id"] == f"{candidate.agent}.{candidate.candidate_id}"],
             base["support_thresholds"],
         ))
     supported = [row["candidate_id"] for row in assessments if row["status"] == "supported"]

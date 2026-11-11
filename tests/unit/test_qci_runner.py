@@ -30,6 +30,8 @@ def test_frozen_runner_inputs_are_discovery_only_and_complete() -> None:
     assert len(rows) == 16 and all(row["split"] == "development" for row in rows)
     assert len(candidates) == 12
     assert {candidate.agent for candidate in candidates} == {"sender", "receiver"}
+    node_ids = {f"{candidate.agent}.{candidate.candidate_id}" for candidate in candidates}
+    assert len(node_ids) == 12
     assert execution["development_audit"].startswith("forbidden")
 
 
