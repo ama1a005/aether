@@ -126,6 +126,9 @@ def test_qwen_development_capture_notebook_is_pinned_and_ordered():
     combined = '\n'.join(code_cells)
     assert '18dc7e7e9d8dd152c974931ab919f54960510d31' in combined
     assert "git','fetch','--no-tags','origin','lm" in combined
+    assert "aether-qwen-development-capture-corrected" in combined
+    assert "subprocess.Popen" in combined
+    assert "print(line,end='',flush=True)" in combined
     assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
     assert 'torch==2.14.1' in combined and 'download.pytorch.org/whl/cpu' in combined
     assert 'instrumentation.run_qwen_development_capture' in combined

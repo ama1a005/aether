@@ -43,7 +43,7 @@ WORK=Path('/kaggle/working')
 RUNTIME=Path('/tmp/aether-qwen-development-capture')
 REPO,VENV=RUNTIME/'aether',RUNTIME/'venv'
 PY=VENV/'bin'/'python'; HF_CACHE=RUNTIME/'hf-cache'
-OUTPUT=WORK/'aether-qwen-development-capture'
+OUTPUT=WORK/'aether-qwen-development-capture-corrected'
 for path in (RUNTIME,HF_CACHE,OUTPUT): path.mkdir(parents=True,exist_ok=True)
 REPOSITORY_URL={REPOSITORY_URL!r}; REPOSITORY_COMMIT={REPOSITORY_COMMIT!r}
 MODEL_ID={MODEL_ID!r}; MODEL_REVISION={MODEL_REVISION!r}
@@ -55,11 +55,18 @@ for name in ('AETHER_RUN_REAL_MODEL_TESTS','AETHER_RUN_CALIBRATION_MODELS','AETH
 def run_logged(name,command,cwd=None,timeout=3600,check=True):
     path=OUTPUT/(name+'.log')
     with path.open('w',encoding='utf-8') as log:
-        result=subprocess.run(command,cwd=cwd,env=os.environ.copy(),stdout=log,
-                              stderr=subprocess.STDOUT,text=True,timeout=timeout,check=False)
-    print(path.read_text(encoding='utf-8')[-16000:])
-    if check: result.check_returncode()
-    return result.returncode
+        process=subprocess.Popen(command,cwd=cwd,env=os.environ.copy(),stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT,text=True,bufsize=1)
+        assert process.stdout is not None
+        started=time.monotonic()
+        for line in process.stdout:
+            print(line,end='',flush=True); log.write(line); log.flush()
+            if time.monotonic()-started>timeout:
+                process.kill(); process.wait()
+                raise subprocess.TimeoutExpired(command,timeout)
+        return_code=process.wait()
+    if check and return_code: raise subprocess.CalledProcessError(return_code,command)
+    return return_code
 print('Kaggle Python:',sys.version); print('Platform:',platform.platform())
 """),
         _cell("code", """# Isolated CPython 3.11 and exact source checkout.

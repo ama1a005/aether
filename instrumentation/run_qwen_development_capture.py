@@ -282,11 +282,24 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
     label_ids = validate_label_tokens(adapter.tokenizer)
     artifacts: list[dict[str, Any]] = []
     measurements: list[dict[str, Any]] = []
+    total_captures = len(rows) * len(config["agents"]) * len(config["conditions"])
+    completed_captures = 0
+    print(
+        f"DCAP-1 capture started: {total_captures} forward passes across "
+        f"{len(rows)} development cases.",
+        flush=True,
+    )
     for row in rows:
         partition = "discovery" if row["case_id"] in config["discovery_case_ids"] else "development_audit"
         for agent in config["agents"]:
             captured: dict[str, dict[str, torch.Tensor]] = {}
             for condition in config["conditions"]:
+                print(
+                    f"DCAP-1 [{completed_captures + 1}/{total_captures}] "
+                    f"case={row['case_id']} partition={partition} "
+                    f"agent={agent} condition={condition}",
+                    flush=True,
+                )
                 prompt, token_ids = _prompt(row, agent, condition)
                 expected_code = row[f"{condition}_{agent}_output"] if agent == "sender" else row[f"{condition}_{agent}_code"]
                 path = output_root / "activations" / f"{row['case_id']}_{agent}_{condition}.pt"
@@ -300,6 +313,12 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
                     "partition": partition, "agent": agent, "condition": condition,
                     "token_position": config["token_position"],
                 })
+                completed_captures += 1
+                print(
+                    f"DCAP-1 completed {completed_captures}/{total_captures}; "
+                    f"artifact={path.name}",
+                    flush=True,
+                )
             for measurement in _paired_measurements(captured["clean"], captured["attacked"]):
                 measurements.append({
                     "case_id": row["case_id"], "direction": row["direction"],
