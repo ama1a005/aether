@@ -1,0 +1,150 @@
+schema_version: aether.phase1-completion.v1
+status: prospectively_frozen_completion_evidence_requirements
+claim_boundary: A PASS means required artifacts and declared predicates exist; it does not replace artifact-specific scientific review.
+gates:
+  - id: qwen_qualification
+    category: primary_model
+    kind: json
+    path: results/phase1/model_qualification/qwen15b_kaggle_20261110/summary.json
+    expect:
+      mq_g1.overall: PASS
+      mq_g2.overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: qwen_instrumentation_acceptance
+    category: primary_model
+    kind: json
+    path: results/phase1/instrumentation_acceptance/qwen15b_ia_g1_20261111/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: qwen_development_capture
+    category: primary_model
+    kind: json
+    path: results/phase1/development_capture/qwen15b_dcap1_20261111/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: qci_discovery_interventions
+    category: causal_core
+    kind: qci_discovery
+    path: results/phase1/causal_interventions/qwen15b_qci1
+  - id: qci_development_audit
+    category: causal_core
+    kind: qci_audit_conditional
+    path: results/phase1/causal_interventions/qwen15b_qci1_audit
+    depends_on: qci_discovery_interventions
+  - id: method_freeze_review
+    category: causal_core
+    kind: json
+    path: results/phase1/method_freeze/decision.json
+    expect:
+      decision_recorded: true
+      validation_executions: 0
+      test_executions: 0
+  - id: matched_search_baselines
+    category: causal_core
+    kind: json
+    path: results/phase1/search_comparison/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: mechanism_guided_remediation
+    category: causal_core
+    kind: json
+    path: results/phase1/remediation/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: locked_validation
+    category: locked_evaluation
+    kind: json
+    path: results/phase1/validation/summary.json
+    expect:
+      protocol_frozen_before_access: true
+      overall: PASS
+      test_executions: 0
+  - id: once_only_test
+    category: locked_evaluation
+    kind: json
+    path: results/phase1/test/summary.json
+    expect:
+      method_frozen: true
+      once_only: true
+      overall: PASS
+  - id: bfcl_official
+    category: external_benchmark
+    kind: json
+    path: results/phase1/bfcl/official/summary.json
+    expect:
+      official_protocol: true
+      overall: PASS
+  - id: mcptox_official
+    category: external_benchmark
+    kind: json
+    path: results/phase1/mcptox/official/summary.json
+    expect:
+      official_protocol: true
+      overall: PASS
+  - id: tamas_official
+    category: external_benchmark
+    kind: json
+    path: results/phase1/tamas/official/summary.json
+    expect:
+      official_protocol: true
+      overall: PASS
+  - id: tracr_known_structure_intervention
+    category: calibration
+    kind: json
+    path: results/calibration/tracr/summary.json
+    expect:
+      intervention.performed: true
+  - id: ioi_causal_calibration
+    category: calibration
+    kind: json
+    path: results/calibration/ioi/summary.json
+    expect:
+      comparison.acceptance_passed: true
+  - id: trained_sae_qwen_evaluation
+    category: supporting_experiment
+    kind: json
+    path: results/phase1/sae/qwen15b/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: real_qwen_red_team
+    category: supporting_experiment
+    kind: json
+    path: results/phase1/red_team/qwen15b/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: real_qwen_agent_c
+    category: supporting_experiment
+    kind: json
+    path: results/phase1/agent_c/qwen15b/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: second_model_qualification
+    category: generalization
+    kind: json
+    path: results/phase1/model_qualification/second_model/summary.json
+    expect:
+      overall: PASS
+      validation_executions: 0
+      test_executions: 0
+  - id: final_verified_report
+    category: reporting
+    kind: json
+    path: results/phase1/final_report/report_manifest.json
+    expect:
+      overall: PASS
+      incomplete_runs_rejected: true
