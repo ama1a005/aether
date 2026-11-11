@@ -124,7 +124,7 @@ def test_qwen_development_capture_notebook_is_pinned_and_ordered():
     archive = next(i for i, source in enumerate(code_cells) if 'archive_contents.json' in source)
     assert preflight < download < capture < archive
     combined = '\n'.join(code_cells)
-    assert '18dc7e7e9d8dd152c974931ab919f54960510d31' in combined
+    assert '50c9d1b01304cdb9aabf313cb1d7f35b05f6a618' in combined
     assert "git','fetch','--no-tags','origin','lm" in combined
     assert "aether-qwen-development-capture-corrected" in combined
     assert "subprocess.Popen" in combined
