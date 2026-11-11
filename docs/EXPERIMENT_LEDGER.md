@@ -1,5 +1,18 @@
 # Experiment Ledger
 
+## P0_mech_20261111_qwen15b_ia_g1_seed42 — executed IA-G1 PASS
+
+- Evidence class: real-model instrumentation compatibility on four fixed,
+  eligible development cases using pinned Qwen2.5-1.5B CPU float32.
+- Eight passive checks had maximum logit difference `0.0`; 73 activation
+  artifacts round-tripped and rehashed; layer-14 head capture reconstructed the
+  `[1, 121, 1536]` tensor as `[1, 121, 12, 128]`; hooks were fully removed.
+- Fixed layer-14 MLP patches applied once in both directions and produced
+  nonzero logit effects. Magnitudes are acceptance diagnostics and cannot be
+  used to select a component or claim a circuit.
+- Validation/test executions were zero. Original archive SHA-256:
+  `5e1f2208e5b397c1bf5d6372f426d8296d4aac12dcf25820ab86ee19a63aafd5`.
+
 ## P0_target_20261110_qwen15b_mq_seed42 — executed qualification PASS
 
 - Evidence class: real Qwen2.5-1.5B behavioral and message-causal qualification

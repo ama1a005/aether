@@ -1,5 +1,20 @@
 # AETHER current bounded task
 
+## Prospective Qwen development activation capture — 2026-11-11
+
+Following IA-G1 PASS, freeze a development-only capture protocol before any
+broad internal activation data are observed. Exclude the four IA-G1 cases from
+component selection. Use 16 fixed eligible cases for discovery capture and four
+remaining eligible cases as an untouched development audit cohort. Capture
+sender and receiver attention/MLP outputs and pre-`o_proj` heads at every Qwen
+layer for clean and attacked prompts, retaining exact prompts, token IDs,
+component identities, tensor hashes, model revision, and seed.
+
+This task may compute declared paired activation-difference measurements but
+must not execute causal search, choose a circuit, tune on the audit cohort,
+access validation/test, or claim localization. Its output feeds a separately
+frozen intervention and negative-control protocol.
+
 ## Qwen2.5-1.5B instrumentation acceptance on Kaggle — 2026-11-11
 
 Ingest and hash-verify the successful MQ-HW1/MQ-G1/MQ-G2 qualification bundle,

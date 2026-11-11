@@ -1,2 +1,3 @@
 # Executed evidence is hash-addressed and must retain its original bytes.
 results/phase1/model_qualification/qwen15b_kaggle_20261110/** -text
+results/phase1/instrumentation_acceptance/qwen15b_ia_g1_20261111/** -text

@@ -143,6 +143,23 @@ def test_head_capture_reconstructs_concat_and_head_patch_is_local() -> None:
     assert adapter._handles == []
 
 
+def test_comprehensive_capture_collects_modules_and_heads_in_one_pass() -> None:
+    adapter = adapter_with_dummy_model()
+    sites = adapter.identify_components([0])
+    selected = [site for site in sites if site.component_type in {"attention_output", "mlp_output"}]
+    inputs = torch.tensor([[[1.0, 2.0], [3.0, 4.0]]])
+    baseline = adapter.model.model.layers[0](inputs)
+    adapter.install_comprehensive_capture(selected, [0])
+    observed = adapter.model.model.layers[0](inputs)
+    assert torch.equal(baseline, observed)
+    assert set(adapter.activations) == {site.component_id for site in selected}
+    assert adapter.head_activations["L0.pre_o_proj_heads"].shape == (1, 2, 2, 1)
+    with pytest.raises(RuntimeError, match="remove existing hooks"):
+        adapter.install_comprehensive_capture(selected, [0])
+    adapter.remove_hooks()
+    assert adapter._handles == []
+
+
 def test_load_forwards_cpu_memory_saving_option(monkeypatch: pytest.MonkeyPatch) -> None:
     calls: dict[str, dict[str, object]] = {}
 

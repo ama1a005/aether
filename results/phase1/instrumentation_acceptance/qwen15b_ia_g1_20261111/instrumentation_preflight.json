@@ -1,0 +1,78 @@
+{
+  "command_line": [
+    "/tmp/aether-qwen-instrumentation/aether/instrumentation/run_qwen_instrumentation_acceptance.py",
+    "--preflight-only",
+    "--output",
+    "/kaggle/working/aether-qwen-instrumentation-acceptance",
+    "--cache",
+    "/tmp/aether-qwen-instrumentation/hf-cache"
+  ],
+  "config_file": "configs/model_qualification/qwen_1_5b_instrumentation_acceptance.json",
+  "config_sha256": "c23d1d5b2ae4b2c48cd2a54d3fd3d4f825cbd2842a71534f86235eff720bdcc6",
+  "decision": {
+    "hardware_pass": true,
+    "overall": "PASS",
+    "qualification_verified": true
+  },
+  "experiment_id": "P0_mech_20261111_qwen15b_ia_g1",
+  "git_commit": "a9e4630d8b773b4668c699c12b78311edff8973e",
+  "hardware": {
+    "cache_path": "/tmp/aether-qwen-instrumentation/hf-cache",
+    "decision": {
+      "overall": "PASS",
+      "predicates": {
+        "MQ-HW1.available_ram": true,
+        "MQ-HW1.cgroup_headroom": true,
+        "MQ-HW1.cpu": true,
+        "MQ-HW1.fp32": true,
+        "MQ-HW1.free_disk": true,
+        "MQ-HW1.installed_ram": true,
+        "MQ-HW1.no_cuda": true,
+        "MQ-HW1.no_offload": true,
+        "MQ-HW1.no_pagefile_change": true,
+        "MQ-HW1.one_model": true,
+        "MQ-HW1.split_lock": true,
+        "MQ-HW1.unquantized": true
+      },
+      "state": "READY_FOR_MODEL_ACCESS"
+    },
+    "measurements": {
+      "available_ram_gib": 29.91234588623047,
+      "cgroup_available_gib": 26.37232208251953,
+      "cgroup_memory_limit_gib": 30.0,
+      "disk_free_gib": 965.5968437194824,
+      "installed_ram_gib": 31.346603393554688
+    },
+    "model_accessed": false,
+    "model_candidate_config": "configs/model_qualification/qwen_1_5b_candidate.json",
+    "model_candidate_config_sha256": "324c8b694a7b4e2138a8dafde06f60cb2510d5c4a4e6b2ff0bff44cff585cbd9",
+    "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "python_executable": "/tmp/aether-qwen-instrumentation/venv/bin/python",
+    "schema_version": "aether.mq-hw1-preflight.v2",
+    "utc_timestamp": "2026-11-11T07:05:18.958407+00:00"
+  },
+  "model_accessed": false,
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "python_env_hash": "203d4b79e539056052ce97243b54ea2d08fe0bdd241096a6f1d781432cca0ce2",
+  "python_executable": "/tmp/aether-qwen-instrumentation/venv/bin/python",
+  "python_version": "3.11.9",
+  "qualification_manifest_sha256": "ff43cf6d6b48d96da0792c0a8d864bbb7dd4753a58014810f14704e153d4c1c1",
+  "qualification_run_id": "P0_target_20261110_qwen15b_mq_seed42",
+  "qualification_summary_sha256": "5cc70ed96a7b3eec8c71cd528e02eb0ff003b7aae297986c0e7e12d4996753e6",
+  "random_seeds": [
+    42
+  ],
+  "raw_output_path": "/kaggle/working/aether-qwen-instrumentation-acceptance/instrumentation_preflight.json",
+  "run_id": "P0_mech_20261111_qwen15b_ia_g1_seed42",
+  "schema_version": "aether.instrumentation-acceptance-preflight.v1",
+  "selected_case_ids": [
+    "v2_case_000",
+    "v2_case_001",
+    "v2_case_012",
+    "v2_case_013"
+  ],
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-11T07:05:19.073100+00:00"
+}

@@ -3,6 +3,17 @@
 **Current checkpoint:** model-independent Phase 1 implementation, 2026-11-04
 **Development branch:** `lm`
 
+## 2026-11-11 Qwen 1.5B IA-G1 PASS
+
+The prospective Kaggle instrumentation-acceptance gate passed all nine
+predicates. Eight passive checks had exact zero logit difference; the layer-14
+pre-`o_proj` tensor reconstructed as 12 heads by 128 dimensions; all 73 saved
+activation tensors round-tripped exactly; both fixed directional activation
+patches applied once with nonzero effects; every hook was removed; and
+validation/test executions remained zero. All archive and manifest hashes were
+reverified locally. This authorizes only a prospective development capture
+protocol, not circuit or remediation claims.
+
 ## 2026-11-11 qualified Qwen 1.5B checkpoint
 
 The single authorized Kaggle campaign passed MQ-HW1, MQ-G1, and MQ-G2 on the

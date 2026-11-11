@@ -281,6 +281,60 @@ class Qwen2ModelAdapter(ModelAdapter):
 
         self._handles.append(o_proj.register_forward_pre_hook(capture))
 
+    def install_comprehensive_capture(
+        self,
+        sites: Sequence[ComponentSite],
+        head_layers: Sequence[int],
+    ) -> None:
+        """Capture module outputs and pre-o_proj heads in one forward pass.
+
+        This is intended for bounded, batch-size-one trace collection. Every
+        captured tensor is detached and copied to CPU; callers must remove hooks
+        between prompts to keep provenance and memory ownership explicit.
+        """
+        if self._handles:
+            raise RuntimeError("remove existing hooks before comprehensive capture")
+        if len(set(head_layers)) != len(head_layers):
+            raise ValueError("head capture layers must be unique")
+        self.activations.clear()
+        self.head_activations.clear()
+        for site in sites:
+            def capture_module(
+                _module: torch.nn.Module,
+                _inputs: tuple[Any, ...],
+                output: Any,
+                *,
+                component_id: str = site.component_id,
+            ) -> None:
+                tensor = output[0] if isinstance(output, tuple) else output
+                self.activations[component_id] = tensor.detach().cpu().clone()
+                return None
+
+            self._handles.append(
+                self._module_for(site).register_forward_hook(capture_module)
+            )
+        for layer in head_layers:
+            heads, head_dim = self._head_shape(layer)
+            o_proj = self.model.model.layers[layer].self_attn.o_proj
+
+            def capture_heads(
+                _module: torch.nn.Module,
+                inputs: tuple[Any, ...],
+                *,
+                layer_id: int = layer,
+                head_count: int = heads,
+                dimension: int = head_dim,
+            ) -> None:
+                concatenated = inputs[0]
+                self.head_activations[f"L{layer_id}.pre_o_proj_heads"] = (
+                    concatenated.view(
+                        *concatenated.shape[:-1], head_count, dimension
+                    ).detach().cpu().clone()
+                )
+                return None
+
+            self._handles.append(o_proj.register_forward_pre_hook(capture_heads))
+
     def install_head_patch(
         self,
         layer: int,

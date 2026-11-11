@@ -1,0 +1,10 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "preflight_sha256": "aa07096e4ce762917ca2d9b0ff28a2ef65d32dcebaecdddebebfb1ecdd56a633",
+  "snapshot_manifest_path": "/kaggle/working/aether-qwen-instrumentation-acceptance/model_snapshot_manifest.json",
+  "snapshot_manifest_sha256": "3cf883fb3fd76b5c4bfd0e150378048b118becb2e32587741b4e96c857b5a3b1",
+  "started_utc": "2026-11-11T07:05:32Z",
+  "state": "IA_G1_PASS",
+  "utc_timestamp": "2026-11-11T07:11:08.285929+00:00"
+}
