@@ -1,5 +1,16 @@
 # Manual Actions
 
+## Kaggle Qwen2.5-1.5B instrumentation acceptance — 2026-11-11
+
+The qualification archive has been ingested and its inner artifacts verified.
+After the IA-G1 notebook is committed, upload
+`notebooks/aether_qwen_instrumentation_acceptance_cpu.ipynb` to a private Kaggle
+notebook with Internet enabled and run it once from top to bottom. GPU is not
+used because IA-G1 preserves the qualified CPU-float32 condition. Download and
+preserve `aether-qwen-instrumentation-acceptance-results.tar.gz` regardless of
+PASS or failure. Do not delete the attempt marker, tune selected sites/cases, or
+rerun after model access. Do not open validation/test.
+
 ## No manual action for the probe-baseline milestone
 
 The correlational probe implementation and synthetic acceptance are CPU-light.

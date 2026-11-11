@@ -1,0 +1,58 @@
+{
+  "gate_version": "IA-G1.0",
+  "status": "prospectively_frozen_before_instrumentation_execution",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "qualification_run_id": "P0_target_20261110_qwen15b_mq_seed42",
+  "qualification_git_commit": "ed6a9ab742426d45626b63c211642079af9f1a97",
+  "qualification_summary_sha256": "5cc70ed96a7b3eec8c71cd528e02eb0ff003b7aae297986c0e7e12d4996753e6",
+  "qualification_manifest_sha256": "ff43cf6d6b48d96da0792c0a8d864bbb7dd4753a58014810f14704e153d4c1c1",
+  "qualification_directory": "results/phase1/model_qualification/qwen15b_kaggle_20261110",
+  "dataset_id": "aether-balanced-causal-v2.0.0",
+  "dataset_split": "development",
+  "selected_case_ids": [
+    "v2_case_000",
+    "v2_case_001",
+    "v2_case_012",
+    "v2_case_013"
+  ],
+  "intervention_case_ids": [
+    "v2_case_000",
+    "v2_case_012"
+  ],
+  "capture_layers": [
+    0,
+    14,
+    27
+  ],
+  "capture_component_types": [
+    "block_output",
+    "attention_output",
+    "mlp_output"
+  ],
+  "head_capture_layer": 14,
+  "intervention_layer": 14,
+  "intervention_component_type": "mlp_output",
+  "intervention_token_position": -1,
+  "passive_logit_rtol": 1e-5,
+  "passive_logit_atol": 1e-6,
+  "minimum_post_load_available_memory_gib": 2.0,
+  "minimum_intervention_applications_per_case": 1,
+  "require_nonzero_intervention_logit_effect": true,
+  "require_exact_hook_cleanup": true,
+  "require_activation_round_trip": true,
+  "execution": {
+    "device": "cpu",
+    "dtype": "float32",
+    "quantized": false,
+    "offload": false,
+    "attention_implementation": "eager",
+    "seed": 42
+  },
+  "split_access_policy": {
+    "development": "selected_ids_only",
+    "validation": "forbidden",
+    "test": "forbidden"
+  },
+  "claim_boundary": "Software and model compatibility acceptance only. No component ranking, circuit localization, causal pathway, search superiority, remediation, validation, or test claim is authorized by this gate."
+}

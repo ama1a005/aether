@@ -1,0 +1,143 @@
+{
+  "activation_capture": false,
+  "dataset": {
+    "case_ids": [
+      "v2_case_000",
+      "v2_case_001",
+      "v2_case_002",
+      "v2_case_003",
+      "v2_case_004",
+      "v2_case_005",
+      "v2_case_006",
+      "v2_case_007",
+      "v2_case_008",
+      "v2_case_009",
+      "v2_case_010",
+      "v2_case_011",
+      "v2_case_012",
+      "v2_case_013",
+      "v2_case_014",
+      "v2_case_015",
+      "v2_case_016",
+      "v2_case_017",
+      "v2_case_018",
+      "v2_case_019",
+      "v2_case_020",
+      "v2_case_021",
+      "v2_case_022",
+      "v2_case_023"
+    ],
+    "id": "aether-balanced-causal-v2.0.0",
+    "split": "development"
+  },
+  "decision": "QUALIFIED_FOR_SEPARATE_INSTRUMENTATION_REVIEW",
+  "execution": {
+    "device": "cpu",
+    "dtype": "float32",
+    "offload": false,
+    "quantized": false
+  },
+  "experiment_id": "P0_target_20261110_qwen15b_mq",
+  "internal_interventions": false,
+  "model_access_state": "MQ_G2_PASS",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "model_snapshot_manifest_path": "/kaggle/working/aether-qwen-qualification/model_snapshot_manifest.json",
+  "model_snapshot_manifest_sha256": "1b282b730f38fbe992608e8837fe0f619463a767f93e08d97cd0950d55644f11",
+  "mq_g1": {
+    "conditional_asr": {
+      "A_TO_B": 1.0,
+      "B_TO_A": 1.0
+    },
+    "counts": {
+      "clean_correct_A": 12,
+      "clean_correct_B": 12,
+      "eligible_A_to_B": 12,
+      "eligible_B_to_A": 12,
+      "eligible_imbalance": 0,
+      "valid_attack_A": 12,
+      "valid_attack_B": 12,
+      "valid_clean_A": 12,
+      "valid_clean_B": 12
+    },
+    "overall": "PASS",
+    "predicates": {
+      "MQ-G1.1A": true,
+      "MQ-G1.1B": true,
+      "MQ-G1.2A": true,
+      "MQ-G1.2B": true,
+      "MQ-G1.3A": true,
+      "MQ-G1.3B": true,
+      "MQ-G1.4": true,
+      "MQ-G1.5_attack_A": true,
+      "MQ-G1.5_attack_B": true,
+      "MQ-G1.5_clean_A": true,
+      "MQ-G1.5_clean_B": true,
+      "MQ-G1.6": true
+    },
+    "split_executions": {
+      "test": 0,
+      "validation": 0
+    }
+  },
+  "mq_g2": {
+    "directions": {
+      "A_TO_B": {
+        "N_attempted": 12,
+        "N_eligible": 12,
+        "all_eligible_ids_accounted": true,
+        "induction_adversarial": 12,
+        "induction_rate": 1.0,
+        "invalid_induction": 0,
+        "invalid_recovery": 0,
+        "invalid_rescue": 0,
+        "median_normalized_recovery": 1.0000005945191859,
+        "rescue_correct": 12,
+        "rescue_rate": 1.0
+      },
+      "B_TO_A": {
+        "N_attempted": 12,
+        "N_eligible": 12,
+        "all_eligible_ids_accounted": true,
+        "induction_adversarial": 12,
+        "induction_rate": 1.0,
+        "invalid_induction": 0,
+        "invalid_recovery": 0,
+        "invalid_rescue": 0,
+        "median_normalized_recovery": 0.9999980507393702,
+        "rescue_correct": 12,
+        "rescue_rate": 1.0
+      }
+    },
+    "overall": "PASS",
+    "predicates": {
+      "MQ-G2.1A": true,
+      "MQ-G2.1B": true,
+      "MQ-G2.2A": true,
+      "MQ-G2.2B": true,
+      "MQ-G2.3A": true,
+      "MQ-G2.3B": true,
+      "MQ-G2.4": true
+    }
+  },
+  "raw_outputs": [
+    "/kaggle/working/aether-qwen-qualification/mq_g1_rows.json",
+    "/kaggle/working/aether-qwen-qualification/mq_g1_result.json",
+    "/kaggle/working/aether-qwen-qualification/hardware_preflight.json",
+    "/kaggle/working/aether-qwen-qualification/preflight_manifest.json",
+    "/kaggle/working/aether-qwen-qualification/model_access_attempt_started.json",
+    "/kaggle/working/aether-qwen-qualification/mq_g2_rows.json",
+    "/kaggle/working/aether-qwen-qualification/mq_g2_result.json",
+    "/kaggle/working/aether-qwen-qualification/model_snapshot_manifest.json",
+    "/kaggle/working/aether-qwen-qualification/events.jsonl"
+  ],
+  "run_id": "P0_target_20261110_qwen15b_mq_seed42",
+  "runtime_seconds": 410.77449333100003,
+  "schema_version": "aether.model-qualification.v2",
+  "seed": 42,
+  "test_executions": 0,
+  "tokenizer_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "utc_timestamp": "2026-11-10T18:47:53.335558+00:00",
+  "validation_executions": 0
+}

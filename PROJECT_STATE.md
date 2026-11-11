@@ -3,6 +3,23 @@
 **Current checkpoint:** model-independent Phase 1 implementation, 2026-11-04
 **Development branch:** `lm`
 
+## 2026-11-11 qualified Qwen 1.5B checkpoint
+
+The single authorized Kaggle campaign passed MQ-HW1, MQ-G1, and MQ-G2 on the
+24-case development cohort. All 24 clean decisions were correct, all 24 attacks
+reached their predefined outcome, both directions had 12 eligible pairs, all
+mediators were valid, message rescue/induction were 12/12 per direction, and
+validation/test execution counts were zero. All eleven manifest-listed inner
+artifacts were rehashed successfully during local ingestion under
+`results/phase1/model_qualification/qwen15b_kaggle_20261110`.
+
+This is behavioral and message-causal qualification, not internal circuit
+evidence. The next bounded stage is prospectively frozen IA-G1 instrumentation
+acceptance: passive non-interference, selected activation capture, pre-`o_proj`
+head semantics, persistence, cleanup, and fixed intervention execution on
+development examples only. Circuit localization/search remains closed until
+IA-G1 executes and passes.
+
 ## 2026-11-10 Kaggle Qwen preflight newline portability
 
 The Kaggle preflight rejection was caused by Git converting committed text files

@@ -1,0 +1,40 @@
+{
+  "directions": {
+    "A_TO_B": {
+      "N_attempted": 12,
+      "N_eligible": 12,
+      "all_eligible_ids_accounted": true,
+      "induction_adversarial": 12,
+      "induction_rate": 1.0,
+      "invalid_induction": 0,
+      "invalid_recovery": 0,
+      "invalid_rescue": 0,
+      "median_normalized_recovery": 1.0000005945191859,
+      "rescue_correct": 12,
+      "rescue_rate": 1.0
+    },
+    "B_TO_A": {
+      "N_attempted": 12,
+      "N_eligible": 12,
+      "all_eligible_ids_accounted": true,
+      "induction_adversarial": 12,
+      "induction_rate": 1.0,
+      "invalid_induction": 0,
+      "invalid_recovery": 0,
+      "invalid_rescue": 0,
+      "median_normalized_recovery": 0.9999980507393702,
+      "rescue_correct": 12,
+      "rescue_rate": 1.0
+    }
+  },
+  "overall": "PASS",
+  "predicates": {
+    "MQ-G2.1A": true,
+    "MQ-G2.1B": true,
+    "MQ-G2.2A": true,
+    "MQ-G2.2B": true,
+    "MQ-G2.3A": true,
+    "MQ-G2.3B": true,
+    "MQ-G2.4": true
+  }
+}

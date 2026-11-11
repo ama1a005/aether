@@ -1,5 +1,21 @@
 # Research Decisions
 
+## RD-033 — Prospectively bound Qwen 1.5B instrumentation acceptance (2026-11-11)
+
+- **Decision:** After the frozen 1.5B candidate passed MQ-HW1, MQ-G1, and MQ-G2,
+  require a separate IA-G1 gate before development circuit work. Use the same
+  immutable revision and CPU-float32 condition on fixed eligible development IDs.
+- **Checks:** passive hook non-interference at prospectively selected early,
+  middle, and final layers; activation hash/round-trip; exact middle-layer
+  pre-`o_proj` head representation; hook cleanup; and two fixed paired
+  clean-to-attacked last-token MLP patches, one per attack direction.
+- **Stop rule:** any compatibility, integrity, memory, passive-equivalence,
+  persistence, tensor-semantics, intervention-application, or cleanup failure
+  stops the stage. Validation and test remain closed.
+- **Claim boundary:** IA-G1 verifies instrumentation compatibility only. Patch
+  magnitude cannot select components or support circuit, search-superiority, or
+  remediation claims. A PASS permits prospective development-protocol review.
+
 ## RD-032 — Make all declared Phase 1 features mandatory and implement RL first (2026-10-28)
 
 - **Decision:** former Phase 1 optional features are mandatory dependency-ordered

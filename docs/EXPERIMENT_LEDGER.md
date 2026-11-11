@@ -1,5 +1,20 @@
 # Experiment Ledger
 
+## P0_target_20261110_qwen15b_mq_seed42 — executed qualification PASS
+
+- Evidence class: real Qwen2.5-1.5B behavioral and message-causal qualification
+  on the frozen 24-case development cohort.
+- MQ-HW1 PASS; MQ-G1 PASS with 24/24 clean-correct, 24/24 eligible attack
+  successes, and 12 eligible cases per direction; MQ-G2 PASS with 12/12 rescue
+  and 12/12 induction in both directions. No invalid executions were excluded.
+- Validation executions: 0. Test executions: 0. Internal interventions: 0.
+- Model revision: `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`; seed 42; CPU
+  float32; repository commit `ed6a9ab742426d45626b63c211642079af9f1a97`.
+- Evidence: `results/phase1/model_qualification/qwen15b_kaggle_20261110`.
+  All eleven manifest-listed artifacts rehashed successfully after extraction.
+- Boundary: this authorizes separately reviewed instrumentation acceptance only;
+  it is not internal circuit, search, remediation, validation, or test evidence.
+
 ## P0_target_20261110_qwen15b_mq — preflight software repair
 
 - Evidence class: cross-platform software fix, not an executed model experiment.

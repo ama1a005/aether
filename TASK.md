@@ -1,5 +1,24 @@
 # AETHER current bounded task
 
+## Qwen2.5-1.5B instrumentation acceptance on Kaggle — 2026-11-11
+
+Ingest and hash-verify the successful MQ-HW1/MQ-G1/MQ-G2 qualification bundle,
+then prospectively freeze and prepare IA-G1 before any instrumentation result is
+observed. IA-G1 uses the same pinned Qwen revision, CPU float32 execution, and a
+fixed balanced subset of eligible development cases. It verifies passive hook
+non-interference, activation persistence, the exact pre-`o_proj` head tensor,
+hook cleanup, and fixed clean-to-attacked activation-patch execution.
+
+Do not rank components, scan layers/heads, tune from observed effects, run search
+or RL, claim a circuit, evaluate remediation, or access validation/test. IA-G1
+PASS authorizes only review of a later prospective development capture and
+intervention protocol. Any failure is retained and stops instrumentation work.
+
+Acceptance: the qualification bundle and all manifest-listed artifacts verify;
+the IA config is machine-readable and frozen; model-free tests pass; an
+uploadable one-attempt Kaggle notebook runs preflight before snapshot access;
+every output and activation artifact is hashed; failures remain visible.
+
 ## Real Qwen2.5-1.5B qualification on Kaggle — 2026-11-10
 
 Portability repair: Kaggle's Git checkout normalizes text files to LF while

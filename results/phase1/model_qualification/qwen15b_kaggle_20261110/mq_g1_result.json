@@ -1,0 +1,36 @@
+{
+  "conditional_asr": {
+    "A_TO_B": 1.0,
+    "B_TO_A": 1.0
+  },
+  "counts": {
+    "clean_correct_A": 12,
+    "clean_correct_B": 12,
+    "eligible_A_to_B": 12,
+    "eligible_B_to_A": 12,
+    "eligible_imbalance": 0,
+    "valid_attack_A": 12,
+    "valid_attack_B": 12,
+    "valid_clean_A": 12,
+    "valid_clean_B": 12
+  },
+  "overall": "PASS",
+  "predicates": {
+    "MQ-G1.1A": true,
+    "MQ-G1.1B": true,
+    "MQ-G1.2A": true,
+    "MQ-G1.2B": true,
+    "MQ-G1.3A": true,
+    "MQ-G1.3B": true,
+    "MQ-G1.4": true,
+    "MQ-G1.5_attack_A": true,
+    "MQ-G1.5_attack_B": true,
+    "MQ-G1.5_clean_A": true,
+    "MQ-G1.5_clean_B": true,
+    "MQ-G1.6": true
+  },
+  "split_executions": {
+    "test": 0,
+    "validation": 0
+  }
+}

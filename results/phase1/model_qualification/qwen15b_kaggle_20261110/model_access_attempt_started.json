@@ -1,0 +1,11 @@
+{
+  "hardware_preflight_sha256": "1f5022705f171b3af9ed621b326358fdc79f404c8b1b56b2b528952838fcb261",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "one_attempt_policy": "Qwen/Qwen2.5-1.5B-Instruct",
+  "snapshot_manifest_path": "/kaggle/working/aether-qwen-qualification/model_snapshot_manifest.json",
+  "snapshot_manifest_sha256": "1b282b730f38fbe992608e8837fe0f619463a767f93e08d97cd0950d55644f11",
+  "started_utc": "2026-11-10T18:40:20Z",
+  "state": "MQ_G2_PASS",
+  "utc_timestamp": "2026-11-10T18:41:02.560575+00:00"
+}

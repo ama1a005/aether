@@ -1,0 +1,61 @@
+{
+  "cache_path": "/tmp/aether-qwen-qualification/hf-cache",
+  "decision": {
+    "overall": "PASS",
+    "predicates": {
+      "MQ-HW1.available_ram": true,
+      "MQ-HW1.cgroup_headroom": true,
+      "MQ-HW1.cpu": true,
+      "MQ-HW1.fp32": true,
+      "MQ-HW1.free_disk": true,
+      "MQ-HW1.installed_ram": true,
+      "MQ-HW1.no_cuda": true,
+      "MQ-HW1.no_offload": true,
+      "MQ-HW1.no_pagefile_change": true,
+      "MQ-HW1.one_model": true,
+      "MQ-HW1.split_lock": true,
+      "MQ-HW1.unquantized": true
+    },
+    "state": "READY_FOR_MODEL_ACCESS"
+  },
+  "frozen_input_hash_verification": {
+    "control_mappings_sha256": {
+      "canonical_crlf_sha256": "2b8e4f25abff8f657976295de56ddc004b71111668433373f5a70caec3232450",
+      "canonical_lf_sha256": "fde8728858c3915efaf835a8c5f24648dfaaeb15d8c7427cee65685838c2feaa",
+      "expected_frozen_sha256": "2b8e4f25abff8f657976295de56ddc004b71111668433373f5a70caec3232450",
+      "raw_sha256": "fde8728858c3915efaf835a8c5f24648dfaaeb15d8c7427cee65685838c2feaa"
+    },
+    "model_qualification_protocol": {
+      "canonical_crlf_sha256": "31c7507bdc38d4eb52472c6bc62e0e1af54298827b89bf4742dd2a2d74293a80",
+      "canonical_lf_sha256": "64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89",
+      "expected_frozen_sha256": "64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89",
+      "raw_sha256": "64badcea20c43ba7a42f3b8134aa261805484d4bff38841a7130584108827c89"
+    },
+    "semantic_registry_sha256": {
+      "canonical_crlf_sha256": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+      "canonical_lf_sha256": "70e9df79dfbe721cb60705990c7ff601dc1e46dd68ac1619e2b96835786b402d",
+      "expected_frozen_sha256": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+      "raw_sha256": "70e9df79dfbe721cb60705990c7ff601dc1e46dd68ac1619e2b96835786b402d"
+    },
+    "v2_1_config_sha256": {
+      "canonical_crlf_sha256": "aa8d24329d84d00c91d35296a28224801516ef06d5c0be09e3d0fa64bced561e",
+      "canonical_lf_sha256": "8d54a8889b5d7223ac3fed356bc06d79ac4f2065b1bc00b955cab20e2b4e46a5",
+      "expected_frozen_sha256": "8d54a8889b5d7223ac3fed356bc06d79ac4f2065b1bc00b955cab20e2b4e46a5",
+      "raw_sha256": "8d54a8889b5d7223ac3fed356bc06d79ac4f2065b1bc00b955cab20e2b4e46a5"
+    }
+  },
+  "measurements": {
+    "available_ram_gib": 29.611820220947266,
+    "cgroup_available_gib": 27.16417694091797,
+    "cgroup_memory_limit_gib": 30.0,
+    "disk_free_gib": 965.6005706787109,
+    "installed_ram_gib": 31.346603393554688
+  },
+  "model_accessed": false,
+  "model_candidate_config": "configs/model_qualification/qwen_1_5b_candidate.json",
+  "model_candidate_config_sha256": "324c8b694a7b4e2138a8dafde06f60cb2510d5c4a4e6b2ff0bff44cff585cbd9",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "python_executable": "/tmp/aether-qwen-qualification/venv/bin/python",
+  "schema_version": "aether.mq-hw1-preflight.v2",
+  "utc_timestamp": "2026-11-10T18:40:20.237196+00:00"
+}
