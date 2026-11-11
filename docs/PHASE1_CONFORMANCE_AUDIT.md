@@ -14,7 +14,7 @@ yet executed. Every Phase 1 feature is mandatory. Phase 2 is separate.
 | SAE | Hashed checkpoint, provenance, normalization, error gate | Pinned trained SAE matched to Qwen |
 | Search/RL | Greedy, beam, random, receiver/full, fully observed PPO | Real matched multi-seed and ablations |
 | Statistics/report | Paired CIs/McNemar/seeds/errors and gated reports | Final tables from complete qualified runs |
-| Benchmarks | PTB-XL adapter; BFCL/AgentDojo plans; MCPTox/TAMAS imports | Pin compatibility, freeze subsets, native execution |
+| Benchmarks | PTB-XL adapter; pinned BFCL/AgentDojo interfaces; disclosed Qwen2.5 BFCL adapter; MCPTox/TAMAS imports | Execute official evaluators and retain immutable artifacts |
 | Reproducibility/CI | Configs, manifests, policy checks, transfer preflight, 20-gate completion audit | Remaining real-run manifests and remote CI record |
 | Second model | Extensible interfaces | Select, pin and qualify another architecture |
 
@@ -23,7 +23,7 @@ prove Qwen competence, causal validity, benchmark scores or generalization.
 Historical negative results remain unchanged. Locked splits remain inaccessible.
 
 Known-structure Tracr and GPT-2 IOI causal calibrations now pass. Current
-verification: Python 3.11.9, **388 passed and 5 gated skips** (369 unit plus 19
+verification: Python 3.11.9, **391 passed and 5 gated skips** (372 unit plus 19
 integration/regression passes); regression tests execute every existing smoke
 command. `python scripts/audit_phase1_completion.py` remains intentionally
 nonzero until every mandatory evidence gate is satisfied. Root

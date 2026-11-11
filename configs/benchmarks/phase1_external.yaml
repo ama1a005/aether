@@ -1,16 +1,21 @@
 schema_version: 1
-status: proposed_pins_pending_official_package_compatibility_check
+status: package_interfaces_verified_execution_pending
 split: development
 bfcl:
   package: bfcl_eval
   package_version: "2026.3.23"
+  package_wheel_sha256: 3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a
   model: Qwen/Qwen2.5-1.5B-Instruct
+  model_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  registry_adapter: AETHER/Qwen2.5-1.5B-Instruct-FC
+  protocol_label: official_evaluator_with_disclosed_aether_model_adapter
   categories: [simple, multiple, parallel, irrelevance]
   partial_evaluation: false
   output_dir: results/external/bfcl/development
 agentdojo:
   package: agentdojo
   package_version: "0.1.35"
+  package_wheel_sha256: 364bea4219716b716bf639f504d195943f7f6a5535d312ca41d7098704a2affd
   benchmark_version: v1.2.2
   suite: workspace
   model: Qwen/Qwen2.5-1.5B-Instruct

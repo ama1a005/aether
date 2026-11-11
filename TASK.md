@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## BFCL primary-model compatibility closure
+
+Confirm the pinned official BFCL package interface without downloading its
+dataset, then add the smallest disclosed adapter needed to register the frozen
+Qwen2.5-1.5B-Instruct primary model with BFCL's own Qwen function-calling
+handler. Require an immutable local model snapshot and retain the official
+generation/evaluation commands and raw outputs. Record the wheel hash and keep
+the result claim explicitly separate from an unmodified official leaderboard
+model configuration. Model-independent tests may mock the package boundary;
+no benchmark score may be created locally or represented as executed evidence.
+
 ## Phase-1 completion audit and Tracr calibration closure
 
 Maintain `configs/phase1_completion_gates.yaml` as the machine-readable

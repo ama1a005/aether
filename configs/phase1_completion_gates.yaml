@@ -81,7 +81,9 @@ gates:
     kind: json
     path: results/phase1/bfcl/official/summary.json
     expect:
-      official_protocol: true
+      official_evaluator: true
+      custom_model_adapter_disclosed: true
+      model_id: Qwen/Qwen2.5-1.5B-Instruct
       overall: PASS
   - id: mcptox_official
     category: external_benchmark

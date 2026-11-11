@@ -296,6 +296,13 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Reason:** Phase 1 requires the intervention engine to succeed on a known-structure Tracr-compiled model; IOI calibration alone does not satisfy that named requirement. Exhaustive target declaration avoids post-hoc layer selection.
 - **Outcome:** PASS. All baseline, passive-copy and restoration controls were exact; all 24 target/case rows executed and 15 changed at least one non-BOS output. This is calibration evidence, not AETHER circuit evidence.
 
+## RD-032 — Use BFCL's official evaluator with a disclosed primary-model adapter
+
+- **Date:** 2026-11-11
+- **Decision:** Pin `bfcl_eval==2026.3.23` by wheel SHA-256 and use its own Qwen function-calling handler and evaluator. Add only a local registry entry for the frozen `Qwen/Qwen2.5-1.5B-Instruct` revision because that package version does not register Qwen2.5. Require and rehash the immutable model snapshot before generation.
+- **Claim boundary:** Any accepted result is “official BFCL evaluator with disclosed AETHER model adapter,” not an unmodified official leaderboard model configuration. The completion gate records both facts explicitly.
+- **Execution status:** Package compatibility and model-free adapter tests pass. Dataset/model benchmark execution has not occurred, and no BFCL score is claimed.
+
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

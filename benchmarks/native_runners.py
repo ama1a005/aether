@@ -50,7 +50,7 @@ def bfcl_plan(*, package_version: str, model: str, categories: Sequence[str],
     if not package_version or not model or not categories or any(not item for item in categories):
         raise ValueError("Pinned BFCL metadata, model and categories are required")
     root = str(output_dir.resolve())
-    common = ["--model", model, "--test-category", *categories, "--result-dir", root]
+    common = ["--model", model, "--test-category", ",".join(categories), "--result-dir", root]
     generate = (sys.executable, "-m", "bfcl_eval", "generate", *common)
     evaluate = [sys.executable, "-m", "bfcl_eval", "evaluate", *common,
                 "--score-dir", root]
@@ -59,6 +59,30 @@ def bfcl_plan(*, package_version: str, model: str, categories: Sequence[str],
     scope = "official_partial_subset_nonleaderboard" if partial_evaluation else "official_complete_categories"
     return NativeBenchmarkPlan("BFCL", "bfcl_eval", package_version,
                                (tuple(generate), tuple(evaluate)), root, scope)
+
+
+def bfcl_qwen25_plan(*, package_version: str, model_revision: str,
+                     snapshot_manifest: Path, categories: Sequence[str],
+                     output_dir: Path, num_gpus: int = 1,
+                     backend: str = "vllm") -> NativeBenchmarkPlan:
+    """Build official BFCL commands using the disclosed AETHER Qwen2.5 adapter."""
+    if not package_version or not model_revision or not categories:
+        raise ValueError("Pinned BFCL version, model revision and categories are required")
+    if backend not in {"vllm", "sglang"} or num_gpus < 1:
+        raise ValueError("BFCL backend and positive GPU count are required")
+    root = str(output_dir.resolve())
+    provenance = ("--model-revision", model_revision, "--snapshot-manifest",
+                  str(snapshot_manifest.resolve()))
+    common = ("--model", "AETHER/Qwen2.5-1.5B-Instruct-FC", "--test-category",
+              ",".join(categories), "--result-dir", root)
+    generate = (sys.executable, "-m", "benchmarks.bfcl_qwen25", *provenance,
+                "generate", *common, "--num-gpus", str(num_gpus), "--backend", backend)
+    evaluate = (sys.executable, "-m", "benchmarks.bfcl_qwen25", *provenance,
+                "evaluate", *common, "--score-dir", root)
+    return NativeBenchmarkPlan(
+        "BFCL", "bfcl_eval", package_version, (generate, evaluate), root,
+        "official_evaluator_aether_qwen25_adapter_complete_categories",
+    )
 
 
 def execute_native_plan(plan: NativeBenchmarkPlan, record_dir: Path) -> tuple[dict[str, object], ...]:

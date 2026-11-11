@@ -1,5 +1,17 @@
 # AETHER project state
 
+## 2026-11-11 BFCL package compatibility verified
+
+The pinned `bfcl_eval==2026.3.23` and `agentdojo==0.1.35` wheel interfaces were
+inspected without downloading benchmark data. AgentDojo's declared CLI is
+compatible. BFCL exposes a reusable Qwen function-calling handler, but its
+registry does not contain the frozen Qwen2.5-1.5B primary model. A minimal
+disclosed registry adapter now delegates to BFCL's handler and evaluator while
+requiring the already-qualified immutable model snapshot and verifying every
+snapshot file hash. This future result must be labelled “official evaluator
+with disclosed AETHER model adapter,” not an unmodified leaderboard model.
+Neither benchmark has executed and no score exists.
+
 ## 2026-11-11 Tracr known-structure intervention PASS
 
 The pinned Tracr reverse program now has an executed causal calibration rather
@@ -147,8 +159,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **388 passed, 5 skipped** as of the Tracr intervention
-checkpoint (369 unit plus 19 integration/regression passes).
+Python 3.11.9: **391 passed, 5 skipped** as of the BFCL adapter checkpoint
+(372 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.

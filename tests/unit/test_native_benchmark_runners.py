@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.native_runners import agentdojo_plan, bfcl_plan, execute_native_plan
+from benchmarks.native_runners import (
+    agentdojo_plan,
+    bfcl_plan,
+    bfcl_qwen25_plan,
+    execute_native_plan,
+)
 
 
 def test_official_command_plans_are_explicit(tmp_path):
@@ -19,6 +24,22 @@ def test_official_command_plans_are_explicit(tmp_path):
     assert len(bfcl.commands) == 2
     assert bfcl.commands[1][-1] == "--partial-eval"
     assert bfcl.result_scope == "official_partial_subset_nonleaderboard"
+    assert bfcl.commands[0][bfcl.commands[0].index("--test-category") + 1] == "simple"
+
+
+def test_qwen25_adapter_plan_pins_snapshot_and_labels_scope(tmp_path):
+    plan = bfcl_qwen25_plan(
+        package_version="2026.3.23",
+        model_revision="abc123",
+        snapshot_manifest=tmp_path / "snapshot.json",
+        categories=["simple", "multiple"],
+        output_dir=tmp_path / "bfcl",
+        num_gpus=2,
+    )
+    assert plan.commands[0][1:3] == ("-m", "benchmarks.bfcl_qwen25")
+    assert "abc123" in plan.commands[0]
+    assert "simple,multiple" in plan.commands[0]
+    assert plan.result_scope == "official_evaluator_aether_qwen25_adapter_complete_categories"
 
 
 def test_native_execution_requires_exact_installed_version(tmp_path):
