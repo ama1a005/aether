@@ -58,7 +58,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **333 passed, 5 skipped**. The gated skips are two real-Qwen
+Python 3.11.9: **348 passed, 5 skipped** as of the IA-G1 notebook checkpoint.
+The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
 

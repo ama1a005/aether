@@ -75,3 +75,31 @@ def test_qwen_qualification_notebook_is_pinned_and_runs_gates_in_order():
     assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
     assert 'torch==2.14.1' in combined and 'download.pytorch.org/whl/cpu' in combined
     assert 'SET_AFTER_QUALIFICATION_RUNNER_COMMIT' not in combined
+
+
+def test_qwen_instrumentation_notebook_is_pinned_bounded_and_ordered():
+    root = Path(__file__).resolve().parents[2]
+    notebook_path = root / 'notebooks/aether_qwen_instrumentation_acceptance_cpu.ipynb'
+    notebook = json.loads(notebook_path.read_text(encoding='utf-8'))
+    code_cells = [''.join(cell['source']) for cell in notebook['cells']
+                  if cell['cell_type'] == 'code']
+    for index, source in enumerate(code_cells):
+        ast.parse(source, filename=f'instrumentation-notebook-cell-{index}')
+    assert len({cell['id'] for cell in notebook['cells']}) == len(notebook['cells'])
+    assert all(cell['outputs'] == [] and cell['execution_count'] is None
+               for cell in notebook['cells'] if cell['cell_type'] == 'code')
+    preflight = next(i for i, source in enumerate(code_cells)
+                     if '--preflight-only' in source)
+    download = next(i for i, source in enumerate(code_cells)
+                    if 'snapshot_download' in source)
+    execution = next(i for i, source in enumerate(code_cells)
+                     if "run_logged('qwen-instrumentation-acceptance'" in source)
+    archive = next(i for i, source in enumerate(code_cells)
+                   if 'archive_contents.json' in source)
+    assert preflight < download < execution < archive
+    combined = '\n'.join(code_cells)
+    assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
+    assert 'torch==2.14.1' in combined and 'download.pytorch.org/whl/cpu' in combined
+    assert 'SET_AFTER_INSTRUMENTATION_ACCEPTANCE_COMMIT' not in combined
+    assert 'AETHER_RUN_REAL_MODEL_TESTS' in combined
+    assert "os.environ.pop(name,None)" in combined
