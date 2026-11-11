@@ -1,0 +1,10 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "preflight_sha256": "cab24e00e91f1869304bcadab913dbf72fbe80fee379b5df7ecbff73d2c94feb",
+  "snapshot_manifest_path": "/kaggle/working/aether-qwen-development-capture-corrected/model_snapshot_manifest.json",
+  "snapshot_manifest_sha256": "b66c023db73b3241d528d655a337fb06ff8fcb6b488683c971e1ca92dcb12e91",
+  "started_utc": "2026-11-11T10:31:06Z",
+  "state": "DCAP_1_PASS",
+  "utc_timestamp": "2026-11-11T10:37:28.382787+00:00"
+}

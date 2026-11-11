@@ -1,5 +1,18 @@
 # Experiment Ledger
 
+## P0_mech_20261111_qwen15b_dcap1 — PASS
+
+- Pinned Qwen2.5-1.5B-Instruct revision, CPU float32, seed 42.
+- Twenty development cases: 16 discovery and four unopened development-audit
+  cases for selection purposes; four IA-G1 cases excluded.
+- 80 activation artifacts and 3,360 declared layer-level paired measurements.
+- All seven DCAP predicates passed; all locally rechecked hashes matched; zero
+  validation and zero test executions.
+- Original archive SHA-256:
+  `7890212a8e7a4eb099be86bc572cd6172fd1c45b839f695e56e6ba4a46e97b21`.
+- Interpretation: capture/descriptive evidence only. No component ranking,
+  localization, circuit, search, remediation, validation, or test claim.
+
 ## P0_mech_20261111_qwen15b_ia_g1_seed42 — executed IA-G1 PASS
 
 - Evidence class: real-model instrumentation compatibility on four fixed,

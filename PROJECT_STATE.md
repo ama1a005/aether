@@ -1,5 +1,17 @@
 # AETHER project state
 
+## 2026-11-11 DCAP-1 PASS
+
+The corrected development-capture run passed all seven frozen predicates on the
+20 declared development cases. It produced 80 sender/receiver clean/attacked
+activation artifacts and 3,360 layer-level paired measurements. All artifact,
+manifest, and archive-content hashes verified locally; qualified predictions
+were reproduced; hooks were removed; measurements were finite; and validation
+and test execution counts remained zero. The 4.87 GB tensor archive remains
+external under SHA-256
+`7890212a8e7a4eb099be86bc572cd6172fd1c45b839f695e56e6ba4a46e97b21`.
+This authorizes prospective causal-intervention protocol review only.
+
 ## 2026-11-11 DCAP-1 first attempt retained as failed
 
 The development-capture preflight and pinned model download passed, but capture

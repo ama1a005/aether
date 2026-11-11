@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Prospective Qwen causal-intervention protocol
+
+Following verified DCAP-1 PASS, preserve its metadata and freeze the real-Qwen
+component-selection, paired intervention, negative-control, query-budget and
+development-audit rules before inspecting or ranking activation magnitudes.
+Selection may use only the 16 discovery cases. The four development-audit cases
+remain closed until the selection and causal-support rules are immutable.
+Validation and test remain forbidden. Implement and model-free test the runner
+and a commit-pinned Kaggle notebook; execution is a separate retained attempt.
+
 ## DCAP-1 portability repair and rerun
 
 Retain the failed first development-capture archive. Repair the qualified-token

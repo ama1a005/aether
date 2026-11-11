@@ -1,0 +1,79 @@
+{
+  "protocol_version": "QCI-1.0",
+  "status": "prospectively_frozen_before_dcap_magnitude_ranking",
+  "experiment_id": "P0_cross_20261111_qwen15b_qci1",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "dcap_directory": "results/phase1/development_capture/qwen15b_dcap1_20261111",
+  "dcap_summary_sha256": "2e34222a2f207acfad9c0a48e091fef0e8f189ee7698c80629d0615a7c0ae77d",
+  "dcap_manifest_sha256": "2fb1a46b84ff3c9b5fbfe0a4fc9975f4517b8c74f0be617cce3daa947656461f",
+  "dcap_tensor_archive_sha256": "7890212a8e7a4eb099be86bc572cd6172fd1c45b839f695e56e6ba4a46e97b21",
+  "discovery_case_ids": [
+    "v2_case_002", "v2_case_003", "v2_case_004", "v2_case_005",
+    "v2_case_006", "v2_case_007", "v2_case_008", "v2_case_009",
+    "v2_case_014", "v2_case_015", "v2_case_016", "v2_case_017",
+    "v2_case_018", "v2_case_019", "v2_case_020", "v2_case_021"
+  ],
+  "development_audit_case_ids": [
+    "v2_case_010", "v2_case_011", "v2_case_022", "v2_case_023"
+  ],
+  "selection": {
+    "source_partition": "discovery_only",
+    "agents": ["sender", "receiver"],
+    "candidate_families": ["module", "head"],
+    "module_types": ["attention_output", "mlp_output"],
+    "head_expansion": "split_pre_o_proj_tensor_axis_1_into_12_heads",
+    "per_case_normalized_l2": "l2(clean-attacked)/(0.5*(l2(clean)+l2(attacked))+1e-8)",
+    "per_case_cosine_distance": "1-cosine(clean,attacked)",
+    "per_case_score": "0.5*normalized_l2+0.5*cosine_distance",
+    "aggregate_score": "minimum_of_directional_medians",
+    "top_k_modules_per_agent": 3,
+    "top_k_heads_per_agent": 3,
+    "tie_break": "ascending_candidate_id",
+    "audit_access_during_selection": false
+  },
+  "operators": {
+    "rescue": "paired_clean_to_attacked_last_prompt_token",
+    "induction": "paired_attacked_to_clean_last_prompt_token",
+    "sender_semantics": "patch_generation_step_0_then_regenerate_message_and_run_receiver",
+    "receiver_semantics": "patch_receiver_with_serialized_message_held_byte_identical",
+    "message_positive_control": "whole_paired_message_replacement"
+  },
+  "negative_controls": [
+    "identity_clean_to_clean",
+    "identity_attacked_to_attacked",
+    "deterministic_same_direction_shuffled_donor",
+    "irrelevant_equal_token_position_1",
+    "passive_hook_no_replacement"
+  ],
+  "support_thresholds": {
+    "median_rescue_min": 0.5,
+    "rescue_above_0_25_fraction_min": 0.75,
+    "median_induction_min": 0.5,
+    "induction_above_0_25_fraction_min": 0.75,
+    "paired_minus_shuffled_median_min": 0.2,
+    "paired_minus_irrelevant_position_min": 0.2,
+    "all_raw_effects_expected_direction": true
+  },
+  "audit_rule": {
+    "eligible_candidates": "discovery_supported_only",
+    "thresholds_immutable": true,
+    "minimum_expected_direction_cases": 3,
+    "both_attack_directions_represented": true,
+    "failure_action": "reject_candidate_without_replacement"
+  },
+  "budget": {
+    "maximum_selected_internal_candidates": 12,
+    "maximum_discovery_intervention_executions": 1000,
+    "maximum_audit_intervention_executions": 240,
+    "maximum_total_model_forward_passes": 2200,
+    "budget_exhaustion_action": "stop_and_retain_incomplete_run"
+  },
+  "split_access_policy": {
+    "development_discovery": "selection_and_causal_support",
+    "development_audit": "verification_only_after_selection_freeze",
+    "validation": "forbidden",
+    "test": "forbidden"
+  },
+  "claim_boundary": "QCI-1 may establish development intervention-supported candidates and bridge evidence only. It cannot establish validation, test, remediation, search-superiority, benchmark, or publication claims."
+}

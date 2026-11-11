@@ -1,5 +1,16 @@
 # Research Decisions
 
+## RD-031 — DCAP-1 passes; freeze interventions before ranking (2026-11-11)
+
+- **Decision:** Accept the hash-verified 80-artifact Qwen2.5-1.5B DCAP-1 bundle
+  as development capture evidence. Treat its 3,360 measurements as descriptive
+  inputs only until a prospective selection/intervention protocol is committed.
+- **Boundary:** Selection may inspect only the 16 discovery cases. The four
+  development-audit cases, validation, and test cannot guide candidate choice,
+  thresholds, operators, budgets, or stopping rules.
+- **Reason:** DCAP verifies instrumentation and data completeness; activation
+  contrast alone is correlational and cannot support the required causal claim.
+
 ## RD-033 — Prospectively bound Qwen 1.5B instrumentation acceptance (2026-11-11)
 
 - **Decision:** After the frozen 1.5B candidate passed MQ-HW1, MQ-G1, and MQ-G2,
