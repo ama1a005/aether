@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 import pytest
 import torch
 
 from causal.qwen_candidate_selection import load_protocol, select_candidates
+from causal.run_qwen_candidate_selection import _verify_discovery_artifacts
 
 
 PROTOCOL = Path("configs/causal_candidates/qwen_1_5b_dcap1_intervention_v1.json")
@@ -61,3 +63,23 @@ def test_selection_fails_closed_for_missing_discovery_pair(tmp_path: Path) -> No
     rows = [{"case_id": "a", "direction": "A_TO_B"}, {"case_id": "b", "direction": "B_TO_A"}]
     with pytest.raises(FileNotFoundError, match="missing discovery activation pair"):
         select_candidates(tmp_path, rows, protocol)
+
+
+def test_discovery_hash_verification_never_requires_audit_tensor(tmp_path: Path) -> None:
+    protocol = {"discovery_case_ids": ["d"], "development_audit_case_ids": ["a"]}
+    records = []
+    for agent in ("sender", "receiver"):
+        for condition in ("clean", "attacked"):
+            path = tmp_path / f"d_{agent}_{condition}.pt"
+            path.write_bytes(f"{agent}-{condition}".encode())
+            records.append({
+                "case_id": "d", "partition": "discovery", "path": str(path),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            })
+    records.append({
+        "case_id": "a", "partition": "development_audit",
+        "path": str(tmp_path / "missing_audit.pt"), "sha256": "unused",
+    })
+    verified = _verify_discovery_artifacts(tmp_path, records, protocol)
+    assert len(verified) == 4
+    assert all(name.startswith("d_") for name in verified)
