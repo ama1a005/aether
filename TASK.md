@@ -1,5 +1,13 @@
 # AETHER current bounded task
 
+## DCAP-1 portability repair and rerun
+
+Retain the failed first development-capture archive. Repair the qualified-token
+replay without changing cases, model, components, metrics, or split policy;
+test the padded-input reconstruction; pin a regenerated notebook to the repair
+commit; and rerun DCAP-1 once. Do not treat the failed archive as activation
+evidence or proceed to component selection.
+
 ## Prospective Qwen development activation capture — 2026-11-11
 
 Following IA-G1 PASS, freeze a development-only capture protocol before any

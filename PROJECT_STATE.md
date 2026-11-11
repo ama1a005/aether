@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-11 DCAP-1 first attempt retained as failed
+
+The development-capture preflight and pinned model download passed, but capture
+stopped before producing activation evidence. Qualification stored exact
+left-padded batch token IDs, while the first DCAP runner compared those IDs to
+an individually tokenized, unpadded prompt. The runner now verifies the
+non-padding prompt tokens and replays the exact qualified input IDs and
+attention mask. A fresh run with the corrected, commit-pinned notebook is
+required; the failed archive is not activation or circuit evidence.
+
 **Current checkpoint:** model-independent Phase 1 implementation, 2026-11-04
 **Development branch:** `lm`
 

@@ -156,10 +156,29 @@ def _capture_one(
     agent: str,
 ) -> tuple[dict[str, torch.Tensor], dict[str, Any]]:
     """Capture one prompt at every declared module and head site."""
-    inputs = adapter.tokenize([prompt])
-    actual_ids = [int(token) for token in inputs["input_ids"][0].tolist()]
-    if actual_ids != expected_ids:
+    tokenized = adapter.tokenize([prompt])
+    actual_ids = [int(token) for token in tokenized["input_ids"][0].tolist()]
+    pad_token_id = adapter.tokenizer.pad_token_id
+    if pad_token_id is None:
+        raise ValueError("capture tokenizer has no pad token ID")
+
+    def strip_left_padding(token_ids: list[int]) -> list[int]:
+        first_content = 0
+        while first_content < len(token_ids) and token_ids[first_content] == pad_token_id:
+            first_content += 1
+        return token_ids[first_content:]
+
+    if strip_left_padding(actual_ids) != strip_left_padding(expected_ids):
         raise ValueError("capture tokenization differs from qualified prompt token IDs")
+    padding_count = len(expected_ids) - len(strip_left_padding(expected_ids))
+    inputs = {
+        "input_ids": torch.tensor([expected_ids], dtype=torch.long, device=tokenized["input_ids"].device),
+        "attention_mask": torch.tensor(
+            [[0] * padding_count + [1] * (len(expected_ids) - padding_count)],
+            dtype=torch.long,
+            device=tokenized["input_ids"].device,
+        ),
+    }
     sites = [
         site for site in adapter.identify_components(config["layers"])
         if site.component_type in config["module_components"]
@@ -191,7 +210,8 @@ def _capture_one(
         "path": str(path), "sha256": sha256_file(path),
         "component_count": len(payload),
         "module_component_count": len(modules), "head_layer_count": len(heads),
-        "input_token_count": len(actual_ids), "input_token_ids": actual_ids,
+        "input_token_count": len(expected_ids), "input_token_ids": expected_ids,
+        "left_padding_token_count": padding_count,
         "predicted_code": predicted, "expected_qualified_code": expected_code,
         "prediction_matches_qualification": predicted == expected_code,
         "round_trip_exact": True, "hooks_remaining": len(adapter._handles),
