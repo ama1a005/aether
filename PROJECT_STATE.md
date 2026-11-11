@@ -20,6 +20,14 @@ A strict atomic ingestion command verifies hashes, denominators, controls,
 budgets and split locks before admitting the downloaded bundle. It refuses
 overwrites, symlinks and ambiguous artifact names.
 
+The conditional QCI-A1 development audit is also prospectively frozen before
+the discovery result is available. It may run only when the verified discovery
+gate reports supported candidates. To preserve the pre-existing 240-execution
+audit budget, it audits at most eight supported candidates ordered by the
+already-frozen activation score: 224 candidate executions plus eight whole-
+message controls. The four untouched development-audit cases are fixed; an
+immutable-source Kaggle notebook and strict result verifier are prepared.
+
 ## 2026-11-11 QCI-1 candidate selection complete
 
 After committing protocol SHA-256
@@ -122,8 +130,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **371 passed, 5 skipped** as of the QCI ingestion checkpoint
-(352 unit plus 19 integration/regression passes).
+Python 3.11.9: **385 passed, 5 skipped** as of the prospective QCI audit
+checkpoint (366 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.

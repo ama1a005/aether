@@ -11,6 +11,15 @@ Development-audit remains
 closed until the frozen discovery support classification is known; validation
 and test remain forbidden.
 
+## Conditional QCI-A1 development audit
+
+Before the QCI discovery result was available, freeze and model-free verify the
+audit candidate cap, priority, four untouched cases, operators, unchanged
+support thresholds, query budgets, failure behavior and split locks. Prepare a
+commit-pinned Kaggle runner and strict result verifier. Execution remains
+forbidden unless the independently verified discovery bundle emits
+`ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT`; no supported candidate means stop.
+
 ## Prospective Qwen causal-intervention protocol
 
 Following verified DCAP-1 PASS, preserve its metadata and freeze the real-Qwen

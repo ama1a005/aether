@@ -282,6 +282,13 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Reason:** The protocol and case/gate hashes were already prospectively frozen; the missing reproducibility item was an immutable model/tokenizer revision. This selects the official revision shown on the publisher's model history and does not introduce a second candidate or change any outcome rule. Its snapshot will be hashed before execution.
 - **Execution status:** Not run. The repository now contains a gated runner and Kaggle notebook; the model must not be downloaded until the notebook's MQ-HW1 pre-access check passes.
 - **Stop rule:** MQ-G1 failure stops before MQ-G2. Any MQ-G1/G2 failure ends the campaign. Passing both only recommends a separately reviewed instrumentation-acceptance stage; this decision does not authorize internal interventions or locked-split access.
+## RD-030 — Prospectively cap the QCI-A1 development audit
+
+- **Date:** 2026-11-11
+- **Decision:** Before QCI discovery results are ingested, freeze QCI-A1 to the four untouched development-audit cases and at most eight discovery-supported candidates. Rank eligible candidates only by descending already-frozen activation aggregate score, then region-qualified candidate ID. Apply the unchanged QCI support thresholds and all seven intervention/control operators. Protocol SHA-256 is `b5bb88629637ca6a8fcbb25242892bbdf93959e5fdbb6c437efbd13f86b85e0f`.
+- **Reason:** The existing causal protocol permits at most 240 audit executions. Auditing all 12 possible candidates would require 336 candidate executions. Eight candidates require 224 candidate executions; adding eight whole-message controls yields 232 and preserves the frozen limit without using discovery intervention effects to choose among supported candidates.
+- **Gate:** QCI-A1 remains forbidden unless the independently verified QCI-1.1 bundle reports at least one supported candidate. No supported candidate stops the internal causal claim. Validation and test remain locked.
+
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

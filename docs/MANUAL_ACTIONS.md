@@ -18,6 +18,13 @@ new destination; existing evidence is never overwritten):
 .\.venv\Scripts\python.exe scripts\ingest_qci_bundle.py <extracted-folder> results\phase1\causal_interventions\qwen15b_qci1 --archive <archive-path>
 ```
 
+Only if that command's verification report says
+`ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT`, attach the same retained discovery
+archive as a private Kaggle input and run
+`notebooks/aether_qwen_causal_audit_cpu.ipynb`. It pins source commit
+`8d5e5d3f30de0b3df2e443b31afca90073fa1d6e`. If the discovery report says
+`STOP_NO_SUPPORTED_CANDIDATE`, do not run the audit notebook.
+
 ## Kaggle Qwen2.5-1.5B instrumentation acceptance — 2026-11-11
 
 The qualification archive has been ingested and its inner artifacts verified.
