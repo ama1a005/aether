@@ -8,5 +8,27 @@
   "compiler_bos": "BOS",
   "vocab": [1, 2, 3, 4],
   "max_seq_len": 6,
-  "intervention": "not_attempted_bounded_reference_only"
+  "intervention": {
+    "status": "prospectively_frozen_before_any_parameter_ablation",
+    "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+    "targets": [
+      "transformer/layer_0/attn",
+      "transformer/layer_0/mlp",
+      "transformer/layer_1/attn",
+      "transformer/layer_1/mlp",
+      "transformer/layer_2/attn",
+      "transformer/layer_2/mlp",
+      "transformer/layer_3/attn",
+      "transformer/layer_3/mlp"
+    ],
+    "cases": "all_declared_reverse_cases",
+    "passive_control": "deep_parameter_tree_copy_without_replacement",
+    "acceptance": {
+      "baseline_all_exact": true,
+      "passive_all_exact": true,
+      "at_least_one_target_changes_non_bos_output": true,
+      "restored_all_exact": true
+    },
+    "selection_policy": "exhaustive_no_posthoc_target_selection"
+  }
 }
