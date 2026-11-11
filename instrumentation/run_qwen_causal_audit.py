@@ -75,6 +75,17 @@ def _completed_audit_executions(output_root: Path) -> int:
     return candidate_count + control_count
 
 
+def _failure_dataset_hashes(discovery_root: Path) -> dict[str, str]:
+    """Record every available frozen input hash without assuming valid discovery."""
+    paths = {
+        "selection": SELECTION_PATH,
+        "qualification_rows": QUALIFICATION_ROWS_PATH,
+        "discovery_summary": discovery_root / "summary.json",
+        "discovery_manifest": discovery_root / "manifest.json",
+    }
+    return {name: sha256_file(path) for name, path in paths.items() if path.is_file()}
+
+
 def preflight(output_root: Path, cache_root: Path, discovery_root: Path) -> dict[str, Any]:
     """Verify the supported discovery bundle, audit plan and hardware pre-access."""
     base, protocol, rows, candidates, plan = _load_audit_inputs(discovery_root)
@@ -314,7 +325,7 @@ def main() -> None:
             "utc_timestamp": failure["utc_timestamp"],
             "git_commit": failure["git_commit"],
             "uncommitted_diff": failure["uncommitted_diff"],
-            "dataset_manifest_hashes": {},
+            "dataset_manifest_hashes": _failure_dataset_hashes(arguments.discovery.resolve()),
             "model_id": failure["model_id"],
             "model_revision": failure["model_revision"],
             "tokenizer_revision": failure["tokenizer_revision"],
