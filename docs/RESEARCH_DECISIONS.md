@@ -289,6 +289,13 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Reason:** The existing causal protocol permits at most 240 audit executions. Auditing all 12 possible candidates would require 336 candidate executions. Eight candidates require 224 candidate executions; adding eight whole-message controls yields 232 and preserves the frozen limit without using discovery intervention effects to choose among supported candidates.
 - **Gate:** QCI-A1 remains forbidden unless the independently verified QCI-1.1 bundle reports at least one supported candidate. No supported candidate stops the internal causal claim. Validation and test remain locked.
 
+## RD-031 — Require and execute Tracr known-structure interventions
+
+- **Date:** 2026-11-11
+- **Decision:** Replace the earlier “optional intervention omitted” treatment with a prospectively frozen exhaustive intervention over all eight compiled attention/MLP half-layers in the pinned Tracr reverse model. Preserve the old structure-only result separately.
+- **Reason:** Phase 1 requires the intervention engine to succeed on a known-structure Tracr-compiled model; IOI calibration alone does not satisfy that named requirement. Exhaustive target declaration avoids post-hoc layer selection.
+- **Outcome:** PASS. All baseline, passive-copy and restoration controls were exact; all 24 target/case rows executed and 15 changed at least one non-BOS output. This is calibration evidence, not AETHER circuit evidence.
+
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

@@ -1,0 +1,69 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "P0_mech_20261111_tracr_reverse_intervention_0",
+  "run_id": "P0_mech_20261111_tracr_reverse_intervention_seed0",
+  "utc_timestamp": "2026-11-11T17:23:53.104672+00:00",
+  "git_commit": "0d118513d79367ff9c61ad68badaa21c914cffaf",
+  "uncommitted_diff": false,
+  "dataset_manifest_hashes": {
+    "config": "e99c982fa18c8824480dc7839fbda24e7c81f6d163312be6a9187555959dce40",
+    "runner": "695f9a6a0fd3418c035aef0ce4bd4bcb1793b964e1f169ff72811b8d2a65803f"
+  },
+  "model_id": "tracr-compiled-reverse",
+  "model_revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+  "tokenizer_revision": "not_applicable_symbolic_encoder",
+  "prompt_versions": {
+    "rasp_program": "tracr.compiler.lib.make_reverse(rasp.tokens)"
+  },
+  "random_seeds": [
+    0
+  ],
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "python_env_hash": "0a4368cb28435ab82829f906ede70d912bc7192626b6c25b5ea9d39d746dfe71",
+  "python_packages": {
+    "tracr": "1.0.0",
+    "jax": "0.10.2",
+    "jaxlib": "0.10.2",
+    "dm-haiku": "0.0.17",
+    "chex": "0.1.92",
+    "numpy": "2.4.6"
+  },
+  "command_line": [
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\calibration\\tracr\\run_calibration.py"
+  ],
+  "config_file": "calibration\\tracr\\config.json",
+  "raw_output_path": "results\\calibration\\tracr_intervention\\summary.json",
+  "source_revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+  "config_path": "calibration\\tracr\\config.json",
+  "config_sha256": "e99c982fa18c8824480dc7839fbda24e7c81f6d163312be6a9187555959dce40",
+  "result_path": "results\\calibration\\tracr_intervention\\summary.json",
+  "result_sha256": "c29e8220467ee86499fd71b75962b96559b621bc6e10aa2f0aa9d020df0caa44",
+  "environment_path": "results\\calibration\\tracr_intervention\\environment.json",
+  "environment_sha256": "8b8bb430dcaf9f9d1ed3902044b7710967a3a50658280b14e428ef1b8b89b8f5",
+  "artifact_paths": {
+    "results\\calibration\\tracr_intervention\\summary.json": "c29e8220467ee86499fd71b75962b96559b621bc6e10aa2f0aa9d020df0caa44",
+    "results\\calibration\\tracr_intervention\\environment.json": "8b8bb430dcaf9f9d1ed3902044b7710967a3a50658280b14e428ef1b8b89b8f5",
+    "calibration\\tracr\\config.json": "e99c982fa18c8824480dc7839fbda24e7c81f6d163312be6a9187555959dce40"
+  },
+  "inputs": [
+    [
+      "BOS",
+      1,
+      2,
+      3
+    ],
+    [
+      "BOS",
+      4,
+      2,
+      1
+    ],
+    [
+      "BOS",
+      1,
+      4
+    ]
+  ],
+  "validation_executions": 0,
+  "test_executions": 0
+}

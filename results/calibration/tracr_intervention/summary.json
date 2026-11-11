@@ -1,0 +1,2395 @@
+{
+  "experiment_id": "P0_mech_20261111_tracr_reverse_intervention_0",
+  "run_id": "P0_mech_20261111_tracr_reverse_intervention_seed0",
+  "utc_timestamp": "2026-11-11T17:23:53.100042+00:00",
+  "source": {
+    "repository": "https://github.com/google-deepmind/tracr",
+    "revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+    "license": "Apache-2.0",
+    "environment": ".venv-tracr",
+    "python": "3.11",
+    "program": "tracr.compiler.lib.make_reverse(rasp.tokens)",
+    "compiler_bos": "BOS",
+    "vocab": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "max_seq_len": 6,
+    "intervention": {
+      "status": "prospectively_frozen_before_any_parameter_ablation",
+      "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+      "targets": [
+        "transformer/layer_0/attn",
+        "transformer/layer_0/mlp",
+        "transformer/layer_1/attn",
+        "transformer/layer_1/mlp",
+        "transformer/layer_2/attn",
+        "transformer/layer_2/mlp",
+        "transformer/layer_3/attn",
+        "transformer/layer_3/mlp"
+      ],
+      "cases": "all_declared_reverse_cases",
+      "passive_control": "deep_parameter_tree_copy_without_replacement",
+      "acceptance": {
+        "baseline_all_exact": true,
+        "passive_all_exact": true,
+        "at_least_one_target_changes_non_bos_output": true,
+        "restored_all_exact": true
+      },
+      "selection_policy": "exhaustive_no_posthoc_target_selection"
+    }
+  },
+  "classification": "known-structure transformer calibration",
+  "model_id": "tracr-compiled-reverse",
+  "model_revision": "9ce2b8c82b6ba10e62e86cf6f390e7536d4fd2cd",
+  "seed": 0,
+  "cases": [
+    {
+      "input": [
+        "BOS",
+        1,
+        2,
+        3
+      ],
+      "expected": [
+        "BOS",
+        3,
+        2,
+        1
+      ],
+      "observed": [
+        "BOS",
+        3,
+        2,
+        1
+      ],
+      "exact_match": true
+    },
+    {
+      "input": [
+        "BOS",
+        4,
+        2,
+        1
+      ],
+      "expected": [
+        "BOS",
+        1,
+        2,
+        4
+      ],
+      "observed": [
+        "BOS",
+        1,
+        2,
+        4
+      ],
+      "exact_match": true
+    },
+    {
+      "input": [
+        "BOS",
+        1,
+        4
+      ],
+      "expected": [
+        "BOS",
+        4,
+        1
+      ],
+      "observed": [
+        "BOS",
+        4,
+        1
+      ],
+      "exact_match": true
+    }
+  ],
+  "compiler_graph": {
+    "node_count": 8,
+    "edge_count": 9,
+    "nodes": [
+      {
+        "id": "reverse_1",
+        "name": "reverse",
+        "type": "Aggregate"
+      },
+      {
+        "id": "reverse_selector_2",
+        "name": "reverse_selector",
+        "type": "Select"
+      },
+      {
+        "id": "tokens",
+        "name": "tokens",
+        "type": "TokensType"
+      },
+      {
+        "id": "indices",
+        "name": "indices",
+        "type": "IndicesType"
+      },
+      {
+        "id": "opp_idx-1_3",
+        "name": "opp_idx-1",
+        "type": "Map"
+      },
+      {
+        "id": "opp_idx_4",
+        "name": "opp_idx",
+        "type": "SequenceMap"
+      },
+      {
+        "id": "length_5",
+        "name": "length",
+        "type": "SelectorWidth"
+      },
+      {
+        "id": "all_true_selector_6",
+        "name": "all_true_selector",
+        "type": "Select"
+      }
+    ],
+    "edges": [
+      [
+        "reverse_selector_2",
+        "reverse_1"
+      ],
+      [
+        "tokens",
+        "reverse_1"
+      ],
+      [
+        "tokens",
+        "all_true_selector_6"
+      ],
+      [
+        "indices",
+        "reverse_selector_2"
+      ],
+      [
+        "indices",
+        "opp_idx_4"
+      ],
+      [
+        "opp_idx-1_3",
+        "reverse_selector_2"
+      ],
+      [
+        "opp_idx_4",
+        "opp_idx-1_3"
+      ],
+      [
+        "length_5",
+        "opp_idx_4"
+      ],
+      [
+        "all_true_selector_6",
+        "length_5"
+      ]
+    ]
+  },
+  "observed_internal_structure": {
+    "residuals": [
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      }
+    ],
+    "layer_outputs": [
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          4,
+          49
+        ],
+        "dtype": "float32"
+      }
+    ],
+    "attention_logits": [
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      },
+      {
+        "shape": [
+          1,
+          1,
+          4,
+          4
+        ],
+        "dtype": "float32"
+      }
+    ]
+  },
+  "intervention": {
+    "performed": true,
+    "protocol": {
+      "status": "prospectively_frozen_before_any_parameter_ablation",
+      "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+      "targets": [
+        "transformer/layer_0/attn",
+        "transformer/layer_0/mlp",
+        "transformer/layer_1/attn",
+        "transformer/layer_1/mlp",
+        "transformer/layer_2/attn",
+        "transformer/layer_2/mlp",
+        "transformer/layer_3/attn",
+        "transformer/layer_3/mlp"
+      ],
+      "cases": "all_declared_reverse_cases",
+      "passive_control": "deep_parameter_tree_copy_without_replacement",
+      "acceptance": {
+        "baseline_all_exact": true,
+        "passive_all_exact": true,
+        "at_least_one_target_changes_non_bos_output": true,
+        "restored_all_exact": true
+      },
+      "selection_policy": "exhaustive_no_posthoc_target_selection"
+    },
+    "passive_cases": [
+      {
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "exact_match": true
+      },
+      {
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "exact_match": true
+      },
+      {
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          4,
+          1
+        ],
+        "exact_match": true
+      }
+    ],
+    "rows": [
+      {
+        "target": "transformer/layer_0/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1,
+          2
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.2360680103302
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 1.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 412.3105773925781
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 1.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_0/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          2,
+          3
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.2360680103302
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 1.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 412.3105773925781
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 1.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_0/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.2360680103302
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 1.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 412.3105773925781
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 1.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_0/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1,
+          2
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 371.7406005859375
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 5.196152210235596
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_0/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          2,
+          3
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 371.7406005859375
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 5.196152210235596
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_0/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 371.7406005859375
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_0/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 5.196152210235596
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          4,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1,
+          2
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 11.224971771240234
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 6.480740547180176
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          2,
+          3
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 11.224971771240234
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 6.480740547180176
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_1/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 11.224971771240234
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_1/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 6.480740547180176
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          4,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1,
+          2
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          2,
+          3
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_2/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_2/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 3.464101552963257
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1,
+          2
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.6457512378692627
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 2.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 250.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          2,
+          3
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.6457512378692627
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 2.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 250.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/attn",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          1,
+          1
+        ],
+        "exact_match": false,
+        "changed_non_bos_positions": [
+          1
+        ],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/key",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.6457512378692627
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/linear",
+            "parameter": "w",
+            "shape": [
+              14,
+              49
+            ],
+            "pre_ablation_l2": 2.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/query",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 250.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "b",
+            "shape": [
+              14
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/attn/value",
+            "parameter": "w",
+            "shape": [
+              49,
+              14
+            ],
+            "pre_ablation_l2": 2.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      },
+      {
+        "target": "transformer/layer_3/mlp",
+        "operator": "zero_all_parameter_tensors_in_one_compiled_half_layer",
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          4,
+          1
+        ],
+        "exact_match": true,
+        "changed_non_bos_positions": [],
+        "parameter_tensors": [
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "b",
+            "shape": [
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_1",
+            "parameter": "w",
+            "shape": [
+              49,
+              42
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "b",
+            "shape": [
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          },
+          {
+            "module": "transformer/layer_3/mlp/linear_2",
+            "parameter": "w",
+            "shape": [
+              42,
+              49
+            ],
+            "pre_ablation_l2": 0.0
+          }
+        ]
+      }
+    ],
+    "restored_cases": [
+      {
+        "input": [
+          "BOS",
+          1,
+          2,
+          3
+        ],
+        "expected": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "observed": [
+          "BOS",
+          3,
+          2,
+          1
+        ],
+        "exact_match": true
+      },
+      {
+        "input": [
+          "BOS",
+          4,
+          2,
+          1
+        ],
+        "expected": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "observed": [
+          "BOS",
+          1,
+          2,
+          4
+        ],
+        "exact_match": true
+      },
+      {
+        "input": [
+          "BOS",
+          1,
+          4
+        ],
+        "expected": [
+          "BOS",
+          4,
+          1
+        ],
+        "observed": [
+          "BOS",
+          4,
+          1
+        ],
+        "exact_match": true
+      }
+    ],
+    "predicates": {
+      "baseline_all_exact": true,
+      "passive_all_exact": true,
+      "at_least_one_target_changes_non_bos_output": true,
+      "restored_all_exact": true,
+      "all_targets_executed": true
+    },
+    "overall": "PASS"
+  },
+  "validation_executions": 0,
+  "test_executions": 0,
+  "timing_seconds": {
+    "total": 5.476244099998439
+  }
+}

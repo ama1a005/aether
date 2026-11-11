@@ -1,5 +1,22 @@
 # AETHER project state
 
+## 2026-11-11 Tracr known-structure intervention PASS
+
+The pinned Tracr reverse program now has an executed causal calibration rather
+than structure-only metadata. Before observing outcomes, all eight compiled
+attention/MLP half-layers were frozen as an exhaustive zero-parameter ablation
+set over three exact reverse cases. All baseline, passive-copy and restored
+outputs were exact; 15 of 24 target/case ablations changed a non-BOS output;
+all targets executed; validation/test executions were zero. The accepted clean
+run is under `results/calibration/tracr_intervention`; the earlier structure-
+only result and an incomplete-manifest first intervention attempt are retained
+separately.
+
+A machine-readable 20-gate Phase-1 completion audit now prevents partial
+software or narrative status from being reported as project completion. At
+this checkpoint five gates pass, fourteen required artifacts are missing and
+the QCI development audit is blocked on the discovery result.
+
 ## 2026-11-11 QCI-1.1 runner ready for Kaggle execution
 
 The real discovery-only intervention runner and commit-pinned Kaggle notebook
@@ -130,8 +147,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **385 passed, 5 skipped** as of the prospective QCI audit
-checkpoint (366 unit plus 19 integration/regression passes).
+Python 3.11.9: **388 passed, 5 skipped** as of the Tracr intervention
+checkpoint (369 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
@@ -148,6 +165,10 @@ claim must stop. Later work still requires approved development-audit,
 method-freeze review, validation and once-only test evaluation; official
 benchmarks, real SAE/red-team/Agent C evidence and a second qualified model also
 remain absent.
+
+Known-structure Tracr intervention calibration and GPT-2 IOI causal calibration
+now both pass. They validate intervention machinery on calibration substrates;
+they do not substitute for QCI-1.1 or establish an AETHER internal circuit.
 
 The transfer config deliberately has `revision: pending`, so preflight blocks
 until an immutable revision is reviewed. Proposed BFCL/AgentDojo pins and task

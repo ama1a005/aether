@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Phase-1 completion audit and Tracr calibration closure
+
+Maintain `configs/phase1_completion_gates.yaml` as the machine-readable
+completion boundary. The pinned Tracr reverse calibration now executes the
+prospectively frozen exhaustive half-layer intervention protocol and passes
+with full run provenance. Preserve the historical structure-only result and
+the retained incomplete-manifest attempt. This closes calibration only; it
+does not authorize QCI audit or locked-split access.
+
 ## QCI-1.1 execution handoff
 
 The discovery-only runner and commit-pinned notebook are complete and tested.
