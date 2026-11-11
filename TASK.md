@@ -4,7 +4,10 @@
 
 The discovery-only runner and commit-pinned notebook are complete and tested.
 Execute `notebooks/aether_qwen_causal_interventions_cpu.ipynb` once on Kaggle,
-then hash-verify and ingest the retained archive. Development-audit remains
+then hash-verify and ingest the retained archive with
+`scripts/ingest_qci_bundle.py`. The verifier and atomic ingester are complete
+and tested; they refuse incomplete, altered, ambiguous or overwrite attempts.
+Development-audit remains
 closed until the frozen discovery support classification is known; validation
 and test remain forbidden.
 

@@ -2,6 +2,12 @@
 
 > Historical implementation ledger. The authoritative current status and test
 > count are in the root `PROJECT_STATE.md`.
+>
+> Current checkpoint (2026-11-11): Qwen2.5-1.5B qualification,
+> instrumentation acceptance and development capture have passed. QCI-1.1 is
+> frozen and awaits its one retained Kaggle execution. Its verified result
+> determines whether development-audit may open; validation and test remain
+> locked.
 
 ## 2026-11-05 graph-aware hierarchical RL hardening
 

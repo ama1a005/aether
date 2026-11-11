@@ -12,6 +12,14 @@ blocked before model access because only 2.69 GiB RAM was available. Kaggle must
 execute `notebooks/aether_qwen_causal_interventions_cpu.ipynb`; no causal
 candidate is accepted until that retained run is verified.
 
+The runner is hardened at source commit
+`0e8a616aedd8a7a5caf2af5b34d9170bf9f114fc`: every successful active patch
+must apply exactly once and failures retain a reproducibility manifest. The
+uploadable notebook is regenerated at `dbfc837` and pins that immutable source.
+A strict atomic ingestion command verifies hashes, denominators, controls,
+budgets and split locks before admitting the downloaded bundle. It refuses
+overwrites, symlinks and ambiguous artifact names.
+
 ## 2026-11-11 QCI-1 candidate selection complete
 
 After committing protocol SHA-256
@@ -114,8 +122,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **368 passed, 5 skipped** as of the QCI-1.1 runner checkpoint
-(349 unit plus 19 integration/regression passes).
+Python 3.11.9: **371 passed, 5 skipped** as of the QCI ingestion checkpoint
+(352 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
@@ -123,11 +131,15 @@ coverage runs the P1, P2, P3, P4 and end-to-end smokes.
 ## Evidence boundary and remaining work
 
 Toy, fixture, rule-based and synthetic runs are software acceptance, not Qwen or
-benchmark evidence. No locked validation/test split was opened. The larger
-computer must: pin Qwen2.5-1.5B; pass preflight and qualification; run real hook,
-capture, intervention, multi-seed, SAE, red-team and Agent C experiments; execute
-official benchmarks; qualify a second model; then freeze the method before
-approved validation and once-only test evaluation.
+benchmark evidence. No locked validation/test split was opened. Qwen2.5-1.5B
+qualification, instrumentation acceptance and development activation capture
+have passed. The immediate unresolved scientific gate is the frozen QCI-1.1
+discovery intervention run on Kaggle. Its verified support classification
+determines whether development-audit may open or whether the internal-circuit
+claim must stop. Later work still requires approved development-audit,
+method-freeze review, validation and once-only test evaluation; official
+benchmarks, real SAE/red-team/Agent C evidence and a second qualified model also
+remain absent.
 
 The transfer config deliberately has `revision: pending`, so preflight blocks
 until an immutable revision is reviewed. Proposed BFCL/AgentDojo pins and task
