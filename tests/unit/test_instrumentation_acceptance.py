@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 
 from instrumentation.run_qwen_instrumentation_acceptance import (
     _load_config,
+    _write_failure_manifest,
+    preflight,
     verify_qualification_bundle,
 )
 
@@ -38,6 +43,23 @@ def test_instrumentation_gate_is_prospective_bounded_and_cpu_exact() -> None:
     assert config["split_access_policy"]["test"] == "forbidden"
     assert len(config["selected_case_ids"]) == 4
     assert "No component ranking" in config["claim_boundary"]
+
+
+def test_preflight_and_failure_records_contain_required_provenance(tmp_path: Path) -> None:
+    """Retain complete metadata before access and after any explicit failure."""
+    result = preflight(tmp_path, tmp_path)
+    assert result["model_accessed"] is False
+    assert result["git_commit"]
+    assert result["model_revision"]
+    assert result["random_seeds"] == [42]
+    assert result["python_env_hash"]
+    _write_failure_manifest(tmp_path, RuntimeError("fixture failure"))
+    failure = json.loads((tmp_path / "failure_manifest.json").read_text(encoding="utf-8"))
+    assert failure["failure"] == {
+        "exception_type": "RuntimeError", "message": "fixture failure"
+    }
+    assert failure["dataset_manifest_hashes"]
+    assert failure["artifact_paths"]
 
 
 def test_qualification_hash_mismatch_fails_closed() -> None:

@@ -141,15 +141,29 @@ def preflight(output_root: Path, cache_root: Path) -> dict[str, Any]:
     config = _load_config()
     qualification, selected = verify_qualification_bundle(config)
     hardware = measure_hardware(cache_root)
+    _packages, environment_hash = _environment_inventory()
     result = {
         "schema_version": "aether.instrumentation-acceptance-preflight.v1",
         "utc_timestamp": datetime.now(timezone.utc).isoformat(),
         "experiment_id": EXPERIMENT_ID,
         "run_id": RUN_ID,
+        "git_commit": _git("rev-parse", "HEAD"),
+        "uncommitted_diff": bool(_git("status", "--porcelain")),
         "config_sha256": sha256_file(CONFIG_PATH),
+        "config_file": str(CONFIG_PATH.relative_to(ROOT)),
         "qualification_summary_sha256": config["qualification_summary_sha256"],
+        "qualification_manifest_sha256": config["qualification_manifest_sha256"],
         "qualification_run_id": qualification["run_id"],
         "selected_case_ids": [row["case_id"] for row in selected],
+        "model_id": config["model_id"],
+        "model_revision": config["model_revision"],
+        "tokenizer_revision": config["model_revision"],
+        "random_seeds": [config["execution"]["seed"]],
+        "python_version": platform.python_version(),
+        "python_executable": sys.executable,
+        "python_env_hash": environment_hash,
+        "command_line": sys.argv,
+        "raw_output_path": str(output_root / "instrumentation_preflight.json"),
         "model_accessed": False,
         "hardware": hardware,
         "decision": {
@@ -161,6 +175,43 @@ def preflight(output_root: Path, cache_root: Path) -> dict[str, Any]:
     output_root.mkdir(parents=True, exist_ok=True)
     _write_json(output_root / "instrumentation_preflight.json", result)
     return result
+
+
+def _write_failure_manifest(output_root: Path, error: Exception) -> None:
+    """Record required provenance for every failed acceptance attempt."""
+    config = _load_config()
+    packages, environment_hash = _environment_inventory()
+    artifacts = [
+        path for path in output_root.rglob("*")
+        if path.is_file() and path.name != "failure_manifest.json"
+    ]
+    _write_json(output_root / "failure_manifest.json", {
+        "manifest_version": "1.0.0",
+        "experiment_id": EXPERIMENT_ID,
+        "run_id": RUN_ID,
+        "utc_timestamp": datetime.now(timezone.utc).isoformat(),
+        "git_commit": _git("rev-parse", "HEAD"),
+        "uncommitted_diff": bool(_git("status", "--porcelain")),
+        "dataset_manifest_hashes": {
+            config["qualification_directory"] + "/summary.json": config["qualification_summary_sha256"],
+            config["qualification_directory"] + "/manifest.json": config["qualification_manifest_sha256"],
+        },
+        "model_id": config["model_id"],
+        "model_revision": config["model_revision"],
+        "tokenizer_revision": config["model_revision"],
+        "random_seeds": [config["execution"]["seed"]],
+        "hardware": platform.platform(),
+        "python_version": platform.python_version(),
+        "python_executable": sys.executable,
+        "python_env_hash": environment_hash,
+        "python_packages": packages,
+        "command_line": sys.argv,
+        "config_file": str(CONFIG_PATH.relative_to(ROOT)),
+        "config_hash": sha256_file(CONFIG_PATH),
+        "raw_output_path": str(output_root / "execution_failure.json"),
+        "artifact_paths": {str(path): sha256_file(path) for path in artifacts},
+        "failure": {"exception_type": type(error).__name__, "message": str(error)},
+    })
 
 
 def _final_logits(adapter: Qwen2ModelAdapter, prompt: str) -> tuple[torch.Tensor, list[int]]:
@@ -330,6 +381,8 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
     marker = json.loads(marker_path.read_text(encoding="utf-8"))
     if preflight_record["decision"]["overall"] != "PASS":
         raise RuntimeError("instrumentation preflight did not pass")
+    if marker.get("preflight_sha256") != sha256_file(preflight_path):
+        raise RuntimeError("instrumentation preflight differs from the model-access marker")
     if marker.get("state") != "MODEL_FILES_READY":
         raise RuntimeError("instrumentation snapshot marker is not ready")
     if marker.get("model_revision") != config["model_revision"]:
@@ -338,6 +391,8 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
     if sha256_file(snapshot_path) != marker["snapshot_manifest_sha256"]:
         raise RuntimeError("snapshot manifest differs from the access marker")
     snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    if snapshot.get("model_id") != config["model_id"] or snapshot.get("resolved_revision") != config["model_revision"]:
+        raise RuntimeError("snapshot manifest model identity differs from frozen IA-G1")
     _verify_snapshot_manifest(snapshot, cache_root)
     if torch.version.cuda is not None or torch.cuda.is_initialized() or torch.cuda.is_available():
         raise RuntimeError("IA-G1 requires the qualified CPU-only PyTorch condition")
@@ -473,6 +528,7 @@ def main() -> None:
             "exception_type": type(error).__name__, "message": str(error),
             "traceback": traceback.format_exc(),
         })
+        _write_failure_manifest(output, error)
         raise
     print(json.dumps(result, indent=2, allow_nan=False))
     if result.get("overall") == "FAIL" or result.get("decision", {}).get("overall") == "BLOCKED":
