@@ -2,3 +2,4 @@
 results/phase1/model_qualification/qwen15b_kaggle_20261110/** -text
 results/phase1/instrumentation_acceptance/qwen15b_ia_g1_20261111/** -text
 results/phase1/development_capture/qwen15b_dcap1_20261111/** -text
+results/phase1/candidate_selection/qwen15b_qci1/** -text

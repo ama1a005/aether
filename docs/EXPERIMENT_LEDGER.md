@@ -1,5 +1,14 @@
 # Experiment Ledger
 
+## P0_cross_20261111_qwen15b_qci1_seed42 — candidate selection complete
+
+- Executed only after QCI-1 protocol freeze; source commit `243f4e6`.
+- Hash-verified 64 discovery tensors and expanded 784 module/head candidates.
+- Selected 12 candidates using the minimum directional median rule: three
+  modules and three pre-`o_proj` heads per agent.
+- Development-audit tensors were not opened; validation/test executions are
+  zero. Selection magnitudes are correlational and authorize interventions only.
+
 ## P0_mech_20261111_qwen15b_dcap1 — PASS
 
 - Pinned Qwen2.5-1.5B-Instruct revision, CPU float32, seed 42.

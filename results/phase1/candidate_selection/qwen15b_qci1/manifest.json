@@ -1,0 +1,32 @@
+{
+  "artifact_paths": {
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\results\\phase1\\candidate_selection\\qwen15b_qci1\\selection.json": "ded131530370c8b83786d49d3f5a72e6bf307c2cc9939a4389b45bf235e0eba1"
+  },
+  "command_line": [
+    "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\causal\\run_qwen_candidate_selection.py",
+    "--activations",
+    "notebooks\\Results\\Latest\\aether-qwen-development-capture-results\\aether-qwen-development-capture-corrected\\activations"
+  ],
+  "config_file": "configs\\causal_candidates\\qwen_1_5b_dcap1_intervention_v1.json",
+  "dataset_manifest_hashes": {
+    "dcap_manifest": "2fb1a46b84ff3c9b5fbfe0a4fc9975f4517b8c74f0be617cce3daa947656461f",
+    "dcap_summary": "2e34222a2f207acfad9c0a48e091fef0e8f189ee7698c80629d0615a7c0ae77d",
+    "qualification_rows": "8ec8da7b6a7ba04924852301b64884cb7591cfa71bca2c30681618dba3d70ffe"
+  },
+  "experiment_id": "P0_cross_20261111_qwen15b_qci1",
+  "git_commit": "243f4e67d2f91bb94121eed190895f53555320e4",
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "manifest_version": "1.0.0",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "prompt_versions": {},
+  "python_env_hash": "not_applicable_no_model_loaded",
+  "random_seeds": [
+    42
+  ],
+  "raw_output_path": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\results\\phase1\\candidate_selection\\qwen15b_qci1\\selection.json",
+  "run_id": "P0_cross_20261111_qwen15b_qci1_seed42",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-11T11:34:05.018445+00:00"
+}

@@ -1,5 +1,16 @@
 # AETHER project state
 
+## 2026-11-11 QCI-1 candidate selection complete
+
+After committing protocol SHA-256
+`8a4712ef3160251ed24dd8d82eaee005140e2853beddef88c9991e1e991c704e`,
+the discovery-only selector hash-verified and opened exactly 64 discovery
+activation artifacts. It did not open development-audit tensors, validation, or
+test. From 784 expanded sender/receiver module and head candidates, the frozen
+bidirectional rule selected 12 candidates for causal intervention. These are
+correlational prefilter results only; none is a causal component until it passes
+paired intervention and specificity controls.
+
 ## 2026-11-11 DCAP-1 PASS
 
 The corrected development-capture run passed all seven frozen predicates on the

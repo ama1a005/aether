@@ -1,5 +1,18 @@
 # Research Decisions
 
+## RD-DCAP-QCI-001 — Freeze before discovery ranking (2026-11-11)
+
+- **Decision:** Use QCI-1 protocol hash
+  `8a4712ef3160251ed24dd8d82eaee005140e2853beddef88c9991e1e991c704e`.
+  Rank only the 16 DCAP discovery cases by the minimum of the A→B and B→A
+  median normalized activation contrasts, selecting three modules and three
+  heads per agent with deterministic identifier tie-breaking.
+- **Executed outcome:** 12 of 784 candidates were selected. This is a
+  correlational prefilter, not causal localization.
+- **Next gate:** Execute the already frozen rescue, induction, identity,
+  shuffled-donor, irrelevant-position and passive-hook controls. Do not replace
+  failed candidates or use development-audit results to retune the method.
+
 ## RD-031 — DCAP-1 passes; freeze interventions before ranking (2026-11-11)
 
 - **Decision:** Accept the hash-verified 80-artifact Qwen2.5-1.5B DCAP-1 bundle
