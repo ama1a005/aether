@@ -154,7 +154,7 @@ def test_qwen_qci_notebook_is_pinned_ordered_and_locked():
     archive = next(i for i, source in enumerate(code_cells) if 'archive_contents.json' in source)
     assert preflight < download < execution < archive
     combined = '\n'.join(code_cells)
-    assert '7d5f7cb90215014f457c5fe670c13877e346a734' in combined
+    assert '0e8a616aedd8a7a5caf2af5b34d9170bf9f114fc' in combined
     assert '989aa7980e4cf806f80c7fef2b1adb7bc71aa306' in combined
     assert 'instrumentation.run_qwen_causal_interventions' in combined
     assert 'tests/unit/test_qci_execution.py' in combined
