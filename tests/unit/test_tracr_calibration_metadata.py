@@ -33,7 +33,7 @@ def test_completed_tracr_manifest_integrity() -> None:
 
 
 def test_tracr_intervention_evidence_when_current_config_was_executed() -> None:
-    manifest_path = Path("results/calibration/tracr/manifest.json")
+    manifest_path = Path("results/calibration/tracr_intervention/manifest.json")
     if not manifest_path.exists():
         return
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

@@ -56,6 +56,8 @@ def main() -> None:
     """Compile official reverse, compare exact outputs, and record exposed structure."""
     config_path = Path("calibration/tracr/config.json")
     config = json.loads(config_path.read_text(encoding="utf-8"))
+    output_dir = Path("results/calibration/tracr_intervention")
+    output_dir.mkdir(parents=True, exist_ok=True)
     program = lib.make_reverse(rasp.tokens)
     extracted = rasp_to_graph.extract_rasp_graph(program)
     graph_nodes = []
@@ -156,7 +158,7 @@ def main() -> None:
         name: importlib.metadata.version(name)
         for name in ["tracr", "jax", "jaxlib", "dm-haiku", "chex", "numpy"]
     }
-    environment_path = Path("calibration/tracr/environment.json")
+    environment_path = output_dir / "environment.json"
     environment = {
         "python": sys.version,
         "executable": sys.executable,
@@ -190,8 +192,6 @@ def main() -> None:
         "test_executions": 0,
         "timing_seconds": {"total": time.perf_counter() - started},
     }
-    output_dir = Path("results/calibration/tracr")
-    output_dir.mkdir(parents=True, exist_ok=True)
     result_path = output_dir / "summary.json"
     result_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
     manifest = {

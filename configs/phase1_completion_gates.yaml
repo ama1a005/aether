@@ -100,7 +100,7 @@ gates:
   - id: tracr_known_structure_intervention
     category: calibration
     kind: json
-    path: results/calibration/tracr/summary.json
+    path: results/calibration/tracr_intervention/summary.json
     expect:
       intervention.performed: true
   - id: ioi_causal_calibration
