@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import platform
 import sys
+import tarfile
 import time
 import traceback
 from typing import Any
@@ -36,6 +37,53 @@ QCI1_EVIDENCE = ROOT / "results/phase1/causal_interventions/qwen15b_qci1"
 OUTPUT_DEFAULT = ROOT / "results/phase1/causal_interventions/qwen15b_qci2_discovery"
 EXPERIMENT_ID = "P0_cross_20261112_qwen15b_qci2_semantic"
 RUN_ID = f"{EXPERIMENT_ID}_seed42"
+CHECKPOINT_INTERVAL = 25
+
+
+def _execution_key(row: dict[str, Any]) -> tuple[str, str, str]:
+    """Return the unique frozen execution identity for one retained row."""
+    return str(row["candidate_id"]), str(row["case_id"]), str(row["operator"])
+
+
+def _load_resume_rows(raw_path: Path, expected_keys: list[tuple[str, str, str]]) -> list[dict[str, Any]]:
+    """Load and validate a strict prefix of the frozen execution sequence."""
+    if not raw_path.is_file():
+        return []
+    rows = [json.loads(line) for line in raw_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    observed = [_execution_key(row) for row in rows]
+    if len(observed) != len(set(observed)):
+        raise ValueError("QCI-2 checkpoint contains duplicate execution keys")
+    if observed != expected_keys[:len(observed)]:
+        raise ValueError("QCI-2 checkpoint is not an exact frozen-sequence prefix")
+    if any(row.get("hook_cleanup") is not True for row in rows):
+        raise ValueError("QCI-2 checkpoint contains an unclean hook row")
+    return rows
+
+
+def _write_checkpoint(output_root: Path, rows: list[dict[str, Any]], source_steps: int) -> None:
+    """Atomically record resume state and a small downloadable checkpoint archive."""
+    state = {
+        "schema_version": "aether.qci2-checkpoint.v1", "run_id": RUN_ID,
+        "protocol_hash": sha256_file(PROTOCOL_PATH), "completed_executions": len(rows),
+        "last_execution_key": list(_execution_key(rows[-1])) if rows else None,
+        "cumulative_source_capture_forward_steps": source_steps,
+        "candidate_forward_steps": sum(int(row["model_forward_steps"]) for row in rows),
+        "validation_executions": 0, "test_executions": 0,
+        "utc_timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    target = output_root / "checkpoint_state.json"
+    temporary = output_root / "checkpoint_state.json.tmp"
+    temporary.write_text(json.dumps(state, indent=2, sort_keys=True), encoding="utf-8")
+    temporary.replace(target)
+    archive = output_root.parent / "aether-qwen-qci2-checkpoint.tar.gz"
+    temporary_archive = archive.with_suffix(".tmp")
+    with tarfile.open(temporary_archive, "w:gz") as bundle:
+        for name in ("raw_interventions.jsonl", "checkpoint_state.json", "qci2_preflight.json",
+                     "qci2_model_access.json", "model_snapshot_manifest.json"):
+            path = output_root / name
+            if path.is_file():
+                bundle.add(path, arcname=f"{output_root.name}/{name}")
+    temporary_archive.replace(archive)
 
 
 def _load_inputs() -> tuple[dict[str, Any], list[dict[str, Any]], list[Any]]:
@@ -108,7 +156,7 @@ def preflight(output_root: Path, cache_root: Path) -> dict[str, Any]:
     return result
 
 
-def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
+def run(output_root: Path, cache_root: Path, *, resume: bool = False) -> dict[str, Any]:
     """Run all frozen QCI-2 discovery interventions with one model load."""
     started = time.perf_counter()
     protocol, rows, candidates = _load_inputs()
@@ -154,21 +202,44 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
                 inputs = qci1._qualified_inputs(adapter, prompt, ids)
                 sources[(row["case_id"], agent, condition)] = qci1._capture_sources(adapter, inputs, selected)
                 capture_steps += 1
+    ordered_keys = [
+        (f"{candidate.agent}.{candidate.candidate_id}", str(row["case_id"]), operator)
+        for candidate in candidates for row in rows for operator in protocol["operators"]
+    ]
+    raw_path = output_root / "raw_interventions.jsonl"
+    if raw_path.exists() and not resume:
+        raise FileExistsError("QCI-2 raw output already exists; use --resume after preserving the attempt")
+    existing = _load_resume_rows(raw_path, ordered_keys) if resume else []
+    checkpoint_path = output_root / "checkpoint_state.json"
+    previous_source_steps = 0
+    if existing:
+        if checkpoint_path.is_file():
+            checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            if checkpoint.get("protocol_hash") != sha256_file(PROTOCOL_PATH) or checkpoint.get("completed_executions") != len(existing):
+                raise ValueError("QCI-2 checkpoint state differs from retained rows")
+            previous_source_steps = int(checkpoint["cumulative_source_capture_forward_steps"])
+        else:
+            previous_source_steps = 64
+    cumulative_source_steps = previous_source_steps + capture_steps
     ledger = QueryLedger(
         int(protocol["budget"]["maximum_total_executions"]),
         int(protocol["budget"]["maximum_total_model_forward_steps"]),
-        forward_steps=capture_steps,
+        executions=len(existing),
+        forward_steps=cumulative_source_steps + sum(int(row["model_forward_steps"]) for row in existing),
     )
-    raw_path = output_root / "raw_interventions.jsonl"
     output_root.mkdir(parents=True, exist_ok=True)
-    all_results: list[dict[str, Any]] = []
+    all_results: list[dict[str, Any]] = list(existing)
     operators = list(protocol["operators"])
-    with raw_path.open("w", encoding="utf-8") as stream:
+    with raw_path.open("a", encoding="utf-8") as stream:
         total = len(candidates) * len(rows) * len(operators)
         completed = 0
         for candidate in candidates:
             for row in rows:
                 for operator in operators:
+                    key = (f"{candidate.agent}.{candidate.candidate_id}", str(row["case_id"]), operator)
+                    if key in set(ordered_keys[:len(existing)]):
+                        completed += 1
+                        continue
                     result = qci1._run_one(
                         adapter, candidate, row, operator, sources,
                         donor_maps["same_decision"], {item["case_id"]: item for item in rows},
@@ -181,6 +252,8 @@ def run(output_root: Path, cache_root: Path) -> dict[str, Any]:
                     stream.write(json.dumps(result, sort_keys=True, allow_nan=False) + "\n")
                     stream.flush()
                     completed += 1
+                    if completed % CHECKPOINT_INTERVAL == 0 or completed == total:
+                        _write_checkpoint(output_root, all_results, cumulative_source_steps)
                     print(f"QCI-2 [{completed}/{total}] {candidate.candidate_id} {row['case_id']} {operator} status={result['status']}", flush=True)
     message_controls = qci1._run_message_controls(adapter, rows, label_ids, ledger)
     assessments = [
@@ -244,9 +317,10 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=OUTPUT_DEFAULT)
     parser.add_argument("--cache", type=Path, required=True)
     parser.add_argument("--preflight-only", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     arguments = parser.parse_args()
     try:
-        result = preflight(arguments.output.resolve(), arguments.cache.resolve()) if arguments.preflight_only else run(arguments.output.resolve(), arguments.cache.resolve())
+        result = preflight(arguments.output.resolve(), arguments.cache.resolve()) if arguments.preflight_only else run(arguments.output.resolve(), arguments.cache.resolve(), resume=arguments.resume)
         print(json.dumps(result, indent=2, sort_keys=True))
     except Exception as error:
         arguments.output.mkdir(parents=True, exist_ok=True)
