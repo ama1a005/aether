@@ -1,5 +1,18 @@
 # AETHER current bounded task
 
+## QCI-2 decision-semantic control correction
+
+Preserve QCI-1.1 as a valid negative result for **case-specific** mediation.
+Its shuffled donors were selected within attack direction and therefore carried
+the same clean decision as the paired donor. That control cannot distinguish a
+general decision-semantic mediator from a nonspecific replacement effect.
+Prospectively freeze a separate QCI-2 study using the unchanged 12 candidates,
+same-decision donors as a generalization control, opposite-decision donors as
+the specificity control, and the existing identity/passive/position controls.
+Do not reuse QCI-1 outcomes to reselect candidates or weaken effect thresholds.
+Keep the four development-audit cases closed until QCI-2 discovery rules and
+execution code are committed and model-free verified.
+
 ## QCI-1.1 negative-result closure
 
 Preserve and independently verify the retained QCI-1.1 archive, ingest it

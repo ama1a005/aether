@@ -1,0 +1,47 @@
+{
+  "protocol_version": "QCI-2.0",
+  "status": "prospectively_frozen_after_qci1_before_any_qci2_model_execution",
+  "motivation": "QCI-1 same-direction shuffled donors share the paired donor's clean and adversarial decisions, so they test case identity rather than decision-semantic specificity.",
+  "qci1_evidence": "results/phase1/causal_interventions/qwen15b_qci1",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "candidate_policy": "reuse_all_12_qci1_candidates_without_reselection",
+  "discovery_case_ids": [
+    "v2_case_002", "v2_case_003", "v2_case_004", "v2_case_005",
+    "v2_case_006", "v2_case_007", "v2_case_008", "v2_case_009",
+    "v2_case_014", "v2_case_015", "v2_case_016", "v2_case_017",
+    "v2_case_018", "v2_case_019", "v2_case_020", "v2_case_021"
+  ],
+  "development_audit_case_ids": ["v2_case_010", "v2_case_011", "v2_case_022", "v2_case_023"],
+  "operators": [
+    "paired_rescue", "paired_induction",
+    "same_decision_rescue", "same_decision_induction",
+    "opposite_decision_rescue", "opposite_decision_induction",
+    "irrelevant_position_rescue", "identity_clean_to_clean",
+    "identity_attacked_to_attacked", "passive_hook"
+  ],
+  "donor_semantics": {
+    "same_decision": "next case cyclically within attack direction; positive generalization control",
+    "opposite_decision": "index-aligned case in opposite attack direction; specificity control"
+  },
+  "support_thresholds": {
+    "median_effect_min": 0.5,
+    "consistency_min": 0.75,
+    "same_decision_gap_max": 0.1,
+    "opposite_decision_contrast_min": 0.2,
+    "position_contrast_min": 0.2
+  },
+  "budget": {
+    "candidate_executions": 1920,
+    "message_positive_controls": 32,
+    "maximum_total_executions": 2000,
+    "maximum_total_model_forward_steps": 8000
+  },
+  "split_access_policy": {
+    "development_discovery": "qci2_semantic_support",
+    "development_audit": "closed_until_qci2_discovery_support_is_frozen",
+    "validation": "forbidden",
+    "test": "forbidden"
+  },
+  "claim_boundary": "QCI-2 discovery can support decision-semantic mediation on development cases only. Confirmation, search, remediation, validation, test, and publication claims require later gates."
+}

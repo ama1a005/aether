@@ -276,18 +276,34 @@ def _run_one(
     operator: str, sources: dict[tuple[str, str, str], dict[str, torch.Tensor]],
     donor_map: dict[str, str], by_id: dict[str, dict[str, Any]], label_ids: dict[str, int],
     execution: dict[str, Any], ledger: QueryLedger,
+    semantic_donor_maps: dict[str, dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """Run one declared candidate/case/operator execution and retain failures."""
     source_condition, target, position, passive = {
         "paired_rescue": ("clean", "attacked", -1, False),
         "paired_induction": ("attacked", "clean", -1, False),
         "shuffled_donor_rescue": ("clean", "attacked", -1, False),
+        "same_decision_rescue": ("clean", "attacked", -1, False),
+        "same_decision_induction": ("attacked", "clean", -1, False),
+        "opposite_decision_rescue": ("clean", "attacked", -1, False),
+        "opposite_decision_induction": ("attacked", "clean", -1, False),
         "irrelevant_position_rescue": ("clean", "attacked", int(execution["irrelevant_token_position"]), False),
         "identity_clean_to_clean": ("clean", "clean", -1, False),
         "identity_attacked_to_attacked": ("attacked", "attacked", -1, False),
         "passive_hook": ("attacked", "attacked", -1, True),
     }[operator]
-    donor_id = donor_map[row["case_id"]] if operator == "shuffled_donor_rescue" else row["case_id"]
+    if operator == "shuffled_donor_rescue":
+        donor_id = donor_map[row["case_id"]]
+    elif operator.startswith("same_decision_"):
+        if semantic_donor_maps is None:
+            raise ValueError("QCI semantic donor maps are required")
+        donor_id = semantic_donor_maps["same_decision"][row["case_id"]]
+    elif operator.startswith("opposite_decision_"):
+        if semantic_donor_maps is None:
+            raise ValueError("QCI semantic donor maps are required")
+        donor_id = semantic_donor_maps["opposite_decision"][row["case_id"]]
+    else:
+        donor_id = row["case_id"]
     source = None if passive else sources[(donor_id, candidate.agent, source_condition)][candidate.candidate_id]
     forward_charge = 1 if candidate.agent == "receiver" else execution["sender_generation_max_new_tokens"] + 1
     ledger.charge(forward_steps=forward_charge)
@@ -307,7 +323,11 @@ def _run_one(
         effect = None
         status = _execution_status(score, passive, applications)
         if score is not None:
-            effect = induction_effect(clean, attacked, score) if operator == "paired_induction" else rescue_effect(clean, attacked, score)
+            effect = (
+                induction_effect(clean, attacked, score)
+                if operator in {"paired_induction", "same_decision_induction", "opposite_decision_induction"}
+                else rescue_effect(clean, attacked, score)
+            )
         baseline = clean if target == "clean" else attacked
         tolerance = execution["identity_tolerance"]
         noninterference = None
