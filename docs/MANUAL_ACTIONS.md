@@ -1,5 +1,18 @@
 # Manual Actions
 
+## 2026-11-12 — execute the prospectively frozen QCI-2 notebook once
+
+After the notebook commit is pushed to branch `lm`, upload
+`notebooks/aether_qwen_qci2_semantic_cpu.ipynb` to Kaggle. Enable Internet,
+select a CPU session with at least 12 GiB available RAM, and run all cells once.
+The notebook pins runner commit
+`ca2e0750e6d97da686bf4c798acdcf984810e7b9`. GPUs remain unused to preserve
+the qualified CPU-float32 condition.
+
+Do not change donors, candidates, thresholds, cases, or budgets; do not delete
+the marker to rerun; and do not open audit, validation, or test. Download
+`aether-qwen-qci2-results.tar.gz`. Do not use the old QCI-A1 notebook for QCI-2.
+
 ## 2026-11-12 — QCI execution complete; do not run the audit notebook
 
 QCI-1.1 was verified and ingested. Its binding outcome is

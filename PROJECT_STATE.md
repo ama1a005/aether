@@ -1,5 +1,23 @@
 # AETHER project state
 
+## 2026-11-12 QCI-2 prospectively frozen — semantic-control correction
+
+QCI-1.1 remains a valid negative result for **case-specific** mediation: its
+same-direction shuffled donor changed case identity but preserved the clean and
+attacked decision semantics. Every `A_TO_B` discovery case has clean decision A
+and attacked decision B, while every `B_TO_A` case has the reverse. The QCI-1
+control therefore could not test decision semantics shared across cases.
+
+Before any QCI-2 model execution, the repository now freezes a distinct study,
+reusing all 12 QCI-1 candidates without reselection. It requires paired effects,
+same-decision generalization, opposite-decision contrast, position specificity,
+and identity/passive non-interference. Audit, validation and test remain closed.
+
+The local preflight verified all frozen inputs and correctly blocked before
+model access because only 2.91 GiB RAM was available. The next action is one
+Kaggle run of `notebooks/aether_qwen_qci2_semantic_cpu.ipynb` after its commit is
+pushed. QCI-2 cannot retroactively change the QCI-1 result.
+
 ## 2026-11-12 QCI-1.1 verified negative result — stop internal causal claim
 
 The retained Kaggle QCI-1.1 archive passed independent verification and was
@@ -177,7 +195,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **391 passed, 5 skipped** as of the BFCL adapter checkpoint
+Python 3.11.9: **400 passed, 5 skipped** at the QCI-2 preparation checkpoint
+(381 unit plus 19 integration/regression passes)
 (372 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression

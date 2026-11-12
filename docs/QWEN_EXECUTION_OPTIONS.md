@@ -6,6 +6,10 @@
 > failed at least one frozen predicate, most importantly shuffled-source
 > specificity. The binding state is `STOP_NO_SUPPORTED_CANDIDATE`; do not run
 > QCI-A1 or treat the historical “pending qualification” text below as current.
+> A separately frozen QCI-2 study tests decision-semantic mediation because the
+> QCI-1 same-direction shuffle preserved decision labels. It does not erase the
+> negative case-specific result. Its only authorized route is
+> `notebooks/aether_qwen_qci2_semantic_cpu.ipynb` after that notebook is pushed.
 
 There are two independent problems: sufficient resources to execute, and model
 behavior suitable for the experiment. CUDA installation proves neither. The

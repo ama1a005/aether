@@ -310,6 +310,15 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Evidence:** All 1,376 declared executions were valid and within budget, with zero validation/test access. No candidate passed every frozen predicate. Large receiver rescue/induction effects failed shuffled-source separation and are not accepted as source-specific causal mediation.
 - **Consequence:** The current Qwen path does not establish the required N1 internal cross-agent circuit claim. External benchmarks and clearly separated supporting experiments may continue, but cannot repair or substitute for this failed gate.
 
+## RD-034 — Freeze QCI-2 decision-semantic controls without candidate reselection
+
+- **Date:** 2026-11-12
+- **Diagnosis:** QCI-1 same-direction shuffled donors preserved both clean and attacked decision labels. They rejected case-specific mediation but could not distinguish shared decision semantics from generic replacement.
+- **Decision:** Preserve QCI-1 and freeze a separate development-only QCI-2 before model execution. Reuse all 12 QCI-1 candidates and require paired effect, same-decision generalization, opposite-decision contrast, irrelevant-position contrast, and identity/passive non-interference.
+- **Thresholds:** Median paired and same-decision effect at least `0.5`; consistency at least `0.75`; paired/same-decision gap at most `0.1`; opposite-decision contrast and irrelevant-position contrast at least `0.2`.
+- **Budget:** 1,920 candidate executions plus 32 message controls, at most 2,000 executions and 8,000 forward steps. Audit, validation and test remain closed.
+- **Claim boundary:** A pass supports only decision-semantic mediation on development discovery. A failure stops that claim. Neither outcome changes QCI-1's negative case-specific conclusion.
+
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.
