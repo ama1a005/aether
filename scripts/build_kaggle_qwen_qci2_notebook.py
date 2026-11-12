@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_URL = "https://github.com/ama1a005/aether.git"
-REPOSITORY_COMMIT = "3faae014ff839f7e39c7403ef2810f779595b709"
+REPOSITORY_COMMIT = "f26a3f0c932c652cc86d628fe6ac18bc9b08391a"
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 OUTPUT = ROOT / "notebooks/aether_qwen_qci2_semantic_cpu.ipynb"
@@ -59,12 +59,17 @@ def run_logged(name,command,cwd=None,timeout=3600,check=True):
     with path.open('w',encoding='utf-8') as log:
         process=subprocess.Popen(command,cwd=cwd,env=os.environ.copy(),stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT,text=True,bufsize=1)
-        assert process.stdout is not None; started=time.monotonic()
-        for line in process.stdout:
-            print(line,end='',flush=True); log.write(line); log.flush()
-            if time.monotonic()-started>timeout:
-                process.kill(); process.wait(); raise subprocess.TimeoutExpired(command,timeout)
-        code=process.wait()
+        try:
+            assert process.stdout is not None; started=time.monotonic()
+            for line in process.stdout:
+                print(line,end='',flush=True); log.write(line); log.flush()
+                if time.monotonic()-started>timeout: raise subprocess.TimeoutExpired(command,timeout)
+            code=process.wait()
+        except BaseException:
+            process.terminate()
+            try: process.wait(timeout=30)
+            except subprocess.TimeoutExpired: process.kill(); process.wait()
+            raise
     if check and code: raise subprocess.CalledProcessError(code,command)
     return code
 print('Kaggle Python:',sys.version); print('Platform:',platform.platform())
@@ -84,6 +89,19 @@ lock=WORK/'requirements-kaggle-qci2-cpu.txt'
 lines=(REPO/'requirements-lock.txt').read_text(encoding='utf-8').splitlines()
 lock.write_text('\\n'.join(line for line in lines if line.strip() and not line.strip().startswith('torch=='))+'\\n',encoding='utf-8')
 """),
+        _cell("code", """# Optional resume from one previously downloaded private checkpoint input.
+checkpoints=list(Path('/kaggle/input').rglob('aether-qwen-qci2-checkpoint.tar.gz'))
+if len(checkpoints)>1: raise RuntimeError(f'Attach at most one checkpoint: {checkpoints}')
+if checkpoints:
+ with tarfile.open(checkpoints[0],'r:gz') as bundle:
+  for member in bundle.getmembers():
+   parts=Path(member.name).parts
+   if Path(member.name).is_absolute() or '..' in parts or member.issym() or member.islnk(): raise ValueError(f'Unsafe checkpoint member: {member.name}')
+  bundle.extractall(WORK,filter='data')
+ state=json.loads((OUTPUT/'checkpoint_state.json').read_text())
+ print('Resume prefix:',state['completed_executions'],'/ 1920')
+else: print('Fresh run; no checkpoint attached.')
+"""),
         _cell("code", """# Install qualified CPU dependencies and run all model-free QCI-2 gates.
 subprocess.run([UV,'pip','install','--python',str(PY),'pip==25.3'],check=True,env=uv_env)
 subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cpu'],check=True,env=uv_env)
@@ -91,7 +109,7 @@ subprocess.run([UV,'pip','install','--python',str(PY),'--requirement',str(lock)]
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','--editable',str(REPO)],check=True,env=uv_env)
 run_logged('dependency-check',[str(PY),'-m','pip','check'],cwd=REPO)
 run_logged('environment',[str(PY),'-c','import sys,torch; print(sys.version,torch.__version__,torch.version.cuda); assert sys.version_info[:2]==(3,11); assert torch.version.cuda is None and not torch.cuda.is_available()'],cwd=REPO)
-run_logged('model-free-qci2-tests',[str(PY),'-m','pytest','tests/unit/test_qci2_execution.py','tests/unit/test_qci2_bundle_verifier.py','tests/unit/test_qci_runner.py','tests/unit/test_model_adapter.py','-q'],cwd=REPO)
+run_logged('model-free-qci2-tests',[str(PY),'-m','pytest','tests/unit/test_qci2_execution.py','tests/unit/test_qci2_resume.py','tests/unit/test_qci2_bundle_verifier.py','tests/unit/test_qci_runner.py','tests/unit/test_model_adapter.py','-q'],cwd=REPO)
 """),
         _cell("markdown", """## Pre-access gate
 
@@ -110,11 +128,12 @@ assert preflight['decision']['overall']=='PASS'
 The marker defines this as one retained attempt. Never delete it to rerun or tune
 the frozen study. If download fails, archive the failure and stop.
 """),
-        _cell("code", """marker_path=OUTPUT/'qci2_model_access.json'; assert not marker_path.exists()
+        _cell("code", """marker_path=OUTPUT/'qci2_model_access.json'; resuming=(OUTPUT/'raw_interventions.jsonl').is_file()
+if marker_path.exists() and not resuming: raise RuntimeError('Unexpected marker without checkpoint rows')
 preflight_path=OUTPUT/'qci2_preflight.json'
-marker={'state':'MODEL_SNAPSHOT_DOWNLOAD_STARTED','model_id':MODEL_ID,'model_revision':MODEL_REVISION,
+marker={'state':'MODEL_SNAPSHOT_RESUME_STARTED' if resuming else 'MODEL_SNAPSHOT_DOWNLOAD_STARTED','model_id':MODEL_ID,'model_revision':MODEL_REVISION,
         'preflight_sha256':hashlib.sha256(preflight_path.read_bytes()).hexdigest(),
-        'started_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
+        'started_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'resuming':resuming}
 marker_path.write_text(json.dumps(marker,indent=2),encoding='utf-8')
 snapshot_code=r'''import hashlib,json,sys
 from pathlib import Path
@@ -140,13 +159,15 @@ else: marker.update({'state':'MODEL_SNAPSHOT_DOWNLOAD_FAILED','download_exit_cod
 marker_path.write_text(json.dumps(marker,indent=2),encoding='utf-8')
 assert code==0,'Preserve the failed attempt and stop.'
 """),
-        _cell("markdown", """## Execute the frozen QCI-2 campaign
+        _cell("markdown", """## Execute or resume the frozen QCI-2 campaign
 
 Runs 1,920 candidate executions plus 32 whole-message controls. Output is
-streamed continuously, so the cell is visibly active. Do not interrupt it.
+streamed continuously. Every 25 rows, a checkpoint archive is replaced
+atomically in `/kaggle/working`. If interrupted without a session reset, rerun
+this cell once; only an exact validated prefix is skipped.
 """),
         _cell("code", """code=run_logged('qwen-qci2-semantic',[str(PY),'-m','instrumentation.run_qwen_causal_semantic_interventions',
-    '--output',str(OUTPUT),'--cache',str(HF_CACHE)],cwd=REPO,timeout=24*60*60,check=False)
+    '--output',str(OUTPUT),'--cache',str(HF_CACHE),'--resume'],cwd=REPO,timeout=24*60*60,check=False)
 summary_path=OUTPUT/'summary.json'
 if summary_path.exists(): print(json.dumps(json.loads(summary_path.read_text()),indent=2))
 else:
