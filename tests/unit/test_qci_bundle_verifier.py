@@ -89,3 +89,18 @@ def test_qci_bundle_verifier_rejects_inconsistent_support_summary(tmp_path) -> N
     _write_json(archive_path, archive)
     with pytest.raises(ValueError, match="support classification differs"):
         verify(tmp_path)
+
+
+def test_qci_bundle_verifier_allows_only_missing_gitignored_logs(tmp_path) -> None:
+    _bundle(tmp_path)
+    archive_path = tmp_path / "archive_contents.json"
+    archive = json.loads(archive_path.read_text(encoding="utf-8"))
+    archive["dependency-check.log"] = hashlib.sha256(b"verified log\n").hexdigest()
+    _write_json(archive_path, archive)
+    report = verify(tmp_path)
+    assert report["omitted_gitignored_logs"] == ["dependency-check.log"]
+
+    archive["missing_scientific.json"] = hashlib.sha256(b"missing").hexdigest()
+    _write_json(archive_path, archive)
+    with pytest.raises(ValueError, match="cannot uniquely resolve"):
+        verify(tmp_path)

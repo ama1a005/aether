@@ -1,5 +1,17 @@
 # AETHER current bounded task
 
+## QCI-2 retained-evidence portability repair
+
+The first Kaggle QCI-2 attempt stopped during model-free tests, before preflight
+and before model access, because the committed QCI-1 evidence intentionally
+omits gitignored execution logs while its archive inventory records them. Keep
+all scientific artifacts and hashes mandatory, but permit absent `.log` entries
+when verifying a compact, ingested evidence directory. Continue verifying every
+inventory entry that is present and reject any missing non-log artifact. Add a
+regression test, commit the repair, repin the QCI-2 notebook, and rerun the full
+model-independent suite. This is a software portability repair, not an
+experimental rerun or protocol change.
+
 ## QCI-2 decision-semantic control correction
 
 Preserve QCI-1.1 as a valid negative result for **case-specific** mediation.

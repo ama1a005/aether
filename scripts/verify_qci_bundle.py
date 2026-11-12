@@ -37,6 +37,31 @@ def _resolve(root: Path, recorded: str) -> Path:
     return matches[0]
 
 
+def _verify_archive_contents(root: Path, entries: dict[str, str]) -> list[str]:
+    """Verify retained archive entries, allowing only omitted execution logs.
+
+    Atomic ingestion verifies the complete downloaded archive. Git deliberately
+    excludes ``*.log`` files, so a later clean checkout contains the scientific
+    artifacts and ingest receipt but not notebook console logs. No non-log
+    artifact may be absent, and every retained file is still hash-verified.
+    """
+    omitted_logs: list[str] = []
+    failures: list[str] = []
+    for recorded, expected in entries.items():
+        try:
+            local = _resolve(root, recorded)
+        except ValueError:
+            if Path(recorded).suffix == ".log":
+                omitted_logs.append(recorded)
+                continue
+            raise
+        if _sha256(local) != expected:
+            failures.append(recorded)
+    if failures:
+        raise ValueError(f"QCI archive-content hash failures: {failures}")
+    return sorted(omitted_logs)
+
+
 def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
     """Verify hashes, denominators, controls, budgets and split locks."""
     root = root.resolve()
@@ -68,13 +93,7 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
     if manifest_failures:
         raise ValueError(f"QCI manifest hash failures: {manifest_failures}")
     archive_contents = json.loads((root / "archive_contents.json").read_text(encoding="utf-8"))
-    content_failures = []
-    for recorded, expected in archive_contents.items():
-        local = _resolve(root, recorded)
-        if _sha256(local) != expected:
-            content_failures.append(recorded)
-    if content_failures:
-        raise ValueError(f"QCI archive-content hash failures: {content_failures}")
+    omitted_archive_logs = _verify_archive_contents(root, archive_contents)
     rows = [json.loads(line) for line in (root / "raw_interventions.jsonl").read_text(encoding="utf-8").splitlines() if line]
     if len(rows) != 1344 or summary.get("candidate_execution_count") != 1344:
         raise ValueError("QCI candidate execution denominator is not 1344")
@@ -141,6 +160,8 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
         "development_audit_executions": 0, "validation_executions": 0, "test_executions": 0,
         "manifest_entry_count": len(manifest["artifact_paths"]),
         "archive_content_entry_count": len(archive_contents),
+        "omitted_gitignored_log_count": len(omitted_archive_logs),
+        "omitted_gitignored_logs": omitted_archive_logs,
         "archive_sha256": archive_hash, "archive_entry_count": archive_entries,
     }
 
