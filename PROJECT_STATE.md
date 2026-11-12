@@ -1,5 +1,22 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2 discovery PASS — four semantic candidates require audit
+
+The retained QCI-2 archive passed independent verification and atomic ingestion
+under `results/phase1/causal_interventions/qwen15b_qci2_discovery`. All 1,920
+candidate executions and 32 message controls completed with zero invalid/error
+rows; 1,952 total executions and 5,920 forward steps stayed within budget;
+development-audit, validation and test access remained zero. Archive SHA-256 is
+`ff62e1e800154cb17ec6c38e7aad62b44625a8f9d584c83caad61c8c74d62375`.
+
+Four prospectively retained candidates passed every paired-effect,
+same-decision generalization, opposite-decision contrast, position separation,
+consistency and non-interference predicate: sender layer-22 attention output;
+receiver layer-22 attention output; receiver layer-20 head 5; and receiver
+layer-22 head 7. This is positive development-discovery evidence for
+decision-semantic mediation, not audit confirmation, validation, test, search,
+remediation or publication evidence. The frozen QCI-2A1 audit is now authorized.
+
 ## 2026-11-13 QCI-2A1 conditional audit frozen before discovery outcome
 
 The four-case decision-semantic development audit is implemented and frozen

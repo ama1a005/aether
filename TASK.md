@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Execute the authorized QCI-2A1 development audit
+
+QCI-2 discovery independently verifies with four supported candidates and
+explicitly opens `ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT`. Preserve the
+ingested discovery bundle and run the already-frozen four-case audit exactly
+once using `notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb`. Do not change
+candidates, operators, thresholds, cases or budgets. Validation and test remain
+forbidden. Independently verify and atomically ingest the returned audit bundle
+before any method-freeze, search or remediation decision.
+
 ## Prospective QCI-2 development audit
 
 While the retained QCI-2 discovery campaign runs externally, freeze and

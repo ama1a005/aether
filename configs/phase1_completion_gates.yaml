@@ -36,6 +36,15 @@ gates:
     kind: qci_audit_conditional
     path: results/phase1/causal_interventions/qwen15b_qci1_audit
     depends_on: qci_discovery_interventions
+  - id: qci2_semantic_discovery
+    category: causal_core
+    kind: qci2_discovery
+    path: results/phase1/causal_interventions/qwen15b_qci2_discovery
+  - id: qci2_semantic_development_audit
+    category: causal_core
+    kind: qci2_audit_conditional
+    path: results/phase1/causal_interventions/qwen15b_qci2_audit
+    depends_on: qci2_semantic_discovery
   - id: method_freeze_review
     category: causal_core
     kind: json

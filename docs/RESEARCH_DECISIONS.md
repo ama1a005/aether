@@ -329,3 +329,9 @@ The intermediate-review application is an isolated presentation layer: it may im
 - **Decision:** Before observing retained QCI-2 outcomes, freeze a four-case audit that admits only independently verified discovery-supported candidates, retains up to all 12 candidates, uses pre-QCI-1 activation ranking only, and repeats all ten semantic and non-interference operators.
 - **Budget:** At most 480 candidate executions, eight message controls, 500 total executions and 2,400 forward steps.
 - **Gate:** Negative, incomplete, altered or absent discovery stops before model access. Audit support permits method-freeze review only; validation and test remain locked.
+## RD-036 — Admit four QCI-2 candidates to the frozen development audit
+
+- **Date:** 2026-11-13
+- **Evidence:** The independently verified QCI-2 discovery bundle contains 1,920 candidate rows and 32 message controls with zero invalid/errors and no audit/validation/test access. Four of 12 candidates pass every frozen semantic and control predicate.
+- **Decision:** Authorize the already-frozen QCI-2A1 four-case development audit for exactly those four candidates. Do not modify thresholds, operators, cases, ranking or budgets.
+- **Claim boundary:** The discovery result supports decision-semantic mediation on the development-discovery cohort only. It does not establish audit replication, a full distributed circuit, validation/test generalization, search superiority, remediation utility or publication readiness.

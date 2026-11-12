@@ -13,6 +13,8 @@ import yaml
 
 from scripts.verify_qci_audit_bundle import verify_audit
 from scripts.verify_qci_bundle import verify
+from scripts.verify_qci2_bundle import verify as verify_qci2
+from scripts.verify_qci2_audit_bundle import verify_audit as verify_qci2_audit
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,6 +95,31 @@ def audit(repository: Path = ROOT, config_path: Path = DEFAULT_CONFIG) -> dict[s
                     status = "PASS"
                 except (OSError, KeyError, TypeError, ValueError) as error:
                     status, reasons = "INVALID", [f"QCI audit verification failed: {type(error).__name__}: {error}"]
+        elif kind == "qci2_discovery":
+            if not path.is_dir():
+                status, reasons = "MISSING", [f"missing QCI-2 discovery bundle: {path}"]
+            else:
+                try:
+                    details = verify_qci2(path)
+                    status = "PASS"
+                except (OSError, KeyError, TypeError, ValueError) as error:
+                    status, reasons = "INVALID", [f"QCI-2 verification failed: {type(error).__name__}: {error}"]
+        elif kind == "qci2_audit_conditional":
+            dependency = by_id.get(str(gate.get("depends_on")))
+            if dependency is None:
+                raise ValueError(f"QCI-2 audit gate {gate_id} has an unresolved dependency")
+            if dependency["status"] != "PASS":
+                status, reasons = "BLOCKED", ["QCI-2 discovery has not passed verification"]
+            elif dependency["details"].get("next_gate") == "STOP_DECISION_SEMANTIC_CLAIM":
+                status, reasons = "NOT_APPLICABLE", ["verified QCI-2 discovery found no semantic candidate"]
+            elif not path.is_dir():
+                status, reasons = "MISSING", [f"missing required QCI-2 audit bundle: {path}"]
+            else:
+                try:
+                    details = verify_qci2_audit(path)
+                    status = "PASS"
+                except (OSError, KeyError, TypeError, ValueError) as error:
+                    status, reasons = "INVALID", [f"QCI-2 audit verification failed: {type(error).__name__}: {error}"]
         else:
             raise ValueError(f"unsupported Phase-1 gate kind: {kind}")
         row = {

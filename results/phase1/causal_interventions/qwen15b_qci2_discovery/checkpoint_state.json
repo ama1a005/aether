@@ -1,0 +1,16 @@
+{
+  "candidate_forward_steps": 5760,
+  "completed_executions": 1920,
+  "cumulative_source_capture_forward_steps": 128,
+  "last_execution_key": [
+    "sender.module.L23.mlp_output",
+    "v2_case_021",
+    "passive_hook"
+  ],
+  "protocol_hash": "b068a64b229ca16839de05a749b60e090a60674a6dca9dfd421e6d1f23c85b73",
+  "run_id": "P0_cross_20261112_qwen15b_qci2_semantic_seed42",
+  "schema_version": "aether.qci2-checkpoint.v1",
+  "test_executions": 0,
+  "utc_timestamp": "2026-11-12T20:36:56.984253+00:00",
+  "validation_executions": 0
+}

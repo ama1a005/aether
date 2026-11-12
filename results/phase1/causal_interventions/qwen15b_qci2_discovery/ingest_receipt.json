@@ -1,0 +1,47 @@
+{
+  "archive": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\notebooks\\Results\\QCI2 Results\\aether-qwen-qci2-results.tar.gz",
+  "copied_artifact_sha256": {
+    "archive_contents.json": "d52a70dbd789b76c76aa43c39afc67b067eedbaaace323d817acb591c3f4be12",
+    "candidate_assessments.json": "925269aa543a7f4d1d5b85935e4eb02cfed5d5997b23f51b28174d2aa4edc201",
+    "checkpoint_state.json": "8a62350cd50c44b37b56e193d3d1155589451e5d4da9224ad07912a1d64d55ab",
+    "dependency-check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+    "environment.log": "3bf334fa8b089d4004de5e302eae544dd8cf18a0ebd11ff92313c4ec00de913e",
+    "independent-qci2-verification.log": "9a8291e7e2d510a2987f35d82166e91fa7df58294846f7bcfe3b39ba95870114",
+    "manifest.json": "dafe1fb0254cc486c2c39eee173f09ceb38fc338d6838ba3b3e0eb46a855e79e",
+    "message_positive_controls.json": "6d5cf89db5264a89d747f7996139dd4a398828d337e1a3237713c2969292e3ed",
+    "model-free-qci2-tests.log": "c4acd3c0b58cf347f6f0868bc8378af05f6ec42f11356eb3ec3c7915a359e32b",
+    "model-snapshot-download.log": "69874c8be4dac14820682f59a9437e0a1fea6618de3b0b4cf88b6c72185f2ae0",
+    "model_snapshot_manifest.json": "fd5fe462fe5419ac6f94cae965dcbed3bdeb62eac4d2dee3ade881d5845a61f6",
+    "qci2-preflight.log": "f1899283fd39fb71fbfb1821ce06f505b70c93f84ef456e839c86367ed2986ce",
+    "qci2_model_access.json": "a828f22ff3aecc190f419ecdeb89e152018bcf4c0293fb76f0dc068b83cbc6c6",
+    "qci2_preflight.json": "f1899283fd39fb71fbfb1821ce06f505b70c93f84ef456e839c86367ed2986ce",
+    "qwen-qci2-semantic.log": "8dd7dca13a45568bb01bd22822260d3bf928c784db42976afc9ffe19353d2095",
+    "raw_interventions.jsonl": "00c36aa1baf1d190f2fd80959ca3f7f32b0436876196ef9763d6c5e796a9c8c2",
+    "summary.json": "6667851162d1687d9179784e4113d0125df19d53ee52d8fb5f58a4c93af80fdc"
+  },
+  "ingested_utc": "2026-11-12T20:47:55.219016+00:00",
+  "schema_version": "aether.qci2-ingest.v1",
+  "source": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\.local\\qci2-downloaded-verification\\aether-qci2-discovery",
+  "verification": {
+    "archive_content_entry_count": 15,
+    "archive_entry_count": 18,
+    "archive_sha256": "ff62e1e800154cb17ec6c38e7aad62b44625a8f9d584c83caad61c8c74d62375",
+    "candidate_count": 12,
+    "candidate_execution_count": 1920,
+    "development_audit_executions": 0,
+    "invalid_or_error_count": 0,
+    "manifest_entry_count": 7,
+    "message_positive_control_count": 32,
+    "next_gate": "ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT",
+    "overall": "PASS",
+    "run_id": "P0_cross_20261112_qwen15b_qci2_semantic_seed42",
+    "supported_candidates": [
+      "receiver.head.L20.H5.pre_o_proj",
+      "receiver.head.L22.H7.pre_o_proj",
+      "receiver.module.L22.attention_output",
+      "sender.module.L22.attention_output"
+    ],
+    "test_executions": 0,
+    "validation_executions": 0
+  }
+}

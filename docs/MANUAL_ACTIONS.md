@@ -1,11 +1,14 @@
 # Manual Actions
 
-## 2026-11-13 — QCI-2 audit is conditional; do not run it yet
+## 2026-11-13 — QCI-2 audit is now authorized
 
-`notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb` is only for a verified
-positive QCI-2 discovery archive. Do not run it while discovery is incomplete.
-`STOP_DECISION_SEMANTIC_CLAIM` forbids the audit;
-`ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT` authorizes one retained run.
+QCI-2 discovery independently verified with four supported candidates and
+returned `ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT`. Upload
+`notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb` and attach the successful
+`aether-qwen-qci2-results.tar.gz` as one private Kaggle input. Run all cells
+once on CPU with Internet enabled. Do not alter candidates, thresholds, cases,
+operators or budgets, and do not open validation/test. Download and preserve
+`aether-qwen-qci2-audit-results.tar.gz` regardless of the audit outcome.
 
 ## 2026-11-12 — execute the prospectively frozen QCI-2 notebook once
 

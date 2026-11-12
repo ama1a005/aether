@@ -1,0 +1,17 @@
+{
+  "candidate_assessments.json": "925269aa543a7f4d1d5b85935e4eb02cfed5d5997b23f51b28174d2aa4edc201",
+  "checkpoint_state.json": "8a62350cd50c44b37b56e193d3d1155589451e5d4da9224ad07912a1d64d55ab",
+  "dependency-check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+  "environment.log": "3bf334fa8b089d4004de5e302eae544dd8cf18a0ebd11ff92313c4ec00de913e",
+  "manifest.json": "dafe1fb0254cc486c2c39eee173f09ceb38fc338d6838ba3b3e0eb46a855e79e",
+  "message_positive_controls.json": "6d5cf89db5264a89d747f7996139dd4a398828d337e1a3237713c2969292e3ed",
+  "model-free-qci2-tests.log": "c4acd3c0b58cf347f6f0868bc8378af05f6ec42f11356eb3ec3c7915a359e32b",
+  "model-snapshot-download.log": "69874c8be4dac14820682f59a9437e0a1fea6618de3b0b4cf88b6c72185f2ae0",
+  "model_snapshot_manifest.json": "fd5fe462fe5419ac6f94cae965dcbed3bdeb62eac4d2dee3ade881d5845a61f6",
+  "qci2-preflight.log": "f1899283fd39fb71fbfb1821ce06f505b70c93f84ef456e839c86367ed2986ce",
+  "qci2_model_access.json": "a828f22ff3aecc190f419ecdeb89e152018bcf4c0293fb76f0dc068b83cbc6c6",
+  "qci2_preflight.json": "f1899283fd39fb71fbfb1821ce06f505b70c93f84ef456e839c86367ed2986ce",
+  "qwen-qci2-semantic.log": "8dd7dca13a45568bb01bd22822260d3bf928c784db42976afc9ffe19353d2095",
+  "raw_interventions.jsonl": "00c36aa1baf1d190f2fd80959ca3f7f32b0436876196ef9763d6c5e796a9c8c2",
+  "summary.json": "6667851162d1687d9179784e4113d0125df19d53ee52d8fb5f58a4c93af80fdc"
+}
