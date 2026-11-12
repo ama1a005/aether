@@ -14,7 +14,17 @@ def build_audit_plan(
     """Build the frozen audit plan only after verified discovery support."""
     if verification.get("overall") != "PASS":
         raise ValueError("QCI discovery evidence is not verified")
-    if verification.get("next_gate") != "ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT":
+    requirement = str(
+        protocol.get(
+            "discovery_result_requirement",
+            "verified_next_gate_ELIGIBLE_TO_FREEZE_DEVELOPMENT_AUDIT",
+        )
+    )
+    prefix = "verified_next_gate_"
+    if not requirement.startswith(prefix):
+        raise ValueError("QCI audit discovery-result requirement is invalid")
+    authorized_gate = requirement[len(prefix):]
+    if verification.get("next_gate") != authorized_gate:
         raise ValueError("QCI discovery did not authorize development audit")
     supported = verification.get("supported_candidates")
     if not isinstance(supported, list) or not supported:

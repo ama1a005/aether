@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## Prospective QCI-2 development audit
+
+While the retained QCI-2 discovery campaign runs externally, freeze and
+model-free verify its conditional four-case development audit before any QCI-2
+outcome is observed. Reuse only independently verified QCI-2-supported
+candidates, rank them solely by the pre-QCI-1 frozen activation score, retain
+all semantic and non-interference operators, and keep validation/test closed.
+The audit runner and notebook must fail before model access when discovery is
+negative, incomplete, altered, or absent. No QCI-2 audit execution is authorized
+until the retained discovery archive verifies and explicitly opens that gate.
+
 ## QCI-2 retained-evidence portability repair
 
 The first Kaggle QCI-2 attempt stopped during model-free tests, before preflight

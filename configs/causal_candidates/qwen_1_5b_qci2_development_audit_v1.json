@@ -1,0 +1,52 @@
+{
+  "protocol_version": "QCI-2A1.0",
+  "status": "prospectively_frozen_before_qci2_discovery_result",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "discovery_protocol": "configs/causal_candidates/qwen_1_5b_qci2_semantic_v1.json",
+  "discovery_result_requirement": "verified_next_gate_ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT",
+  "development_audit_case_ids": ["v2_case_010", "v2_case_011", "v2_case_022", "v2_case_023"],
+  "candidate_policy": {
+    "eligibility": "qci2_discovery_supported_only",
+    "maximum_candidates": 12,
+    "priority": "descending_pre_qci1_frozen_activation_aggregate_score_then_candidate_id",
+    "replacement_after_failure": false
+  },
+  "operators_per_candidate_per_case": [
+    "paired_rescue", "paired_induction",
+    "same_decision_rescue", "same_decision_induction",
+    "opposite_decision_rescue", "opposite_decision_induction",
+    "irrelevant_position_rescue", "identity_clean_to_clean",
+    "identity_attacked_to_attacked", "passive_hook"
+  ],
+  "support_rule": {
+    "threshold_source": "configs/causal_candidates/qwen_1_5b_qci2_semantic_v1.json#support_thresholds",
+    "thresholds_immutable": true,
+    "expected_case_count": 4,
+    "both_attack_directions_represented": true,
+    "all_controls_required": true,
+    "failure_action": "reject_candidate_without_replacement"
+  },
+  "message_positive_controls": {"whole_message_rescue": 4, "whole_message_induction": 4},
+  "budget": {
+    "maximum_candidate_intervention_executions": 480,
+    "maximum_message_control_executions": 8,
+    "maximum_total_executions": 500,
+    "maximum_total_model_forward_steps": 2400,
+    "budget_exhaustion_action": "stop_and_retain_incomplete_run"
+  },
+  "execution": {
+    "device": "cpu", "dtype": "float32", "seed": 42,
+    "primary_token_position": -1, "irrelevant_token_position": 1,
+    "sender_generation_max_new_tokens": 4,
+    "identity_tolerance": {"absolute": 1e-6, "relative": 1e-5}
+  },
+  "split_access_policy": {
+    "development_discovery": "read_verified_qci2_support_only",
+    "development_audit": "listed_ids_once_after_verified_qci2_support",
+    "validation": "forbidden", "test": "forbidden"
+  },
+  "next_state_if_supported": "READY_FOR_QCI2_METHOD_FREEZE_REVIEW",
+  "next_state_if_rejected": "STOP_DECISION_SEMANTIC_CLAIM",
+  "claim_boundary": "QCI-2 audit may confirm development-only decision-semantic mediation. It cannot establish validation, test, remediation, search-superiority, benchmark, or publication claims."
+}
