@@ -1,5 +1,12 @@
 # Manual Actions
 
+## 2026-11-13 — QCI-2 audit is conditional; do not run it yet
+
+`notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb` is only for a verified
+positive QCI-2 discovery archive. Do not run it while discovery is incomplete.
+`STOP_DECISION_SEMANTIC_CLAIM` forbids the audit;
+`ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT` authorizes one retained run.
+
 ## 2026-11-12 — execute the prospectively frozen QCI-2 notebook once
 
 After the notebook commit is pushed to branch `lm`, upload

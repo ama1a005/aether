@@ -322,3 +322,10 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.
+
+## RD-035 — Freeze the conditional QCI-2 semantic development audit
+
+- **Date:** 2026-11-13
+- **Decision:** Before observing retained QCI-2 outcomes, freeze a four-case audit that admits only independently verified discovery-supported candidates, retains up to all 12 candidates, uses pre-QCI-1 activation ranking only, and repeats all ten semantic and non-interference operators.
+- **Budget:** At most 480 candidate executions, eight message controls, 500 total executions and 2,400 forward steps.
+- **Gate:** Negative, incomplete, altered or absent discovery stops before model access. Audit support permits method-freeze review only; validation and test remain locked.

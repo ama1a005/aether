@@ -1,5 +1,18 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2A1 conditional audit frozen before discovery outcome
+
+The four-case decision-semantic development audit is implemented and frozen
+before any retained QCI-2 outcome is available. It accepts only independently
+verified QCI-2-supported candidates, retains all supported candidates up to the
+fixed 12, orders them only by the pre-QCI-1 activation score, and applies all
+ten semantic/control operators. Its maximum is 480 candidate executions plus
+eight whole-message controls. Validation and test remain inaccessible.
+
+The runner, independent verifier and commit-pinned Kaggle notebook are
+model-free verified. The notebook fails before model access unless discovery
+explicitly returns `ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT`.
+
 ## 2026-11-12 QCI-2 prospectively frozen — semantic-control correction
 
 QCI-1.1 remains a valid negative result for **case-specific** mediation: its
@@ -198,8 +211,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **401 passed, 5 skipped** at the QCI-2 portability checkpoint
-(382 unit plus 19 integration/regression passes).
+Python 3.11.9: **408 passed, 5 skipped** at the QCI-2 audit checkpoint
+(389 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
