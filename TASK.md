@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## QCI-1.1 negative-result closure
+
+Preserve and independently verify the retained QCI-1.1 archive, ingest it
+without overwriting evidence, and record the frozen negative outcome. No
+candidate passed shuffled-source specificity, so enforce
+`STOP_NO_SUPPORTED_CANDIDATE`: do not run QCI-A1, do not relax thresholds or
+reselect candidates from the observed effects, and do not open validation or
+test. The next research decision is a human-reviewed negative-result/pivot
+checkpoint; external benchmark and supporting-evidence work may continue only
+with claims separated from the failed internal-circuit gate.
+
 ## BFCL primary-model compatibility closure
 
 Confirm the pinned official BFCL package interface without downloading its

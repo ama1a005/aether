@@ -1,0 +1,16 @@
+{
+  "candidate_assessments.json": "f4d0c582304a08c44546be220fefc64809466f7804ab8414e09caa831d0d3ea3",
+  "dependency-check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+  "environment.log": "3bf334fa8b089d4004de5e302eae544dd8cf18a0ebd11ff92313c4ec00de913e",
+  "manifest.json": "dcae9940320a25cf09a2157b0366ca77e23901ae36a342f1ef645c65b7ef31b0",
+  "message_positive_controls.json": "6d5cf89db5264a89d747f7996139dd4a398828d337e1a3237713c2969292e3ed",
+  "model-free-qci-tests.log": "7cd9d973ac57e85a4e3efe9d198628770daef3ed4cdcf172047159436f69f332",
+  "model-snapshot-download.log": "72127edb1c7561046f9ef0c4d361dded0754f38f7449d51aa99f73dbb40b266e",
+  "model_snapshot_manifest.json": "bb9a9210fb6c2ba0b6d37f41299233196e341f3345f9c525815eeb0d3097e636",
+  "qci-preflight.log": "ff8ec626c7a9e8c5f5e569eb9bebcca315342d5d76bc6efb63f5d823dc15a9aa",
+  "qci_model_access.json": "100a50a3885917dd8d648b66dafe85888ef2486268be52b30dc41a24da2a525e",
+  "qci_preflight.json": "ff8ec626c7a9e8c5f5e569eb9bebcca315342d5d76bc6efb63f5d823dc15a9aa",
+  "qwen-causal-interventions.log": "8ee7872856ad41cebdff45e50e2c48e37d7d69a45a85249534c1c6b7145297c3",
+  "raw_interventions.jsonl": "7cce118de81915dcaf74bcf9139b02b09bbf17bbbb82e4e2d77ef47dca7ebe71",
+  "summary.json": "3bedc538e837d838c35e3cf49424dc097c2ef440e5d26c58d35734b9f326221f"
+}

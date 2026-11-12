@@ -1,5 +1,14 @@
 # Manual Actions
 
+## 2026-11-12 — QCI execution complete; do not run the audit notebook
+
+QCI-1.1 was verified and ingested. Its binding outcome is
+`STOP_NO_SUPPORTED_CANDIDATE`: none of the 12 candidates passed the frozen
+specificity rule. Do **not** run `aether_qwen_causal_audit_cpu.ipynb`, loosen
+thresholds, replace candidates from observed effects, or open validation/test.
+The next manual action is a research-review decision about reporting the
+negative result or prospectively defining a new study; it is not a rerun.
+
 ## 2026-11-11 — execute frozen QCI-1.1 on Kaggle
 
 Upload `notebooks/aether_qwen_causal_interventions_cpu.ipynb` from branch `lm`.

@@ -1,5 +1,23 @@
 # AETHER project state
 
+## 2026-11-12 QCI-1.1 verified negative result — stop internal causal claim
+
+The retained Kaggle QCI-1.1 archive passed independent verification and was
+atomically ingested under `results/phase1/causal_interventions/qwen15b_qci1`.
+All 1,344 candidate/control executions and 32 whole-message controls completed
+with zero invalid/error rows; the query ledger remained within budget and
+development-audit, validation and test executions were zero. None of the 12
+prospectively selected candidates passed every frozen support predicate.
+
+Several receiver candidates produced large rescue and induction effects, but
+the effects did not separate from shuffled-source controls. They are therefore
+non-specific replacement effects, not supported causal mediators under the
+frozen protocol. The binding next state is `STOP_NO_SUPPORTED_CANDIDATE`.
+QCI-A1 must not run, and the present Qwen internal-circuit, matched-search,
+mechanism-guided remediation and locked causal-evaluation path stops. This is a
+valid negative scientific result, but it does not establish AETHER's required
+N1 internal cross-agent circuit claim.
+
 ## 2026-11-11 BFCL package compatibility verified
 
 The pinned `bfcl_eval==2026.3.23` and `agentdojo==0.1.35` wheel interfaces were
@@ -25,9 +43,9 @@ only result and an incomplete-manifest first intervention attempt are retained
 separately.
 
 A machine-readable 20-gate Phase-1 completion audit now prevents partial
-software or narrative status from being reported as project completion. At
-this checkpoint five gates pass, fourteen required artifacts are missing and
-the QCI development audit is blocked on the discovery result.
+software or narrative status from being reported as project completion. After
+QCI ingestion, six gates pass, the conditional QCI audit is not applicable and
+thirteen required artifacts remain absent.
 
 ## 2026-11-11 QCI-1.1 runner ready for Kaggle execution
 

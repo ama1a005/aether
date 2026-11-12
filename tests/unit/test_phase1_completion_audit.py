@@ -16,8 +16,8 @@ def test_repository_completion_audit_reports_known_evidence_and_open_gates() -> 
     assert statuses["qwen_qualification"] == "PASS"
     assert statuses["qwen_instrumentation_acceptance"] == "PASS"
     assert statuses["qwen_development_capture"] == "PASS"
-    assert statuses["qci_discovery_interventions"] == "MISSING"
-    assert statuses["qci_development_audit"] == "BLOCKED"
+    assert statuses["qci_discovery_interventions"] == "PASS"
+    assert statuses["qci_development_audit"] == "NOT_APPLICABLE"
     assert statuses["tracr_known_structure_intervention"] in {"MISSING", "PASS"}
     assert statuses["ioi_causal_calibration"] == "PASS"
 

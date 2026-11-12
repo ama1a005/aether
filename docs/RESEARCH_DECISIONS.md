@@ -303,6 +303,13 @@ Keep the research `.venv` unchanged and place CUDA/model/MCP dependencies in `.v
 - **Claim boundary:** Any accepted result is “official BFCL evaluator with disclosed AETHER model adapter,” not an unmodified official leaderboard model configuration. The completion gate records both facts explicitly.
 - **Execution status:** Package compatibility and model-free adapter tests pass. Dataset/model benchmark execution has not occurred, and no BFCL score is claimed.
 
+## RD-033 — Stop the frozen Qwen internal-circuit path after QCI-1.1
+
+- **Date:** 2026-11-12
+- **Decision:** Accept the independently verified QCI-1.1 negative result and enforce `STOP_NO_SUPPORTED_CANDIDATE`. Do not execute QCI-A1, reselect candidates from observed intervention effects, relax specificity thresholds, or open validation/test.
+- **Evidence:** All 1,376 declared executions were valid and within budget, with zero validation/test access. No candidate passed every frozen predicate. Large receiver rescue/induction effects failed shuffled-source separation and are not accepted as source-specific causal mediation.
+- **Consequence:** The current Qwen path does not establish the required N1 internal cross-agent circuit claim. External benchmarks and clearly separated supporting experiments may continue, but cannot repair or substitute for this failed gate.
+
 # Decision — removable review layer and evidence labelling (2026-10-19)
 
 The intermediate-review application is an isolated presentation layer: it may import frozen AETHER core interfaces, but core modules must not import `demo`. Its default live path is deterministic core execution and must state that the model was not used for that run. Replay artifacts must identify themselves as verified precomputed executions. Evidence cards may summarize committed results only with their original development/negative/blocked provenance. The demo introduces no new research metric and does not authorize validation, external benchmark downloads, or model-integration progression.

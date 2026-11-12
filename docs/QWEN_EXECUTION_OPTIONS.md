@@ -1,5 +1,12 @@
 # Qwen execution options — 2026-10-29
 
+> **Status update, 2026-11-12:** The 1.5B model subsequently passed
+> qualification, instrumentation acceptance and development capture. QCI-1.1
+> then completed with no supported internal candidate because every candidate
+> failed at least one frozen predicate, most importantly shuffled-source
+> specificity. The binding state is `STOP_NO_SUPPORTED_CANDIDATE`; do not run
+> QCI-A1 or treat the historical “pending qualification” text below as current.
+
 There are two independent problems: sufficient resources to execute, and model
 behavior suitable for the experiment. CUDA installation proves neither. The
 0.5B V2 development results failed the behavioral prerequisite. The 1.5B model

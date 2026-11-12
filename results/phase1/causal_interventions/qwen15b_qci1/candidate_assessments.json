@@ -1,0 +1,370 @@
+[
+  {
+    "candidate_id": "receiver.head.L20.H5.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": true,
+      "median_induction": true,
+      "median_rescue": true,
+      "position_separation": true,
+      "raw_direction": true,
+      "rescue_consistency": true,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": true,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 1.0,
+      "median_induction": 1.0934845786398857,
+      "median_rescue": 1.0914499945022413,
+      "paired_minus_irrelevant_position": 1.091450170610173,
+      "paired_minus_shuffled_median": 0.0013083264081639179,
+      "rescue_above_0_25_fraction": 1.0
+    },
+    "reasons": [
+      "shuffled_separation"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "receiver.head.L22.H7.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": true,
+      "median_induction": true,
+      "median_rescue": true,
+      "position_separation": true,
+      "raw_direction": true,
+      "rescue_consistency": true,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": true,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 1.0,
+      "median_induction": 0.5073870130156142,
+      "median_rescue": 0.5040487503189203,
+      "paired_minus_irrelevant_position": 0.5040489264268517,
+      "paired_minus_shuffled_median": -0.00048619292511709045,
+      "rescue_above_0_25_fraction": 1.0
+    },
+    "reasons": [
+      "shuffled_separation"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "receiver.head.L25.H4.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": -0.022631462722927063,
+      "median_rescue": -0.022548124532633933,
+      "paired_minus_irrelevant_position": -0.022547948424702455,
+      "paired_minus_shuffled_median": -2.6881866032824747e-05,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "receiver.module.L22.attention_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": true,
+      "median_induction": true,
+      "median_rescue": true,
+      "position_separation": true,
+      "raw_direction": true,
+      "rescue_consistency": true,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": true,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 1.0,
+      "median_induction": 0.5714372573622792,
+      "median_rescue": 0.5678811222411875,
+      "paired_minus_irrelevant_position": 0.5678812983491189,
+      "paired_minus_shuffled_median": 0.00027649959166964333,
+      "rescue_above_0_25_fraction": 1.0
+    },
+    "reasons": [
+      "shuffled_separation"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "receiver.module.L22.mlp_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": true,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": true,
+      "raw_direction": true,
+      "rescue_consistency": true,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": true,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 1.0,
+      "median_induction": 0.33289033277772434,
+      "median_rescue": 0.33142135595972066,
+      "paired_minus_irrelevant_position": 0.3314215320676521,
+      "paired_minus_shuffled_median": -0.0005222723775726301,
+      "rescue_above_0_25_fraction": 1.0
+    },
+    "reasons": [
+      "median_rescue",
+      "median_induction",
+      "shuffled_separation"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "receiver.module.L23.mlp_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 0.07628976275065115,
+      "median_rescue": 0.07567176023734168,
+      "paired_minus_irrelevant_position": 0.07567193634527315,
+      "paired_minus_shuffled_median": 0.0004001130675346104,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.head.L22.H10.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 7.547243646076818e-07,
+      "median_rescue": -1.7610793147854203e-07,
+      "paired_minus_irrelevant_position": 0.0,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.head.L22.H11.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 7.547243646076818e-07,
+      "median_rescue": -1.7610793147854203e-07,
+      "paired_minus_irrelevant_position": 0.0,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.head.L22.H7.pre_o_proj",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 7.547243646076818e-07,
+      "median_rescue": -1.7610793147854203e-07,
+      "paired_minus_irrelevant_position": 0.0,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.module.L22.attention_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": true,
+      "median_induction": true,
+      "median_rescue": true,
+      "position_separation": true,
+      "raw_direction": true,
+      "rescue_consistency": true,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": true,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 1.0,
+      "median_induction": 1.0000001761079313,
+      "median_rescue": 0.9999992452756354,
+      "paired_minus_irrelevant_position": 0.9999994213835669,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 1.0
+    },
+    "reasons": [
+      "shuffled_separation"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.module.L22.mlp_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 7.547243646076818e-07,
+      "median_rescue": -1.7610793147854203e-07,
+      "paired_minus_irrelevant_position": 0.0,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  },
+  {
+    "candidate_id": "sender.module.L23.mlp_output",
+    "checks": {
+      "control_noninterference": true,
+      "induction_consistency": false,
+      "median_induction": false,
+      "median_rescue": false,
+      "position_separation": false,
+      "raw_direction": false,
+      "rescue_consistency": false,
+      "shuffled_separation": false
+    },
+    "metrics": {
+      "all_raw_effects_expected_direction": false,
+      "controls_noninterfering": true,
+      "induction_above_0_25_fraction": 0.0,
+      "median_induction": 7.547243646076818e-07,
+      "median_rescue": -1.7610793147854203e-07,
+      "paired_minus_irrelevant_position": 0.0,
+      "paired_minus_shuffled_median": 0.0,
+      "rescue_above_0_25_fraction": 0.0
+    },
+    "reasons": [
+      "median_rescue",
+      "rescue_consistency",
+      "median_induction",
+      "induction_consistency",
+      "shuffled_separation",
+      "position_separation",
+      "raw_direction"
+    ],
+    "status": "rejected"
+  }
+]

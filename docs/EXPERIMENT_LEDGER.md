@@ -1,5 +1,21 @@
 # Experiment Ledger
 
+## P0_cross_20261111_qwen15b_qci1_interventions_seed42 — verified negative
+
+- Executed on the pinned Qwen2.5-1.5B-Instruct revision in the qualified CPU
+  float32 condition; runtime was 18,276.85 seconds.
+- Independent archive verification passed. Archive SHA-256:
+  `d1cc5e1887268d0706100a9bb0ce744fa071b675e88f65eea74c995e06ac2f0c`.
+- All 1,344 candidate/control executions and 32 whole-message controls ran;
+  invalid/error count was zero; 1,376 executions and 4,128 forward steps stayed
+  below the frozen 1,400/8,000 budgets.
+- Supported candidates: 0/12. Strong receiver rescue/induction effects failed
+  shuffled-source separation and therefore did not qualify as source-specific
+  causal mediation.
+- Development-audit, validation and test executions were all zero. Binding
+  outcome: `STOP_NO_SUPPORTED_CANDIDATE`; QCI-A1 is forbidden.
+- Evidence: `results/phase1/causal_interventions/qwen15b_qci1`.
+
 ## P0_cross_20261111_qwen15b_qci1_seed42 — candidate selection complete
 
 - Executed only after QCI-1 protocol freeze; source commit `243f4e6`.
