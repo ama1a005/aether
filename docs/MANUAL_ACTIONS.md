@@ -5,8 +5,10 @@
 After the notebook commit is pushed to branch `lm`, upload
 `notebooks/aether_qwen_qci2_semantic_cpu.ipynb` to Kaggle. Enable Internet,
 select a CPU session with at least 12 GiB available RAM, and run all cells once.
-The notebook pins runner commit
-`ca2e0750e6d97da686bf4c798acdcf984810e7b9`. GPUs remain unused to preserve
+The corrected notebook pins runner commit
+`3faae014ff839f7e39c7403ef2810f779595b709`. The first upload stopped in
+model-free verification before preflight/model access because gitignored QCI-1
+logs were absent from the clean checkout; it is not a scientific attempt. GPUs remain unused to preserve
 the qualified CPU-float32 condition.
 
 Do not change donors, candidates, thresholds, cases, or budgets; do not delete

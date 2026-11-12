@@ -30,7 +30,7 @@ matched-search or mechanism-guided-remediation evidence. It must not be turned
 into a positive result by post-hoc threshold or candidate changes.
 
 Known-structure Tracr and GPT-2 IOI causal calibrations now pass. Current
-verification: Python 3.11.9, **400 passed and 5 gated skips** (381 unit plus 19
+verification: Python 3.11.9, **401 passed and 5 gated skips** (382 unit plus 19
 integration/regression passes); regression tests execute every existing smoke
 command. `python scripts/audit_phase1_completion.py` remains intentionally
 nonzero until every mandatory evidence gate is satisfied. Root

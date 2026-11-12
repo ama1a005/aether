@@ -14,9 +14,12 @@ same-decision generalization, opposite-decision contrast, position specificity,
 and identity/passive non-interference. Audit, validation and test remain closed.
 
 The local preflight verified all frozen inputs and correctly blocked before
-model access because only 2.91 GiB RAM was available. The next action is one
-Kaggle run of `notebooks/aether_qwen_qci2_semantic_cpu.ipynb` after its commit is
-pushed. QCI-2 cannot retroactively change the QCI-1 result.
+model access because only 2.91 GiB RAM was available. The first Kaggle upload
+stopped in model-free tests before preflight and model access because the clean
+checkout omitted gitignored QCI-1 console logs recorded in the original archive
+inventory. The verifier now permits only absent `.log` entries while continuing
+to require and hash every scientific artifact. A corrected, repinned notebook
+must run once. QCI-2 cannot retroactively change the QCI-1 result.
 
 ## 2026-11-12 QCI-1.1 verified negative result — stop internal causal claim
 
@@ -195,9 +198,8 @@ preflight or model access, so it is not Qwen qualification evidence.
 
 ## Verification
 
-Python 3.11.9: **400 passed, 5 skipped** at the QCI-2 preparation checkpoint
-(381 unit plus 19 integration/regression passes)
-(372 unit plus 19 integration/regression passes).
+Python 3.11.9: **401 passed, 5 skipped** at the QCI-2 portability checkpoint
+(382 unit plus 19 integration/regression passes).
 The gated skips are two real-Qwen
 tests, one pinned GPT-2 test, and two opt-in demo artifact tests. Regression
 coverage runs the P1, P2, P3, P4 and end-to-end smokes.
@@ -207,17 +209,18 @@ coverage runs the P1, P2, P3, P4 and end-to-end smokes.
 Toy, fixture, rule-based and synthetic runs are software acceptance, not Qwen or
 benchmark evidence. No locked validation/test split was opened. Qwen2.5-1.5B
 qualification, instrumentation acceptance and development activation capture
-have passed. The immediate unresolved scientific gate is the frozen QCI-1.1
-discovery intervention run on Kaggle. Its verified support classification
-determines whether development-audit may open or whether the internal-circuit
-claim must stop. Later work still requires approved development-audit,
+have passed. The immediate unresolved scientific gate is the frozen QCI-2
+decision-semantic discovery run on Kaggle. QCI-1.1 is already a verified
+negative result and its audit is forbidden. QCI-2 determines whether a distinct
+development-only semantic-mediation claim can proceed to a separately frozen
+audit. Later work still requires approved development-audit,
 method-freeze review, validation and once-only test evaluation; official
 benchmarks, real SAE/red-team/Agent C evidence and a second qualified model also
 remain absent.
 
 Known-structure Tracr intervention calibration and GPT-2 IOI causal calibration
 now both pass. They validate intervention machinery on calibration substrates;
-they do not substitute for QCI-1.1 or establish an AETHER internal circuit.
+they do not substitute for QCI-2 or establish an AETHER internal circuit.
 
 The transfer config deliberately has `revision: pending`, so preflight blocks
 until an immutable revision is reviewed. Proposed BFCL/AgentDojo pins and task

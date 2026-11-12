@@ -15,7 +15,7 @@ def test_qci2_notebook_is_pinned_clean_and_matches_builder() -> None:
     notebook = build()
     assert json.loads(OUTPUT.read_text(encoding="utf-8")) == notebook
     source = "".join("".join(cell["source"]) for cell in notebook["cells"])
-    assert REPOSITORY_COMMIT == "ca2e0750e6d97da686bf4c798acdcf984810e7b9"
+    assert REPOSITORY_COMMIT == "3faae014ff839f7e39c7403ef2810f779595b709"
     assert "run_qwen_causal_semantic_interventions" in source
     assert "scripts.verify_qci2_bundle" in source
     assert "aether-qwen-qci2-results.tar.gz" in source

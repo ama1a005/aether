@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_URL = "https://github.com/ama1a005/aether.git"
-REPOSITORY_COMMIT = "ca2e0750e6d97da686bf4c798acdcf984810e7b9"
+REPOSITORY_COMMIT = "3faae014ff839f7e39c7403ef2810f779595b709"
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 OUTPUT = ROOT / "notebooks/aether_qwen_qci2_semantic_cpu.ipynb"
