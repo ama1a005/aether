@@ -10,6 +10,7 @@ from causal.method_freeze import (
     BudgetExhausted,
     MatchedBudgetLedger,
     edge_record_is_acceptable,
+    load_and_validate_amendment,
     load_and_validate_proposal,
     proposal_sha256,
     validate_mask,
@@ -19,6 +20,7 @@ from causal.method_freeze import (
 ROOT = Path(__file__).resolve().parents[2]
 V1_PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v1.yaml"
 PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
+AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
 
 
 def _write(tmp_path: Path, value: dict) -> Path:
@@ -170,3 +172,18 @@ def test_construct_stress_test_is_separate_and_unexecuted() -> None:
     assert stress["status"] == "PROSPECTIVE_NOT_EXECUTED"
     assert stress["input_policy"].startswith("new_development_cases_disjoint")
     assert proposal["construct_validity"]["qci2_prompts_cases_thresholds_results_unchanged"] is True
+
+
+def test_accounting_amendment_matches_qualified_generation_steps() -> None:
+    amendment = load_and_validate_amendment(AMENDMENT, PROPOSAL, ROOT)
+    correction = amendment["forward_accounting_correction"]
+    assert correction["model_forwards_per_mask_evaluation"] == 16 * (4 + 1)
+    assert correction["maximum_model_forward_steps"] == 160 + 45 * 80
+    assert amendment["scientific_method_changes"] == "none_accounting_only"
+
+
+def test_accounting_amendment_cannot_change_method(tmp_path: Path) -> None:
+    amendment = yaml.safe_load(AMENDMENT.read_text(encoding="utf-8"))
+    amendment["scientific_method_changes"] = "changed_candidates"
+    with pytest.raises(ValueError, match="accounting only"):
+        load_and_validate_amendment(_write(tmp_path, amendment), PROPOSAL, ROOT)

@@ -1,0 +1,42 @@
+schema_version: aether.qci2-method-freeze-amendment.v2.1
+status: AWAITING_HUMAN_REVIEW
+base_proposal_path: configs/phase1_core/qci2_method_freeze_v2.yaml
+base_proposal_sha256: b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c
+reason: >-
+  The qualified sender uses four explicit uncached autoregressive model forward
+  steps before one receiver forward. The approved v2 proposal incorrectly
+  counted one sender generation call as one model forward. This amendment
+  preserves all candidates, masks, methods, cases, thresholds, phases and call
+  limits while correcting the actual model-forward ledger ceiling.
+forward_accounting_correction:
+  sender_autoregressive_steps_per_case: 4
+  receiver_forward_steps_per_case: 1
+  case_count: 16
+  model_forwards_per_mask_evaluation: 80
+  baseline_forward_steps: 160
+  maximum_model_forward_steps: 3760
+derivation:
+  per_mask: 16 * (4 + 1) = 80
+  baselines: 16 * 2 * (4 + 1) = 160
+  search_masks: 32 * 80 = 2560
+  negative_controls: 6 * 80 = 480
+  checkpoint_reload: 1 * 80 = 80
+  independent_verification: 1 * 80 = 80
+  local_minimality: 5 * 80 = 400
+  total: 160 + 2560 + 480 + 80 + 80 + 400 = 3760
+scientific_method_changes: none_accounting_only
+unchanged:
+  - qci1_and_qci2_evidence
+  - candidate_graph
+  - mask_semantics
+  - overlap_constraints
+  - methods_and_seeds
+  - maximum_unique_search_masks_32
+  - maximum_total_mask_evaluations_45
+  - objective_and_thresholds
+  - bvp_edge_acceptance
+  - split_guards
+  - construct_validity_protocol
+review:
+  required: true
+  decision_artifact_created_only_after_human_review: true

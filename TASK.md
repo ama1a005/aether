@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Review the QCI-2 v2.1 forward-accounting amendment
+
+Before implementing evidence-bearing CORE-02 execution, review the accounting-
+only amendment at
+`configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml`. It corrects four
+sender autoregressive forwards plus one receiver forward per case, yielding 80
+forwards per 16-case mask evaluation and a 3,760 maximum per method/seed. Do not
+change or execute the approved scientific method until this exact amendment is
+human-approved.
+
 ## Implement the approved QCI-2 development-only matched-search runner
 
 Method-freeze v2 is human-approved at SHA-256

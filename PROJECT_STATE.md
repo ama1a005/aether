@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 accounting audit requires v2.1 approval
+
+Mapping approved method-freeze v2 to the qualified Qwen execution path exposed
+one prospective accounting defect before model access: sender generation uses
+four uncached autoregressive forwards, not one generation-level forward. The
+correct per-method/per-seed maximum is 3,760 model forward steps rather than
+1,504. A narrow v2.1 amendment changes only this ledger ceiling and remains
+`AWAITING_HUMAN_REVIEW`. No runner execution is authorized under the incorrect
+ceiling; candidates, masks, methods, thresholds and split locks are unchanged.
+
 ## 2026-11-13 QCI-2 method-freeze v2 approved
 
 The human project owner approved the prospectively revised QCI-2 matched-search

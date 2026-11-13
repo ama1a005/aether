@@ -25,6 +25,7 @@ SUPPORTED_SCHEMAS = frozenset({
     "aether.qci2-method-freeze-proposal.v1",
     "aether.qci2-method-freeze-proposal.v2",
 })
+AMENDMENT_SCHEMA = "aether.qci2-method-freeze-amendment.v2.1"
 
 
 class BudgetExhausted(RuntimeError):
@@ -241,17 +242,51 @@ def proposal_sha256(path: Path) -> str:
     return sha256_file(path)
 
 
+def load_and_validate_amendment(path: Path, base_path: Path, repo: Path) -> dict[str, Any]:
+    """Validate a narrow accounting amendment against an immutable v2 base."""
+    amendment = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(amendment, dict) or amendment.get("schema_version") != AMENDMENT_SCHEMA:
+        raise ValueError("unsupported method-freeze amendment schema")
+    if amendment.get("status") != "AWAITING_HUMAN_REVIEW":
+        raise ValueError("accounting amendment is not awaiting human review")
+    base = load_and_validate_proposal(base_path, repo)
+    if amendment.get("base_proposal_sha256") != sha256_file(base_path):
+        raise ValueError("accounting amendment base proposal hash differs")
+    if base.get("schema_version") != "aether.qci2-method-freeze-proposal.v2":
+        raise ValueError("accounting amendment requires the v2 proposal")
+    correction = amendment.get("forward_accounting_correction", {})
+    expected = {
+        "sender_autoregressive_steps_per_case": 4,
+        "receiver_forward_steps_per_case": 1,
+        "case_count": 16,
+        "model_forwards_per_mask_evaluation": 80,
+        "baseline_forward_steps": 160,
+        "maximum_model_forward_steps": 3760,
+    }
+    if correction != expected:
+        raise ValueError("accounting amendment does not match qualified execution arithmetic")
+    if amendment.get("scientific_method_changes") != "none_accounting_only":
+        raise ValueError("amendment may change accounting only")
+    return amendment
+
+
 def main() -> None:
     """Validate the repository proposal and print its prospective review hash."""
     root = Path(__file__).resolve().parents[1]
     path = root / "configs/phase1_core/qci2_method_freeze_v2.yaml"
     proposal = load_and_validate_proposal(path, root)
+    amendment_path = root / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
+    amendment = load_and_validate_amendment(amendment_path, path, root)
     print(json.dumps({
         "status": proposal["status"],
         "schema_version": proposal["schema_version"],
         "proposal_sha256": proposal_sha256(path),
         "case_count": len(proposal["case_ids"]),
         "method_count": len(proposal["methods"]),
+        "accounting_amendment_status": amendment["status"],
+        "accounting_amendment_sha256": proposal_sha256(amendment_path),
+        "effective_maximum_model_forward_steps": amendment[
+            "forward_accounting_correction"]["maximum_model_forward_steps"],
     }, indent=2, sort_keys=True))
 
 
