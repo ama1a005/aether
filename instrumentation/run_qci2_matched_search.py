@@ -11,6 +11,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tarfile
 import time
 from typing import Any
 
@@ -46,6 +47,15 @@ def _write(path: Path, value: Any) -> None:
 
 def _git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
+
+
+def _checkpoint_archive(output: Path) -> None:
+    """Replace a portable archive after every completed method/seed unit."""
+    target = output.parent / "aether-core02-checkpoint.tar.gz"
+    temporary = target.with_suffix(".tmp")
+    with tarfile.open(temporary, "w:gz") as bundle:
+        bundle.add(output, arcname=output.name)
+    temporary.replace(target)
 
 
 class RecordingEvaluator:
@@ -136,6 +146,7 @@ def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
                                      "completed": results, "last_completed": key,
                                      "development_audit_executions": 0,
                                      "validation_executions": 0, "test_executions": 0})
+            _checkpoint_archive(output)
     ledgers = [{"method": method, "seed": seed,
                 "cache_namespace": plans[(method, seed)].cache_namespace,
                 **results[f"{method}:{seed}"]["ledger"]}
