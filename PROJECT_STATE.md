@@ -4,7 +4,7 @@
 
 The resumable campaign CLI, per-method checkpoint archive, independent verifier,
 atomic ingester and seven-cell commit-pinned Kaggle notebook are implemented.
-The notebook pins `f1461338de413c80605b11a35dc780b280fdbc14`, runs all
+The notebook pins `67759734dc841ddd5b0705d5846cb396408e9b84`, runs all
 model-free gates before model access and exports only after independent bundle
 verification. Actual Qwen search remains unexecuted and requires the documented
 manual Kaggle run.

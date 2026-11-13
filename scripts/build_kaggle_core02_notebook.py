@@ -5,7 +5,7 @@ import hashlib, json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMIT = "f1461338de413c80605b11a35dc780b280fdbc14"
+COMMIT = "67759734dc841ddd5b0705d5846cb396408e9b84"
 OUTPUT = ROOT / "notebooks/aether_qwen_core02_matched_search.ipynb"
 
 

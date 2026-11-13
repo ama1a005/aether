@@ -5,10 +5,10 @@
 Upload `notebooks/aether_qwen_core02_matched_search.ipynb` to Kaggle, enable
 Internet, choose a CPU session with at least 12 GiB available RAM, and run all
 seven cells. The notebook pins commit
-`f1461338de413c80605b11a35dc780b280fdbc14` and executes five methods across
+`67759734dc841ddd5b0705d5846cb396408e9b84` and executes five methods across
 seeds 11, 22 and 33 on development-discovery only.
 
-After every completed method/seed run it replaces
+After every completed mask evaluation it replaces
 `/kaggle/working/aether-core02-checkpoint.tar.gz`. If the session ends, download
 that file, upload it as a private Kaggle dataset/input, start a new session with
 the same notebook and run all cells again. Attach exactly one checkpoint.
