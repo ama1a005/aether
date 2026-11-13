@@ -1,5 +1,11 @@
 # AETHER current bounded task
 
+## Connect the approved search engine to real Qwen measurements
+
+The v2.3 constraint-safe search engine is model-free verified. Implement the
+two-condition 16-case Qwen mask evaluator and persistence layer, then add the
+independent verifier, atomic ingester and commit-pinned checkpoint-safe notebook.
+
 ## Implement the approved v2.3 CORE-02 package
 
 Record the exact v2.3 approval, implement its comparator definitions without

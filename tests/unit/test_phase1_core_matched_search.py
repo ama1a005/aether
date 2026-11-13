@@ -90,10 +90,29 @@ def test_every_method_queries_only_legal_measured_masks(method: str) -> None:
             forward_passes=160, raw_outputs={"mask": list(mask), "executed": True},
         )
 
-    outcome = run_constraint_safe_search(freeze, plan, evaluate)
+    reference = (
+        "sender.module.L22.attention_output", "message.decision_code",
+        "receiver.head.L20.H5.pre_o_proj",
+    )
+    outcome = run_constraint_safe_search(
+        freeze, plan, evaluate,
+        matched_random_reference=reference if method == "matched_random" else None,
+    )
     legal = set(enumerate_legal_masks(freeze.proposal))
     assert observed and set(observed) <= legal
     assert len(observed) == len(set(observed)) <= 32
     assert outcome.ledger["model_forward_steps"] == 160 + 160 * len(observed)
     if method == "receiver_only":
         assert all(all(node.startswith("receiver.") for node in mask) for mask in observed)
+    if method == "matched_random":
+        assert all(len(mask) == 3 for mask in observed)
+
+
+def test_matched_random_requires_same_seed_greedy_reference() -> None:
+    freeze = _freeze()
+    plan = build_run_plans(freeze, methods=["matched_random"], seeds=[11])[0]
+    with pytest.raises(ValueError, match="same-seed greedy"):
+        run_constraint_safe_search(
+            freeze, plan,
+            lambda mask: Evaluation(0.8, 0.0, 160, {"mask": list(mask)}),
+        )

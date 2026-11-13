@@ -1,5 +1,16 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 constraint-safe search engine implemented
+
+The five v2.3 comparators now operate only on the 36 legal masks. Greedy and
+beam start from all four maximal masks; receiver-only remains within its six-mask
+domain; matched random requires the same-seed greedy terminal mask and a fresh
+cache; flat PPO uses the approved multi-start removal MDP and exact optimizer
+configuration. Model-independent tests verify legal queries, cache uniqueness,
+forward accounting and the matched-random dependency. This is not real-model
+search evidence. Qwen mask execution, retained artifacts, independent bundle
+verification and the external notebook are still pending.
+
 ## 2026-11-13 QCI-2 v2.3 algorithm completion approved
 
 The human project owner approved the exact v2.3 algorithm amendment at SHA-256

@@ -20,6 +20,10 @@ from causal.method_freeze import (
     validate_mask,
 )
 from discovery.budgeted import Evaluation
+from discovery.rl.ppo import PPOConfig, RewardWeights, _ActorCritic, _update
+import numpy as np
+import torch
+from torch.distributions import Categorical
 
 
 PROPOSAL_DECISION_SCHEMA = "aether.qci2-method-freeze-decision.v1"
@@ -92,6 +96,7 @@ class CoreSearchOutcome:
     stop_reason: str
     records: tuple[tuple[tuple[str, ...], Evaluation], ...]
     ledger: dict[str, Any]
+    policy_checkpoint: dict[str, Any] | None = None
 
 
 class LegalMaskSession:
@@ -167,7 +172,7 @@ class LegalMaskSession:
         }
         return CoreSearchOutcome(
             method, seed, best, self.cache[best], self.feasible(self.cache[best]),
-            stop_reason, tuple(self.cache.items()), ledger,
+            stop_reason, tuple(self.cache.items()), ledger, None,
         )
 
 
@@ -179,10 +184,136 @@ def _children(mask: tuple[str, ...], legal: frozenset[tuple[str, ...]]) -> tuple
     }))
 
 
+class _OverlapSafePPOEnv:
+    """Approved multi-start removal MDP over the 36 legal masks."""
+
+    def __init__(self, session: LegalMaskSession, seed: int) -> None:
+        self.session = session
+        self.ids = tuple(sorted(row["id"] for row in session.freeze.proposal["candidate_graph"]["nodes"] if row["intervenable"]))
+        maximum = max(map(len, session.legal))
+        self.starts = [mask for mask in sorted(session.legal) if len(mask) == maximum]
+        random.Random(seed).shuffle(self.starts)
+        self.episode = -1
+        self.mask: tuple[str, ...] = ()
+        self.current: Evaluation | None = None
+        self.done = True
+
+    @property
+    def stop_action(self) -> int:
+        return len(self.ids)
+
+    def reset(self) -> np.ndarray:
+        self.episode += 1
+        self.mask = self.starts[self.episode % len(self.starts)]
+        self.current = self.session.query(self.mask, phase="ppo_training")
+        self.done = False
+        return self.observation()
+
+    def observation(self) -> np.ndarray:
+        assert self.current is not None
+        retained = set(self.mask)
+        nodes = {row["id"]: row["region"] for row in self.session.freeze.proposal["candidate_graph"]["nodes"] if row["intervenable"]}
+        bits = [float(node in retained) for node in self.ids]
+        fractions = [sum(node in retained and nodes[node] == region for node in self.ids) /
+                     max(1, sum(nodes[node] == region for node in self.ids))
+                     for region in ("sender", "message", "receiver")]
+        remaining = (self.session.plan.maximum_unique_search_masks - len(self.session.cache)) / self.session.plan.maximum_unique_search_masks
+        rows: list[float] = []
+        for mask, value in sorted(self.session.cache.items()):
+            members = set(mask)
+            rows.extend(float(node in members) for node in self.ids)
+            rows.extend((value.faithfulness, value.benign_damage, float(value.forward_passes), 1.0))
+        width = len(self.ids) + 4
+        rows.extend([0.0] * ((self.session.plan.maximum_unique_search_masks - len(self.session.cache)) * width))
+        return np.asarray(bits + fractions + [self.current.faithfulness, self.current.benign_damage, remaining] + rows, dtype=np.float32)
+
+    def action_mask(self) -> np.ndarray:
+        allowed: list[bool] = []
+        for node in self.ids:
+            child = tuple(item for item in self.mask if item != node)
+            allowed.append(node in self.mask and child in self.session.legal and
+                           (child in self.session.cache or len(self.session.cache) < self.session.plan.maximum_unique_search_masks))
+        return np.asarray([*allowed, True], dtype=np.bool_)
+
+    @staticmethod
+    def utility(mask: tuple[str, ...], value: Evaluation) -> float:
+        return value.faithfulness - value.benign_damage - 0.1 * len(mask) / 6
+
+    def step(self, action: int) -> tuple[np.ndarray, float, bool]:
+        if self.done or not self.action_mask()[action]:
+            raise ValueError("PPO action is invalid in the current legal mask")
+        assert self.current is not None
+        if action == self.stop_action:
+            self.done = True
+            bonus = 0.25 if self.session.feasible(self.current) else 0.0
+            return self.observation(), bonus, True
+        previous = self.utility(self.mask, self.current)
+        child = tuple(item for item in self.mask if item != self.ids[action])
+        cached = child in self.session.cache
+        next_value = self.session.query(child, phase="ppo_training")
+        reward = self.utility(child, next_value) - previous
+        if not cached:
+            reward -= 0.001 * next_value.forward_passes
+        self.mask, self.current = child, next_value
+        self.done = not self.action_mask()[:-1].any()
+        return self.observation(), reward, self.done
+
+
+def _run_overlap_safe_ppo(session: LegalMaskSession, seed: int) -> tuple[str, dict[str, Any]]:
+    """Train the exact approved masked PPO and return its selected checkpoint."""
+    config = PPOConfig(seed=seed, training_steps=256, rollout_steps=32, update_epochs=4)
+    env = _OverlapSafePPOEnv(session, seed)
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(seed)
+        state = env.reset()
+        model = _ActorCritic(len(state), len(env.ids) + 1, 64)
+        optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+        transitions: list[tuple[np.ndarray, np.ndarray, int, float, float, bool, float]] = []
+        episode_return = 0.0
+        best_return = float("-inf")
+        best_step = -1
+        best_state: dict[str, torch.Tensor] | None = None
+        episodes = 0
+        for step in range(256):
+            tensor = torch.from_numpy(state).unsqueeze(0)
+            logits, value = model(tensor)
+            allowed = env.action_mask()
+            distribution = Categorical(logits=logits.masked_fill(~torch.from_numpy(allowed).unsqueeze(0), -torch.inf))
+            action = distribution.sample()
+            next_state, reward, done = env.step(int(action.item()))
+            episode_return += reward
+            transitions.append((state, allowed, int(action.item()), float(distribution.log_prob(action).item()), float(value.item()), done, reward))
+            state = next_state
+            if done:
+                if episode_return > best_return:
+                    best_return, best_step = episode_return, step
+                    best_state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+                episodes += 1
+                if episodes >= 64:
+                    break
+                state, episode_return = env.reset(), 0.0
+            if len(transitions) >= 32:
+                _update(model, optimizer, transitions, config, 0.0 if done else float(model(torch.from_numpy(state).unsqueeze(0))[1].item()))
+                transitions.clear()
+        if transitions:
+            _update(model, optimizer, transitions, config, 0.0)
+        if best_state is None:
+            best_state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+        checkpoint = {
+            "schema_version": "aether.core02-flat-ppo.v1", "seed": seed,
+            "best_episode_return": best_return, "selection_step": best_step,
+            "episodes": episodes, "candidates": list(env.ids),
+            "state_dict": {name: value.tolist() for name, value in best_state.items()},
+        }
+    return "training_actions_complete", checkpoint
+
+
 def run_constraint_safe_search(
     freeze: EffectiveMethodFreeze,
     plan: MethodSeedPlan,
     evaluate: Any,
+    *,
+    matched_random_reference: tuple[str, ...] | None = None,
 ) -> CoreSearchOutcome:
     """Run one approved search method without ever constructing an overlap mask."""
     session = LegalMaskSession(freeze, plan, evaluate)
@@ -191,7 +322,16 @@ def run_constraint_safe_search(
     stop = "search_complete"
     try:
         if method == "matched_random":
-            choices = sorted(legal)
+            if matched_random_reference is None:
+                raise ValueError("matched random requires the same-seed greedy terminal mask")
+            reference = validate_mask(freeze.proposal, matched_random_reference)
+            regions = {row["id"]: row["region"] for row in freeze.proposal["candidate_graph"]["nodes"]}
+            counts = {region: sum(regions[node] == region for node in reference)
+                      for region in ("sender", "message", "receiver")}
+            choices = [mask for mask in sorted(legal) if all(
+                sum(regions[node] == region for node in mask) == count
+                for region, count in counts.items()
+            )]
             random.Random(plan.seed).shuffle(choices)
             for mask in choices[:plan.maximum_unique_search_masks]:
                 session.query(mask, phase="search")
@@ -212,26 +352,17 @@ def run_constraint_safe_search(
                     break
                 frontier = next_frontier
         elif method == "flat_ppo":
-            # The frozen flat baseline acts over the legal mask domain. Its
-            # training actions are seeded and cache-aware; policy optimization
-            # and checkpoint reload are handled by the execution runner.
-            choices = sorted(legal)
-            rng = random.Random(plan.seed)
-            logits = {mask: 0.0 for mask in choices}
-            for _ in range(256):
-                unseen = [mask for mask in choices if mask not in session.cache]
-                if unseen and len(session.cache) < plan.maximum_unique_search_masks:
-                    mask = rng.choice(unseen)
-                else:
-                    mask = max(choices, key=lambda item: (logits[item], tuple(item)))
-                value = session.query(mask, phase="ppo_training")
-                reward = value.faithfulness - value.benign_damage - 0.1 * len(mask) / 6
-                logits[mask] = 0.9 * logits[mask] + 0.1 * reward
+            stop, checkpoint = _run_overlap_safe_ppo(session, plan.seed)
         else:
             raise ValueError(f"unsupported approved method: {method}")
     except BudgetExhausted:
         stop = "INCOMPLETE_BUDGET"
-    return session.outcome(method, plan.seed, stop)
+    outcome = session.outcome(method, plan.seed, stop)
+    if method == "flat_ppo" and 'checkpoint' in locals():
+        return CoreSearchOutcome(**{**asdict(outcome), "records": outcome.records,
+                                   "evaluation": outcome.evaluation,
+                                   "policy_checkpoint": checkpoint})
+    return outcome
 
 
 def _load_json(path: Path) -> dict[str, Any]:
