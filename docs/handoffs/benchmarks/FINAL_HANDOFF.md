@@ -4,6 +4,7 @@
 **Target Date:** 19 November 2026 (Completed Engineering Delivery: 13 November 2026)  
 **Branch:** `phase1/benchmarks-nov19`  
 **Base Commit:** `00846b020b685dfa3ab89bce2c5227d2810c9d1e`  
+**Final Commit:** `cd9336b9eca2cd716b6dcb1814cb3c6974da1bfb`  
 **Upstream Target:** `origin/lm`  
 **PR Title:** `Phase1 external benchmarks: BFCL/MCPTox/TAMAS verified workflows`  
 **Reviewer / Integration Owner:** Lead Developer (Codex in `phase1/core-nov19`)  
