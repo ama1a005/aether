@@ -1,5 +1,11 @@
 # AETHER current bounded task
 
+## Finish the checkpoint-safe external execution entry point
+
+Independent verification and atomic ingestion are implemented. Complete the
+campaign CLI that persists all 15 method/seed runs and the commit-pinned Kaggle
+notebook that invokes it and exports the verified archive.
+
 ## Add retained execution orchestration around the real evaluator
 
 The real two-condition mask evaluator is implemented. Wire it into the CLI with

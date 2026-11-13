@@ -1,5 +1,13 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 verification and atomic-ingestion boundary implemented
+
+The independent verifier now rejects missing or altered required artifacts,
+dirty-source evidence, protected-split access, absent method/seed runs, shared
+caches, budget overruns, non-real raw evaluations and unsupported edge promotion.
+The ingester verifies first and copies through a new staging directory without
+overwriting an existing evidence destination. No result bundle exists yet.
+
 ## 2026-11-13 CORE-02 real mask evaluator implemented
 
 The real evaluator now runs both frozen conditions for each of the 16 discovery
