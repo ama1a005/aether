@@ -1,14 +1,17 @@
 # AETHER current bounded task
 
-## Execute the authorized QCI-2A1 development audit
+## Freeze the post-audit QCI-2 search and remediation method
 
-QCI-2 discovery independently verifies with four supported candidates and
-explicitly opens `ELIGIBLE_TO_FREEZE_QCI2_DEVELOPMENT_AUDIT`. Preserve the
-ingested discovery bundle and run the already-frozen four-case audit exactly
-once using `notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb`. Do not change
-candidates, operators, thresholds, cases or budgets. Validation and test remain
-forbidden. Independently verify and atomically ingest the returned audit bundle
-before any method-freeze, search or remediation decision.
+QCI-2 discovery and its prospectively frozen development audit independently
+verify. All four admitted candidates replicated and the audit opens
+`READY_FOR_QCI2_METHOD_FREEZE_REVIEW`. Preserve both immutable bundles. Before
+using audit effect sizes to configure an algorithm, prospectively freeze the
+candidate graph, permitted operators, random/greedy/beam/PPO and receiver-only
+comparators, budgets, seeds, stopping rules, remediation frontier, statistics,
+failure rules and artifact schemas. Add model-independent tests and a
+commit-pinned external runner. Do not tune from the four audit cases, open
+validation/test, or claim search superiority or remediation utility before a
+separately authorized retained execution.
 
 ## Prospective QCI-2 development audit
 

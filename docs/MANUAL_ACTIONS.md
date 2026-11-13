@@ -1,5 +1,15 @@
 # Manual Actions
 
+## 2026-11-13 — QCI-2 audit complete; no rerun required
+
+The returned QCI-2A1 archive independently verifies and has been ingested. All
+four candidates replicated across the untouched development-audit cases, with
+168 valid executions and no validation/test access. Do not rerun or modify the
+audit notebook. No manual action is currently required while the search and
+remediation method is frozen and model-free verified. A new commit-pinned
+notebook and explicit instructions will be supplied before any next retained
+model execution.
+
 ## 2026-11-13 — QCI-2 audit is now authorized
 
 QCI-2 discovery independently verified with four supported candidates and

@@ -335,3 +335,10 @@ The intermediate-review application is an isolated presentation layer: it may im
 - **Evidence:** The independently verified QCI-2 discovery bundle contains 1,920 candidate rows and 32 message controls with zero invalid/errors and no audit/validation/test access. Four of 12 candidates pass every frozen semantic and control predicate.
 - **Decision:** Authorize the already-frozen QCI-2A1 four-case development audit for exactly those four candidates. Do not modify thresholds, operators, cases, ranking or budgets.
 - **Claim boundary:** The discovery result supports decision-semantic mediation on the development-discovery cohort only. It does not establish audit replication, a full distributed circuit, validation/test generalization, search superiority, remediation utility or publication readiness.
+
+## RD-037 — Accept QCI-2 audit replication and open method-freeze review
+
+- **Date:** 2026-11-13
+- **Evidence:** The independently verified retained audit contains 160 candidate executions and eight message positive controls with zero invalid/errors and no validation/test access. All four discovery-supported candidates passed the unchanged audit predicates on four untouched development cases.
+- **Decision:** Accept development-audit replication of decision-semantic mediation and open only `READY_FOR_QCI2_METHOD_FREEZE_REVIEW`. Preserve the discovery and audit bundles as immutable inputs. Freeze matched-search and remediation methods before their execution.
+- **Claim boundary:** This is replicated development evidence, not locked validation/test generalization, a complete distributed circuit, algorithm superiority, remediation effectiveness, external-benchmark performance or publication-ready confirmation.

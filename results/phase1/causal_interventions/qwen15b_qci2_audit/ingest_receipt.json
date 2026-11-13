@@ -1,0 +1,44 @@
+{
+  "archive": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\notebooks\\Results\\QCI2 Audit\\aether-qwen-qci2-audit-results.tar.gz",
+  "archive_sha256": "78e50b32a86f5a0ba1ccbbe1bb87942dc17a8c8505fb41aba88a050748bf9aec",
+  "copied_artifact_sha256": {
+    "archive_contents.json": "a5c83b352832fa188f088354a53e32508692e120c60ebb788ecc92efbbb91bc8",
+    "audit-preflight.log": "09b2c2d0c7ec15138d8795fb7eefd7ca30a1eaa4ca6233d91267d8fdcb7af259",
+    "audit-tests.log": "f66f0020010213c110e89dd2a0559a0315dfae9514e5dc6ba1e10e93e6af7e31",
+    "audit-verification.log": "b8aa3cda9c768833f76e58cefbdd97795db3c9a6496d109f822ff539d35a604a",
+    "audit_model_access.json": "eb61fa70e035e77f374055ecf9daf615f11265e73dfe7eeea73cf947f1b3d7af",
+    "audit_preflight.json": "09b2c2d0c7ec15138d8795fb7eefd7ca30a1eaa4ca6233d91267d8fdcb7af259",
+    "candidate_audit_assessments.json": "62e4939940c6bfe2b497ff576f685d97ef3e4ac7cb7e1826d8fb78f10b578b17",
+    "dependency-check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+    "discovery-verification.log": "9a8291e7e2d510a2987f35d82166e91fa7df58294846f7bcfe3b39ba95870114",
+    "manifest.json": "d05e56583acd5244ca81b4bc411228cb24e0c7a4e55f92e239636f2f67eb0130",
+    "message_positive_controls.json": "576d404daa499b6349df58018c1a6a9917a33e8c1470098310a6f47b1b6db647",
+    "model-snapshot-download.log": "36e303219858e9c9b7f425b9d48d9b8b017de08f5b8302a1fd9b992880f264c2",
+    "model_snapshot_manifest.json": "baed88893b67f674b88008e3425bfb7f6fb4e883cfcdf459d5cfb364702658be",
+    "qci2-semantic-audit.log": "8a3f670c2400eebf6bcb7a11be71ea1109a0fcf5284928574a870bd28cd689cb",
+    "raw_audit_interventions.jsonl": "2b8a31c8d131d1d03dc9c358ca5734ae76d041fd5c5e8caf2489f67cb5fef0dc",
+    "summary.json": "e1284b7bb8a066ae054e5ef1ff254a4865fad302b6e40f10ba88a0469316ed78"
+  },
+  "ingested_utc": "2026-11-13T12:07:28.128004+00:00",
+  "schema_version": "aether.qci2-audit-ingest.v1",
+  "source": "C:\\Users\\dthun\\Documents\\AMRITA\\FYP\\Code\\notebooks\\Results\\QCI2 Audit\\aether-qwen-qci2-audit-results\\aether-qci2-audit",
+  "verification": {
+    "audit_supported_candidates": [
+      "receiver.head.L20.H5.pre_o_proj",
+      "receiver.head.L22.H7.pre_o_proj",
+      "receiver.module.L22.attention_output",
+      "sender.module.L22.attention_output"
+    ],
+    "candidate_count": 4,
+    "candidate_execution_count": 160,
+    "development_audit_executions": 168,
+    "invalid_or_error_count": 0,
+    "message_positive_control_count": 8,
+    "next_gate": "READY_FOR_QCI2_METHOD_FREEZE_REVIEW",
+    "omitted_gitignored_logs": [],
+    "overall": "PASS",
+    "run_id": "P0_cross_20261112_qwen15b_qci2_semantic_audit_seed42",
+    "test_executions": 0,
+    "validation_executions": 0
+  }
+}

@@ -19,7 +19,7 @@ def test_repository_completion_audit_reports_known_evidence_and_open_gates() -> 
     assert statuses["qci_discovery_interventions"] == "PASS"
     assert statuses["qci_development_audit"] == "NOT_APPLICABLE"
     assert statuses["qci2_semantic_discovery"] == "PASS"
-    assert statuses["qci2_semantic_development_audit"] == "MISSING"
+    assert statuses["qci2_semantic_development_audit"] == "PASS"
     assert statuses["tracr_known_structure_intervention"] in {"MISSING", "PASS"}
     assert statuses["ioi_causal_calibration"] == "PASS"
 

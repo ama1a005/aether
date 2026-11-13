@@ -1,0 +1,44 @@
+{
+  "audit_supported_candidates": [
+    "receiver.head.L22.H7.pre_o_proj",
+    "sender.module.L22.attention_output",
+    "receiver.head.L20.H5.pre_o_proj",
+    "receiver.module.L22.attention_output"
+  ],
+  "candidate_execution_count": 160,
+  "candidate_ids": [
+    "receiver.head.L22.H7.pre_o_proj",
+    "sender.module.L22.attention_output",
+    "receiver.head.L20.H5.pre_o_proj",
+    "receiver.module.L22.attention_output"
+  ],
+  "claim_boundary": "QCI-2 audit may confirm development-only decision-semantic mediation. It cannot establish validation, test, remediation, search-superiority, benchmark, or publication claims.",
+  "development_audit_case_ids": [
+    "v2_case_010",
+    "v2_case_011",
+    "v2_case_022",
+    "v2_case_023"
+  ],
+  "development_audit_executions": 168,
+  "discovery_summary_hash": "6667851162d1687d9179784e4113d0125df19d53ee52d8fb5f58a4c93af80fdc",
+  "excluded_supported_candidates": [],
+  "experiment_id": "P0_cross_20261112_qwen15b_qci2_semantic_audit",
+  "invalid_or_error_count": 0,
+  "message_positive_control_count": 8,
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "next_state": "READY_FOR_QCI2_METHOD_FREEZE_REVIEW",
+  "protocol_hash": "b957bb9905de490d994ede01a4b381348f3c18ae385a4dfe2dfd182172404a29",
+  "query_ledger": {
+    "executions": 168,
+    "forward_steps": 344,
+    "maximum_executions": 500,
+    "maximum_forward_steps": 2400
+  },
+  "run_id": "P0_cross_20261112_qwen15b_qci2_semantic_audit_seed42",
+  "runtime_seconds": 1323.406684959,
+  "schema_version": "aether.qci2-audit.v1",
+  "test_executions": 0,
+  "utc_timestamp": "2026-11-13T11:59:01.696433+00:00",
+  "validation_executions": 0
+}
