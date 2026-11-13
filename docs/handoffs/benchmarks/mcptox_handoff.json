@@ -1,0 +1,25 @@
+{
+  "benchmark": "MCPTox",
+  "evidence_class": "official_compatible_tool_poisoning_evaluation",
+  "upstream_revision": "f85189f9ad12504c197c7f920ab818a40657b1fa",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "cohort": "485 cases across 45 servers",
+  "selection_rule": "deterministic case_id sorted prefix or full release; no outcome conditioning",
+  "official_evaluator_executed": false,
+  "status": "BLOCKED",
+  "denominators": {
+    "eligible": 0,
+    "invalid": 0,
+    "errors": 0,
+    "successes": 0
+  },
+  "raw_artifacts": [],
+  "artifact_sha256": {},
+  "limitations": [
+    "Execution blocked locally pending automated MCP server runtime and local model inference harness.",
+    "Pinned upstream repository lacks LICENSE file; raw case records excluded from git redistribution.",
+    "Official release contains released response labels but lacks official automated runner."
+  ],
+  "metrics": {},
+  "schema_version": "aether.nov19.external_benchmark.v1"
+}

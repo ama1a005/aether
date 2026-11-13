@@ -1,0 +1,4 @@
+Benchmark,Evaluation Task,Evidence Class,Status,Eligible Denominator,Errors / Invalid,Success Rate / Accuracy,95% CI (Wilson),Upstream Revision
+BFCL,Benign Tool Competence,official_evaluator_with_disclosed_aether_model_adapter,BLOCKED,0,0,N/A,N/A,bfcl_eval==2026.3.23
+MCPTox,Tool Description Poisoning,official_compatible_tool_poisoning_evaluation,BLOCKED,0,0,N/A,N/A,f85189f9ad12504c197c7f920ab818a40657b1fa
+TAMAS,Multi-Agent Adversarial Robustness,official_native_execution,BLOCKED,0,0,N/A,N/A,545c112af9aab93b7ef2b0b60831d93c81c365c3
