@@ -149,6 +149,11 @@ def main() -> None:
         output=args.output.resolve(), method=args.method, seed=args.seed,
         input_artifacts=tuple(args.input_artifact), declared_budget=args.declared_budget,
     )
+    if result["overall"] == "PASS":
+        args.output.mkdir(parents=True, exist_ok=False)
+        (args.output / "preflight.json").write_text(
+            json.dumps(result, indent=2, sort_keys=True), encoding="utf-8"
+        )
     print(json.dumps(result, indent=2, sort_keys=True))
     if result["overall"] != "PASS":
         raise SystemExit(2)
