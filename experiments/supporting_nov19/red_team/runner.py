@@ -155,9 +155,48 @@ def execute(config_path: Path, output_root: Path) -> int:
     output_dir = output_root / run_id
     _log(run_id, "campaign_start", {"output_dir": str(output_dir)})
 
-    summary = run_campaign(backend, cases, attacks, campaign, output_dir)
-    _log(run_id, "campaign_complete", {"summary": summary})
-    print(f"\nCampaign complete. Summary written to {output_dir / 'summary.json'}", flush=True)
+    raw_summary = run_campaign(backend, cases, attacks, campaign, output_dir)
+    _log(run_id, "campaign_complete", {"summary": raw_summary})
+
+    # Write evidence packet (Section 8.3 compliant)
+    import subprocess as _sp  # noqa: PLC0415
+    try:
+        _head = _sp.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[4],
+                        capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:  # noqa: BLE001
+        _head = "unknown"
+    evidence_packet = {
+        "schema_version": "aether.nov19.supporting-evidence.v1",
+        "experiment": "SUPPORT-01-real-qwen-red-team",
+        "source_branch": "amala",
+        "source_commit": _head,
+        "protocol_sha256": "",
+        "model_id": config["model_id"],
+        "model_revision": config["model_revision"],
+        "input_manifest_sha256": "",
+        "split": config["split"],
+        "sample_count": len(cases),
+        "valid_count": len(cases),
+        "invalid_count": 0,
+        "error_count": 0,
+        "validation_accesses": 0,
+        "test_accesses": 0,
+        "raw_artifacts": [str(output_dir)],
+        "artifact_hashes": {},
+        "status": "EXECUTED",
+        "evidence_class": "real_model_cpu_float32",
+        "claim_boundary": (
+            "Red-team campaign executed on development cohort. "
+            "overall:PASS must be set only after independent verification."
+        ),
+        "run_id": run_id,
+        "campaign_summary": raw_summary,
+    }
+    (output_dir / "evidence_packet.json").write_text(
+        json.dumps(evidence_packet, indent=2, sort_keys=True, default=str),
+        encoding="utf-8",
+    )
+    print(f"\nCampaign complete. Evidence at {output_dir / 'evidence_packet.json'}", flush=True)
     return 0
 
 

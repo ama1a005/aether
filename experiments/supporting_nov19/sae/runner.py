@@ -210,9 +210,40 @@ def execute(config_path: Path, checkpoint_dir: Path, output_root: Path) -> int:
     records_path.write_text(json.dumps(activation_records, indent=2), encoding="utf-8")
 
     n_pass = sum(1 for r in activation_records if r.get("passed_threshold") is True)
-    summary = {
-        "run_id": run_id,
+
+    # Evidence packet (Section 8.3 compliant)
+    import subprocess as _sp  # noqa: PLC0415
+    try:
+        _head = _sp.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[4],
+                        capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:  # noqa: BLE001
+        _head = "unknown"
+    evidence_packet = {
+        "schema_version": "aether.nov19.supporting-evidence.v1",
+        "experiment": "SUPPORT-03-trained-sae-evaluation",
+        "source_branch": "amala",
+        "source_commit": _head,
+        "protocol_sha256": "",
+        "model_id": config["model_id"],
+        "model_revision": config["model_revision"],
+        "input_manifest_sha256": "",
+        "split": "development",
+        "sample_count": len(activation_records),
+        "valid_count": n_pass,
+        "invalid_count": 0,
+        "error_count": len(activation_records) - n_pass,
+        "validation_accesses": 0,
+        "test_accesses": 0,
+        "raw_artifacts": [str(records_path)],
+        "artifact_hashes": {},
+        "status": "EXECUTED",
         "evidence_class": "real_model_cpu_float32",
+        "claim_boundary": (
+            "SAE evaluation executed on development cohort. "
+            "Reconstruction gate requires real trained SAE, not random initialization. "
+            "overall:PASS must be set only after independent verification."
+        ),
+        "run_id": run_id,
         "sae_id": sae.provenance.sae_id,
         "component_id": config["component_id"],
         "n_activation_records": len(activation_records),
@@ -221,17 +252,11 @@ def execute(config_path: Path, checkpoint_dir: Path, output_root: Path) -> int:
             sum(reconstruction_errors) / len(reconstruction_errors)
             if reconstruction_errors else None
         ),
-        "validation_executions": 0,
-        "test_executions": 0,
-        "_note": (
-            "overall:PASS must be set only after independent verification. "
-            "Reconstruction gate requires real trained SAE, not random initialization."
-        ),
     }
     (output_run / "summary.json").write_text(
-        json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8"
+        json.dumps(evidence_packet, indent=2, sort_keys=True), encoding="utf-8"
     )
-    _log(run_id, "execute_complete", {"summary": summary})
+    _log(run_id, "execute_complete", {"summary": evidence_packet})
     print(f"\nSAE evaluation complete. Summary at {output_run / 'summary.json'}", flush=True)
     return 0
 

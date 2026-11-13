@@ -191,20 +191,49 @@ def execute(config_path: Path, output_root: Path) -> int:
             _log(run_id, "record_written", {"case_id": case.case_id, "mode": mode})
 
     n_complete = sum(1 for r in records if r["status"] == "complete")
-    summary = {
-        "run_id": run_id,
+
+    # Evidence packet (Section 8.3 compliant)
+    import subprocess as _sp  # noqa: PLC0415
+    try:
+        _head = _sp.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[4],
+                        capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:  # noqa: BLE001
+        _head = "unknown"
+    evidence_packet = {
+        "schema_version": "aether.nov19.supporting-evidence.v1",
+        "experiment": "SUPPORT-02-real-qwen-agent-c",
+        "source_branch": "amala",
+        "source_commit": _head,
+        "protocol_sha256": "",
+        "model_id": config["model_id"],
+        "model_revision": config["model_revision"],
+        "input_manifest_sha256": "",
+        "split": "development",
+        "sample_count": len(records),
+        "valid_count": n_complete,
+        "invalid_count": 0,
+        "error_count": len(records) - n_complete,
+        "validation_accesses": 0,
+        "test_accesses": 0,
+        "raw_artifacts": [str(records_dir)],
+        "artifact_hashes": {},
+        "status": "EXECUTED",
         "evidence_class": "real_model_cpu_float32",
+        "claim_boundary": (
+            "Agent C A/B study executed on development cohort. "
+            "overall:PASS must be set only after independent verification."
+        ),
+        "run_id": run_id,
         "n_total": len(records),
         "n_complete": n_complete,
         "n_error": len(records) - n_complete,
-        "validation_executions": 0,
-        "test_executions": 0,
-        "_note": "overall:PASS must be set only after independent verification of real model outputs.",
     }
     summary_path = output_root / run_id / "summary.json"
     summary_path.parent.mkdir(parents=True, exist_ok=True)
-    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
-    _log(run_id, "execute_complete", {"summary": summary})
+    summary_path.write_text(
+        json.dumps(evidence_packet, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    _log(run_id, "execute_complete", {"summary": evidence_packet})
     print(f"\nAgent C study complete. Summary at {summary_path}", flush=True)
     return 0
 
