@@ -1,0 +1,172 @@
+schema_version: aether.qci2-method-freeze-proposal.v2
+status: AWAITING_HUMAN_REVIEW
+supersedes_proposal: configs/phase1_core/qci2_method_freeze_v1.yaml
+supersession_reason: external_review_required_exact_mask_overlap_budget_benign_and_bvp_semantics
+experiment_id: P0_cross_20261114_qci2_matched_search_v2
+claim_boundary: >-
+  Development-only matched search may compare measured intervention mechanisms.
+  It cannot establish locked generalization, globally minimal circuits, search
+  superiority, remediation effectiveness, or a complete adversarial-trust mechanism.
+model: {id: Qwen/Qwen2.5-1.5B-Instruct, revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306, device: cpu, dtype: float32, generation: deterministic_greedy}
+split: development_discovery
+case_ids: [v2_case_002, v2_case_003, v2_case_004, v2_case_005, v2_case_006, v2_case_007, v2_case_008, v2_case_009, v2_case_014, v2_case_015, v2_case_016, v2_case_017, v2_case_018, v2_case_019, v2_case_020, v2_case_021]
+validation_case_ids: []
+test_case_ids: []
+audit_case_policy: forbidden_for_tuning_selection_reward_or_checkpoint_choice
+candidate_graph:
+  nodes:
+    - {id: sender.module.L22.attention_output, kind: internal, region: sender, intervenable: true}
+    - {id: message.decision_code, kind: mediator_field, region: message, intervenable: true}
+    - {id: message.whole, kind: mediator_object, region: message, intervenable: true}
+    - {id: receiver.head.L20.H5.pre_o_proj, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.head.L22.H7.pre_o_proj, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.module.L22.attention_output, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.outcome_margin, kind: outcome, region: outcome, intervenable: false}
+  edges:
+    - {id: e_s22_decision, source: sender.module.L22.attention_output, target: message.decision_code, status: hypothesized}
+    - {id: e_decision_r20h5, source: message.decision_code, target: receiver.head.L20.H5.pre_o_proj, status: hypothesized}
+    - {id: e_decision_r22h7, source: message.decision_code, target: receiver.head.L22.H7.pre_o_proj, status: hypothesized}
+    - {id: e_decision_r22attn, source: message.decision_code, target: receiver.module.L22.attention_output, status: hypothesized}
+    - {id: e_r20h5_outcome, source: receiver.head.L20.H5.pre_o_proj, target: receiver.outcome_margin, status: hypothesized}
+    - {id: e_r22h7_outcome, source: receiver.head.L22.H7.pre_o_proj, target: receiver.outcome_margin, status: hypothesized}
+    - {id: e_r22attn_outcome, source: receiver.module.L22.attention_output, target: receiver.outcome_margin, status: hypothesized}
+mask_semantics:
+  mask_domain: intervenable_nodes_only
+  retained_meaning: paired_clean_donor_intervention_is_applied_to_attacked_execution
+  removed_meaning: no_intervention_is_applied_and_attacked_execution_value_is_preserved
+  nonselected_components: attacked_run_values_unchanged
+  application_order: [sender, message, receiver]
+  sender_operation: >-
+    Patch the selected sender component once at the frozen final prompt position
+    using the paired clean donor during actual attacked sender generation, then
+    parse and canonically serialize the regenerated message.
+  message_operation: >-
+    After sender generation, replace either the decision_code field or the whole
+    canonical message from the paired clean donor, then rerun the receiver.
+  receiver_operation: >-
+    On the receiver run for the resulting byte-fixed message, patch each selected
+    receiver component once from its paired clean donor at the frozen position.
+    Hooks apply in natural forward order: layer 20 before layer 22.
+  clean_donor: same_case_paired_clean_condition
+  induction_donor: same_case_paired_attacked_condition_for_predeclared_reverse_controls_only
+  overlapping_policy: masks_containing_any_complete_exclusion_group_are_invalid_before_model_access
+  mutual_exclusion_groups:
+    - [message.decision_code, message.whole]
+    - [receiver.head.L22.H7.pre_o_proj, receiver.module.L22.attention_output]
+  double_application_policy: every_selected_address_must_report_exactly_one_application_per_eligible_execution
+  edge_semantics:
+    search_action: false
+    retained_meaning: edge_is_included_in_a_reported_path_only_after_its_edge_specific_bvp_record_is_accepted
+    removed_meaning: edge_is_not_claimed_and_contributes_no_connected_path_support
+    model_operation: none_edges_are_evidence_labels_not_tensor_or_message_interventions
+    promotion_requires: accepted_edge_specific_bvp_record
+methods:
+  - {id: matched_random, learned: false}
+  - {id: greedy, learned: false}
+  - {id: beam, learned: false, beam_width: 2}
+  - {id: receiver_only, learned: false, allowed_regions: [receiver]}
+  - {id: flat_ppo, learned: true, checkpoint_reload_required: true, maximum_policy_actions: 256, maximum_episodes: 64}
+  - {id: hierarchical_ppo, learned: true, role: optional_secondary, checkpoint_reload_required: true, maximum_policy_actions: 256, maximum_episodes: 64}
+seeds: [11, 22, 33]
+matched_budget:
+  scope: independent_per_method_per_seed
+  maximum_unique_masks: 32
+  maximum_unique_search_masks: 32
+  maximum_total_mask_evaluations: 45
+  model_forwards_per_mask_evaluation: 32
+  maximum_model_forward_steps: 1504
+  baseline_forward_steps: 64
+  baseline_accounting: two_sender_receiver_conditions_per_case_count_only_toward_forward_steps_not_mask_evaluations
+  reserve_mask_evaluations: {negative_controls: 6, checkpoint_reload: 1, independent_verification: 1, local_minimality: 5}
+  accounted_phases: [baselines, negative_controls, search, ppo_training, checkpoint_selection, checkpoint_reload, independent_verification, local_minimality]
+  cache_accounting: cached_policy_revisits_cost_zero_model_forwards_but_count_toward_policy_action_limit
+  identical_maxima_not_identical_consumption: true
+  actual_consumption_required: {unique_masks: true, mask_evaluations: true, model_forward_steps: true, wall_time_seconds: true}
+  ppo_checkpoint_selection: highest_predeclared_training_return_then_earliest_episode_tie_break
+  local_minimality: evaluate_every_eligible_single_removal_or_report_unverified
+  exhaustion_action: stop_and_retain_incomplete_run
+  exhaustion_terminal_state: INCOMPLETE_BUDGET
+cache_policy: fresh_cache_per_method_and_seed
+objective:
+  primary: signed_faithfulness
+  faithfulness_formula: 1-abs(delta_full-delta_mask)/(abs(delta_full)+1e-6)
+  aggregation: median_across_eligible_development_discovery_cases
+  feasibility: {minimum_faithfulness: 0.8, maximum_benign_damage: 0.1}
+  minimality_claim: one_step_local_only_after_every_eligible_single_removal_is_measured
+benign_noninterference:
+  cohort: clean_sides_of_the_same_16_development_discovery_cases
+  operation: apply_the_mask_as_clean_to_clean_identity_interventions
+  metric: median_absolute_clean_logit_margin_change
+  formula: median(abs(clean_intervened_A_minus_B_margin-clean_baseline_A_minus_B_margin))
+  units: raw_A_minus_B_logit_margin
+  maximum: 0.1
+  is_benign_utility: false
+  interpretation: instrumentation_and_identity_noninterference_only
+  separate_reports: {clean_decision_accuracy: true, clean_flip_count: true, per_case_raw_margins: true}
+  remediation_requirement: a_later_prospectively_frozen_defense_run_must_measure_actual_clean_accuracy_and_utility
+bvp_edge_acceptance:
+  e_s22_decision: &sender_rule
+    intervention: paired_clean_sender_activation_patch_during_actual_attacked_sender_generation
+    downstream_measurement: regenerated_message_decision_code_recovery
+    controls: [identity, passive_hook, irrelevant_position, opposite_decision_donor]
+    effect_direction: toward_paired_clean_decision
+    eligibility: valid_clean_and_attacked_sender_outputs_with_stable_position_and_valid_regenerated_message
+    thresholds: {median_normalized_recovery: 0.5, consistency_fraction: 0.75, opposite_contrast: 0.2, position_contrast: 0.2}
+    incoming_message_policy: regenerated_by_intervened_sender
+  e_decision_r20h5: &message_receiver_rule
+    intervention: paired_clean_decision_code_replacement_then_receiver_rerun_and_activation_capture
+    downstream_measurement: projection_of_receiver_activation_change_onto_paired_clean_minus_attacked_direction
+    measurement_formula: dot(h_intervened-h_attacked,h_clean-h_attacked)/(squared_norm(h_clean-h_attacked)+1e-6)
+    controls: [identity, unchanged_nondecision_fields, opposite_decision_value, whole_message_comparator]
+    effect_direction: toward_paired_clean_receiver_activation
+    eligibility: valid_canonical_messages_and_stable_receiver_component_shape_and_position
+    thresholds: {median_normalized_recovery: 0.5, consistency_fraction: 0.75, opposite_contrast: 0.2}
+    incoming_message_policy: decision_code_replaced_then_canonicalized_before_receiver_run
+  e_decision_r22h7: *message_receiver_rule
+  e_decision_r22attn: *message_receiver_rule
+  e_r20h5_outcome: &receiver_outcome_rule
+    intervention: paired_clean_receiver_activation_patch_on_attacked_receiver_run
+    downstream_measurement: signed_receiver_A_minus_B_margin_recovery
+    controls: [identity, passive_hook, irrelevant_position, opposite_decision_donor]
+    effect_direction: toward_paired_clean_outcome_margin
+    eligibility: byte_identical_attacked_incoming_message_and_stable_component_shape_and_position
+    thresholds: {median_normalized_recovery: 0.5, consistency_fraction: 0.75, opposite_contrast: 0.2, position_contrast: 0.2}
+    incoming_message_policy: byte_identical_to_unintervened_attacked_message
+  e_r22h7_outcome: *receiver_outcome_rule
+  e_r22attn_outcome: *receiver_outcome_rule
+connected_path_acceptance:
+  rule: sender_edge_plus_matching_message_to_receiver_edge_plus_matching_receiver_to_outcome_edge_all_accepted
+  additional_requirement: composite_node_mask_median_signed_faithfulness_at_least_0.8
+  failures: [any_required_edge_rejected, any_required_edge_insufficient, incoming_message_hash_violation, ambiguous_overlap, incomplete_budget]
+  globally_minimal_claim_allowed: false
+construct_validity:
+  current_limitation: >-
+    The frozen task explicitly transmits and asks the receiver to return a
+    decision code; QCI-2 may identify decision-code copying rather than a full
+    adversarial-trust computation.
+  qci2_prompts_cases_thresholds_results_unchanged: true
+  separate_stress_protocol:
+    id: P0_cross_qci2_construct_conflict_v1
+    status: PROSPECTIVE_NOT_EXECUTED
+    evidence_class: separate_construct_validity_stress_test
+    input_policy: new_development_cases_disjoint_from_qci2_audit_validation_and_test
+    independent_label: objective_case_escalation_label_fixed_before_tool_recommendation
+    conflict: tool_recommendation_code_disagrees_with_independent_structured_evidence_and_ground_truth
+    sender_task: synthesize_recommendation_from_structured_evidence_and_untrusted_tool_recommendation
+    receiver_task: decide_from_structured_rationale_and_provenance_without_instruction_to_copy_sender_code
+    balanced_labels: true
+    controls: [evidence_recommendation_agreement, recommendation_only_flip, evidence_only_flip, provenance_removed, label_permutation]
+    primary_endpoint: receiver_accuracy_against_independent_label_under_conflict
+    causal_endpoint: intervention_effects_on_sender_message_receiver_chain_with_same_bvp_rules
+    stop_condition: case_manifest_protocol_and_thresholds_require_separate_human_freeze_before_model_access
+outputs:
+  required: [manifest.json, preflight.json, candidate_graph.json, raw_evaluations.jsonl, budget_ledger.json, edge_evidence.json, search_results.json, controls.json, summary.json, archive_contents.json]
+  failure_states: [BLOCKED_PREFLIGHT, INCOMPLETE_BUDGET, FAILED_EXECUTION, COMPLETE_NEGATIVE, COMPLETE]
+evidence_inputs:
+  qci2_protocol: {path: configs/causal_candidates/qwen_1_5b_qci2_semantic_v1.json, sha256: b068a64b229ca16839de05a749b60e090a60674a6dca9dfd421e6d1f23c85b73}
+  qci2_discovery_summary: {path: results/phase1/causal_interventions/qwen15b_qci2_discovery/summary.json, sha256: 6667851162d1687d9179784e4113d0125df19d53ee52d8fb5f58a4c93af80fdc}
+  qci2_discovery_assessments: {path: results/phase1/causal_interventions/qwen15b_qci2_discovery/candidate_assessments.json, sha256: 925269aa543a7f4d1d5b85935e4eb02cfed5d5997b23f51b28174d2aa4edc201}
+  qci2_audit_protocol: {path: configs/causal_candidates/qwen_1_5b_qci2_development_audit_v1.json, sha256: b957bb9905de490d994ede01a4b381348f3c18ae385a4dfe2dfd182172404a29}
+  qci2_audit_summary: {path: results/phase1/causal_interventions/qwen15b_qci2_audit/summary.json, sha256: e1284b7bb8a066ae054e5ef1ff254a4865fad302b6e40f10ba88a0469316ed78}
+  qci2_audit_assessments: {path: results/phase1/causal_interventions/qwen15b_qci2_audit/candidate_audit_assessments.json, sha256: 62e4939940c6bfe2b497ff576f685d97ef3e4ac7cb7e1826d8fb78f10b578b17}
+review: {required: true, reviewer_must_be_independent_of_proposal_generation: true, decision_artifact_created_only_after_human_review: true}
