@@ -26,6 +26,7 @@ SUPPORTED_SCHEMAS = frozenset({
     "aether.qci2-method-freeze-proposal.v2",
 })
 AMENDMENT_SCHEMA = "aether.qci2-method-freeze-amendment.v2.1"
+AMENDMENT_V2_2_SCHEMA = "aether.qci2-method-freeze-amendment.v2.2"
 
 
 class BudgetExhausted(RuntimeError):
@@ -267,6 +268,39 @@ def load_and_validate_amendment(path: Path, base_path: Path, repo: Path) -> dict
         raise ValueError("accounting amendment does not match qualified execution arithmetic")
     if amendment.get("scientific_method_changes") != "none_accounting_only":
         raise ValueError("amendment may change accounting only")
+    return amendment
+
+
+def load_and_validate_v2_2_amendment(
+    path: Path, base_path: Path, v2_1_path: Path, repo: Path
+) -> dict[str, Any]:
+    """Validate the two-condition accounting correction against immutable inputs."""
+    amendment = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(amendment, dict) or amendment.get("schema_version") != AMENDMENT_V2_2_SCHEMA:
+        raise ValueError("unsupported v2.2 method-freeze amendment schema")
+    if amendment.get("status") != "AWAITING_HUMAN_REVIEW":
+        raise ValueError("v2.2 accounting amendment is not awaiting human review")
+    base = load_and_validate_proposal(base_path, repo)
+    load_and_validate_amendment(v2_1_path, base_path, repo)
+    if amendment.get("supersedes_amendment") != str(v2_1_path.relative_to(repo)).replace("\\", "/"):
+        raise ValueError("v2.2 amendment does not supersede the exact v2.1 path")
+    if amendment.get("base_proposal_sha256") != sha256_file(base_path):
+        raise ValueError("v2.2 amendment base proposal hash differs")
+    if base.get("schema_version") != "aether.qci2-method-freeze-proposal.v2":
+        raise ValueError("v2.2 accounting amendment requires the v2 proposal")
+    expected = {
+        "sender_autoregressive_steps_per_case_condition": 4,
+        "receiver_forward_steps_per_case_condition": 1,
+        "conditions_per_mask_evaluation": 2,
+        "case_count": 16,
+        "model_forwards_per_mask_evaluation": 160,
+        "baseline_forward_steps": 160,
+        "maximum_model_forward_steps": 7360,
+    }
+    if amendment.get("forward_accounting_correction") != expected:
+        raise ValueError("v2.2 accounting does not count attack and benign conditions")
+    if amendment.get("scientific_method_changes") != "none_accounting_only":
+        raise ValueError("v2.2 amendment may change accounting only")
     return amendment
 
 

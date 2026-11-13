@@ -1,5 +1,13 @@
 # AETHER current bounded task
 
+## Review QCI-2 v2.2 two-condition accounting amendment
+
+The real evaluator must execute both attacked rescue and clean identity for
+every mask. Review the accounting-only v2.2 amendment and its human checklist.
+Do not execute Qwen matched search under v2.1 because its 3,760-forward ceiling
+cannot produce the frozen benign metric. After exact-hash approval, update the
+effective-method loader and finish the runner, verifier and external notebook.
+
 ## Complete CORE-02 real evaluator and retained external handoff
 
 The approved method loader, legal-mask planner, isolated run plans, corrected

@@ -11,6 +11,7 @@ from causal.method_freeze import (
     MatchedBudgetLedger,
     edge_record_is_acceptable,
     load_and_validate_amendment,
+    load_and_validate_v2_2_amendment,
     load_and_validate_proposal,
     proposal_sha256,
     validate_mask,
@@ -21,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 V1_PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v1.yaml"
 PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
 AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
+AMENDMENT_V2_2 = ROOT / "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml"
 
 
 def _write(tmp_path: Path, value: dict) -> Path:
@@ -187,3 +189,17 @@ def test_accounting_amendment_cannot_change_method(tmp_path: Path) -> None:
     amendment["scientific_method_changes"] = "changed_candidates"
     with pytest.raises(ValueError, match="accounting only"):
         load_and_validate_amendment(_write(tmp_path, amendment), PROPOSAL, ROOT)
+
+
+def test_v2_2_counts_attack_and_clean_identity_conditions() -> None:
+    amendment = load_and_validate_v2_2_amendment(AMENDMENT_V2_2, PROPOSAL, AMENDMENT, ROOT)
+    correction = amendment["forward_accounting_correction"]
+    assert correction["model_forwards_per_mask_evaluation"] == 16 * 2 * (4 + 1)
+    assert correction["maximum_model_forward_steps"] == 160 + 45 * 160
+
+
+def test_v2_2_cannot_omit_benign_condition(tmp_path: Path) -> None:
+    amendment = yaml.safe_load(AMENDMENT_V2_2.read_text(encoding="utf-8"))
+    amendment["forward_accounting_correction"]["conditions_per_mask_evaluation"] = 1
+    with pytest.raises(ValueError, match="attack and benign"):
+        load_and_validate_v2_2_amendment(_write(tmp_path, amendment), PROPOSAL, AMENDMENT, ROOT)

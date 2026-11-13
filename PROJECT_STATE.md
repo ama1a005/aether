@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 v2.2 accounting correction awaits review
+
+Real-evaluator wiring exposed that every mask needs two distinct conditions:
+attacked rescue/faithfulness and clean-to-clean benign noninterference. V2.1
+counted only one condition. The prospective accounting-only v2.2 amendment
+corrects the complete mask cost to 160 forwards and the per-method/per-seed
+maximum to 7,360. Candidates, masks, methods, thresholds and split locks are
+unchanged. No model execution is permitted until the exact v2.2 hash receives
+explicit human approval.
+
 ## 2026-11-13 CORE-02 model-independent foundation implemented
 
 The approved v2 + v2.1 chain now drives a fail-closed matched-search planner.
