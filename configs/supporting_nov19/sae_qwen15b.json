@@ -1,0 +1,14 @@
+{
+  "schema_version": "aether.supporting-nov19.sae.v1",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "dtype": "float32",
+  "device": "cpu",
+  "component_id": "receiver.module.L22.attention_output",
+  "seed": 0,
+  "output_dir": "results/phase1/sae/qwen15b",
+  "source_commit": "00846b020b685dfa3ab89bce2c5227d2810c9d1e",
+  "external_tensor_archive_sha256": "7890212a8e7a4eb099be86bc572cd6172fd1c45b839f695e56e6ba4a46e97b21",
+  "_note": "SAE checkpoint must be trained from the external tensor archive. Prospective config only."
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "aether.supporting-nov19.second-model.v1",
+  "model_id": "microsoft/Phi-3-mini-4k-instruct",
+  "model_revision": "unknown",
+  "_note_model_revision": "MUST be updated to the exact pinned HuggingFace commit SHA before executing. Leave as 'unknown' until confirmed.",
+  "dtype": "float32",
+  "device": "cpu",
+  "seed": 0,
+  "output_dir": "results/phase1/model_qualification/second_model",
+  "source_commit": "00846b020b685dfa3ab89bce2c5227d2810c9d1e",
+  "_disqualified": {
+    "Qwen/Qwen2.5-0.5B-Instruct": "Failed balanced qualification - asymmetric on balanced cases"
+  },
+  "_qualification_gates_required": [
+    "24/24 clean and eligible attacked cases",
+    "message-level rescue and induction 12/12 in each direction",
+    "instrumentation and capture gates"
+  ],
+  "_note": "Prospective manifest only. Do not add overall:PASS without genuine execution of all gates."
+}

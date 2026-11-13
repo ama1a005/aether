@@ -1,0 +1,17 @@
+{
+  "schema_version": "aether.supporting-nov19.agent-c.v1",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "dtype": "float32",
+  "device": "cpu",
+  "split": "development",
+  "seed": 0,
+  "agent_c_config": {
+    "use_verification_tool": false,
+    "risk_score_threshold": 0.4
+  },
+  "output_dir": "results/phase1/agent_c/qwen15b",
+  "source_commit": "00846b020b685dfa3ab89bce2c5227d2810c9d1e",
+  "_note": "Prospective config. Do not add overall:PASS to summary.json without genuine execution and independent verification."
+}
