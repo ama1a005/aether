@@ -12,6 +12,7 @@ from causal.method_freeze import (
     edge_record_is_acceptable,
     load_and_validate_amendment,
     load_and_validate_v2_2_amendment,
+    load_and_validate_v2_3_amendment,
     load_and_validate_proposal,
     proposal_sha256,
     validate_mask,
@@ -23,6 +24,7 @@ V1_PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v1.yaml"
 PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
 AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
 AMENDMENT_V2_2 = ROOT / "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml"
+AMENDMENT_V2_3 = ROOT / "configs/phase1_core/qci2_method_freeze_v2_3_amendment.yaml"
 
 
 def _write(tmp_path: Path, value: dict) -> Path:
@@ -203,3 +205,22 @@ def test_v2_2_cannot_omit_benign_condition(tmp_path: Path) -> None:
     amendment["forward_accounting_correction"]["conditions_per_mask_evaluation"] = 1
     with pytest.raises(ValueError, match="attack and benign"):
         load_and_validate_v2_2_amendment(_write(tmp_path, amendment), PROPOSAL, AMENDMENT, ROOT)
+
+
+def test_v2_3_freezes_overlap_safe_algorithms_and_ppo() -> None:
+    amendment = load_and_validate_v2_3_amendment(
+        AMENDMENT_V2_3, PROPOSAL, AMENDMENT_V2_2, AMENDMENT, ROOT
+    )
+    assert amendment["legal_domain"]["count"] == 36
+    assert amendment["methods"]["beam"]["beam_width"] == 2
+    assert amendment["methods"]["flat_ppo"]["maximum_policy_actions"] == 256
+    assert amendment["budget_and_split"]["development_audit_validation_test_access"] == "forbidden"
+
+
+def test_v2_3_ppo_drift_fails_closed(tmp_path: Path) -> None:
+    amendment = yaml.safe_load(AMENDMENT_V2_3.read_text(encoding="utf-8"))
+    amendment["methods"]["flat_ppo"]["learning_rate"] = 0.01
+    with pytest.raises(ValueError, match="PPO configuration differs"):
+        load_and_validate_v2_3_amendment(
+            _write(tmp_path, amendment), PROPOSAL, AMENDMENT_V2_2, AMENDMENT, ROOT
+        )

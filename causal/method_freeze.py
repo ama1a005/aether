@@ -27,6 +27,7 @@ SUPPORTED_SCHEMAS = frozenset({
 })
 AMENDMENT_SCHEMA = "aether.qci2-method-freeze-amendment.v2.1"
 AMENDMENT_V2_2_SCHEMA = "aether.qci2-method-freeze-amendment.v2.2"
+AMENDMENT_V2_3_SCHEMA = "aether.qci2-method-freeze-amendment.v2.3"
 
 
 class BudgetExhausted(RuntimeError):
@@ -301,6 +302,49 @@ def load_and_validate_v2_2_amendment(
         raise ValueError("v2.2 accounting does not count attack and benign conditions")
     if amendment.get("scientific_method_changes") != "none_accounting_only":
         raise ValueError("v2.2 amendment may change accounting only")
+    return amendment
+
+
+def load_and_validate_v2_3_amendment(
+    path: Path, base_path: Path, v2_2_path: Path, v2_1_path: Path, repo: Path
+) -> dict[str, Any]:
+    """Validate prospective algorithm details for every required comparator."""
+    amendment = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(amendment, dict) or amendment.get("schema_version") != AMENDMENT_V2_3_SCHEMA:
+        raise ValueError("unsupported v2.3 method-freeze amendment schema")
+    if amendment.get("status") != "AWAITING_HUMAN_REVIEW":
+        raise ValueError("v2.3 method amendment is not awaiting human review")
+    load_and_validate_v2_2_amendment(v2_2_path, base_path, v2_1_path, repo)
+    if amendment.get("supersedes_amendment") != str(v2_2_path.relative_to(repo)).replace("\\", "/"):
+        raise ValueError("v2.3 does not supersede the exact v2.2 path")
+    if amendment.get("base_proposal_sha256") != sha256_file(base_path):
+        raise ValueError("v2.3 base proposal hash differs")
+    if amendment.get("legal_domain", {}).get("count") != 36:
+        raise ValueError("v2.3 must freeze all 36 legal masks")
+    methods = amendment.get("methods", {})
+    if set(methods) != {"greedy", "beam", "receiver_only", "matched_random", "flat_ppo"}:
+        raise ValueError("v2.3 comparator definitions differ")
+    ppo = methods["flat_ppo"]
+    expected_ppo = {
+        "maximum_policy_actions": 256, "maximum_episodes": 64,
+        "rollout_steps": 32, "update_epochs": 4, "hidden_size": 64,
+        "learning_rate": 0.0003, "gamma": 0.99, "gae_lambda": 0.95,
+        "clip_ratio": 0.2, "value_coefficient": 0.5,
+        "entropy_coefficient": 0.01, "maximum_gradient_norm": 0.5,
+    }
+    if any(ppo.get(name) != value for name, value in expected_ppo.items()):
+        raise ValueError("v2.3 PPO configuration differs")
+    budget = amendment.get("budget_and_split", {})
+    if budget != {
+        "maximum_unique_search_masks": 32,
+        "maximum_total_mask_evaluations": 45,
+        "maximum_model_forward_steps": 7360,
+        "actual_consumption_reported": True,
+        "cache_isolation": "fresh_per_method_and_seed",
+        "split": "development_discovery_only",
+        "development_audit_validation_test_access": "forbidden",
+    }:
+        raise ValueError("v2.3 budget or split protections differ")
     return amendment
 
 

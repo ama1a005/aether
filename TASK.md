@@ -1,5 +1,13 @@
 # AETHER current bounded task
 
+## Review QCI-2 v2.3 algorithm-completion amendment
+
+Review the exact overlap-safe greedy, beam, receiver-only, matched-random and
+flat-PPO definitions before their implementation is admitted to the evidence
+runner. This is the last prospective algorithm specification gate identified by
+the runner audit. No model access is authorized under ambiguous comparator
+semantics.
+
 ## Finish the approved v2.2 CORE-02 execution package
 
 V2.2 is human-approved. Complete the real two-condition mask evaluator,

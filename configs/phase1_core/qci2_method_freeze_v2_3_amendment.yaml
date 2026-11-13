@@ -1,0 +1,91 @@
+schema_version: aether.qci2-method-freeze-amendment.v2.3
+status: AWAITING_HUMAN_REVIEW
+supersedes_amendment: configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml
+base_proposal_path: configs/phase1_core/qci2_method_freeze_v2.yaml
+base_proposal_sha256: b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c
+reason: >-
+  The approved proposal names comparator families but does not fully determine
+  their initialization, overlap-safe traversal, tie breaks, matched-random
+  reference, or PPO hyperparameters. These details are frozen prospectively
+  before any CORE-02 model execution so implementation choices cannot follow
+  observed matched-search outcomes.
+legal_domain:
+  count: 36
+  includes_empty_mask: true
+  maximal_masks: all_four_legal_size_four_masks
+  overlap_groups_are_never_constructed_or_evaluated: true
+common_ranking: [feasible_first, fewer_retained_nodes, higher_signed_faithfulness, lower_benign_damage, lexicographic_mask]
+methods:
+  greedy:
+    initialization: evaluate_all_four_maximal_legal_masks
+    transition: remove_exactly_one_retained_node
+    selection: best_ranked_child_from_best_ranked_current_parent
+    stop: no_legal_child_or_budget_exhaustion
+  beam:
+    beam_width: 2
+    initialization: evaluate_all_four_maximal_legal_masks
+    transition: all_unique_legal_single_node_removals_of_current_beam
+    selection: best_two_by_common_ranking
+    stop: empty_frontier_or_budget_exhaustion
+  receiver_only:
+    domain: all_six_legal_masks_over_the_three_receiver_candidates
+    initialization: both_legal_size_two_receiver_masks
+    transition: greedy_single_node_removal
+    stop: no_legal_child_or_budget_exhaustion
+  matched_random:
+    reference: same_seed_greedy_terminal_mask
+    cache: fresh_and_independent_from_greedy
+    sampling: uniform_without_replacement_from_legal_masks_with_exact_reference_region_counts
+    sample_count: min_32_or_complete_matched_space
+    ordering: seeded_permutation
+  flat_ppo:
+    environment: overlap_safe_multi_start_node_removal_mdp
+    episode_starts: seeded_permutation_of_four_maximal_legal_masks_repeated_cyclically
+    actions: one_remove_action_per_retained_node_plus_stop
+    invalid_actions: removed_nodes_and_unaffordable_unseen_masks
+    observation: retained_bits_region_fractions_current_metrics_remaining_budget_and_complete_padded_query_ledger
+    actor_critic: shared_two_layer_tanh
+    hidden_size: 64
+    maximum_policy_actions: 256
+    maximum_episodes: 64
+    rollout_steps: 32
+    update_epochs: 4
+    learning_rate: 0.0003
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_ratio: 0.2
+    value_coefficient: 0.5
+    entropy_coefficient: 0.01
+    maximum_gradient_norm: 0.5
+    reward: {effect: 1.0, benign: 1.0, size: 0.1, cost: 0.001, feasible_stop_bonus: 0.25}
+    checkpoint_selection: highest_episode_return_then_earliest_episode
+    checkpoint_reload: deterministic_masked_argmax_on_fresh_evaluator_cache
+reserved_evaluations:
+  negative_controls:
+    - identity_clean_to_clean
+    - passive_hook
+    - irrelevant_position
+    - opposite_decision_donor
+    - shuffled_same_decision_donor
+    - region_and_count_matched_random
+  checkpoint_reload: selected_policy_only_or_explicit_not_applicable_for_nonlearned_method
+  independent_verification: best_terminal_mask_on_fresh_execution
+  local_minimality: every_legal_single_node_removal_up_to_five_or_report_unverified
+budget_and_split:
+  maximum_unique_search_masks: 32
+  maximum_total_mask_evaluations: 45
+  maximum_model_forward_steps: 7360
+  actual_consumption_reported: true
+  cache_isolation: fresh_per_method_and_seed
+  split: development_discovery_only
+  development_audit_validation_test_access: forbidden
+scientific_method_changes: prospective_algorithm_completion_only
+unchanged:
+  - qci1_and_qci2_evidence
+  - candidate_graph_and_mask_meaning
+  - objective_thresholds_and_benign_units
+  - bvp_edge_acceptance
+  - construct_validity_limitation
+review:
+  required: true
+  decision_artifact_created_only_after_human_review: true

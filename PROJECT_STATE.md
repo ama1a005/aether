@@ -1,5 +1,14 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 v2.3 algorithm completion awaits review
+
+Constraint-safe runner implementation showed that the approved proposal names
+the comparator families but does not uniquely determine overlap-safe starts,
+tie breaks, matched-random reference sampling or PPO hyperparameters. V2.3
+prospectively freezes these details before CORE-02 model access. It changes no
+evidence, candidate, metric, threshold, split or budget. Execution is paused at
+the exact-hash human review gate.
+
 ## 2026-11-13 QCI-2 v2.2 accounting amendment approved
 
 The human project owner approved the exact v2.2 accounting amendment at SHA-256
