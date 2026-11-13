@@ -12,3 +12,6 @@ def test_core02_notebook_is_pinned_restart_safe_and_split_locked() -> None:
     assert "scripts.verify_qci2_matched_search_bundle" in source
     assert "development-audit" in source and "validation or test" in source
     assert all(cell.get("outputs", []) == [] for cell in notebook["cells"] if cell["cell_type"] == "code")
+    for index, cell in enumerate(notebook["cells"]):
+        if cell["cell_type"] == "code":
+            compile("".join(cell["source"]), f"core02-cell-{index}", "exec")

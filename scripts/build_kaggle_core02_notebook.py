@@ -55,7 +55,7 @@ subprocess.run(['git','fetch','origin','phase1/core-nov19'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
 lock=WORK/'core02-lock.txt'; lines=(REPO/'requirements-lock.txt').read_text().splitlines()
-lock.write_text('\n'.join(x for x in lines if not x.startswith('torch=='))+'\n')
+lock.write_text(chr(10).join(x for x in lines if not x.startswith('torch=='))+chr(10))
 subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cpu'],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
