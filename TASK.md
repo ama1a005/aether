@@ -1,5 +1,11 @@
 # AETHER current bounded task
 
+## Implement the approved v2.3 CORE-02 package
+
+Record the exact v2.3 approval, implement its comparator definitions without
+deviation, and complete the real evaluator, checkpointing, independent bundle
+verification, atomic ingestion and commit-pinned external notebook.
+
 ## Review QCI-2 v2.3 algorithm-completion amendment
 
 Review the exact overlap-safe greedy, beam, receiver-only, matched-random and

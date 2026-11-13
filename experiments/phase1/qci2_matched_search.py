@@ -25,8 +25,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
 DEFAULT_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml"
 DEFAULT_V2_1_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
+DEFAULT_METHOD_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_3_amendment.yaml"
 DEFAULT_PROPOSAL_DECISION = ROOT / "results/phase1/method_freeze/decision.json"
 DEFAULT_AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_2_decision.json"
+DEFAULT_METHOD_AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_3_decision.json"
 
 
 def _git(args: list[str]) -> str:
@@ -41,8 +43,10 @@ def inspect_preflight(
     proposal: Path,
     amendment: Path,
     v2_1_amendment: Path,
+    method_amendment: Path,
     proposal_decision: Path,
     amendment_decision: Path,
+    method_amendment_decision: Path,
     model_snapshot: Path | None,
     output: Path,
     method: str | None,
@@ -54,8 +58,10 @@ def inspect_preflight(
     freeze = load_effective_method_freeze(
         repo=ROOT, proposal_path=proposal, amendment_path=amendment,
         v2_1_amendment_path=v2_1_amendment,
+        method_amendment_path=method_amendment,
         proposal_decision_path=proposal_decision,
         amendment_decision_path=amendment_decision,
+        method_amendment_decision_path=method_amendment_decision,
     )
     plans = build_run_plans(
         freeze, methods=[method] if method else None, seeds=[seed] if seed is not None else None
@@ -120,8 +126,10 @@ def main() -> None:
     parser.add_argument("--protocol", type=Path, default=DEFAULT_PROPOSAL)
     parser.add_argument("--amendment", type=Path, default=DEFAULT_AMENDMENT)
     parser.add_argument("--v2-1-amendment", type=Path, default=DEFAULT_V2_1_AMENDMENT)
+    parser.add_argument("--method-amendment", type=Path, default=DEFAULT_METHOD_AMENDMENT)
     parser.add_argument("--proposal-decision", type=Path, default=DEFAULT_PROPOSAL_DECISION)
     parser.add_argument("--amendment-decision", type=Path, default=DEFAULT_AMENDMENT_DECISION)
+    parser.add_argument("--method-amendment-decision", type=Path, default=DEFAULT_METHOD_AMENDMENT_DECISION)
     parser.add_argument("--model-snapshot", type=Path)
     parser.add_argument("--input-artifact", action="append", type=Path, required=True)
     parser.add_argument("--declared-budget", type=int, required=True)
@@ -133,8 +141,10 @@ def main() -> None:
     result = inspect_preflight(
         proposal=args.protocol.resolve(), amendment=args.amendment.resolve(),
         v2_1_amendment=args.v2_1_amendment.resolve(),
+        method_amendment=args.method_amendment.resolve(),
         proposal_decision=args.proposal_decision.resolve(),
         amendment_decision=args.amendment_decision.resolve(),
+        method_amendment_decision=args.method_amendment_decision.resolve(),
         model_snapshot=args.model_snapshot.resolve() if args.model_snapshot else None,
         output=args.output.resolve(), method=args.method, seed=args.seed,
         input_artifacts=tuple(args.input_artifact), declared_budget=args.declared_budget,

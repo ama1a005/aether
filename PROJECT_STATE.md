@@ -1,5 +1,12 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2 v2.3 algorithm completion approved
+
+The human project owner approved the exact v2.3 algorithm amendment at SHA-256
+`5e8fc93feeb04227462769e0ebdb9f8e7aa759b9cbca118c61c0ee4faf421c06`.
+The overlap-safe comparator implementation, verifier and external execution
+package are authorized. Protected splits remain closed.
+
 ## 2026-11-13 CORE-02 v2.3 algorithm completion awaits review
 
 Constraint-safe runner implementation showed that the approved proposal names

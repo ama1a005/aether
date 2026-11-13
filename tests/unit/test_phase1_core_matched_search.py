@@ -7,23 +7,31 @@ from pathlib import Path
 
 import pytest
 
-from causal.core_search import build_run_plans, enumerate_legal_masks, load_effective_method_freeze
+from causal.core_search import (
+    build_run_plans, enumerate_legal_masks, load_effective_method_freeze,
+    run_constraint_safe_search,
+)
+from discovery.budgeted import Evaluation
 
 
 ROOT = Path(__file__).resolve().parents[2]
 PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
 V2_1_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
 AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml"
+METHOD_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_3_amendment.yaml"
 PROPOSAL_DECISION = ROOT / "results/phase1/method_freeze/decision.json"
 AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_2_decision.json"
+METHOD_AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_3_decision.json"
 
 
 def _freeze():
     return load_effective_method_freeze(
         repo=ROOT, proposal_path=PROPOSAL, amendment_path=AMENDMENT,
         v2_1_amendment_path=V2_1_AMENDMENT,
+        method_amendment_path=METHOD_AMENDMENT,
         proposal_decision_path=PROPOSAL_DECISION,
         amendment_decision_path=AMENDMENT_DECISION,
+        method_amendment_decision_path=METHOD_AMENDMENT_DECISION,
     )
 
 
@@ -36,7 +44,9 @@ def test_effective_method_requires_exact_human_approved_hashes(tmp_path: Path) -
         load_effective_method_freeze(
             repo=ROOT, proposal_path=PROPOSAL, amendment_path=AMENDMENT,
             v2_1_amendment_path=V2_1_AMENDMENT,
+            method_amendment_path=METHOD_AMENDMENT,
             proposal_decision_path=PROPOSAL_DECISION, amendment_decision_path=decision,
+            method_amendment_decision_path=METHOD_AMENDMENT_DECISION,
         )
 
 
@@ -65,3 +75,25 @@ def test_unfrozen_seed_and_method_fail_closed() -> None:
         build_run_plans(freeze, seeds=[44])
     with pytest.raises(ValueError, match="unknown method"):
         build_run_plans(freeze, methods=["new_search"])
+
+
+@pytest.mark.parametrize("method", ["matched_random", "greedy", "beam", "receiver_only", "flat_ppo"])
+def test_every_method_queries_only_legal_measured_masks(method: str) -> None:
+    freeze = _freeze()
+    plan = build_run_plans(freeze, methods=[method], seeds=[11])[0]
+    observed: list[tuple[str, ...]] = []
+
+    def evaluate(mask: tuple[str, ...]) -> Evaluation:
+        observed.append(mask)
+        return Evaluation(
+            faithfulness=0.85 - 0.01 * len(mask), benign_damage=0.0,
+            forward_passes=160, raw_outputs={"mask": list(mask), "executed": True},
+        )
+
+    outcome = run_constraint_safe_search(freeze, plan, evaluate)
+    legal = set(enumerate_legal_masks(freeze.proposal))
+    assert observed and set(observed) <= legal
+    assert len(observed) == len(set(observed)) <= 32
+    assert outcome.ledger["model_forward_steps"] == 160 + 160 * len(observed)
+    if method == "receiver_only":
+        assert all(all(node.startswith("receiver.") for node in mask) for mask in observed)
