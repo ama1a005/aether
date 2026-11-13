@@ -1,7 +1,19 @@
+"""Legacy synthetic bridge scaffold.
+
+This module contains association-only mock logic used by early synthetic tests.
+Its output is never intervention evidence and must not be promoted into a
+scientific DCMG result.
+"""
+
 import json
 from typing import List, Tuple
 
 class MessageBridge:
+    """Build synthetic association links that are ineligible for paper evidence."""
+
+    evidence_class = "synthetic_association_scaffold"
+    scientific_evidence_eligible = False
+
     def __init__(self):
         self.sender_message_links: List[Tuple[str, str, float]] = []
         self.message_receiver_links: List[Tuple[str, str, float]] = []
@@ -38,6 +50,11 @@ class MessageBridge:
 
     def to_dict(self) -> dict:
         return {
+            "evidence_class": self.evidence_class,
+            "scientific_evidence_eligible": self.scientific_evidence_eligible,
+            "claim_boundary": (
+                "Association-only mock scores; not intervention-verified BVP/DCMG evidence."
+            ),
             "sender_message_links": self.sender_message_links,
             "message_receiver_links": self.message_receiver_links
         }

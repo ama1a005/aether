@@ -1,0 +1,150 @@
+schema_version: aether.qci2-method-freeze-proposal.v1
+status: AWAITING_HUMAN_REVIEW
+experiment_id: P0_cross_20261114_qci2_matched_search
+claim_boundary: >-
+  A passed development run may compare search mechanics and identify
+  intervention-supported development mechanisms. It cannot establish locked
+  generalization, a globally minimal circuit, search superiority, remediation
+  effectiveness, or publication readiness.
+model:
+  id: Qwen/Qwen2.5-1.5B-Instruct
+  revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  device: cpu
+  dtype: float32
+  generation: deterministic_greedy
+split: development_discovery
+case_ids:
+  - v2_case_002
+  - v2_case_003
+  - v2_case_004
+  - v2_case_005
+  - v2_case_006
+  - v2_case_007
+  - v2_case_008
+  - v2_case_009
+  - v2_case_014
+  - v2_case_015
+  - v2_case_016
+  - v2_case_017
+  - v2_case_018
+  - v2_case_019
+  - v2_case_020
+  - v2_case_021
+validation_case_ids: []
+test_case_ids: []
+audit_case_policy: forbidden_for_tuning_selection_or_reward_design
+candidate_policy: exactly_qci2_supported_internal_nodes_plus_predeclared_message_and_outcome_nodes
+candidate_graph:
+  nodes:
+    - {id: sender.module.L22.attention_output, kind: internal, region: sender, intervenable: true}
+    - {id: message.decision_code, kind: mediator_field, region: message, intervenable: true}
+    - {id: message.whole, kind: mediator_object, region: message, intervenable: true}
+    - {id: receiver.head.L20.H5.pre_o_proj, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.head.L22.H7.pre_o_proj, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.module.L22.attention_output, kind: internal, region: receiver, intervenable: true}
+    - {id: receiver.outcome_margin, kind: outcome, region: outcome, intervenable: false}
+  edges:
+    - {id: e_s22_decision, source: sender.module.L22.attention_output, target: message.decision_code, status: hypothesized}
+    - {id: e_decision_r20h5, source: message.decision_code, target: receiver.head.L20.H5.pre_o_proj, status: hypothesized}
+    - {id: e_decision_r22h7, source: message.decision_code, target: receiver.head.L22.H7.pre_o_proj, status: hypothesized}
+    - {id: e_decision_r22attn, source: message.decision_code, target: receiver.module.L22.attention_output, status: hypothesized}
+    - {id: e_r20h5_outcome, source: receiver.head.L20.H5.pre_o_proj, target: receiver.outcome_margin, status: hypothesized}
+    - {id: e_r22h7_outcome, source: receiver.head.L22.H7.pre_o_proj, target: receiver.outcome_margin, status: hypothesized}
+    - {id: e_r22attn_outcome, source: receiver.module.L22.attention_output, target: receiver.outcome_margin, status: hypothesized}
+bridge_tests:
+  sender_to_message:
+    intervention: paired_activation_replacement_during_actual_sender_generation
+    required_observations: [regenerated_message_bytes, regenerated_message_sha256, decision_code, raw_sender_output]
+  message_to_receiver:
+    intervention: paired_decision_field_and_whole_message_replacement
+    required_observations: [incoming_message_sha256, receiver_activation_hashes, receiver_margin, receiver_code]
+  receiver_to_outcome:
+    intervention: paired_activation_replacement_with_message_bytes_held_identical
+    required_observations: [incoming_message_sha256, intervention_application_count, receiver_margin, receiver_code]
+  edge_acceptance: each_edge_requires_its_own_intervention_evidence_and_negative_controls
+operators:
+  internal: [paired_rescue, paired_induction, identity, passive, irrelevant_position, opposite_decision_donor]
+  message: [whole_message_rescue, whole_message_induction, decision_code_rescue, decision_code_induction, identity]
+methods:
+  - {id: matched_random, learned: false}
+  - {id: greedy, learned: false}
+  - {id: beam, learned: false, beam_width: 2}
+  - {id: receiver_only, learned: false, allowed_regions: [receiver]}
+  - {id: flat_ppo, learned: true, checkpoint_reload_required: true}
+  - {id: hierarchical_ppo, learned: true, role: optional_secondary, checkpoint_reload_required: true}
+seeds: [11, 22, 33]
+matched_budget:
+  maximum_unique_masks: 32
+  maximum_model_forward_steps: 8192
+  accounting: every_uncached_model_forward_including_baselines_controls_training_and_verification
+  exhaustion_action: stop_and_retain_incomplete_run
+cache_policy: fresh_cache_per_method_and_seed
+objective:
+  primary: signed_faithfulness
+  feasibility:
+    minimum_faithfulness: 0.8
+    maximum_benign_damage: 0.1
+  report_separately:
+    - raw_clean_attacked_and_intervened_margins
+    - signed_faithfulness
+    - intervention_footprint
+    - retained_nodes_and_edges
+    - unique_mask_queries
+    - model_forward_steps
+    - wall_time_seconds
+    - seed_stability
+    - invalid_and_error_denominators
+    - benign_utility
+  minimality_claim: one_step_local_only_after_all_single_removals_are_measured
+controls:
+  - identity
+  - passive_hook
+  - irrelevant_position
+  - opposite_decision_donor
+  - same_decision_donor
+  - region_and_count_matched_random
+  - whole_message_positive_control
+stopping:
+  deterministic: budget_exhaustion_or_no_feasible_child_or_local_minimality_verified
+  learned: explicit_stop_action_or_budget_exhaustion
+outputs:
+  required:
+    - manifest.json
+    - preflight.json
+    - candidate_graph.json
+    - raw_evaluations.jsonl
+    - search_results.json
+    - controls.json
+    - summary.json
+    - archive_contents.json
+  failure_states: [BLOCKED_PREFLIGHT, INCOMPLETE_BUDGET, FAILED_EXECUTION, COMPLETE_NEGATIVE, COMPLETE]
+construct_validity:
+  current_limitation: >-
+    The qualified sender emits recommendation_code and the receiver is instructed
+    to return the sender decision_code. QCI-2 may therefore identify
+    decision-code copying rather than a richer unsafe-trust computation.
+  handling: preserve_as_limitation_and_freeze_a_separate_conflicting_evidence_stress_test
+  qci2_results_unchanged: true
+evidence_inputs:
+  qci2_protocol:
+    path: configs/causal_candidates/qwen_1_5b_qci2_semantic_v1.json
+    sha256: b068a64b229ca16839de05a749b60e090a60674a6dca9dfd421e6d1f23c85b73
+  qci2_discovery_summary:
+    path: results/phase1/causal_interventions/qwen15b_qci2_discovery/summary.json
+    sha256: 6667851162d1687d9179784e4113d0125df19d53ee52d8fb5f58a4c93af80fdc
+  qci2_discovery_assessments:
+    path: results/phase1/causal_interventions/qwen15b_qci2_discovery/candidate_assessments.json
+    sha256: 925269aa543a7f4d1d5b85935e4eb02cfed5d5997b23f51b28174d2aa4edc201
+  qci2_audit_protocol:
+    path: configs/causal_candidates/qwen_1_5b_qci2_development_audit_v1.json
+    sha256: b957bb9905de490d994ede01a4b381348f3c18ae385a4dfe2dfd182172404a29
+  qci2_audit_summary:
+    path: results/phase1/causal_interventions/qwen15b_qci2_audit/summary.json
+    sha256: e1284b7bb8a066ae054e5ef1ff254a4865fad302b6e40f10ba88a0469316ed78
+  qci2_audit_assessments:
+    path: results/phase1/causal_interventions/qwen15b_qci2_audit/candidate_audit_assessments.json
+    sha256: 62e4939940c6bfe2b497ff576f685d97ef3e4ac7cb7e1826d8fb78f10b578b17
+review:
+  required: true
+  reviewer_must_be_independent_of_proposal_generation: true
+  decision_artifact_created_only_after_human_review: true
