@@ -93,6 +93,7 @@ class RecordingEvaluator:
             stream.write(json.dumps(record, sort_keys=True, allow_nan=False) + "\n")
             stream.flush()
         self.cache[mask] = value
+        _checkpoint_archive(self.raw.parent)
         return value
 
 
