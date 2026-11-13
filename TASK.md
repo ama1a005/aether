@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Build the approved CORE-02 runner and external execution handoff
+
+Implement and model-free verify the idempotent matched-search runner against the
+approved v2 proposal plus v2.1 accounting amendment. Require real measured Qwen
+interventions, exact multi-site application counts, fresh per-method/per-seed
+caches, retained incomplete states, independent verification and immutable
+outputs. Prepare a commit-pinned checkpoint-safe external notebook. Do not load
+the model locally or access audit, validation or test cases.
+
 ## Review the QCI-2 v2.1 forward-accounting amendment
 
 Before implementing evidence-bearing CORE-02 execution, review the accounting-

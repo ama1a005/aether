@@ -1,5 +1,14 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2 v2.1 accounting amendment approved
+
+The human project owner approved the accounting-only amendment at SHA-256
+`3c6c3eba7c8d08211813faba41885a91d3b32abae6a34aee76c05ed2e96e849b`.
+The effective per-method/per-seed ceiling is 3,760 real model forward steps.
+CORE-02 runner and external handoff implementation is authorized on the 16
+development-discovery cases only. Model access remains conditional on a clean,
+commit-pinned preflight; development-audit, validation and test remain closed.
+
 ## 2026-11-13 CORE-02 accounting audit requires v2.1 approval
 
 Mapping approved method-freeze v2 to the qualified Qwen execution path exposed
