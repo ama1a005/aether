@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 real mask evaluator implemented
+
+The real evaluator now runs both frozen conditions for each of the 16 discovery
+cases, regenerates the sender message, applies mutually exclusive message
+operations, installs simultaneous receiver module/head patches, verifies every
+selected internal address applied exactly once, and returns median signed
+faithfulness plus raw-margin benign damage with all case rows. It charges the
+approved 160 forwards per mask. This code has model-independent boundary tests;
+it has not loaded Qwen locally and is not experimental evidence.
+
 ## 2026-11-13 CORE-02 constraint-safe search engine implemented
 
 The five v2.3 comparators now operate only on the 36 legal masks. Greedy and

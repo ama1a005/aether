@@ -1,5 +1,11 @@
 # AETHER current bounded task
 
+## Add retained execution orchestration around the real evaluator
+
+The real two-condition mask evaluator is implemented. Wire it into the CLI with
+method/seed checkpointing and raw artifacts, then complete independent archive
+verification, atomic ingestion and the commit-pinned external notebook.
+
 ## Connect the approved search engine to real Qwen measurements
 
 The v2.3 constraint-safe search engine is model-free verified. Implement the
