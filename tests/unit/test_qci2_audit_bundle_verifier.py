@@ -32,7 +32,7 @@ def test_qci2_audit_verifier_recalculates_support(tmp_path) -> None:
     _write(tmp_path / "summary.json", {"run_id": "audit", "candidate_ids": [candidate],
         "audit_supported_candidates": [candidate], "candidate_execution_count": 40,
         "message_positive_control_count": 8, "development_audit_executions": 48,
-        "validation_executions": 0, "test_executions": 0, "next_state": "READY_FOR_METHOD_FREEZE_REVIEW",
+        "validation_executions": 0, "test_executions": 0, "next_state": "READY_FOR_QCI2_METHOD_FREEZE_REVIEW",
         "query_ledger": {"executions": 48, "maximum_executions": 500, "forward_steps": 100, "maximum_forward_steps": 2400}})
     _write(tmp_path / "audit_preflight.json", {"decision": {"overall": "PASS"}}); _write(tmp_path / "audit_model_access.json", {"state": "QCI2_AUDIT_COMPLETE"})
     names = ["summary.json", "raw_audit_interventions.jsonl", "candidate_audit_assessments.json", "message_positive_controls.json", "audit_preflight.json", "audit_model_access.json"]

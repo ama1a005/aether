@@ -66,7 +66,7 @@ def verify_audit(root: Path) -> dict[str, Any]:
     supported = sorted(candidate for candidate, row in recalculated.items() if row["status"] == "supported")
     if sorted(summary.get("audit_supported_candidates", [])) != supported:
         raise ValueError("QCI-2 audit support summary differs")
-    state = "READY_FOR_METHOD_FREEZE_REVIEW" if supported else "STOP_DECISION_SEMANTIC_CLAIM"
+    state = "READY_FOR_QCI2_METHOD_FREEZE_REVIEW" if supported else "STOP_DECISION_SEMANTIC_CLAIM"
     if summary.get("next_state") != state:
         raise ValueError("QCI-2 audit next state differs")
     ledger = summary["query_ledger"]
