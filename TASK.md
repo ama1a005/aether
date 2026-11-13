@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Implement the approved QCI-2 development-only matched-search runner
+
+Method-freeze v2 is human-approved at SHA-256
+`b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c`.
+Implement an idempotent, fail-closed CORE-02 runner and independent verifier for
+the 16 development-discovery cases. Enforce exact mask ordering, overlap guards,
+per-method/per-seed cache isolation and budget accounting. Prepare a commit-
+pinned external notebook only after model-independent preflight/tests pass. Do
+not execute Qwen locally, use audit cases for tuning, or access validation/test.
+
 ## Freeze the post-audit QCI-2 search and remediation method
 
 QCI-2 discovery and its prospectively frozen development audit independently

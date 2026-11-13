@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2 method-freeze v2 approved
+
+The human project owner approved the prospectively revised QCI-2 matched-search
+and BVP proposal at SHA-256
+`b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c`.
+The separate decision artifact authorizes implementation of the development-
+discovery-only runner. It does not authorize model execution until preflight and
+commit pinning pass, and it does not open development-audit, validation or test
+cases. The next bounded task is CORE-02 runner/preflight implementation.
+
 ## 2026-11-13 QCI-2A1 audit PASS — four semantic candidates replicated
 
 The retained QCI-2A1 archive independently verifies and is atomically ingested

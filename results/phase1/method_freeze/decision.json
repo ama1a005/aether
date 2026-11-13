@@ -1,0 +1,23 @@
+{
+  "schema_version": "aether.qci2-method-freeze-decision.v1",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_core_workstream",
+  "reviewed_utc": "2026-11-13T13:55:39.8279805Z",
+  "proposal_path": "configs/phase1_core/qci2_method_freeze_v2.yaml",
+  "proposal_sha256": "b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c",
+  "proposal_schema_version": "aether.qci2-method-freeze-proposal.v2",
+  "source_branch": "phase1/core-nov19",
+  "source_commit_before_decision": "4358de073782953402213470be869da75b7d8e42",
+  "authorized_next_state": "IMPLEMENT_DEVELOPMENT_ONLY_MATCHED_SEARCH_RUNNER",
+  "validation_executions": 0,
+  "test_executions": 0,
+  "restrictions": [
+    "do_not_modify_or_rerun_qci1_or_qci2",
+    "do_not_use_development_audit_cases_for_tuning_or_selection",
+    "do_not_access_validation_or_test",
+    "do_not_promote_topology_or_association_to_causal_edge_evidence",
+    "stop_and_retain_incomplete_runs_on_budget_exhaustion"
+  ]
+}
