@@ -306,3 +306,47 @@ code, executed evidence and future work.
 Next bounded task: on the larger computer, select an immutable Qwen2.5-1.5B
 revision, install the exact environment, run `python scripts/phase1_preflight.py`,
 and stop unless every gate passes. Model qualification requires a separate task.
+
+## Phase-1 local closure and execution packaging — 2026-11-14
+
+Finish every Phase-1 deliverable that does not depend on observing the active
+CORE-02 campaign or a later external model/benchmark run. Add a prospective,
+machine-readable execution registry over the already frozen completion gates;
+fail-closed dependency and artifact checks; a human-readable execution/evidence
+guide; and an evidence-status view in the review frontend. Prepare only honest
+wrappers around existing official benchmark and experiment interfaces.
+
+Do not change frozen contracts, earlier protocols, prompts, splits, thresholds,
+or results. Do not access validation/test, download models or benchmark data,
+invent results, mark preparation as evidence, or modify user-owned untracked
+manuals/results. External executions remain manual and must be ingested only by
+their declared verifiers. CORE-02 remains the immediate external prerequisite.
+
+Acceptance: every completion gate has an explicit execution class, prerequisite
+list, runner or documented human gate, expected artifact and verification rule;
+the registry rejects cycles, unknown dependencies and unsafe paths; the frontend
+shows live audit state without claiming missing work is complete; documentation
+distinguishes implementation, tests, executed evidence and future execution;
+relevant Python/frontend tests pass.
+
+## Phase-1 external execution packages — 2026-11-14
+
+Complete all locally implementable infrastructure needed after CORE-02: pinned
+BFCL and AgentDojo native execution packages, strict bundle verification and
+atomic ingestion, real-Qwen red-team and Agent-C entry points, trained-SAE
+evaluation preflight/execution, generic second-model qualification, Kaggle
+notebook generation, final evidence UI/report integration and demo packaging
+checks. Every path must retain raw outputs and reproducibility metadata and fail
+closed before model/data access when prerequisites are absent.
+
+Do not execute models, download official datasets, select a trained SAE or
+second model on the user's behalf, open validation/test, modify frozen contracts
+or protocols, or promote synthetic/transformed evidence as official. Any stage
+whose scientific parameters are not yet frozen must stop at an explicit review
+gate rather than inventing defaults.
+
+Acceptance: model-independent tests exercise successful fixture bundles and all
+failure boundaries; generated notebooks compile and pin immutable source/config;
+official-package outputs remain clearly separated from AETHER transformations;
+ingesters verify before atomic copy and reject overwrite; the frontend and final
+report consume only verified evidence; the full test and demo build pass.

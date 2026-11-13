@@ -18,6 +18,7 @@ from demo.backend.model_runtime import model_status, preload_model
 from demo.backend.repository import get_case, load_cases
 from demo.backend.service import get_live_replay, get_replay, get_run, run_induction, run_pipeline, run_rescue
 from demo.backend.tools import run_all_tools, run_tool
+from scripts.phase1_execution_status import execution_status
 
 
 class CaseRequest(BaseModel):
@@ -163,6 +164,15 @@ def evidence(): return evidence_cards()
 
 @app.get("/api/demo/system-status")
 def status(): return system_status()
+
+
+@app.get("/api/demo/phase1-status")
+def phase1_status() -> dict:
+    """Expose verified evidence and prospective execution readiness read-only."""
+    try:
+        return execution_status()
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(500, f"Phase-1 evidence registry is invalid: {exc}") from exc
 
 
 @app.get("/api/demo/model/status")

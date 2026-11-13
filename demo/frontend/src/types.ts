@@ -4,4 +4,6 @@ export interface DemoCase {case_id:string;display_name:string;age:number;sex:str
 export interface PipelineRun {run_id:string;case_id:string;condition:string;provenance_type:string;tools?:unknown[];raw_fhir_mcp_data?:unknown[];mcp_calls?:unknown[];clean_evidence?:Record<string,unknown>;attacked_evidence?:Record<string,unknown>|null;attack_delta?:{path:string;clean:any;attacked:any};sender:Record<string,unknown>;mediator:{raw:string;parsed:Record<string,unknown>;sha256:string};receiver:{decision:Action;score:number;raw_output:string};expected_action?:Action;correct?:boolean;runtime_seconds:number}
 export interface EvidenceCard {title:string;status:string;provenance_type:string;artifact:string;details:Record<string,unknown>}
 export interface StatusRow {capability:string;status:string}
+export interface Phase1Stage {id:string;category:string;evidence_status:string;readiness:string;execution:string;depends_on:string[];runner:string|null;runner_exists:boolean|null;expected_artifact:string;verification:string;reasons:string[]}
+export interface Phase1Status {schema_version:string;overall_evidence:string;claim_boundary:string;stages:Phase1Stage[]}
 export interface ReplayBundle {case_id:string;provenance_type:string;clean:PipelineRun;attacked:PipelineRun;rescue:Record<string,unknown>;content_sha256:string}

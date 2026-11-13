@@ -69,6 +69,10 @@ def test_frontend_api_contracts() -> None:
     assert clean.status_code == 200 and clean.json()["provenance_type"] == "LIVE EXECUTION"
     assert client.get("/api/demo/evidence").status_code == 200
     assert client.get("/api/demo/system-status").status_code == 200
+    phase1 = client.get("/api/demo/phase1-status")
+    assert phase1.status_code == 200
+    assert phase1.json()["overall_evidence"] == "INCOMPLETE"
+    assert len(phase1.json()["stages"]) == 22
     model = client.get("/api/demo/model/status")
     assert model.status_code == 200 and model.json()["policy"].startswith("single instance")
 

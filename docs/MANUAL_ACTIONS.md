@@ -214,3 +214,34 @@ The 2026-10-19 recheck after cleanup improved available RAM to 2.814 GiB, but th
 3. Preserve `aether-qwen-qualification-results.tar.gz` from Kaggle outputs. The archive includes the preflight, snapshot hash manifest, attempt marker, gate results, raw per-case rows, environment inventory, and logs. Do not reset the attempt marker or rerun after model access begins.
 4. If the preflight blocks, stop before model access. If the model load or qualification fails, preserve the failure and do not tune/retry. MQ-G2 is skipped unless MQ-G1 passes.
 5. If MQ-G1 and MQ-G2 both pass, stop and review the evidence before authorizing a separate instrumentation-acceptance task. This notebook does not produce internal causal-circuit evidence.
+
+## Current manual sequence — 2026-11-14
+
+The qualification instructions above are historical and complete. Do this now:
+
+1. Resume `notebooks/aether_qwen_core02_matched_search.ipynb` using exactly one
+   private attached CORE-02 checkpoint dataset. Repeat checkpoint transfer after
+   any Kaggle interruption until the notebook exports the final results archive.
+2. Do not submit a checkpoint archive as final evidence. Return the final archive
+   for `scripts/verify_qci2_matched_search_bundle.py` and controlled ingestion.
+3. Do not open validation or test. CORE-02 must first determine the prospective
+   remediation protocol; that protocol must be reviewed and frozen before its run.
+4. MCPTox needs human license/protocol clarification before a new official-result
+   claim. TAMAS needs native-framework credentials. A trained SAE needs a pinned
+   compatible real checkpoint. Do not substitute toy or transformed outputs.
+5. Use `python -m scripts.phase1_execution_status` or the demo’s **PHASE-1
+   EVIDENCE** page to see the next authorized gate.
+
+### Prospective supporting-protocol reviews
+
+After CORE-02 verification, review the exact configs and record approval before
+running their generated notebooks:
+
+- Qwen red-team: SHA-256 `dc1204374fd7e2207a7af694ff173e4ca781807bb9f2bb4ba6ba9fecb98ced03`
+- Qwen-trace Agent C: SHA-256 `94e724ce189d9247da79436bfed36de34a3d431112b77a6c3bdacb939a942a5c`
+- trained-SAE evaluation: SHA-256 `d26478bbd31d820e2068ba37cbd8c361df89024caecf5a8db1e998eaf61c94e5`
+
+The SAE config additionally needs the real checkpoint/component and activation
+artifact paths. The second-model template needs a distinct public model ID,
+immutable 40-hex revision and named human reviewer. The runners refuse to load
+models or accept artifacts until these fields are frozen.

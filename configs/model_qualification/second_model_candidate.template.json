@@ -1,0 +1,15 @@
+{
+  "status": "AWAITING_HUMAN_MODEL_SELECTION_AND_REVIEW",
+  "model_id": "REPLACE_WITH_DISTINCT_OPEN_MODEL",
+  "revision": "REPLACE_WITH_IMMUTABLE_40_HEX_COMMIT",
+  "device": "cpu",
+  "dtype": "float32",
+  "quantized": false,
+  "explicit_offload": false,
+  "disk_offload": false,
+  "low_cpu_mem_usage": true,
+  "trust_remote_code": false,
+  "local_files_only": true,
+  "cpu_threads": 2,
+  "human_review": {"approved": false, "reviewer": "", "utc_timestamp": ""}
+}

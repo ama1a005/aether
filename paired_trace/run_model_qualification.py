@@ -60,6 +60,12 @@ def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def _repo_or_absolute(path: Path) -> str:
+    """Render committed paths relatively and external protocol files absolutely."""
+    resolved = path.resolve()
+    return str(resolved.relative_to(ROOT)) if resolved.is_relative_to(ROOT) else str(resolved)
+
+
 def _text_hashes_with_newline_variants(path: Path) -> dict[str, str]:
     """Return raw, canonical-LF, and canonical-CRLF hashes for a UTF-8 text file."""
     raw = path.read_bytes()
@@ -131,7 +137,7 @@ def measure_hardware(cache_path: Path) -> dict[str, Any]:
         "utc_timestamp": datetime.now(timezone.utc).isoformat(),
         "python_executable": sys.executable,
         "cache_path": str(cache_path.resolve()),
-        "model_candidate_config": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "model_candidate_config": _repo_or_absolute(MODEL_CONFIG_PATH),
         "model_candidate_config_sha256": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "model_revision": model_config["revision"],
         "model_accessed": False,
@@ -307,7 +313,7 @@ def _write_preflight_manifest(output_root: Path, result: dict[str, Any]) -> None
         "git_commit": _git(["git", "rev-parse", "HEAD"]),
         "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
+            _repo_or_absolute(path): _canonical_text_sha256(path)
             for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
                          MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
@@ -317,7 +323,7 @@ def _write_preflight_manifest(output_root: Path, result: dict[str, Any]) -> None
         "random_seeds": [v21["seed"]], "hardware_measurements": result["measurements"],
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages,
-        "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "command_line": sys.argv, "config_file": _repo_or_absolute(MODEL_CONFIG_PATH),
         "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH), "model_accessed": False,
         "preflight_decision": result["decision"], "raw_output_path": str(artifact),
         "artifact_paths": {str(artifact): sha256_file(artifact)},
@@ -340,7 +346,7 @@ def _write_failure_manifest(output_root: Path, error: Exception) -> None:
         "git_commit": _git(["git", "rev-parse", "HEAD"]),
         "uncommitted_diff": bool(_git(["git", "status", "--porcelain"])),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
+            _repo_or_absolute(path): _canonical_text_sha256(path)
             for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
                          MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
@@ -360,7 +366,7 @@ def _write_failure_manifest(output_root: Path, error: Exception) -> None:
         "tokenizer_revision": model_config["revision"], "random_seeds": [v21["seed"]],
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages, "hardware": platform.platform(),
-        "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "command_line": sys.argv, "config_file": _repo_or_absolute(MODEL_CONFIG_PATH),
         "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "failure": {"exception_type": type(error).__name__, "message": str(error)},
         "raw_output_path": str(output_root / "execution_failure.json"),
@@ -759,7 +765,7 @@ def _finalize(
         "utc_timestamp": result["utc_timestamp"], "git_commit": git_commit,
         "uncommitted_diff": bool(diff),
         "dataset_manifest_hashes": {
-            str(path.relative_to(ROOT)): _canonical_text_sha256(path)
+            _repo_or_absolute(path): _canonical_text_sha256(path)
             for path in (REGISTRY_PATH, MAPPING_PATH, G1_PATH, G2_PATH, HW_PATH, V21_PATH,
                          MODEL_CONFIG_PATH, PROTOCOL_PATH)
         },
@@ -772,7 +778,7 @@ def _finalize(
                      "device": "CPU float32", "torch_cuda_available": torch.cuda.is_available()},
         "python_version": platform.python_version(), "python_executable": sys.executable,
         "python_env_hash": env_hash, "python_packages": packages,
-        "command_line": sys.argv, "config_file": str(MODEL_CONFIG_PATH.relative_to(ROOT)),
+        "command_line": sys.argv, "config_file": _repo_or_absolute(MODEL_CONFIG_PATH),
         "config_hash": _canonical_text_sha256(MODEL_CONFIG_PATH),
         "raw_output_path": str(result_path),
         "artifact_paths": {str(path.relative_to(ROOT) if path.is_relative_to(ROOT) else path): sha256_file(path)

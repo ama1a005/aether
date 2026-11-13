@@ -1,0 +1,14 @@
+schema_version: aether.qwen-red-team.v1
+status: awaiting_human_protocol_review
+approval_sha256: null
+experiment_id: P0_attack_qwen15b_development_red_team
+split: development
+model_id: Qwen/Qwen2.5-1.5B-Instruct
+model_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+case_registry: data/causal_v2/case_registry.json
+seed: 42
+n_per_family: 1
+max_target_calls: 192
+validation_executions: 0
+test_executions: 0
+claim_boundary: Development red-team robustness only; not causal-circuit, remediation, validation or test evidence.

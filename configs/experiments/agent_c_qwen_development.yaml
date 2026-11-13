@@ -1,0 +1,10 @@
+schema_version: aether.qwen-agent-c.v1
+status: awaiting_human_protocol_review
+approval_sha256: null
+split: development
+qwen_rows: results/phase1/model_qualification/qwen15b_kaggle_20261110/mq_g1_rows.json
+case_registry: data/causal_v2/case_registry.json
+risk_score_threshold: 0.4
+validation_executions: 0
+test_executions: 0
+claim_boundary: Retained real-Qwen A/B traces with deterministic clean-tool Agent-C review; not a third Qwen agent.

@@ -387,3 +387,44 @@ they do not substitute for QCI-2 or establish an AETHER internal circuit.
 The transfer config deliberately has `revision: pending`, so preflight blocks
 until an immutable revision is reviewed. Proposed BFCL/AgentDojo pins and task
 scopes likewise require official-package compatibility confirmation.
+
+## 2026-11-14 Phase-1 local closure (current authoritative checkpoint)
+
+The earlier QCI-2-pending text above is historical. QCI-2 semantic discovery,
+its development audit, method-freeze review and amendments v2.1-v2.3 are now
+verified. The active external gate is CORE-02 matched search. The retained
+Kaggle archive is a resumable partial checkpoint, not final evidence.
+
+Added an exact execution registry (`configs/phase1_execution_registry.yaml`),
+dependency/cycle/path validator (`scripts/phase1_execution_status.py`), and
+review-frontend evidence page. These wrap the frozen 22-gate completion audit;
+they do not alter prior protocols or results. The guide at
+`docs/PHASE1_EXECUTION_AND_EVIDENCE_GUIDE.md` records official dataset identity,
+test-case provenance, execution ordering, promotion rules and manual actions.
+
+Current audit: 9 PASS, 1 NOT_APPLICABLE and 12 MISSING. CORE-02 is executable;
+remediation and locked evaluation remain dependency-blocked. MCPTox official
+execution is blocked by missing reproducible official evaluator and unresolved
+repository licensing; TAMAS official-compatible execution requires its native
+framework/credentials; trained-SAE evidence requires a pinned scientifically
+suitable checkpoint. These blockers must not be replaced with mock evidence.
+
+Verification on Python 3.11.9: 450 passed, 5 skipped across unit, integration
+and regression tests. Frontend: 5 tests passed and production Vite build passed.
+P3 and P4 smokes passed; `scripts/smoke_test.py` passed 3/3 stages with 431 unit
+tests. The only warning is denied creation of `.pytest_cache`; it does not affect
+test outcomes.
+
+## 2026-11-14 external execution infrastructure closure
+
+Added real execution packages for BFCL, AgentDojo, Qwen red-team, retained-Qwen
+Agent-C review, trained-SAE evaluation and generic second-model qualification.
+All share strict hash-inventoried bundles, independent verification and atomic
+no-overwrite ingestion. Kaggle notebook builders pin immutable source commits;
+the final evidence report refuses to run while any prerequisite gate is missing.
+The review demo now has a network-free production-package verifier.
+
+No new model or benchmark was executed. Red-team, Agent-C and SAE prospective
+configs remain at explicit human-review gates; the SAE checkpoint/component and
+second-model identity are deliberately unset. This is implementation readiness,
+not new scientific evidence.

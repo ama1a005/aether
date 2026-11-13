@@ -1,0 +1,74 @@
+schema_version: aether.phase1-execution.v1
+status: prospective_execution_registry
+claim_boundary: Readiness is not scientific evidence. Only completion-gate verification can mark a stage complete.
+stages:
+  qwen_qualification: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
+  qwen_instrumentation_acceptance: {execution: completed, depends_on: [qwen_qualification], runner: null, verification: completion_gate}
+  qwen_development_capture: {execution: completed, depends_on: [qwen_instrumentation_acceptance], runner: null, verification: completion_gate}
+  qci_discovery_interventions: {execution: completed, depends_on: [qwen_development_capture], runner: null, verification: artifact_specific}
+  qci_development_audit: {execution: conditional, depends_on: [qci_discovery_interventions], runner: null, verification: artifact_specific}
+  qci2_semantic_discovery: {execution: completed, depends_on: [qwen_development_capture], runner: null, verification: artifact_specific}
+  qci2_semantic_development_audit: {execution: completed, depends_on: [qci2_semantic_discovery], runner: null, verification: artifact_specific}
+  method_freeze_review: {execution: completed, depends_on: [qci2_semantic_development_audit], runner: null, verification: completion_gate}
+  matched_search_baselines:
+    execution: kaggle_model
+    depends_on: [method_freeze_review]
+    runner: notebooks/aether_qwen_core02_matched_search.ipynb
+    verification: scripts/verify_qci2_matched_search_bundle.py
+  mechanism_guided_remediation:
+    execution: result_dependent_model
+    depends_on: [matched_search_baselines]
+    runner: null
+    verification: completion_gate
+  locked_validation:
+    execution: human_authorized_locked_split
+    depends_on: [mechanism_guided_remediation]
+    runner: null
+    verification: completion_gate
+  once_only_test:
+    execution: human_authorized_once_only
+    depends_on: [locked_validation]
+    runner: null
+    verification: completion_gate
+  bfcl_official:
+    execution: official_external_benchmark
+    depends_on: [qwen_qualification]
+    runner: benchmarks/run_native_official.py
+    verification: scripts/verify_external_bundle.py
+  mcptox_official:
+    execution: blocked_official_evaluator_and_license_review
+    depends_on: [qwen_qualification]
+    runner: docs/MCPTox_INTEGRATION.md
+    verification: completion_gate
+  tamas_official:
+    execution: blocked_native_framework_and_credentials
+    depends_on: [qwen_qualification]
+    runner: docs/TAMAS_INTEGRATION.md
+    verification: completion_gate
+  tracr_known_structure_intervention: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
+  ioi_causal_calibration: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
+  trained_sae_qwen_evaluation:
+    execution: blocked_pinned_trained_checkpoint_required
+    depends_on: [qwen_development_capture]
+    runner: experiments/phase1/qwen_sae_evaluation.py
+    verification: scripts/verify_external_bundle.py
+  real_qwen_red_team:
+    execution: external_model
+    depends_on: [matched_search_baselines]
+    runner: experiments/phase1/qwen_red_team.py
+    verification: scripts/verify_external_bundle.py
+  real_qwen_agent_c:
+    execution: external_model
+    depends_on: [matched_search_baselines]
+    runner: experiments/phase1/qwen_agent_c.py
+    verification: scripts/verify_external_bundle.py
+  second_model_qualification:
+    execution: external_model
+    depends_on: [once_only_test]
+    runner: paired_trace/run_secondary_model_qualification.py
+    verification: completion_gate
+  final_verified_report:
+    execution: local_after_all_evidence
+    depends_on: [once_only_test, bfcl_official, mcptox_official, tamas_official, trained_sae_qwen_evaluation, real_qwen_red_team, real_qwen_agent_c, second_model_qualification]
+    runner: evaluation/phase1_evidence_report.py
+    verification: completion_gate
