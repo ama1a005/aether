@@ -1,5 +1,5 @@
 """Architecture-specific model adapters."""
 
-from .qwen2 import Qwen2ModelAdapter
+from .qwen2 import HeadPatch, ModulePatch, Qwen2ModelAdapter
 
-__all__ = ["Qwen2ModelAdapter"]
+__all__ = ["HeadPatch", "ModulePatch", "Qwen2ModelAdapter"]

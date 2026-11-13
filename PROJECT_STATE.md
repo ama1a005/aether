@@ -1,5 +1,18 @@
 # AETHER project state
 
+## 2026-11-13 CORE-02 model-independent foundation implemented
+
+The approved v2 + v2.1 chain now drives a fail-closed matched-search planner.
+It enumerates all 36 legal overlap-safe masks, creates isolated cache namespaces
+for the five required methods across seeds 11/22/33, and applies the corrected
+3,760-forward ceiling. The Qwen adapter can install multiple module/head patches
+in one execution while retaining an exact application count per address.
+Model-free preflight verifies the approval hashes, evidence inputs, split locks,
+declared budget, clean source commit, resources, model snapshot and fresh output.
+This is software verification only: no Qwen search has executed and no result or
+edge evidence has been created. The real evaluator, checkpoint-safe external
+runner, independent bundle verifier and retained execution remain outstanding.
+
 ## 2026-11-13 QCI-2 v2.1 accounting amendment approved
 
 The human project owner approved the accounting-only amendment at SHA-256

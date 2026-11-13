@@ -8,7 +8,7 @@ import pytest
 import torch
 from torch import nn
 
-from instrumentation.adapters import Qwen2ModelAdapter
+from instrumentation.adapters import HeadPatch, ModulePatch, Qwen2ModelAdapter
 from instrumentation.model_adapter import ComponentSite
 
 
@@ -190,6 +190,37 @@ def test_comprehensive_capture_collects_modules_and_heads_in_one_pass() -> None:
     with pytest.raises(RuntimeError, match="remove existing hooks"):
         adapter.install_comprehensive_capture(selected, [0])
     adapter.remove_hooks()
+    assert adapter._handles == []
+
+
+def test_composite_patch_applies_distinct_module_and_head_exactly_once() -> None:
+    adapter = adapter_with_dummy_model()
+    block = adapter.model.model.layers[0]
+    site = ComponentSite("L0.mlp_output", 0, "mlp_output", "fixture MLP output")
+    inputs = torch.tensor([[[1.0, 2.0], [3.0, 4.0]]])
+    baseline = block(inputs)
+    adapter.install_multi_patch(
+        module_patches=[ModulePatch("receiver.module.L0.mlp", site, torch.tensor([[8.0, 8.0]]))],
+        head_patches=[HeadPatch("receiver.head.L0.H1", 0, 1, torch.tensor([[9.0]]))],
+    )
+    changed = block(inputs)
+    assert not torch.equal(changed, baseline)
+    assert adapter.intervention_application_counts == {
+        "receiver.module.L0.mlp": 1,
+        "receiver.head.L0.H1": 1,
+    }
+    assert adapter.intervention_applications == 2
+    adapter.remove_hooks()
+
+
+def test_composite_patch_rejects_duplicate_addresses_before_execution() -> None:
+    adapter = adapter_with_dummy_model()
+    site = ComponentSite("L0.mlp_output", 0, "mlp_output", "fixture MLP output")
+    with pytest.raises(ValueError, match="addresses must be unique"):
+        adapter.install_multi_patch(module_patches=[
+            ModulePatch("duplicate", site, torch.ones(1, 2)),
+            ModulePatch("duplicate", site, torch.ones(1, 2)),
+        ])
     assert adapter._handles == []
 
 

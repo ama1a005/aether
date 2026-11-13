@@ -2,12 +2,36 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 
 import torch
 
 from instrumentation.model_adapter import ComponentSite, ModelAdapter
+
+
+@dataclass(frozen=True)
+class ModulePatch:
+    """One named module-output patch in a composite intervention."""
+
+    address: str
+    site: ComponentSite
+    source: torch.Tensor
+    token_position: int = -1
+    target_generation_step: int | None = None
+
+
+@dataclass(frozen=True)
+class HeadPatch:
+    """One named pre-o_proj head patch in a composite intervention."""
+
+    address: str
+    layer: int
+    head: int
+    source: torch.Tensor
+    token_position: int = -1
+    target_generation_step: int | None = None
 
 
 class Qwen2ModelAdapter(ModelAdapter):
@@ -38,6 +62,7 @@ class Qwen2ModelAdapter(ModelAdapter):
         self.generation_hook_events: list[dict[str, int]] = []
         self._active_generation_step: int | None = None
         self.head_activations: dict[str, torch.Tensor] = {}
+        self.intervention_application_counts: dict[str, int] = {}
 
     def load(self) -> None:
         """Load the exact requested revision without remote model code."""
@@ -431,3 +456,87 @@ class Qwen2ModelAdapter(ModelAdapter):
             return (head_view.reshape_as(concatenated), *inputs[1:])
 
         self._handles.append(o_proj.register_forward_pre_hook(patch))
+
+    def install_multi_patch(
+        self,
+        *,
+        module_patches: Sequence[ModulePatch] = (),
+        head_patches: Sequence[HeadPatch] = (),
+    ) -> None:
+        """Install multiple uniquely addressed patches for one model execution."""
+        if self._handles:
+            raise RuntimeError("remove existing hooks before installing interventions")
+        addresses = [patch.address for patch in (*module_patches, *head_patches)]
+        if not addresses:
+            raise ValueError("at least one composite patch is required")
+        if len(addresses) != len(set(addresses)):
+            raise ValueError("composite patch addresses must be unique")
+        self.intervention_applications = 0
+        self.intervention_application_counts = {address: 0 for address in addresses}
+
+        for specification in module_patches:
+            if specification.source.ndim not in (2, 3):
+                raise ValueError("module source must be rank two or three")
+
+            def patch_module(
+                _module: torch.nn.Module, _inputs: tuple[Any, ...], output: Any,
+                *, spec: ModulePatch = specification,
+            ) -> Any:
+                if (spec.target_generation_step is not None
+                        and self._active_generation_step != spec.target_generation_step):
+                    return None
+                tensor = output[0] if isinstance(output, tuple) else output
+                resolved = spec.token_position if spec.token_position >= 0 else tensor.shape[1] + spec.token_position
+                if resolved < 0 or resolved >= tensor.shape[1]:
+                    raise IndexError(f"module patch position outside target: {spec.address}")
+                source_resolved = (
+                    spec.token_position if spec.token_position >= 0
+                    else spec.source.shape[1] + spec.token_position
+                ) if spec.source.ndim == 3 else None
+                aligned = spec.source[:, source_resolved, :] if source_resolved is not None else spec.source
+                if aligned.shape != tensor[:, resolved, :].shape:
+                    raise ValueError(f"module patch source shape differs: {spec.address}")
+                patched = tensor.clone()
+                patched[:, resolved, :] = aligned.to(tensor.device, tensor.dtype)
+                self.intervention_application_counts[spec.address] += 1
+                self.intervention_applications += 1
+                return (patched, *output[1:]) if isinstance(output, tuple) else patched
+
+            self._handles.append(
+                self._module_for(specification.site).register_forward_hook(patch_module)
+            )
+
+        for specification in head_patches:
+            heads, head_dim = self._head_shape(specification.layer)
+            if specification.head < 0 or specification.head >= heads:
+                raise IndexError(f"head outside range: {specification.address}")
+            if specification.source.ndim not in (2, 3):
+                raise ValueError("head source must be rank two or three")
+            o_proj = self.model.model.layers[specification.layer].self_attn.o_proj
+
+            def patch_head(
+                _module: torch.nn.Module, inputs: tuple[Any, ...],
+                *, spec: HeadPatch = specification, head_count: int = heads,
+                dimension: int = head_dim,
+            ) -> tuple[Any, ...] | None:
+                if (spec.target_generation_step is not None
+                        and self._active_generation_step != spec.target_generation_step):
+                    return None
+                concatenated = inputs[0]
+                resolved = spec.token_position if spec.token_position >= 0 else concatenated.shape[1] + spec.token_position
+                if resolved < 0 or resolved >= concatenated.shape[1]:
+                    raise IndexError(f"head patch position outside target: {spec.address}")
+                source_resolved = (
+                    spec.token_position if spec.token_position >= 0
+                    else spec.source.shape[1] + spec.token_position
+                ) if spec.source.ndim == 3 else None
+                aligned = spec.source[:, source_resolved, :] if source_resolved is not None else spec.source
+                view = concatenated.view(*concatenated.shape[:-1], head_count, dimension).clone()
+                if aligned.shape != view[:, resolved, spec.head, :].shape:
+                    raise ValueError(f"head patch source shape differs: {spec.address}")
+                view[:, resolved, spec.head, :] = aligned.to(concatenated.device, concatenated.dtype)
+                self.intervention_application_counts[spec.address] += 1
+                self.intervention_applications += 1
+                return (view.reshape_as(concatenated), *inputs[1:])
+
+            self._handles.append(o_proj.register_forward_pre_hook(patch_head))

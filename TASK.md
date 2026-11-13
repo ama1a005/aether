@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Complete CORE-02 real evaluator and retained external handoff
+
+The approved method loader, legal-mask planner, isolated run plans, corrected
+budget checks and multi-site Qwen hooks are model-free verified. Next connect
+these primitives to the real 16-case intervention evaluator, persist checkpoint
+state and raw rows, add independent archive verification, and generate the
+commit-pinned Kaggle notebook. Do not represent the current planner as an
+executed matched-search result and keep audit, validation and test closed.
+
 ## Build the approved CORE-02 runner and external execution handoff
 
 Implement and model-free verify the idempotent matched-search runner against the
