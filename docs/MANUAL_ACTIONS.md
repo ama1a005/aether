@@ -1,5 +1,22 @@
 # Manual Actions
 
+## 2026-11-13 — run the CORE-02 matched-search notebook
+
+Upload `notebooks/aether_qwen_core02_matched_search.ipynb` to Kaggle, enable
+Internet, choose a CPU session with at least 12 GiB available RAM, and run all
+seven cells. The notebook pins commit
+`f1461338de413c80605b11a35dc780b280fdbc14` and executes five methods across
+seeds 11, 22 and 33 on development-discovery only.
+
+After every completed method/seed run it replaces
+`/kaggle/working/aether-core02-checkpoint.tar.gz`. If the session ends, download
+that file, upload it as a private Kaggle dataset/input, start a new session with
+the same notebook and run all cells again. Attach exactly one checkpoint.
+
+When successful, download `aether-core02-results.tar.gz`, extract it under
+`notebooks/Results/core02`, and retain the archive itself. Do not modify the
+notebook, masks, methods, seeds, budgets or protected splits.
+
 ## 2026-11-13 — QCI-2 audit complete; no rerun required
 
 The returned QCI-2A1 archive independently verifies and has been ingested. All

@@ -1,5 +1,11 @@
 # AETHER current bounded task
 
+## Execute and ingest the retained CORE-02 campaign
+
+Local implementation is complete. Run the commit-pinned Kaggle notebook, retain
+checkpoints across session resets, download the verified final archive and
+ingest it locally. CORE-03 conclusions must wait for the verified CORE-02 result.
+
 ## Finish the checkpoint-safe external execution entry point
 
 Independent verification and atomic ingestion are implemented. Complete the
