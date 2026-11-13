@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_URL = "https://github.com/ama1a005/aether.git"
-REPOSITORY_COMMIT = "f26a3f0c932c652cc86d628fe6ac18bc9b08391a"
+REPOSITORY_COMMIT = "c818c6963abb677ac11efe02357711146dc14bca"
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 OUTPUT = ROOT / "notebooks/aether_qwen_qci2_semantic_audit_cpu.ipynb"
@@ -63,18 +63,30 @@ def run_logged(name,command,cwd=None,timeout=3600,check=True):
  return code
 print(sys.version); print(platform.platform())
 """),
-        _cell("code", """# Locate and safely extract exactly one retained QCI-2 discovery archive.
+        _cell("code", """# Locate one archive or Kaggle-auto-extracted QCI-2 discovery directory.
 archives=list(Path('/kaggle/input').rglob('aether-qwen-qci2-results.tar.gz'))
 if (WORK/'aether-qwen-qci2-results.tar.gz').is_file(): archives.append(WORK/'aether-qwen-qci2-results.tar.gz')
-assert len(archives)==1,f'Attach exactly one QCI-2 result archive; found {archives}'
-EXTRACT=RUNTIME/'discovery'; EXTRACT.mkdir()
-with tarfile.open(archives[0],'r:gz') as bundle:
- for member in bundle.getmembers():
-  parts=Path(member.name).parts
-  if Path(member.name).is_absolute() or '..' in parts or member.issym() or member.islnk(): raise ValueError(f'Unsafe member: {member.name}')
- bundle.extractall(EXTRACT,filter='data')
-summaries=list(EXTRACT.rglob('summary.json')); assert len(summaries)==1
-DISCOVERY=summaries[0].parent
+required={'summary.json','manifest.json','raw_interventions.jsonl','candidate_assessments.json','message_positive_controls.json','qci2_preflight.json','qci2_model_access.json','archive_contents.json'}
+directories=[]
+for summary_path in Path('/kaggle/input').rglob('summary.json'):
+ root=summary_path.parent
+ if required.issubset({path.name for path in root.iterdir() if path.is_file()}):
+  payload=json.loads(summary_path.read_text(encoding='utf-8'))
+  if payload.get('schema_version')=='aether.qci2-discovery.v1': directories.append(root)
+if archives and directories: raise RuntimeError('Attach either the archive or extracted dataset, not both')
+if archives:
+ assert len(archives)==1,f'Expected one QCI-2 archive; found {archives}'
+ EXTRACT=RUNTIME/'discovery'; EXTRACT.mkdir()
+ with tarfile.open(archives[0],'r:gz') as bundle:
+  for member in bundle.getmembers():
+   parts=Path(member.name).parts
+   if Path(member.name).is_absolute() or '..' in parts or member.issym() or member.islnk(): raise ValueError(f'Unsafe member: {member.name}')
+  bundle.extractall(EXTRACT,filter='data')
+ summaries=list(EXTRACT.rglob('summary.json')); assert len(summaries)==1
+ DISCOVERY=summaries[0].parent
+else:
+ assert len(directories)==1,f'Expected one extracted QCI-2 directory; found {directories}'
+ DISCOVERY=directories[0]
 print('Discovery:',DISCOVERY)
 """),
         _cell("code", """# Immutable Python 3.11 environment and source checkout.
