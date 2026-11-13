@@ -1,0 +1,18 @@
+{
+  "schema_version": "aether.qci2-method-freeze-amendment-decision.v2.2",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_core_workstream",
+  "reviewed_utc": "2026-11-13T14:40:15.8357830Z",
+  "amendment_path": "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml",
+  "amendment_sha256": "fed75de69761c504653026a8a919014ea40bca8f8efe1c2b2f1127206cfda03b",
+  "base_proposal_sha256": "b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c",
+  "source_branch": "phase1/core-nov19",
+  "source_commit_before_decision": "11221d04a3673063cd98064076d03154faa02524",
+  "authorized_next_state": "IMPLEMENT_DEVELOPMENT_ONLY_MATCHED_SEARCH_RUNNER",
+  "development_audit_executions": 0,
+  "validation_executions": 0,
+  "test_executions": 0,
+  "scientific_method_changes": "none_accounting_only"
+}

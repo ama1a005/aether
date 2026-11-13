@@ -1,5 +1,12 @@
 # AETHER current bounded task
 
+## Finish the approved v2.2 CORE-02 execution package
+
+V2.2 is human-approved. Complete the real two-condition mask evaluator,
+constraint-aware matched methods, checkpoint/resume state, independent verifier,
+atomic ingestion and commit-pinned external notebook. Run model-independent
+verification locally; execute Qwen only in the qualified external environment.
+
 ## Review QCI-2 v2.2 two-condition accounting amendment
 
 The real evaluator must execute both attacked rescue and clean identity for

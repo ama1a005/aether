@@ -1,5 +1,13 @@
 # AETHER project state
 
+## 2026-11-13 QCI-2 v2.2 accounting amendment approved
+
+The human project owner approved the exact v2.2 accounting amendment at SHA-256
+`fed75de69761c504653026a8a919014ea40bca8f8efe1c2b2f1127206cfda03b`.
+CORE-02 implementation and development-discovery execution are authorized with
+160 forwards per complete mask evaluation and a 7,360 maximum per method/seed.
+Development audit, validation and test remain closed.
+
 ## 2026-11-13 CORE-02 v2.2 accounting correction awaits review
 
 Real-evaluator wiring exposed that every mask needs two distinct conditions:

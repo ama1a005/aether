@@ -10,15 +10,15 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from causal.method_freeze import (
-    load_and_validate_amendment,
     load_and_validate_proposal,
+    load_and_validate_v2_2_amendment,
     sha256_file,
     validate_mask,
 )
 
 
 PROPOSAL_DECISION_SCHEMA = "aether.qci2-method-freeze-decision.v1"
-AMENDMENT_DECISION_SCHEMA = "aether.qci2-method-freeze-amendment-decision.v1"
+AMENDMENT_DECISION_SCHEMA = "aether.qci2-method-freeze-amendment-decision.v2.2"
 REQUIRED_METHODS = ("matched_random", "greedy", "beam", "receiver_only", "flat_ppo")
 
 
@@ -104,6 +104,7 @@ def load_effective_method_freeze(
     repo: Path,
     proposal_path: Path,
     amendment_path: Path,
+    v2_1_amendment_path: Path,
     proposal_decision_path: Path,
     amendment_decision_path: Path,
 ) -> EffectiveMethodFreeze:
@@ -112,7 +113,9 @@ def load_effective_method_freeze(
     proposal_path = proposal_path.resolve()
     amendment_path = amendment_path.resolve()
     proposal = load_and_validate_proposal(proposal_path, repo)
-    amendment = load_and_validate_amendment(amendment_path, proposal_path, repo)
+    amendment = load_and_validate_v2_2_amendment(
+        amendment_path, proposal_path, v2_1_amendment_path.resolve(), repo
+    )
     proposal_hash = sha256_file(proposal_path)
     amendment_hash = sha256_file(amendment_path)
     _validate_decision(

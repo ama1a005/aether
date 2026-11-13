@@ -12,14 +12,16 @@ from causal.core_search import build_run_plans, enumerate_legal_masks, load_effe
 
 ROOT = Path(__file__).resolve().parents[2]
 PROPOSAL = ROOT / "configs/phase1_core/qci2_method_freeze_v2.yaml"
-AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
+V2_1_AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_1_amendment.yaml"
+AMENDMENT = ROOT / "configs/phase1_core/qci2_method_freeze_v2_2_amendment.yaml"
 PROPOSAL_DECISION = ROOT / "results/phase1/method_freeze/decision.json"
-AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_1_decision.json"
+AMENDMENT_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_2_decision.json"
 
 
 def _freeze():
     return load_effective_method_freeze(
         repo=ROOT, proposal_path=PROPOSAL, amendment_path=AMENDMENT,
+        v2_1_amendment_path=V2_1_AMENDMENT,
         proposal_decision_path=PROPOSAL_DECISION,
         amendment_decision_path=AMENDMENT_DECISION,
     )
@@ -33,6 +35,7 @@ def test_effective_method_requires_exact_human_approved_hashes(tmp_path: Path) -
     with pytest.raises(ValueError, match="approval hash differs"):
         load_effective_method_freeze(
             repo=ROOT, proposal_path=PROPOSAL, amendment_path=AMENDMENT,
+            v2_1_amendment_path=V2_1_AMENDMENT,
             proposal_decision_path=PROPOSAL_DECISION, amendment_decision_path=decision,
         )
 
@@ -51,8 +54,8 @@ def test_plans_are_matched_and_cache_isolated_per_method_seed() -> None:
     plans = build_run_plans(_freeze())
     assert len(plans) == 15
     assert len({plan.cache_namespace for plan in plans}) == 15
-    assert {plan.maximum_model_forward_steps for plan in plans} == {3760}
-    assert {plan.model_forwards_per_mask_evaluation for plan in plans} == {80}
+    assert {plan.maximum_model_forward_steps for plan in plans} == {7360}
+    assert {plan.model_forwards_per_mask_evaluation for plan in plans} == {160}
     assert {plan.case_ids for plan in plans} == {tuple(_freeze().proposal["case_ids"])}
 
 
