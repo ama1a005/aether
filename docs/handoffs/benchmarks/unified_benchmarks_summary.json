@@ -1,0 +1,87 @@
+{
+  "schema_version": "aether.nov19.external_benchmark.v1",
+  "generated_at_utc": "2026-11-13T16:21:16.902914+00:00",
+  "claim_boundary": "External benchmarks validate benign tool-calling competence (BFCL), metadata poisoning susceptibility (MCPTox), and multi-agent adversarial behavior (TAMAS). They do NOT replace or alone prove AETHER cross-agent DCMG internal causal circuit discovery or Bridge Verification Protocol novelty.",
+  "benchmarks": {
+    "BFCL": {
+      "benchmark": "BFCL",
+      "evidence_class": "official_evaluator_with_disclosed_aether_model_adapter",
+      "upstream_revision": "bfcl_eval==2026.3.23",
+      "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "cohort": [
+        "simple",
+        "multiple",
+        "parallel",
+        "irrelevance"
+      ],
+      "selection_rule": "complete categories; no outcome conditioning",
+      "official_evaluator_executed": false,
+      "status": "BLOCKED",
+      "denominators": {
+        "eligible": 0,
+        "invalid": 0,
+        "errors": 0,
+        "successes": 0
+      },
+      "raw_artifacts": [],
+      "artifact_sha256": {},
+      "limitations": [
+        "Execution blocked locally on laptop 2 due to missing CUDA GPU and Linux vLLM requirement.",
+        "Requires external GPU compute environment (>=16GB VRAM) for native generation.",
+        "Disclosed adapter AETHER/Qwen2.5-1.5B-Instruct-FC used instead of native configuration."
+      ],
+      "metrics": {},
+      "schema_version": "aether.nov19.external_benchmark.v1"
+    },
+    "MCPTox": {
+      "benchmark": "MCPTox",
+      "evidence_class": "official_compatible_tool_poisoning_evaluation",
+      "upstream_revision": "f85189f9ad12504c197c7f920ab818a40657b1fa",
+      "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "cohort": "485 cases across 45 servers",
+      "selection_rule": "deterministic case_id sorted prefix or full release; no outcome conditioning",
+      "official_evaluator_executed": false,
+      "status": "BLOCKED",
+      "denominators": {
+        "eligible": 0,
+        "invalid": 0,
+        "errors": 0,
+        "successes": 0
+      },
+      "raw_artifacts": [],
+      "artifact_sha256": {},
+      "limitations": [
+        "Execution blocked locally pending automated MCP server runtime and local model inference harness.",
+        "Pinned upstream repository lacks LICENSE file; raw case records excluded from git redistribution.",
+        "Official release contains released response labels but lacks official automated runner."
+      ],
+      "metrics": {},
+      "schema_version": "aether.nov19.external_benchmark.v1"
+    },
+    "TAMAS": {
+      "benchmark": "TAMAS",
+      "evidence_class": "official_native_execution",
+      "upstream_revision": "545c112af9aab93b7ef2b0b60831d93c81c365c3",
+      "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "cohort": "300 records (50 per attack: Byzantine, Colluding, Contradicting, DPI, Impersonation, IPI)",
+      "selection_rule": "balanced across 6 attack types; no outcome conditioning",
+      "official_evaluator_executed": false,
+      "status": "BLOCKED",
+      "denominators": {
+        "eligible": 0,
+        "invalid": 0,
+        "errors": 0,
+        "successes": 0
+      },
+      "raw_artifacts": [],
+      "artifact_sha256": {},
+      "limitations": [
+        "Execution blocked locally on laptop 2: AutoGen/CrewAI framework not installed in standard env.",
+        "Requires live model provider API access or Ollama service with adequate memory.",
+        "Evaluates multi-agent conversation security; does not measure internal DCMG causality."
+      ],
+      "metrics": {},
+      "schema_version": "aether.nov19.external_benchmark.v1"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "benchmark": "TAMAS",
+  "evidence_class": "official_native_execution",
+  "upstream_revision": "545c112af9aab93b7ef2b0b60831d93c81c365c3",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "cohort": "300 records (50 per attack: Byzantine, Colluding, Contradicting, DPI, Impersonation, IPI)",
+  "selection_rule": "balanced across 6 attack types; no outcome conditioning",
+  "official_evaluator_executed": false,
+  "status": "BLOCKED",
+  "denominators": {
+    "eligible": 0,
+    "invalid": 0,
+    "errors": 0,
+    "successes": 0
+  },
+  "raw_artifacts": [],
+  "artifact_sha256": {},
+  "limitations": [
+    "Execution blocked locally on laptop 2: AutoGen/CrewAI framework not installed in standard env.",
+    "Requires live model provider API access or Ollama service with adequate memory.",
+    "Evaluates multi-agent conversation security; does not measure internal DCMG causality."
+  ],
+  "metrics": {},
+  "schema_version": "aether.nov19.external_benchmark.v1"
+}
