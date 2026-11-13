@@ -118,6 +118,12 @@ class LegalMaskSession:
             phase="baselines", mask=(), forward_steps=plan.baseline_forward_steps,
             mask_evaluation=False,
         )
+        baseline = self.evaluate(())
+        if not isinstance(baseline, Evaluation):
+            raise TypeError("CORE-02 baseline evaluator must return a measured Evaluation")
+        if baseline.forward_passes != plan.baseline_forward_steps:
+            raise ValueError("baseline forward count differs from approved accounting")
+        self.cache[()] = baseline
 
     def query(self, mask: Iterable[str], *, phase: str) -> Evaluation:
         """Evaluate one legal mask once; cached revisits consume no model budget."""

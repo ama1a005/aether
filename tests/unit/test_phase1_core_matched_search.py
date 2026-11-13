@@ -99,13 +99,13 @@ def test_every_method_queries_only_legal_measured_masks(method: str) -> None:
         matched_random_reference=reference if method == "matched_random" else None,
     )
     legal = set(enumerate_legal_masks(freeze.proposal))
-    assert observed and set(observed) <= legal
-    assert len(observed) == len(set(observed)) <= 32
-    assert outcome.ledger["model_forward_steps"] == 160 + 160 * len(observed)
+    assert observed and observed[0] == () and set(observed) <= legal
+    assert len(observed) == len(set(observed)) <= 33
+    assert outcome.ledger["model_forward_steps"] == 160 * len(observed)
     if method == "receiver_only":
         assert all(all(node.startswith("receiver.") for node in mask) for mask in observed)
     if method == "matched_random":
-        assert all(len(mask) == 3 for mask in observed)
+        assert all(len(mask) == 3 for mask in observed[1:])
 
 
 def test_matched_random_requires_same_seed_greedy_reference() -> None:
