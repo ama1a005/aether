@@ -55,7 +55,9 @@ def _git(*args: str) -> str:
 
 def _checkpoint_archive(output: Path) -> None:
     """Replace a portable archive after every completed method/seed unit."""
-    target = output.parent / "aether-core02-checkpoint.tar.gz"
+    name = ("aether-core02-checkpoint.tar.gz" if output.name == "aether-core02-results"
+            else f"{output.name}-checkpoint.tar.gz")
+    target = output.parent / name
     temporary = target.with_suffix(".tmp")
     with tarfile.open(temporary, "w:gz") as bundle:
         bundle.add(output, arcname=output.name)
@@ -112,6 +114,8 @@ class RecordingEvaluator:
             stream.flush()
         self.cache[mask] = value
         _checkpoint_archive(self.raw.parent)
+        print(f"completed mask method={self.method} seed={self.seed} "
+              f"count={len(self.cache)}", flush=True)
         return value
 
 
