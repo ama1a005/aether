@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import ast
 from pathlib import Path
 
 import pytest
@@ -43,3 +44,18 @@ def test_seed_selection_rejects_invalid_values(tmp_path: Path) -> None:
         runner.run(tmp_path / "out", tmp_path / "snapshot", resume=False, seeds=(11, 11))
     with pytest.raises(ValueError, match="unique subset"):
         runner.run(tmp_path / "out", tmp_path / "snapshot", resume=False, seeds=(44,))
+
+
+def test_generated_parallel_notebooks_are_seed_isolated_and_compile() -> None:
+    root = Path(__file__).resolve().parents[2]
+    expected_commit = "5a29be4826e90fa58affeac4faf015561cefc7dd"
+    for seed in (11, 22, 33):
+        path = root / f"notebooks/aether_qwen_core02_seed{seed}.ipynb"
+        notebook = json.loads(path.read_text(encoding="utf-8"))
+        source = "\n".join("".join(cell["source"]) for cell in notebook["cells"])
+        assert f"SEED={seed}" in source
+        assert expected_commit in source
+        assert "scripts.verify_qci2_matched_search_shard" in source
+        for cell in notebook["cells"]:
+            if cell["cell_type"] == "code":
+                ast.parse("".join(cell["source"]))
