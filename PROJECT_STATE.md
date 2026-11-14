@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-14 CORE-02 seed-parallel scheduling approved
+
+The human project owner approved the scheduling-only v2.4 amendment at SHA-256
+`7e39024df56bc35fff00f140124c726ca4e0d5c15c69f762a5406d6f18cde220`.
+CORE-02 may execute as three disjoint seed shards: seed 11 may resume the
+retained checkpoint, while seeds 22 and 33 start independently. Every shard
+must execute all five frozen methods, pass independent verification and merge
+without duplicate or missing method/seed evidence. No scientific parameter,
+budget, model, case, threshold, metric or split authorization changed.
+
 ## 2026-11-13 CORE-02 external execution package ready
 
 The resumable campaign CLI, per-method checkpoint archive, independent verifier,
