@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from experiments.external_bundle import ingest_bundle, verify_bundle, write_bundle_manifest
+from experiments.external_bundle import ingest_bundle, sha256_file, verify_bundle, verify_protocol_approval, write_bundle_manifest
 
 
 def _metadata() -> dict:
@@ -50,3 +50,17 @@ def test_bundle_rejects_tampering_dirty_source_and_protected_split(tmp_path) -> 
     (source / "bundle_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="protected split"):
         verify_bundle(source)
+
+
+def test_protocol_decision_is_separate_identified_and_hash_exact(tmp_path) -> None:
+    proposal = tmp_path / "proposal.yaml"
+    proposal.write_text("status: prospective\n", encoding="utf-8")
+    decision = tmp_path / "decision.json"
+    payload = {"schema_version": "aether.protocol-decision.v1", "approved": True,
+               "reviewer": "human-owner", "proposal_sha256": sha256_file(proposal),
+               "validation_authorized": False, "test_authorized": False}
+    decision.write_text(json.dumps(payload), encoding="utf-8")
+    assert verify_protocol_approval(proposal, decision)["reviewer"] == "human-owner"
+    proposal.write_text("status: changed\n", encoding="utf-8")
+    with pytest.raises(PermissionError, match="immutable proposal"):
+        verify_protocol_approval(proposal, decision)

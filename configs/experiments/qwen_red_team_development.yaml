@@ -1,6 +1,5 @@
 schema_version: aether.qwen-red-team.v1
 status: awaiting_human_protocol_review
-approval_sha256: null
 experiment_id: P0_attack_qwen15b_development_red_team
 split: development
 model_id: Qwen/Qwen2.5-1.5B-Instruct

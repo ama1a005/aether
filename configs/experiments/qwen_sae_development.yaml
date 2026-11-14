@@ -1,6 +1,5 @@
 schema_version: aether.qwen-sae-evaluation.v1
 status: awaiting_human_checkpoint_and_protocol_review
-approval_sha256: null
 split: development
 model_id: Qwen/Qwen2.5-1.5B-Instruct
 model_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306

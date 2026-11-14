@@ -11,7 +11,7 @@ import torch
 import yaml
 
 from causal.interventions.sae import load_sae_checkpoint
-from experiments.external_bundle import runtime_metadata, sha256_file, write_bundle_manifest
+from experiments.external_bundle import runtime_metadata, sha256_file, verify_protocol_approval, write_bundle_manifest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,11 +45,12 @@ def evaluate(config: dict[str, Any], checkpoint: Path, activations: Path) -> dic
             "claim_boundary": "Reconstruction/sparsity evidence only; no causal SAE-feature claim."}
 
 
-def run(config_path: Path, output: Path) -> Path:
+def run(config_path: Path, approval_path: Path, output: Path) -> Path:
     """Run only a reviewed, development-only trained-SAE protocol."""
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    if config.get("status") != "frozen_and_human_approved" or not config.get("approval_sha256"):
-        raise PermissionError("trained-SAE protocol is not frozen and human-approved")
+    verify_protocol_approval(config_path, approval_path)
+    if config.get("status") != "awaiting_human_checkpoint_and_protocol_review":
+        raise ValueError("unexpected trained-SAE proposal status")
     if config.get("split") != "development" or config.get("validation_executions") != 0 or config.get("test_executions") != 0:
         raise PermissionError("trained-SAE protocol attempts protected-split access")
     checkpoint = Path(config["checkpoint_path"])
@@ -75,9 +76,10 @@ def main() -> None:
     """Execute the reviewed trained-SAE evaluation."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--approval", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
-    print(run(arguments.config, arguments.output))
+    print(run(arguments.config, arguments.approval, arguments.output))
 
 
 if __name__ == "__main__":

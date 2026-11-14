@@ -14,7 +14,7 @@ from contracts.schemas import A2AMessageRecord, PatientCase
 from target.agents.agent_c import AgentC
 from target.mcp.mock_client import MockMCPClient
 from target.mcp.tools import get_vital_signs
-from experiments.external_bundle import runtime_metadata, sha256_file, write_bundle_manifest
+from experiments.external_bundle import runtime_metadata, sha256_file, verify_protocol_approval, write_bundle_manifest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -63,11 +63,12 @@ def evaluate(rows: Sequence[dict[str, Any]], registry: Sequence[dict[str, Any]],
             "reviewed_correct": sum(row["reviewed_correct"] for row in valid)}}
 
 
-def run(config_path: Path, output: Path) -> Path:
+def run(config_path: Path, approval_path: Path, output: Path) -> Path:
     """Execute an approved development-only post-hoc review protocol."""
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    if config.get("status") != "frozen_and_human_approved" or not config.get("approval_sha256"):
-        raise PermissionError("real-Qwen Agent-C protocol is not frozen and human-approved")
+    verify_protocol_approval(config_path, approval_path)
+    if config.get("status") != "awaiting_human_protocol_review":
+        raise ValueError("unexpected Agent-C proposal status")
     if config.get("split") != "development" or config.get("validation_executions") != 0 or config.get("test_executions") != 0:
         raise PermissionError("Agent-C protocol attempts protected-split access")
     rows = json.loads((ROOT / config["qwen_rows"]).read_text(encoding="utf-8"))
@@ -98,9 +99,10 @@ def main() -> None:
     """Run the reviewed Agent-C protocol."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--approval", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
-    print(run(arguments.config, arguments.output))
+    print(run(arguments.config, arguments.approval, arguments.output))
 
 
 if __name__ == "__main__":

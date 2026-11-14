@@ -20,18 +20,19 @@ from attacks.orchestration import CampaignConfig, run_campaign
 from attacks.qwen_backend import QwenRedTeamBackend
 from benchmarks.bfcl_qwen25 import verify_snapshot_manifest
 from contracts.schemas import PatientCase
-from experiments.external_bundle import write_bundle_manifest
+from experiments.external_bundle import verify_protocol_approval, write_bundle_manifest
 from instrumentation.adapters import Qwen2ModelAdapter
 
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def run(config_path: Path, snapshot_manifest: Path, output: Path) -> Path:
+def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output: Path) -> Path:
     """Load the pinned snapshot only after protocol and split checks pass."""
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    if config.get("status") != "frozen_and_human_approved" or not config.get("approval_sha256"):
-        raise PermissionError("real-Qwen red-team protocol is not frozen and human-approved")
+    verify_protocol_approval(config_path, approval_path)
+    if config.get("status") != "awaiting_human_protocol_review":
+        raise ValueError("unexpected red-team proposal status")
     if config.get("split") != "development" or config.get("validation_executions") != 0 or config.get("test_executions") != 0:
         raise PermissionError("red-team protocol attempts protected-split access")
     if output.exists():
@@ -75,10 +76,11 @@ def main() -> None:
     """Execute the approved real-Qwen campaign."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--approval", type=Path, required=True)
     parser.add_argument("--snapshot-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
-    print(run(arguments.config, arguments.snapshot_manifest, arguments.output))
+    print(run(arguments.config, arguments.approval, arguments.snapshot_manifest, arguments.output))
 
 
 if __name__ == "__main__":

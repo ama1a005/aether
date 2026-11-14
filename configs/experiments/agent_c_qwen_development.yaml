@@ -1,6 +1,5 @@
 schema_version: aether.qwen-agent-c.v1
 status: awaiting_human_protocol_review
-approval_sha256: null
 split: development
 qwen_rows: results/phase1/model_qualification/qwen15b_kaggle_20261110/mq_g1_rows.json
 case_registry: data/causal_v2/case_registry.json

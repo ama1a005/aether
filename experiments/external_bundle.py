@@ -56,6 +56,22 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_protocol_approval(proposal: Path, decision: Path) -> dict[str, Any]:
+    """Verify a separate human decision against the immutable proposal bytes."""
+    if not decision.is_file():
+        raise PermissionError(f"human protocol decision is missing: {decision}")
+    payload = json.loads(decision.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != "aether.protocol-decision.v1":
+        raise PermissionError("unsupported protocol decision schema")
+    if payload.get("approved") is not True or not isinstance(payload.get("reviewer"), str) or not payload["reviewer"].strip():
+        raise PermissionError("protocol does not have an identified human approval")
+    if payload.get("proposal_sha256") != sha256_file(proposal):
+        raise PermissionError("protocol decision does not match the immutable proposal")
+    if payload.get("validation_authorized") is not False or payload.get("test_authorized") is not False:
+        raise PermissionError("supporting protocol decision must keep protected splits closed")
+    return payload
+
+
 def artifact_hashes(root: Path, *, exclude: tuple[str, ...] = ("bundle_manifest.json",)) -> dict[str, str]:
     """Hash every regular bundle file using safe POSIX-relative names."""
     if not root.is_dir():

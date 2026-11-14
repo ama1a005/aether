@@ -165,9 +165,10 @@ The following packages are implemented and model-independent tested:
 
 The red-team, Agent-C and SAE configs intentionally remain at human-review
 gates. Their current SHA-256 values are respectively
-`dc1204374fd7e2207a7af694ff173e4ca781807bb9f2bb4ba6ba9fecb98ced03`,
-`94e724ce189d9247da79436bfed36de34a3d431112b77a6c3bdacb939a942a5c`, and
-`d26478bbd31d820e2068ba37cbd8c361df89024caecf5a8db1e998eaf61c94e5`.
-Approval must be recorded prospectively before changing each status to
-`frozen_and_human_approved`. Selecting a trained SAE or second model remains a
-scientific choice, not a code default.
+`59ebdc4503a46a9d6b7db84e99aeff1c33a67fe1ddf0ea18395da9d65337fcff`,
+`abf2cce79f96eef35eaa7df8b869a21e67e37c39c70748be22d96da52e44d633`, and
+`3e2bfef776286f84a8331264fc27db6340c8348b01c5667cea832ded6ab64088`.
+Approval must be recorded prospectively in a separate
+`aether.protocol-decision.v1` artifact containing the exact proposal hash and
+identified reviewer; proposal bytes remain immutable. Selecting a trained SAE
+or second model remains a scientific choice, not a code default.
