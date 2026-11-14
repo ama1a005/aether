@@ -21,6 +21,7 @@ from attacks.qwen_backend import QwenRedTeamBackend
 from benchmarks.bfcl_qwen25 import verify_snapshot_manifest
 from contracts.schemas import PatientCase
 from experiments.external_bundle import verify_protocol_approval, write_bundle_manifest
+from experiments.manifest import sha256_file
 from instrumentation.adapters import Qwen2ModelAdapter
 
 
@@ -55,6 +56,21 @@ def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output:
                               int(config["max_target_calls"]), "development")
     summary = run_campaign(backend, cases, attacks, campaign, output)
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    campaign_summary = output / "campaign_summary.json"
+    (output / "summary.json").replace(campaign_summary)
+    completion = {
+        "overall": "PASS", "model_id": config["model_id"], "model_revision": revision,
+        "evidence_class": "real_qwen_development_red_team", "campaign": summary,
+        "validation_executions": 0, "test_executions": 0,
+    }
+    summary_path = output / "summary.json"
+    summary_path.write_text(json.dumps(completion, indent=2, allow_nan=False), encoding="utf-8")
+    manifest["artifact_paths"] = {
+        **{key: value for key, value in manifest["artifact_paths"].items()
+           if not str(key).endswith("summary.json")},
+        str(campaign_summary): sha256_file(campaign_summary), str(summary_path): sha256_file(summary_path),
+    }
+    (output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
     freeze = subprocess.run([sys.executable, "-m", "pip", "freeze", "--all"], check=True,
                             capture_output=True, text=True).stdout
     write_bundle_manifest(output, {

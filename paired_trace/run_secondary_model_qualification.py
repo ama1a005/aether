@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 import sys
 
+from experiments.manifest import sha256_file
+
 from paired_trace import run_model_qualification as primary
 
 
@@ -63,6 +65,19 @@ def main() -> None:
         delegated.append("--preflight-only")
     sys.argv = delegated
     primary.main()
+    if not arguments.preflight_only:
+        summary_path = arguments.output / "summary.json"
+        manifest_path = arguments.output / "manifest.json"
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        if summary.get("mq_g1", {}).get("overall") != "PASS" or summary.get("mq_g2", {}).get("overall") != "PASS":
+            raise RuntimeError("second model did not pass both frozen qualification gates")
+        summary["overall"] = "PASS"
+        summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for key in list(manifest["artifact_paths"]):
+            if str(key).endswith("summary.json"):
+                manifest["artifact_paths"][key] = sha256_file(summary_path)
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
 
 
 if __name__ == "__main__":
