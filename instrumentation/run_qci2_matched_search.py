@@ -32,6 +32,10 @@ V23 = ROOT / "configs/phase1_core/qci2_method_freeze_v2_3_amendment.yaml"
 DECISION = ROOT / "results/phase1/method_freeze/decision.json"
 V22_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_2_decision.json"
 V23_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_3_decision.json"
+V24 = ROOT / "configs/phase1_core/qci2_method_freeze_v2_4_parallel_amendment.yaml"
+V24_DECISION = ROOT / "results/phase1/method_freeze/amendment_v2_4_parallel_decision.json"
+METHODS = ("greedy", "matched_random", "beam", "receiver_only", "flat_ppo")
+ALL_SEEDS = (11, 22, 33)
 
 
 def _hash(path: Path) -> str:
@@ -56,6 +60,20 @@ def _checkpoint_archive(output: Path) -> None:
     with tarfile.open(temporary, "w:gz") as bundle:
         bundle.add(output, arcname=output.name)
     temporary.replace(target)
+
+
+def _require_parallel_approval() -> str:
+    """Return the approved v2.4 hash or fail before model access."""
+    observed = _hash(V24)
+    if not V24_DECISION.is_file():
+        raise PermissionError(
+            f"parallel execution awaits exact-hash approval: {observed}"
+        )
+    decision = json.loads(V24_DECISION.read_text(encoding="utf-8"))
+    if (decision.get("decision") != "APPROVED"
+            or decision.get("amendment_sha256") != observed):
+        raise PermissionError("parallel execution decision does not approve v2.4")
+    return observed
 
 
 class RecordingEvaluator:
@@ -97,8 +115,12 @@ class RecordingEvaluator:
         return value
 
 
-def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
-    """Execute or resume all 15 independent method/seed runs with one model load."""
+def run(output: Path, snapshot: Path, *, resume: bool,
+        seeds: tuple[int, ...] = ALL_SEEDS) -> dict[str, Any]:
+    """Execute or resume complete method groups for the requested frozen seeds."""
+    if not seeds or any(seed not in ALL_SEEDS for seed in seeds) or len(set(seeds)) != len(seeds):
+        raise ValueError("seeds must be a non-empty unique subset of 11, 22, 33")
+    parallel_sha = _require_parallel_approval() if seeds != ALL_SEEDS else None
     if output.exists() and not resume:
         raise FileExistsError("CORE-02 output exists; use --resume without deleting it")
     output.mkdir(parents=True, exist_ok=True)
@@ -126,11 +148,10 @@ def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
     checkpoint = json.loads(checkpoint_path.read_text()) if checkpoint_path.is_file() else {"completed": {}}
     results: dict[str, Any] = dict(checkpoint.get("completed", {}))
     greedy_refs: dict[int, tuple[str, ...]] = {}
-    methods = ("greedy", "matched_random", "beam", "receiver_only", "flat_ppo")
     plans = {(plan.method, plan.seed): plan for plan in build_run_plans(freeze)}
     started = time.perf_counter()
-    for seed in (11, 22, 33):
-        for method in methods:
+    for seed in seeds:
+        for method in METHODS:
             key = f"{method}:{seed}"
             if key in results:
                 if method == "greedy": greedy_refs[seed] = tuple(results[key]["retained"])
@@ -151,7 +172,7 @@ def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
     ledgers = [{"method": method, "seed": seed,
                 "cache_namespace": plans[(method, seed)].cache_namespace,
                 **results[f"{method}:{seed}"]["ledger"]}
-               for seed in (11, 22, 33) for method in methods]
+               for seed in seeds for method in METHODS]
     _write(output / "budget_ledger.json", ledgers)
     _write(output / "search_results.json", results)
     _write(output / "candidate_graph.json", freeze.proposal["candidate_graph"])
@@ -164,6 +185,8 @@ def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
     summary = {"schema_version": "aether.core02-summary.v1", "status": status,
                "experiment_id": freeze.proposal["experiment_id"],
                "method_seed_run_count": len(results), "runtime_seconds": time.perf_counter() - started,
+               "execution_mode": "complete" if seeds == ALL_SEEDS else "seed_shard",
+               "seeds": list(seeds),
                "development_audit_executions": 0, "validation_executions": 0,
                "test_executions": 0,
                "claim_boundary": freeze.proposal["claim_boundary"]}
@@ -177,7 +200,9 @@ def run(output: Path, snapshot: Path, *, resume: bool) -> dict[str, Any]:
                 "python": platform.python_version(), "command_line": sys.argv,
                 "proposal_sha256": freeze.proposal_sha256,
                 "accounting_amendment_sha256": freeze.amendment_sha256,
-                "method_amendment_sha256": freeze.method_amendment_sha256}
+                "method_amendment_sha256": freeze.method_amendment_sha256,
+                "parallel_amendment_sha256": parallel_sha,
+                "seeds": list(seeds)}
     _write(output / "manifest.json", manifest)
     inventory = {path.relative_to(output).as_posix(): _hash(path)
                  for path in sorted(output.rglob("*")) if path.is_file()
@@ -191,8 +216,11 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model-snapshot", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--seed", type=int, choices=ALL_SEEDS)
     args = parser.parse_args()
-    print(json.dumps(run(args.output.resolve(), args.model_snapshot.resolve(), resume=args.resume), indent=2))
+    seeds = (args.seed,) if args.seed is not None else ALL_SEEDS
+    print(json.dumps(run(args.output.resolve(), args.model_snapshot.resolve(),
+                         resume=args.resume, seeds=seeds), indent=2))
 
 
 if __name__ == "__main__":

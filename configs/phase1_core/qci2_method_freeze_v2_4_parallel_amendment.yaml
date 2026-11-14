@@ -1,0 +1,52 @@
+schema_version: aether.qci2-method-freeze-amendment.v2.4
+status: AWAITING_HUMAN_REVIEW
+supersedes_amendment: configs/phase1_core/qci2_method_freeze_v2_3_amendment.yaml
+base_proposal_path: configs/phase1_core/qci2_method_freeze_v2.yaml
+base_proposal_sha256: b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c
+reason: >-
+  The unchanged 15-run CORE-02 campaign is too long for one external session.
+  This prospective amendment changes scheduling only: each already-frozen seed
+  executes on an independent worker and verified shards are merged afterward.
+scientific_changes: none
+unchanged:
+  - model_and_revision
+  - development_discovery_cases
+  - candidate_graph_and_legal_masks
+  - intervention_evaluator_and_160_forward_mask_cost
+  - methods_algorithms_hyperparameters_and_within_seed_order
+  - thresholds_metrics_and_budgets
+  - independent_cache_per_method_and_seed
+  - split_locks_and_claim_boundary
+shards:
+  - {shard_id: seed11, seeds: [11], resume_policy: retained_checkpoint_permitted}
+  - {shard_id: seed22, seeds: [22], resume_policy: fresh_or_same_seed_checkpoint_only}
+  - {shard_id: seed33, seeds: [33], resume_policy: fresh_or_same_seed_checkpoint_only}
+within_seed_method_order: [greedy, matched_random, beam, receiver_only, flat_ppo]
+isolation:
+  one_seed_per_shard: true
+  method_cache_namespaces_remain_independent: true
+  cross_shard_cache_reuse: forbidden
+  duplicate_method_seed_results: forbidden
+  foreign_seed_raw_rows: forbidden
+resume:
+  seed11_existing_checkpoint: permitted
+  disclosure_required:
+    - imported_archive_sha256
+    - imported_mask_count
+    - imported_completed_method_seed_keys
+  incomplete_mask: rerun_from_start
+  completed_masks: reuse_exact_persisted_rows
+merge:
+  required_seed_set: [11, 22, 33]
+  require_each_shard_independently_verified: true
+  reject_missing_duplicate_or_overlapping_method_seed_runs: true
+  reject_mixed_model_protocol_evaluator_or_split_provenance: true
+  final_bundle_must_pass_original_core02_verifier: true
+execution_authorization:
+  exact_hash_human_approval_required: true
+  development_audit: forbidden
+  validation: forbidden
+  test: forbidden
+review:
+  required: true
+  decision_artifact_created_only_after_human_review: true

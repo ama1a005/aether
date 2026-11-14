@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## CORE-02 seed-parallel scheduling extension
+
+Prepare a prospective scheduling-only amendment that executes the unchanged
+CORE-02 campaign as three disjoint seed shards (11, 22 and 33). Each shard must
+run all five frozen methods in their original within-seed order with independent
+caches and unchanged masks, evaluator, thresholds, budgets and split locks.
+Provide restart-safe Kaggle notebooks, strict shard verification and a
+deterministic merger that restores the original 15-run bundle. Seed 11 may
+resume the retained partial checkpoint; seeds 22 and 33 must start fresh. No
+shard may access Qwen until the exact amendment hash is human-approved.
+
 ## Execute and ingest the retained CORE-02 campaign
 
 Local implementation is complete. Run the commit-pinned Kaggle notebook, retain
