@@ -1,7 +1,9 @@
 # Phase-1 execution and evidence guide
 
-Version: 1.0 (2026-11-14)  
-Scope: Phase 1 only  
+Version: 1.0 (2026-11-14)
+
+Scope: Phase 1 only
+
 Authority: `RESEARCH_CONTRACT.md` and frozen protocol artifacts override this guide.
 
 ## What “finished” means
