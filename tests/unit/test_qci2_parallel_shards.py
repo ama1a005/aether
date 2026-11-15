@@ -59,3 +59,41 @@ def test_generated_parallel_notebooks_are_seed_isolated_and_compile() -> None:
         for cell in notebook["cells"]:
             if cell["cell_type"] == "code":
                 ast.parse("".join(cell["source"]))
+
+
+def test_checkpoint_publisher_requires_private_repo_and_uploads(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    calls: list[dict[str, object]] = []
+
+    class FakeInfo:
+        private = True
+
+    class FakeApi:
+        def __init__(self, token: str) -> None:
+            assert token == "secret"
+
+        def repo_info(self, **kwargs: object) -> FakeInfo:
+            calls.append(dict(kwargs))
+            return FakeInfo()
+
+        def upload_file(self, **kwargs: object) -> None:
+            calls.append(dict(kwargs))
+
+    import huggingface_hub
+    monkeypatch.setattr(huggingface_hub, "HfApi", FakeApi)
+    monkeypatch.setenv("TEST_HF_TOKEN", "secret")
+    publisher = runner.CheckpointPublisher(
+        "owner/private-checkpoints", "seed11/checkpoint.tar.gz", "TEST_HF_TOKEN"
+    )
+    archive = tmp_path / "checkpoint.tar.gz"
+    archive.write_bytes(b"complete")
+    publisher.publish(archive, message="mask complete")
+    assert calls[-1]["repo_type"] == "dataset"
+    assert calls[-1]["path_in_repo"] == "seed11/checkpoint.tar.gz"
+
+
+def test_checkpoint_publisher_rejects_missing_token(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("MISSING_HF_TOKEN", raising=False)
+    with pytest.raises(RuntimeError, match="environment variable is absent"):
+        runner.CheckpointPublisher("owner/repo", "checkpoint.tar.gz", "MISSING_HF_TOKEN")

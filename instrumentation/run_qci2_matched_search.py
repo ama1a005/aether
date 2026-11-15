@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import os
 import subprocess
 import sys
 import tarfile
@@ -53,7 +54,7 @@ def _git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
 
 
-def _checkpoint_archive(output: Path) -> None:
+def _checkpoint_archive(output: Path) -> Path:
     """Replace a portable archive after every completed method/seed unit."""
     name = ("aether-core02-checkpoint.tar.gz" if output.name == "aether-core02-results"
             else f"{output.name}-checkpoint.tar.gz")
@@ -62,6 +63,34 @@ def _checkpoint_archive(output: Path) -> None:
     with tarfile.open(temporary, "w:gz") as bundle:
         bundle.add(output, arcname=output.name)
     temporary.replace(target)
+    return target
+
+
+class CheckpointPublisher:
+    """Atomically publish each checkpoint to a private Hugging Face dataset."""
+
+    def __init__(self, repo_id: str, path_in_repo: str, token_env: str) -> None:
+        from huggingface_hub import HfApi
+
+        token = os.environ.get(token_env)
+        if not token:
+            raise RuntimeError(f"checkpoint token environment variable is absent: {token_env}")
+        self.repo_id = repo_id
+        self.path_in_repo = path_in_repo
+        self.api = HfApi(token=token)
+        info = self.api.repo_info(repo_id=repo_id, repo_type="dataset")
+        if not bool(getattr(info, "private", False)):
+            raise PermissionError("checkpoint dataset must be private")
+
+    def publish(self, archive: Path, *, message: str) -> None:
+        """Upload one complete tar; return only after the remote commit succeeds."""
+        self.api.upload_file(
+            path_or_fileobj=archive,
+            path_in_repo=self.path_in_repo,
+            repo_id=self.repo_id,
+            repo_type="dataset",
+            commit_message=message,
+        )
 
 
 def _require_parallel_approval() -> str:
@@ -82,8 +111,10 @@ class RecordingEvaluator:
     """Persist every completed real mask evaluation and reuse it on resume."""
 
     def __init__(self, execute: QwenMatchedMaskEvaluator, raw: Path,
-                 method: str, seed: int) -> None:
+                 method: str, seed: int,
+                 publisher: CheckpointPublisher | None = None) -> None:
         self.execute, self.raw, self.method, self.seed = execute, raw, method, seed
+        self.publisher = publisher
         self.cache: dict[tuple[str, ...], Evaluation] = {}
         if raw.is_file():
             for line in raw.read_text(encoding="utf-8").splitlines():
@@ -113,14 +144,21 @@ class RecordingEvaluator:
             stream.write(json.dumps(record, sort_keys=True, allow_nan=False) + "\n")
             stream.flush()
         self.cache[mask] = value
-        _checkpoint_archive(self.raw.parent)
+        archive = _checkpoint_archive(self.raw.parent)
+        if self.publisher is not None:
+            self.publisher.publish(
+                archive,
+                message=f"CORE-02 seed {self.seed} {self.method} mask {len(self.cache)}",
+            )
         print(f"completed mask method={self.method} seed={self.seed} "
-              f"count={len(self.cache)}", flush=True)
+              f"count={len(self.cache)} checkpoint={'remote' if self.publisher else 'local'}",
+              flush=True)
         return value
 
 
 def run(output: Path, snapshot: Path, *, resume: bool,
-        seeds: tuple[int, ...] = ALL_SEEDS) -> dict[str, Any]:
+        seeds: tuple[int, ...] = ALL_SEEDS,
+        publisher: CheckpointPublisher | None = None) -> dict[str, Any]:
     """Execute or resume complete method groups for the requested frozen seeds."""
     if not seeds or any(seed not in ALL_SEEDS for seed in seeds) or len(set(seeds)) != len(seeds):
         raise ValueError("seeds must be a non-empty unique subset of 11, 22, 33")
@@ -160,7 +198,7 @@ def run(output: Path, snapshot: Path, *, resume: bool,
             if key in results:
                 if method == "greedy": greedy_refs[seed] = tuple(results[key]["retained"])
                 continue
-            recording = RecordingEvaluator(evaluator, raw, method, seed)
+            recording = RecordingEvaluator(evaluator, raw, method, seed, publisher)
             outcome = run_constraint_safe_search(
                 freeze, plans[(method, seed)], recording,
                 matched_random_reference=greedy_refs.get(seed),
@@ -172,7 +210,9 @@ def run(output: Path, snapshot: Path, *, resume: bool,
                                      "completed": results, "last_completed": key,
                                      "development_audit_executions": 0,
                                      "validation_executions": 0, "test_executions": 0})
-            _checkpoint_archive(output)
+            archive = _checkpoint_archive(output)
+            if publisher is not None:
+                publisher.publish(archive, message=f"CORE-02 seed {seed} completed {method}")
     ledgers = [{"method": method, "seed": seed,
                 "cache_namespace": plans[(method, seed)].cache_namespace,
                 **results[f"{method}:{seed}"]["ledger"]}
@@ -221,10 +261,18 @@ def main() -> None:
     parser.add_argument("--model-snapshot", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--seed", type=int, choices=ALL_SEEDS)
+    parser.add_argument("--checkpoint-repo")
+    parser.add_argument("--checkpoint-path")
+    parser.add_argument("--checkpoint-token-env", default="HF_TOKEN")
     args = parser.parse_args()
     seeds = (args.seed,) if args.seed is not None else ALL_SEEDS
+    if bool(args.checkpoint_repo) != bool(args.checkpoint_path):
+        parser.error("--checkpoint-repo and --checkpoint-path must be supplied together")
+    publisher = (CheckpointPublisher(args.checkpoint_repo, args.checkpoint_path,
+                                     args.checkpoint_token_env)
+                 if args.checkpoint_repo else None)
     print(json.dumps(run(args.output.resolve(), args.model_snapshot.resolve(),
-                         resume=args.resume, seeds=seeds), indent=2))
+                         resume=args.resume, seeds=seeds, publisher=publisher), indent=2))
 
 
 if __name__ == "__main__":
