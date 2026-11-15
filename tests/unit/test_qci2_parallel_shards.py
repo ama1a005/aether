@@ -48,7 +48,7 @@ def test_seed_selection_rejects_invalid_values(tmp_path: Path) -> None:
 
 def test_generated_parallel_notebooks_are_seed_isolated_and_compile() -> None:
     root = Path(__file__).resolve().parents[2]
-    expected_commit = "5a29be4826e90fa58affeac4faf015561cefc7dd"
+    expected_commit = "6c1aab793498df3aeb8627f46ece6e19fe37cae8"
     for seed in (11, 22, 33):
         path = root / f"notebooks/aether_qwen_core02_seed{seed}.ipynb"
         notebook = json.loads(path.read_text(encoding="utf-8"))

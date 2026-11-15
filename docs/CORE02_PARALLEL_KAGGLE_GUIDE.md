@@ -12,6 +12,23 @@ ingested.
 Each friend must use their own Kaggle account in accordance with Kaggle's terms.
 Do not exchange passwords, sessions or API credentials.
 
+## One-time durable-checkpoint setup
+
+Each worker must use their own free Hugging Face account and credentials:
+
+1. In Hugging Face, open **Settings > Access Tokens** and create a fine-grained
+   token with permission to create/write datasets under that account.
+2. In the assigned Kaggle notebook open **Add-ons > Secrets**.
+3. Add secret `HF_TOKEN` with the token as its value and enable notebook access.
+4. Add secret `AETHER_HF_REPO` with a unique repository ID such as
+   `username/aether-core02-seed22` and enable notebook access.
+
+The notebook creates that repository as a private dataset and refuses to use it
+if it is public. Never paste the token into a code cell or send it to another
+person. The newest complete checkpoint is uploaded after every mask. A progress
+line is printed only after the remote upload succeeds. If upload fails, the run
+stops rather than accumulating unprotected progress.
+
 ## Assignment
 
 | Worker | Notebook | Starting state | Required final file |
@@ -34,19 +51,21 @@ same-seed greedy result, and every seed shard must contain all five methods.
    attach it.
 4. Select **Run All**. Do not edit the seed, commit, model revision, cases,
    budgets or commands.
-5. The long execution cell prints one line after every newly completed mask.
-   Kaggle working files will contain a checkpoint tar refreshed after every
-   completed mask:
+5. The long execution cell prints one line after every newly completed mask and
+   successful private remote upload. It ends with `checkpoint=remote`. Kaggle
+   working files also contain a checkpoint tar:
    - seed 11: `aether-core02-checkpoint.tar.gz`
    - seed 22: `aether-core02-seed22-checkpoint.tar.gz`
    - seed 33: `aether-core02-seed33-checkpoint.tar.gz`
-6. If a session stops, save that checkpoint tar as a private Kaggle dataset,
-   attach it to a fresh session running the same notebook, and run all cells.
-   Completed masks are reused; an interrupted, incomplete mask is safely rerun.
+6. If a session stops, start the same notebook with the same two Kaggle secrets
+   and run all cells. It automatically downloads the newest private remote
+   checkpoint. Completed masks are reused; at most the interrupted mask is
+   safely rerun.
 7. Completion is valid only when the last cell prints the independent shard
    verifier PASS and a SHA-256 for the final results archive.
 8. Download the required `*-results.tar.gz` file and retain the displayed hash.
-   Do not rename, edit or recompress its contents.
+   The verified final archive is also uploaded to the private dataset at
+   `core02/seedNN/final-results.tar.gz`. Do not edit or recompress it.
 
 ## Failure rules
 

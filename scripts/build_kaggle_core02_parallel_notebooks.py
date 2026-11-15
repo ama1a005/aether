@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMIT = "5a29be4826e90fa58affeac4faf015561cefc7dd"
+COMMIT = "6c1aab793498df3aeb8627f46ece6e19fe37cae8"
 
 
 def _cell(kind: str, source: str) -> dict[str, object]:
@@ -29,9 +29,10 @@ This notebook runs **only seed {seed}**, but runs all five frozen methods in the
 required order. It never accesses development-audit, validation or test.
 
 Internet must be enabled. A CPU runtime is sufficient and is the frozen
-configuration. If interrupted, save the checkpoint tar from `/kaggle/working`,
-attach it to a new notebook session as a Kaggle dataset, and run all cells again.
-Do not attach another seed's checkpoint.
+configuration. Configure the two Kaggle secrets described in the project guide.
+After every completed mask, the checkpoint is committed to a private Hugging
+Face dataset; a new session automatically restores it. Do not attach another
+seed's checkpoint.
 """),
         _cell("code", f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile
@@ -42,7 +43,7 @@ os.environ.update({{'MPLBACKEND':'Agg','PYTHONNOUSERSITE':'1','TOKENIZERS_PARALL
 for path in (RUNTIME,CACHE): path.mkdir(parents=True,exist_ok=True)
 print('Shard seed:',SEED,'host Python:',sys.version)
 """),
-        _cell("code", f"""# Restore at most one checkpoint. Seed 11 also accepts the original campaign name.
+        _cell("code", f"""# Locate at most one older checkpoint; restore happens after environment setup.
 patterns=['aether-core02-seed{seed}-checkpoint.tar.gz']
 if SEED==11: patterns.append('aether-core02-checkpoint.tar.gz')
 checkpoints=[]
@@ -50,17 +51,8 @@ for pattern in patterns: checkpoints += list(Path('/kaggle/input').rglob(pattern
 checkpoints += [p for pattern in patterns for p in [WORK/pattern] if p.is_file()]
 checkpoints=list(dict.fromkeys(checkpoints))
 if len(checkpoints)>1: raise RuntimeError(f'Attach exactly zero or one seed {{SEED}} checkpoint: {{checkpoints}}')
-if checkpoints:
- with tarfile.open(checkpoints[0],'r:gz') as bundle:
-  members=bundle.getmembers(); roots={{Path(m.name).parts[0] for m in members if Path(m.name).parts}}
-  allowed={{'aether-core02-seed{seed}'}} | ({{'aether-core02-results'}} if SEED==11 else set())
-  if len(roots)!=1 or not roots.issubset(allowed): raise ValueError(f'foreign checkpoint root: {{roots}}')
-  for member in members:
-   if Path(member.name).is_absolute() or '..' in Path(member.name).parts or member.issym() or member.islnk(): raise ValueError(member.name)
-  bundle.extractall(WORK,filter='data')
- extracted=WORK/next(iter(roots)); OUTPUT=extracted
- print('Restored checkpoint:',checkpoints[0],'to',OUTPUT)
-else: print('Fresh seed',SEED,'shard at',OUTPUT)
+LOCAL_CHECKPOINT=checkpoints[0] if checkpoints else None
+print('Older attached checkpoint:',LOCAL_CHECKPOINT)
 """),
         _cell("code", """# Install isolated Python 3.11 and checkout the immutable approved source.
 if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
@@ -78,6 +70,41 @@ subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_qci2_parallel_shards.py','tests/unit/test_phase1_core_matched_search.py','tests/unit/test_phase1_core_qwen_evaluator.py','tests/unit/test_model_adapter.py','-q'],cwd=REPO,check=True)
 print(subprocess.check_output([str(PY),'-c','import sys; print(sys.version); assert sys.version_info[:2]==(3,11)'],text=True))
+"""),
+        _cell("code", f"""# Configure private durable storage and restore its newest checkpoint.
+from kaggle_secrets import UserSecretsClient
+secret_client=UserSecretsClient()
+HF_TOKEN=secret_client.get_secret('HF_TOKEN')
+HF_REPO=secret_client.get_secret('AETHER_HF_REPO')
+assert HF_TOKEN and HF_REPO and '/' in HF_REPO, 'Set Kaggle secrets HF_TOKEN and AETHER_HF_REPO'
+os.environ['HF_TOKEN']=HF_TOKEN
+REMOTE_PATH='core02/seed{seed}/checkpoint.tar.gz'
+restore_code=r'''import sys
+from huggingface_hub import HfApi,hf_hub_download
+from huggingface_hub.errors import EntryNotFoundError
+repo,path,cache=sys.argv[1:]
+api=HfApi()
+api.create_repo(repo_id=repo,repo_type="dataset",private=True,exist_ok=True)
+info=api.repo_info(repo_id=repo,repo_type="dataset")
+if not info.private: raise PermissionError("checkpoint dataset must be private")
+try: print(hf_hub_download(repo_id=repo,filename=path,repo_type="dataset",cache_dir=cache))
+except EntryNotFoundError: print("")
+'''
+remote_output=subprocess.check_output([str(PY),'-c',restore_code,HF_REPO,REMOTE_PATH,str(RUNTIME/'checkpoint-cache')],cwd=REPO,env=os.environ,text=True).strip()
+REMOTE_CHECKPOINT=Path(remote_output.splitlines()[-1]) if remote_output else None
+chosen=REMOTE_CHECKPOINT or LOCAL_CHECKPOINT
+if chosen:
+ with tarfile.open(chosen,'r:gz') as bundle:
+  members=bundle.getmembers(); roots={{Path(m.name).parts[0] for m in members if Path(m.name).parts}}
+  allowed={{'aether-core02-seed{seed}'}} | ({{'aether-core02-results'}} if SEED==11 else set())
+  if len(roots)!=1 or not roots.issubset(allowed): raise ValueError(f'foreign checkpoint root: {{roots}}')
+  for member in members:
+   if Path(member.name).is_absolute() or '..' in Path(member.name).parts or member.issym() or member.islnk(): raise ValueError(member.name)
+  bundle.extractall(WORK,filter='data')
+ OUTPUT=WORK/next(iter(roots))
+ print('Restored durable checkpoint:',chosen,'to',OUTPUT)
+else: print('No checkpoint exists; fresh seed',SEED,'shard')
+print('Private checkpoint repository:',HF_REPO,'path:',REMOTE_PATH)
 """),
         _cell("code", """# Download the immutable Qwen snapshot (one worker avoids RAM/network spikes).
 revision='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
@@ -100,7 +127,7 @@ else:
  print('Using restored passing preflight')
 """),
         _cell("code", """# Execute/resume and stream progress. Every completed mask refreshes the checkpoint tar.
-command=[str(PY),'-u','-m','instrumentation.run_qci2_matched_search','--output',str(OUTPUT),'--model-snapshot',str(snapshot),'--resume','--seed',str(SEED)]
+command=[str(PY),'-u','-m','instrumentation.run_qci2_matched_search','--output',str(OUTPUT),'--model-snapshot',str(snapshot),'--resume','--seed',str(SEED),'--checkpoint-repo',HF_REPO,'--checkpoint-path',REMOTE_PATH]
 process=subprocess.Popen(command,cwd=REPO,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
 assert process.stdout is not None
 for line in process.stdout: print(line,end='',flush=True)
@@ -113,6 +140,13 @@ archive=WORK/'aether-core02-seed{seed}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 print('FINAL SHARD',archive)
 print('SHA256',hashlib.sha256(archive.read_bytes()).hexdigest())
+final_code=r'''import sys
+from huggingface_hub import HfApi
+repo,source,target=sys.argv[1:]
+HfApi().upload_file(path_or_fileobj=source,path_in_repo=target,repo_id=repo,repo_type="dataset",commit_message="verified CORE-02 final seed shard")
+'''
+subprocess.run([str(PY),'-c',final_code,HF_REPO,str(archive),'core02/seed{seed}/final-results.tar.gz'],cwd=REPO,env=os.environ,check=True)
+print('Final verified archive also saved privately at',HF_REPO,'core02/seed{seed}/final-results.tar.gz')
 print('Download this final shard. It is not the merged 15-run evidence bundle.')
 """),
     ]
