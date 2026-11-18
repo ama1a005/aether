@@ -57,11 +57,12 @@ It will raise `PermissionError` if any field is wrong or the SHA does not match.
    git push origin m1/target-harness
    ```
 
-2. Note the new HEAD commit SHA. Update `notebooks/aether_qwen_agent_c.ipynb`
-   cell 1's `COMMIT` variable to this new SHA so the Kaggle notebook clones the
-   correct state.
+2. For the recommended local run, no notebook repin is needed. If choosing the
+   optional Kaggle notebook, update its `COMMIT` to the approval-bearing source
+   commit using `scripts/build_kaggle_supporting_notebook.py`, then commit/push
+   that notebook update before execution.
 
-3. Run the Kaggle notebook: `notebooks/aether_qwen_agent_c.ipynb`
+3. Recommended execution is local Windows CPU in a clean clone after approval; follow `docs/handoffs/target/EXTERNAL_EXECUTION_GUIDE.md` Part B. This deterministic review reads retained real-Qwen traces and does not require Qwen weights or a GPU. The Kaggle notebook remains an optional Linux route only.
 
 4. Download the resulting `aether-agent_c-results.tar.gz`, verify it with
    `scripts/verify_external_bundle.py`, then ingest with

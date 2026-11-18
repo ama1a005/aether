@@ -250,3 +250,12 @@ The original uncommitted CORE/evidence work and untracked `reference_docs/` were
 Final source commit: `e8966b4ed6dd4cdd354322666ceaef3364b576d0` adds a mandatory BFCL approval JSON gate bound to the exact canonical config. The notebook checks approval before model download; a missing decision leaves the path blocked. Commit `16c43d37cd87ccffd6a0f9c38392406461a8ffaf` repins both external notebooks to that exact source commit. Both commits are pushed to `origin/m1/target-harness`.
 
 Regression verification after the approval change: **26 relevant unit tests passed**, then **7 approval/notebook tests passed**; the demo verifier passed. The full unit-suite result remains 606 passed and the one unrelated QCI-2 artifact-resolution failure documented above. No unapproved BFCL or Agent-C run was started.
+
+
+## Local/external execution feasibility guide ? 2026-11-19
+
+The beginner execution guide is `docs/handoffs/target/EXTERNAL_EXECUTION_GUIDE.md`. It corrects an earlier overstatement in this handoff: the canonical Agent-C task does **not** load a Qwen model. It replays the 24 retained real-Qwen A/B development traces through frozen deterministic Agent C for 48 paired conditions, so local Windows CPU execution is appropriate after human approval. The Qwen model remains pinned as upstream trace provenance; no weights are required for this review.
+
+BFCL remains Linux/CUDA external-only. Its preflight now checks that vLLM is installed and rejects NVIDIA devices below compute capability 7.5 as well as devices below the frozen 16-GiB memory floor. This guards against a Kaggle P100 that has 16 GiB but is incompatible with current vLLM CUDA wheels. The BFCL notebook installs the vLLM backend and supports Kaggle or a compatible Linux Jupyter Pod.
+
+No approval was created and no scientific experiment was started during this preparation. Local preflight on the current Windows machine correctly reports missing `bfcl_eval`, missing vLLM, no CUDA device, and the absent local Qwen snapshot.

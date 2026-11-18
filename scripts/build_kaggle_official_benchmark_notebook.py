@@ -35,6 +35,7 @@ assert len(WHEELS)==1, f'Expected exactly one pinned BFCL wheel, found {len(WHEE
 WHEEL=WHEELS[0]; WHEEL_SHA256=hashlib.sha256(WHEEL.read_bytes()).hexdigest()
 assert WHEEL_SHA256=='3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a', WHEEL_SHA256
 subprocess.run([str(PY),'-m','pip','install',str(WHEEL)],check=True)
+subprocess.run([UV,'pip','install','--python',str(PY),'vllm','--torch-backend','auto'],check=True,env=env)
 """
         snapshot_setup = """from huggingface_hub import snapshot_download
 from benchmarks.run_native_official import _load_config
@@ -74,7 +75,9 @@ official outputs plus a hash-verified AETHER wrapper bundle.
 """),
         _cell("code", f"""from pathlib import Path
 import os,shutil,subprocess,sys,tarfile,hashlib
-WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-{benchmark}')
+WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
+WORK.mkdir(parents=True,exist_ok=True)
+RUNTIME=Path('/tmp/aether-{benchmark}')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
 OUTPUT=WORK/'aether-{benchmark}-official'; COMMIT={commit!r}
 URL='https://github.com/ama1a005/aether.git'

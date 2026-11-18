@@ -28,7 +28,7 @@ In AETHER:
 
 - **OS:** Linux (Ubuntu 22.04+ recommended; Windows is incompatible with vLLM)
 - **Python:** 3.11
-- **Accelerator:** NVIDIA GPU with $\ge$ 16 GB VRAM (e.g. A100, RTX 4090, T4 x 2, or Kaggle P100/T4)
+- **Accelerator:** NVIDIA GPU with at least 16 GB VRAM and CUDA compute capability 7.5 or newer (e.g. T4, A10, L4, A100, RTX 4090). Kaggle P100 (compute capability 6.0) is rejected by the current vLLM preflight.
 - **CUDA:** 12.1+
 - **Inference Engine:** `vllm>=0.4.0` or `sglang`
 - **Dependencies:**
@@ -67,8 +67,7 @@ python -m benchmarks.run_native_official bfcl --config configs/benchmarks/phase1
   --output /tmp/aether-bfcl-preflight
 ```
 
-The command fails closed if the pinned wheel, Linux GPU backend, or verified snapshot
-is unavailable. It never writes experiment artifacts inside the checkout.
+The command fails closed if human approval, the pinned wheel, Linux GPU backend (including vLLM installation, 16 GiB VRAM and capability 7.5+), or verified snapshot is unavailable. It never writes experiment artifacts inside the checkout.
 
 ### Step 3.2: Native Execution (only after preflight)
 ```bash

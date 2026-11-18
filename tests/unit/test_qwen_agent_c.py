@@ -26,3 +26,20 @@ def test_agent_c_rejects_validation_rows_and_duplicate_case_ids() -> None:
     import pytest
     with pytest.raises(ValueError, match="development registry"):
         evaluate([row], registry, 0.4)
+
+
+def test_run_requires_approval_before_opening_inputs(tmp_path) -> None:
+    import yaml
+    import pytest
+    from experiments.phase1.qwen_agent_c import run
+
+    config = tmp_path / "proposal.yaml"
+    config.write_text(yaml.safe_dump({
+        "status": "awaiting_human_protocol_review", "split": "development",
+        "validation_executions": 0, "test_executions": 0,
+        "qwen_rows": "missing_rows.json", "case_registry": "missing_registry.json",
+        "risk_score_threshold": 0.4,
+    }), encoding="utf-8")
+    with pytest.raises(PermissionError, match="human protocol decision is missing"):
+        run(config, tmp_path / "missing_approval.json", tmp_path / "output")
+    assert not (tmp_path / "output").exists()

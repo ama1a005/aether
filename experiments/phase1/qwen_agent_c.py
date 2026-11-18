@@ -142,16 +142,34 @@ def run(config_path: Path, approval_path: Path, output: Path, resume: bool = Fal
                "model_id": "Qwen/Qwen2.5-1.5B-Instruct", **result["counts"],
                "validation_executions": 0, "test_executions": 0}
     _atomic_json(output / "summary.json", summary)
+    source_manifest_path = ROOT / "results/phase1/model_qualification/qwen15b_kaggle_20261110/manifest.json"
+    source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
     metadata = runtime_metadata(
         repository=ROOT, experiment_id="P0_agent_c_qwen15b_development", run_id=output.name,
         dataset_manifest_hashes={config["qwen_rows"]: sha256_file(ROOT / config["qwen_rows"]),
-                                 config["case_registry"]: sha256_file(ROOT / config["case_registry"])},
+                                 config["case_registry"]: sha256_file(ROOT / config["case_registry"]),
+                                 "source_qwen_qualification_manifest": sha256_file(source_manifest_path)},
         model_id="Qwen/Qwen2.5-1.5B-Instruct",
         model_revision="989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
         tokenizer_revision="989aa7980e4cf806f80c7fef2b1adb7bc71aa306", seeds=[0],
         config_file=config_path, evidence_kind="qwen_agent_c")
+    metadata["prompt_versions"] = {
+        **source_manifest.get("prompt_versions", {}),
+        "agent_c_policy": "deterministic-agent-c-v1",
+    }
+    metadata["source_qwen_generation"] = {
+        "experiment_id": source_manifest["experiment_id"],
+        "run_id": source_manifest["run_id"],
+        "git_commit": source_manifest["git_commit"],
+        "model_id": source_manifest["model_id"],
+        "model_revision": source_manifest["model_revision"],
+        "tokenizer_revision": source_manifest["tokenizer_revision"],
+        "random_seeds": source_manifest["random_seeds"],
+        "prompt_versions": source_manifest.get("prompt_versions", {}),
+        "source_manifest_sha256": sha256_file(source_manifest_path),
+    }
     write_bundle_manifest(output, metadata)
-    return destination
+    return checkpoint
 
 
 def main() -> None:

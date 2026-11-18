@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from hashlib import sha256
 from importlib.metadata import PackageNotFoundError, version
+from importlib.util import find_spec
 import json
 from pathlib import Path
 import sys
@@ -88,6 +89,8 @@ def check_backend_and_hardware(
     }
     if backend not in {"vllm", "sglang"}:
         reasons.append(f"Unsupported backend {backend!r}; only 'vllm' and 'sglang' supported")
+    elif find_spec(backend) is None:
+        reasons.append(f"Required inference backend {backend!r} is not installed")
 
     if not torch.cuda.is_available():
         reasons.append(
@@ -103,12 +106,19 @@ def check_backend_and_hardware(
             for idx in range(num_gpus):
                 props = torch.cuda.get_device_properties(idx)
                 total_vram_gb = props.total_memory / (1024 ** 3)
+                capability = torch.cuda.get_device_capability(idx)
                 details[f"gpu_{idx}_name"] = props.name
                 details[f"gpu_{idx}_vram_gb"] = round(total_vram_gb, 2)
+                details[f"gpu_{idx}_compute_capability"] = f"{capability[0]}.{capability[1]}"
                 if total_vram_gb < min_vram_gb:
                     reasons.append(
                         f"GPU {idx} ({props.name}) has {total_vram_gb:.1f} GB VRAM, "
                         f"below required {min_vram_gb} GB"
+                    )
+                if backend == "vllm" and capability < (7, 5):
+                    reasons.append(
+                        f"GPU {idx} ({props.name}) has CUDA compute capability "
+                        f"{capability[0]}.{capability[1]}; current vLLM CUDA wheels require 7.5 or newer"
                     )
     return len(reasons) == 0, reasons, details
 

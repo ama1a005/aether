@@ -54,6 +54,29 @@ def test_backend_hardware_rejects_invalid_backend():
     assert any("Unsupported backend" in r for r in reasons)
 
 
+def test_backend_hardware_requires_installed_vllm(monkeypatch):
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: None)
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm")
+    assert not ok
+    assert any("backend 'vllm' is not installed" in reason for reason in reasons)
+
+
+def test_vllm_preflight_rejects_unsupported_compute_capability(monkeypatch):
+    class Properties:
+        name = "Tesla P100"
+        total_memory = 16 * 1024 ** 3
+
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: object())
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (6, 0))
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+    assert not ok
+    assert details["gpu_0_compute_capability"] == "6.0"
+    assert any("require 7.5 or newer" in reason for reason in reasons)
+
+
 def test_categories_rejects_empty_or_invalid():
     ok, reasons, _ = check_categories([])
     assert not ok
