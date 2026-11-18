@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-18 CORE-05 once-only test approved and implemented locally
+
+The human project owner approved CORE-05 at exact proposal SHA-256
+`fc70dfedab254b428287f2d128f7eb2b521b54574f8925c3f695d562460f3c4d`.
+The separate test evaluator, once-only attempt marker, same-attempt resume
+guards, strict verifier and atomic ingester are implemented and model-
+independently tested. No CORE-05 test execution has occurred locally. The
+remaining step is a commit-pinned retained Kaggle execution; a complete attempt
+cannot be rerun, while an interrupted attempt may only resume its own checkpoint.
+
 ## 2026-11-18 CORE-04 validation accepted
 
 The retained CORE-04 archive independently verifies and is atomically ingested

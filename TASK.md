@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Execute the approved CORE-05 test exactly once
+
+The approved runner, attempt controls, verifier and ingester are implemented.
+Generate and run the commit-pinned checkpoint-safe Kaggle notebook. It must
+write the attempt marker before model access, retain checkpoints after every
+arm/seed unit, resume only the same attempt, independently verify before export,
+and preserve either `TEST_ACCEPTED` or `TEST_REJECTED`. Do not initiate a fresh
+run after a complete attempt.
+
 ## Review the prospective CORE-05 once-only test protocol
 
 CORE-04 validation is independently verified, ingested and accepted. Review
