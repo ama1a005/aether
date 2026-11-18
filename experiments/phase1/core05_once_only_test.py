@@ -58,7 +58,10 @@ def preflight(output: Path, snapshot: Path) -> dict[str, Any]:
         "python_3_11": sys.version_info[:2] == (3, 11),
         "git_clean": _git("status", "--porcelain") == "",
         "exact_human_approval": True,
-        "snapshot_revision": snapshot.is_dir() and snapshot.name == protocol["model"]["revision"],
+        # The attempt marker must precede repository access. Preflight therefore
+        # validates the deterministic destination revision; run() later requires
+        # Qwen2ModelAdapter to load that exact local snapshot fail-closed.
+        "snapshot_revision": snapshot.name == protocol["model"]["revision"],
         "output_absent": not output.exists(),
         "test_exact": len(protocol["cohort"]["case_ids"]) == 8,
         "development_locked": not protocol["cohort"]["development_case_ids"],
