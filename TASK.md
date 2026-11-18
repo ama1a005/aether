@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Close the verified primary causal-core test and continue external evidence
+
+CORE-05 is independently verified, ingested and closed; never rerun it. Update
+all evidence registries and reports from the retained artifacts only. The
+remaining Phase-1 execution work is external/supporting evidence: BFCL,
+MCPTox/TAMAS where official access is available, real-Qwen red-team and Agent C,
+trained-SAE evaluation with a pinned compatible checkpoint, second-model
+qualification, and the final verified report. Do not represent readiness as
+evidence or weaken prerequisites to force completion.
+
 ## Execute the approved CORE-05 test exactly once
 
 The approved runner, attempt controls, verifier and ingester are implemented.

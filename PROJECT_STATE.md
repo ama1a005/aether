@@ -1,5 +1,23 @@
 # AETHER project state
 
+## 2026-11-18 CORE-05 once-only test accepted and closed
+
+The only authorized CORE-05 attempt, ID
+`d25c770d-9159-4114-8dfa-7eee8c8618bd`, independently verifies and is
+atomically ingested under `results/phase1/once_only_test`. Across eight locked
+test cases and seeds 11/22/33, the frozen receiver L20H5 paired-clean-donor
+repair achieved attacked decision recovery 1.0 and clean decision accuracy 1.0
+with zero invalid/error rows; no defense achieved attacked recovery 0.0 and
+clean accuracy 1.0. All six arm/seed units, 96 test rows and 504 forwards
+verify. Development and validation re-execution counts are zero. CORE-05 is
+closed and must not be rerun.
+
+This establishes internal held-out test performance on the frozen balanced
+synthetic substrate. It does not establish an oracle-free deployable defense,
+clinical or population validity, official benchmark performance, or a complete
+distributed internal circuit. External benchmarks and supporting/generalization
+experiments remain separate incomplete Phase-1 evidence gates.
+
 ## 2026-11-18 CORE-05 once-only test approved and implemented locally
 
 The human project owner approved CORE-05 at exact proposal SHA-256

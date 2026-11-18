@@ -1,0 +1,43 @@
+{
+  "attempt_id": "d25c770d-9159-4114-8dfa-7eee8c8618bd",
+  "command_line": [
+    "/tmp/aether-core05/aether/experiments/phase1/core05_once_only_test.py",
+    "--resume",
+    "--output",
+    "/kaggle/working/aether-core05-results",
+    "--model-snapshot",
+    "/tmp/aether-core05/hf-cache/models--Qwen--Qwen2.5-1.5B-Instruct/snapshots/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "--checkpoint-repo",
+    "DXVNX05/aether-core05",
+    "--checkpoint-path",
+    "core05/checkpoint.tar.gz"
+  ],
+  "config_file": "configs/phase1_core/core05_once_only_test_freeze_v1.yaml",
+  "dataset_manifest_hashes": {
+    "case_registry": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+    "core04_manifest": "f18fc29e48a3d736b17637e27a525de1316459195dd890a9231eb8fafcc22406",
+    "core04_proposal": "6313d3a8d81e25be0897c6d5b986f85382303a499f524611d91abeec192868dc",
+    "core04_statistics": "2efde82353d2a4cdac6dee4a13b96d54b3d730768e470c0e651d00287966cd6f",
+    "core04_summary": "50d32fc37022095df272163616f2fd29d03f64f81f6245e1f70aa47d3e8690c1"
+  },
+  "git_commit": "c2a4ff24c1789bfe9db9b220e728e4443a0c1133",
+  "hardware": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "prompt_versions": {
+    "source": "balanced_v2_frozen_templates"
+  },
+  "proposal_sha256": "fc70dfedab254b428287f2d128f7eb2b521b54574f8925c3f695d562460f3c4d",
+  "python_env_hash": null,
+  "random_seeds": [
+    11,
+    22,
+    33
+  ],
+  "raw_output_path": "raw_evaluations.jsonl",
+  "run_id": "P0_cross_20261118_core05_once_only_test_v1",
+  "schema_version": "aether.core05-manifest.v1",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-18T13:18:10.767715+00:00"
+}
