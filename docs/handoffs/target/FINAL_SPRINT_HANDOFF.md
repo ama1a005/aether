@@ -18,7 +18,7 @@
 ## 2. Base lm Commit and Final Commits
 - **Base lm commit:** `4a05df1ea1ced1030fa959259dfe6434f5ae03b3`
 - **Sprint base commit:** `299dfa0b258c7c4f6732c459d98f5663fd8ecbcd`
-- **Branch HEAD commit:** (to be committed on `m1/target-harness`)
+- **Final commit:** `7f5470005e2d5ea13ae1541b48f1299a38ab8ee0`
 
 ---
 
