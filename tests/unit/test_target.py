@@ -1,6 +1,7 @@
 import pytest
 import os
 import json
+from pathlib import Path
 from target.case_loader import CaseLoader
 from target.mcp.mock_client import MockMCPClient
 from target.mcp.tools import get_ecg_analysis
@@ -153,13 +154,38 @@ case_source:
   type: synthetic
 n_cases: 2
 seed: 42
+attack:
+  poison_spec: {}
 output:
   trace_dir: {}
-""".format(str(tmp_path).replace('\\', '/')))
+""".format(str(Path("tests/fixtures/poison_attack_spec.json").resolve()).replace('\\', '/'),
+           str(tmp_path).replace('\\', '/')))
     
     import subprocess
     import sys
     
     subprocess.run([sys.executable, "-m", "target.runner", "--config", str(config_path)], check=True)
     
-    assert (tmp_path / "p1_review_target_results.csv").exists()
+    manifests = list(tmp_path.glob("*/manifest.json"))
+    assert len(manifests) == 1
+    manifest = json.loads(manifests[0].read_text(encoding="utf-8"))
+    assert manifest["run_id"] and manifest["git_commit"]
+    assert manifest["dataset_manifest_hashes"]["generated_cases_sha256"]
+    assert len(manifest["artifact_sha256"]) == 5
+    assert (manifests[0].parent / "results.csv").is_file()
+
+
+def test_runner_requires_attack_spec_instead_of_inventing_one(tmp_path, monkeypatch):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        "case_source:\n  type: synthetic\nn_cases: 1\noutput:\n  trace_dir: "
+        + str(tmp_path / "out").replace("\\", "/") + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("sys.argv", ["target.runner", "--config", str(config_path)])
+
+    with pytest.raises(ValueError, match="must declare attack.poison_spec"):
+        from target.runner import main
+        main()
+
+    assert not (tmp_path / "out").exists()

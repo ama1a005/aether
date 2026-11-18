@@ -8,7 +8,7 @@
 **Disclosed Custom Adapter:** `AETHER/Qwen2.5-1.5B-Instruct-FC`  
 **Protocol Label:** `official_evaluator_with_disclosed_aether_model_adapter`  
 **Configured Categories:** `simple`, `multiple`, `parallel`, `irrelevance` (`partial_evaluation: false`)  
-**Target Output Directory:** `results/phase1/bfcl/official/`  
+**Target Output Directory:** `/kaggle/working/aether-bfcl-official/` (outside the source checkout)
 
 ---
 
@@ -48,45 +48,48 @@ In AETHER:
 
 ## 3. Execution Commands (Qualified Compute Environment)
 
-### Step 3.1: Preflight Verification & Dry-Run
+### Step 3.1: Commit-Pinned External Execution
+
+Use the clean Kaggle notebook `notebooks/aether_bfcl_official.ipynb`. It checks out
+the recorded source commit, verifies the exact wheel digest, verifies the retained
+qualification manifest and every downloaded model/tokenizer file, and checks the
+GPU/backend before model execution. It writes to `/kaggle/working`, then runs both
+bundle verifiers and exports a tarball with a printed SHA-256. Preserve that hash
+with the downloaded archive.
+
+The canonical local preflight (which does not generate model output) uses:
 ```bash
-python -m benchmarks.nov19_bfcl.runner --dry-run \
-  --manifest results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json \
-  --output-dir results/phase1/bfcl/official
+python -m benchmarks.run_native_official bfcl --config configs/benchmarks/phase1_external.yaml \
+  --snapshot-manifest /path/to/verified-model-snapshot-manifest.json \
+  --package-wheel /path/to/bfcl_eval-2026.3.23-*.whl --output /tmp/aether-bfcl-preflight
 ```
 
-### Step 3.2: Native Execution
+The command fails closed if the pinned wheel, Linux GPU backend, or verified snapshot
+is unavailable. It never writes experiment artifacts inside the checkout.
+
+### Step 3.2: Native Execution (only after preflight)
 ```bash
-python scripts/benchmark_bfcl_external_runner.py \
-  --manifest results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json \
-  --output-dir results/phase1/bfcl/official \
-  --num-gpus 1 \
-  --backend vllm
+python -m benchmarks.run_native_official bfcl \
+  --config configs/benchmarks/phase1_external.yaml \
+  --snapshot-manifest /path/to/verified-model-snapshot-manifest.json \
+  --package-wheel /path/to/bfcl_eval-2026.3.23-*.whl \
+  --output /tmp/aether-bfcl-official --num-gpus 1 --backend vllm
 ```
 
 ### Step 3.3: Verification of Raw Outputs
 ```bash
-python -c "
-from benchmarks.nov19_bfcl.verifier import BFCLArtifactVerifier
-from benchmarks.nov19_bfcl.report import assemble_bfcl_summary
-from pathlib import Path
-
-verifier = BFCLArtifactVerifier(Path('results/phase1/bfcl/official'))
-res = verifier.verify()
-print('Verification passed:', res.passed)
-if res.passed:
-    summary = assemble_bfcl_summary(res, Path('results/phase1/bfcl/official/summary.json'))
-    print('Summary written successfully')
-else:
-    print('Reasons:', res.reasons)
-"
+python -m scripts.verify_bfcl_bundle /tmp/aether-bfcl-official
+python -m scripts.verify_external_bundle /tmp/aether-bfcl-official --expected-kind bfcl_official
 ```
 
----
+Transfer the archive and ingest atomically without overwriting existing evidence:
+```bash
+python -m scripts.ingest_external_bundle /path/to/aether-bfcl-official /path/to/results/phase1/bfcl/official --expected-kind bfcl_official
+```
 
 ## 4. Expected Artifacts and Provenance
 
-When executed on qualified compute, the output directory `results/phase1/bfcl/official/` contains:
+When executed on qualified compute, the output directory contains:
 1. `execution_logs/plan.json` — Frozen plan and environment parameters
 2. `execution_logs/command_0.json` — Generation command stdout/stderr/exit code
 3. `execution_logs/command_1.json` — Evaluation command stdout/stderr/exit code

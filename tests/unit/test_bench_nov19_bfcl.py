@@ -75,6 +75,7 @@ def test_snapshot_manifest_wrong_revision(tmp_path):
     manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": "wrong_revision_sha",
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(tmp_path),
         "files": [],
     }))
@@ -101,6 +102,7 @@ def test_snapshot_manifest_file_tampering(tmp_path):
     manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": PINNED_MODEL_REVISION,
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(snap_dir),
         "files": [{"path": "config.json", "size": len(b"correct content"), "sha256": sha256(b"correct content").hexdigest()}],
     }))
@@ -197,6 +199,7 @@ def test_runner_dry_run_generates_diagnostics(tmp_path):
     snap_manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": PINNED_MODEL_REVISION,
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(tmp_path),
         "files": [],
     }))

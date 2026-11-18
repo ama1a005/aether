@@ -77,7 +77,7 @@ def check_package(
 def check_backend_and_hardware(
     backend: str = "vllm",
     num_gpus: int = 1,
-    min_vram_gb: float = 6.0,
+    min_vram_gb: float = 16.0,
 ) -> tuple[bool, list[str], dict[str, Any]]:
     """Verify inference backend requirements and GPU resources."""
     reasons = []
@@ -142,6 +142,13 @@ def check_snapshot_manifest(
     if revision != expected_revision:
         reasons.append(
             f"Revision mismatch: expected {expected_revision}, found {revision}"
+        )
+
+    tokenizer_revision = manifest.get("tokenizer_revision")
+    details["tokenizer_revision"] = tokenizer_revision
+    if tokenizer_revision != expected_revision:
+        reasons.append(
+            f"Tokenizer revision mismatch: expected {expected_revision}, found {tokenizer_revision}"
         )
 
     snapshot_dir = Path(manifest.get("snapshot_path", ""))

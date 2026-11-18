@@ -42,6 +42,7 @@ def test_snapshot_manifest_is_hash_and_revision_verified(tmp_path):
     manifest.write_text(json.dumps({
         "model_id": MODEL_ID,
         "resolved_revision": revision,
+        "tokenizer_revision": revision,
         "snapshot_path": str(snapshot),
         "files": [{"path": "config.json", "size": 2,
                    "sha256": hashlib.sha256(b"{}").hexdigest()}],

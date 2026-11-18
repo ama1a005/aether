@@ -48,6 +48,8 @@ def verify_snapshot_manifest(path: Path, expected_revision: str) -> Path:
         raise ValueError(f"snapshot model mismatch: {payload.get('model_id')!r}")
     if payload.get("resolved_revision") != expected_revision:
         raise ValueError("snapshot revision mismatch")
+    if payload.get("tokenizer_revision") != expected_revision:
+        raise ValueError("tokenizer revision mismatch")
     snapshot = Path(payload.get("snapshot_path", "")).resolve()
     if not snapshot.is_dir() or snapshot.name != expected_revision:
         raise ValueError("snapshot path is absent or not the pinned revision directory")
