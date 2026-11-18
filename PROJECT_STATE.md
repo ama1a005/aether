@@ -1,5 +1,14 @@
 # AETHER project state
 
+## 2026-11-19 second-model candidate awaits exact-hash review
+
+Member 3 audited practical distinct-model candidates and prospectively selected
+`HuggingFaceTB/SmolLM2-1.7B-Instruct` under Apache-2.0 at immutable revision
+`dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd`. The proposal reuses unchanged
+balanced behavioral gates and freezes architecture-relative instrumentation,
+CPU float32 execution, negative-result retention and protected-split locks. No
+model was downloaded. Implementation and execution await exact-hash approval.
+
 ## 2026-11-19 SAE v1.1 approved; dual-T4 execution package ready
 
 The human project owner approved the v1.1 corpus-source amendment at SHA-256

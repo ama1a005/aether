@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Review the SmolLM2 second-model qualification freeze
+
+Review `configs/model_qualification/smollm2_1_7b_second_model_freeze_v1.json`
+and `docs/SECOND_MODEL_SMOLLM2_FREEZE_V1_REVIEW.md`. Do not download SmolLM2,
+implement its evidence runner or execute qualification before exact-hash human
+approval. Preserve the unchanged balanced task, CPU-float32/no-offload condition,
+architecture-relative instrumentation, failure retention and validation/test
+locks.
+
 ## Execute the approved SAE v1.1 package on Kaggle
 
 Run `notebooks/aether_qwen_sae_dual_t4.ipynb` in a 2 x T4 Kaggle session with

@@ -14,6 +14,7 @@ from experiments.phase1.qwen_sae_training import (
     train_seed,
 )
 from scripts.generate_qwen_sae_kaggle_notebook import generate
+from scripts.ingest_qwen_sae_bundle import ingest
 from scripts.verify_qwen_sae_bundle import verify
 
 
@@ -86,3 +87,22 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
 def test_bundle_verifier_rejects_missing_inventory(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError, match="archive_contents"):
         verify(tmp_path)
+
+
+def test_atomic_ingester_copies_verified_bundle_and_exposes_summary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source, destination = tmp_path / "source", tmp_path / "destination"
+    (source / "final").mkdir(parents=True)
+    (source / "final/summary.json").write_text(
+        json.dumps({"overall": "FAIL", "scientific_outcome": "SAE_REJECTED"}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.ingest_qwen_sae_bundle.verify", lambda _root: {
+        "bundle_valid": True, "scientific_outcome": "SAE_REJECTED"
+    })
+    receipt = ingest(source, destination)
+    assert receipt["verification"]["bundle_valid"] is True
+    assert json.loads((destination / "summary.json").read_text())["overall"] == "FAIL"
+    with pytest.raises(FileExistsError):
+        ingest(source, destination)
