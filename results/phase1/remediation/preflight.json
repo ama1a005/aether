@@ -1,0 +1,23 @@
+{
+  "available_ram_gib": 22.736984252929688,
+  "checks": {
+    "development_audit_exact": true,
+    "exact_human_approval": true,
+    "git_clean": true,
+    "output_absent": true,
+    "python_3_11": true,
+    "ram_available_10_gib": true,
+    "snapshot_revision": true,
+    "test_locked": true,
+    "validation_locked": true
+  },
+  "git_commit": "0078c1793ef82c917cb57440a7196a9d8c97da73",
+  "model_accessed": false,
+  "model_snapshot": "/tmp/aether-core03/hf-cache/models--Qwen--Qwen2.5-1.5B-Instruct/snapshots/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "overall": "PASS",
+  "proposal_sha256": "cd96984e161389cdbff347dc317f04eaa78ea697689f25620f6566f8bc6803b7",
+  "python": "3.11.9",
+  "schema_version": "aether.core03-preflight.v1",
+  "scientific_evidence": false,
+  "utc_timestamp": "2026-11-18T08:46:50.633045+00:00"
+}

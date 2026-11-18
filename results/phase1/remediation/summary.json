@@ -1,0 +1,16 @@
+{
+  "arm_seed_run_count": 15,
+  "claim_boundary": "This experiment compares paired-clean-donor causal repair probes on an untouched-for-CORE-02 development-audit cohort. It may identify the most effective measured repair location for this qualified task. It cannot claim a deployable defense, locked generalization, a connected internal circuit, global minimality, search superiority, or publication-level validation.",
+  "deployable_without_oracle": false,
+  "development_audit_executions": 120,
+  "execution_state": "COMPLETE",
+  "model_forward_steps": 624,
+  "overall": "PASS",
+  "raw_evaluation_count": 120,
+  "runtime_seconds": 2336.915865858,
+  "schema_version": "aether.core03-summary.v1",
+  "scientific_outcome": "SELECTED_DEVELOPMENT_REPAIR",
+  "selected_arm": "mechanism_receiver_l20_h5",
+  "test_executions": 0,
+  "validation_executions": 0
+}

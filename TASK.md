@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Review the prospective CORE-04 locked-validation protocol
+
+CORE-03 is independently verified and ingested. Review
+`configs/phase1_core/core04_locked_validation_freeze_v1.yaml` and
+`docs/CORE04_LOCKED_VALIDATION_REVIEW.md`. The proposal freezes the selected
+receiver L20H5 repair before held-out access and forbids method reselection,
+threshold changes, development reruns and test access. Do not implement the
+runner, load Qwen, or execute validation until the exact proposal SHA-256 is
+human-approved.
+
 ## Freeze CORE-03 remediation after the verified CORE-02 result
 
 CORE-03 v1 is prospectively frozen and human-approved at SHA-256

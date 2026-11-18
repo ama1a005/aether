@@ -1,0 +1,92 @@
+[
+  {
+    "arm": "no_defense",
+    "model_forward_steps": 40,
+    "seed": 11,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_message_whole",
+    "model_forward_steps": 40,
+    "seed": 11,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_receiver_l22_attention",
+    "model_forward_steps": 44,
+    "seed": 11,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_message_decision_code",
+    "model_forward_steps": 40,
+    "seed": 11,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_receiver_l20_h5",
+    "model_forward_steps": 44,
+    "seed": 11,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "no_defense",
+    "model_forward_steps": 40,
+    "seed": 22,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_message_whole",
+    "model_forward_steps": 40,
+    "seed": 22,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_receiver_l22_attention",
+    "model_forward_steps": 44,
+    "seed": 22,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_message_decision_code",
+    "model_forward_steps": 40,
+    "seed": 22,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_receiver_l20_h5",
+    "model_forward_steps": 44,
+    "seed": 22,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "no_defense",
+    "model_forward_steps": 40,
+    "seed": 33,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_message_whole",
+    "model_forward_steps": 40,
+    "seed": 33,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "fixed_receiver_l22_attention",
+    "model_forward_steps": 44,
+    "seed": 33,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_message_decision_code",
+    "model_forward_steps": 40,
+    "seed": 33,
+    "state": "COMPLETE"
+  },
+  {
+    "arm": "mechanism_receiver_l20_h5",
+    "model_forward_steps": 44,
+    "seed": 33,
+    "state": "COMPLETE"
+  }
+]

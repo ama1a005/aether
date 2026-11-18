@@ -1,5 +1,22 @@
 # AETHER project state
 
+## 2026-11-18 CORE-03 remediation complete; CORE-04 awaits review
+
+The retained CORE-03 archive independently verifies and is atomically ingested
+under `results/phase1/remediation`: 15 arm/seed runs, 120 raw evaluations and
+624 declared model forwards completed with zero validation or test access. The
+frozen selection rule chose `mechanism_receiver_l20_h5`. Whole-message and
+decision-code repair also reached 1.0 attacked recovery and 1.0 clean accuracy;
+the fixed L22 receiver baseline reached 0.5 attacked recovery, and no defense
+reached 0.0. All arms had zero invalid/error rows. This is development-audit,
+paired-clean-donor oracle evidence, not a deployable defense or held-out result.
+
+The next prospective protocol is CORE-04 locked validation. It freezes the
+selected L20H5 repair, eight validation IDs, thresholds, three seeds, a
+no-defense comparator, a 504-forward ceiling, and a continued test lock. It is
+at an exact-hash human scientific review gate. No CORE-04 implementation,
+validation execution, or test access is yet authorized.
+
 ## 2026-11-18 CORE-03 newline-portability repair
 
 The first Kaggle CORE-03 setup stopped in model-independent tests before

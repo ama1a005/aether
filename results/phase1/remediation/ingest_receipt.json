@@ -1,0 +1,41 @@
+{
+  "copied_artifact_sha256": {
+    "archive_contents.json": "3fed2d8a93563ea05ebdbebe11a2434afcfcb95d60e2a684044ab447b28694db",
+    "arm_results.json": "f9bda55423a687a2133a68c3ad10b4b7d749dc38037b524b4e110767b67459e9",
+    "budget_ledger.json": "23fa4155a98444742f22a2ada66b1a91c66ecdf5250b9011565caa80d2c47d5d",
+    "checkpoint_state.json": "1bd9e716ff259e4c3625cb88c9f99991a989ae8ed4d05976c1216add62a66b51",
+    "manifest.json": "ccd4fd34b1b2a6172b5fdbe7ef46cb3d4ea451ee0436c30452a18ace1618afd3",
+    "preflight.json": "09d0329a4a9d1a3d1a33067aed8e98d9def7252e1da3ed9b1e9864742a275829",
+    "raw_evaluations.jsonl": "1d13aeb76ab515965e6881899ecb9fba3104cc3f9f513a8960527339cae04294",
+    "statistics.json": "21f98e7d51e3384f800e324622e356e331694f4c651aaa40d423c9cfbf936fcc",
+    "summary.json": "d783af9443034cf56f0355bd98f2ab2aaa3e8923d9a7e7811b8ce223eb1b6649",
+    "units/fixed_message_whole-11.json": "a1b62773224414582d5159e162fb6b4207f507327924bbbe340c592a3a3fd2db",
+    "units/fixed_message_whole-22.json": "6cf5f02b94ce100550e1a8de83e344f97e1a2cf0b8a9c1dc7298c57a96c3c1a5",
+    "units/fixed_message_whole-33.json": "f31f77b27fd2915a9cf9a46306e4e7984c92b0ac71cceb278ff1b27fbe061986",
+    "units/fixed_receiver_l22_attention-11.json": "7cb9548ca3ff56fed90719469afde2f55ca6e70a4d79cab4d2cc63d138622a47",
+    "units/fixed_receiver_l22_attention-22.json": "420ddd144ae6f1e7dbca0f25ff4a7eb94e1300b13a7d6d1bbddeec62881adf23",
+    "units/fixed_receiver_l22_attention-33.json": "6bcdcafe2b2c1576f7e7129493a02d0cbf5401d6fe0b0709e75da4fcc25cd974",
+    "units/mechanism_message_decision_code-11.json": "19f3839c7881ad41a5a35e850e43ca14970a70ba87c8848ea59f9620538e8b0a",
+    "units/mechanism_message_decision_code-22.json": "cc4d04dd2739dc6573bcafa712c71036f3977b1f3dbda519af5ff2bf7ce08535",
+    "units/mechanism_message_decision_code-33.json": "5ef026dce999adbb95d0c8bdc84b1012f68ce6af05db3e32d43147966971e0cb",
+    "units/mechanism_receiver_l20_h5-11.json": "1ab2f90dc09030af28a141ca1e6e759d3e00a4caec28ec8b3d88fd0183adacdf",
+    "units/mechanism_receiver_l20_h5-22.json": "4cf301222233e871b092e6ebd632f5b0750febc3ad31ee65fef3d54230f58382",
+    "units/mechanism_receiver_l20_h5-33.json": "707a827ee9d56517f558d5049bfcb2441752bbde959c13234b600a50689cdb13",
+    "units/no_defense-11.json": "f28753183b44cd7845ec96adafb19803b14ccc91bc2ae9e480cc4d98ba2f2997",
+    "units/no_defense-22.json": "ab06e88c924cfb3c0c5d6cbf03c10dc68213b6d68187da51ffdc7e8a33492161",
+    "units/no_defense-33.json": "915f46dec7a5c1aebffc652fbc452e9759290dca70d1c86bc387abcb949ed33f"
+  },
+  "ingested_utc": "2026-11-18T11:16:03.916327+00:00",
+  "schema_version": "aether.core03-ingest.v1",
+  "verification": {
+    "arm_seed_run_count": 15,
+    "execution_state": "COMPLETE",
+    "model_forward_steps": 624,
+    "overall": "PASS",
+    "raw_evaluation_count": 120,
+    "scientific_outcome": "SELECTED_DEVELOPMENT_REPAIR",
+    "selected_arm": "mechanism_receiver_l20_h5",
+    "test_executions": 0,
+    "validation_executions": 0
+  }
+}

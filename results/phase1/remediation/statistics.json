@@ -1,0 +1,66 @@
+{
+  "aggregate_by_arm": {
+    "fixed_message_whole": {
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "invalid_or_error_fraction": 0.0,
+      "model_forward_steps": 120,
+      "modified_internal_components": 0,
+      "modified_message_units": 1
+    },
+    "fixed_receiver_l22_attention": {
+      "attacked_decision_recovery_accuracy": 0.5,
+      "clean_decision_accuracy": 1.0,
+      "invalid_or_error_fraction": 0.0,
+      "model_forward_steps": 132,
+      "modified_internal_components": 1,
+      "modified_message_units": 0
+    },
+    "mechanism_message_decision_code": {
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "invalid_or_error_fraction": 0.0,
+      "model_forward_steps": 120,
+      "modified_internal_components": 0,
+      "modified_message_units": 1
+    },
+    "mechanism_receiver_l20_h5": {
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "invalid_or_error_fraction": 0.0,
+      "model_forward_steps": 132,
+      "modified_internal_components": 1,
+      "modified_message_units": 0
+    }
+  },
+  "descriptive_only": true,
+  "schema_version": "aether.core03-statistics.v1",
+  "seed_stability": {
+    "fixed_message_whole": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "fixed_receiver_l22_attention": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "mechanism_message_decision_code": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mechanism_receiver_l20_h5": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "no_defense": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "selected_arm": "mechanism_receiver_l20_h5"
+}
