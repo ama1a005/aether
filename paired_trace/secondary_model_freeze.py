@@ -71,4 +71,10 @@ def verify_decision(proposal_path: Path, decision_path: Path) -> dict[str, Any]:
         raise PermissionError("second-model decision hash mismatch")
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("second-model decision lacks a human project owner")
+    expected = (
+        "I approve SmolLM2 second-model qualification freeze v1 SHA-256 "
+        f"{sha256_file(proposal_path)}"
+    )
+    if decision.get("approval_text") != expected:
+        raise PermissionError("second-model decision does not contain the exact approval text")
     return decision

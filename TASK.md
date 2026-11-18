@@ -1,13 +1,12 @@
 # AETHER current bounded task
 
-## Review the SmolLM2 second-model qualification freeze
+## Execute the approved SmolLM2 second-model qualification
 
-Review `configs/model_qualification/smollm2_1_7b_second_model_freeze_v1.json`
-and `docs/SECOND_MODEL_SMOLLM2_FREEZE_V1_REVIEW.md`. Do not download SmolLM2,
-implement its evidence runner or execute qualification before exact-hash human
-approval. Preserve the unchanged balanced task, CPU-float32/no-offload condition,
-architecture-relative instrumentation, failure retention and validation/test
-locks.
+Run the commit-pinned Kaggle notebook produced for the approved freeze SHA-256
+`ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed`.
+Retain PASS or FAIL, independently verify before export, and atomically ingest
+the archive. Preserve CPU float32/no-offload execution, the unchanged balanced
+task, architecture-relative instrumentation, and validation/test locks.
 
 ## Execute the approved SAE v1.1 package on Kaggle
 

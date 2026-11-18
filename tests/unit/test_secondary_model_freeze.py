@@ -5,17 +5,19 @@ from pathlib import Path
 
 import pytest
 
-from paired_trace.secondary_model_freeze import load_and_validate
+from paired_trace.secondary_model_freeze import load_and_validate, verify_decision
 
 
 ROOT = Path(__file__).resolve().parents[2]
 PROPOSAL = ROOT / "configs/model_qualification/smollm2_1_7b_second_model_freeze_v1.json"
+DECISION = ROOT / "configs/model_qualification/smollm2_1_7b_second_model_decision_v1.json"
 
 
 def test_repository_proposal_is_valid_and_protected() -> None:
     proposal = load_and_validate(PROPOSAL, ROOT)
     assert proposal["model"]["expected_layer_count"] == 24
     assert proposal["validation_executions"] == proposal["test_executions"] == 0
+    assert verify_decision(PROPOSAL, DECISION)["decision"] == "APPROVED"
 
 
 def test_primary_model_is_rejected(tmp_path) -> None:

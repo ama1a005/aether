@@ -1,13 +1,17 @@
 # AETHER project state
 
-## 2026-11-19 second-model candidate awaits exact-hash review
+## 2026-11-19 SmolLM2 second-model freeze approved and implemented
 
-Member 3 audited practical distinct-model candidates and prospectively selected
+The human project owner approved the exact freeze at SHA-256
+`ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed`.
+Member 3 audited practical distinct-model candidates and selected
 `HuggingFaceTB/SmolLM2-1.7B-Instruct` under Apache-2.0 at immutable revision
 `dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd`. The proposal reuses unchanged
 balanced behavioral gates and freezes architecture-relative instrumentation,
-CPU float32 execution, negative-result retention and protected-split locks. No
-model was downloaded. Implementation and execution await exact-hash approval.
+CPU float32 execution, negative-result retention and protected-split locks.
+The Llama adapter, combined runner, independent verifier and atomic ingester are
+implemented and model-independently tested. No model was downloaded locally and
+no result exists; the remaining step is a commit-pinned retained Kaggle run.
 
 ## 2026-11-19 SAE v1.1 approved; dual-T4 execution package ready
 
