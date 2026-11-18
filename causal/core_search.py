@@ -165,6 +165,8 @@ class LegalMaskSession:
         """Return the best observed mask and a complete actual-consumption ledger."""
         if not self.cache:
             raise RuntimeError("search produced no measured mask")
+        if stop_reason != "INCOMPLETE_BUDGET" and self.ledger.state == "RUNNING":
+            self.ledger.complete()
         best = min(self.cache, key=self.rank)
         ledger = {
             "state": self.ledger.state,

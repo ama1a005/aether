@@ -1,5 +1,17 @@
 # AETHER current bounded task
 
+## Freeze CORE-03 remediation after the verified CORE-02 result
+
+CORE-02 is independently verified and atomically ingested. Prospectively freeze
+a development-only remediation comparison before any new model execution. The
+comparison must include the selected message decision-code intervention, the
+selected receiver-head intervention, fixed message and receiver baselines,
+clean-utility/benign-damage accounting, matched cases and budgets, failure
+rules, statistics, artifact schemas and a human review gate. Preserve the
+CORE-02 conclusion that the explicit message node was sufficient and do not
+claim a connected internal DCMG or search superiority. Do not open validation
+or test until remediation is frozen, executed, verified and reviewed.
+
 ## CORE-02 seed-parallel scheduling extension
 
 Prepare a prospective scheduling-only amendment that executes the unchanged

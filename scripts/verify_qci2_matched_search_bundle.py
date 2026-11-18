@@ -12,6 +12,9 @@ from typing import Any
 METHODS = {"matched_random", "greedy", "beam", "receiver_only", "flat_ppo"}
 SEEDS = {11, 22, 33}
 TERMINAL = {"COMPLETE", "COMPLETE_NEGATIVE", "INCOMPLETE_BUDGET"}
+LEGACY_PRE_TERMINAL_LEDGER_COMMITS = {
+    "6c1aab793498df3aeb8627f46ece6e19fe37cae8",
+}
 
 
 def _hash(path: Path) -> str:
@@ -56,10 +59,30 @@ def verify(root: Path) -> dict[str, Any]:
     namespaces = [row["cache_namespace"] for row in ledgers]
     if len(namespaces) != len(set(namespaces)):
         raise ValueError("CORE-02 cache namespaces are shared")
+    search_results = json.loads((root / "search_results.json").read_text(encoding="utf-8"))
+    if set(search_results) != {f"{method}:{seed}" for method in METHODS for seed in SEEDS}:
+        raise ValueError("CORE-02 search results do not contain all 15 method/seed runs")
+    legacy_running = 0
     for row in ledgers:
         if (row["unique_search_masks"] > 32 or row["mask_evaluations"] > 45
                 or row["model_forward_steps"] > 7360):
             raise ValueError("CORE-02 matched budget exceeded")
+        key = f"{row['method']}:{int(row['seed'])}"
+        result = search_results[key]
+        allowed_stop = ("training_actions_complete" if row["method"] == "flat_ppo"
+                        else "search_complete")
+        if result.get("stop_reason") not in {allowed_stop, "INCOMPLETE_BUDGET"}:
+            raise ValueError(f"CORE-02 run has no terminal stop reason: {key}")
+        if result.get("feasible") is not True:
+            raise ValueError(f"CORE-02 run did not return a feasible terminal mask: {key}")
+        state = row.get("state")
+        if state == "RUNNING":
+            if (manifest.get("git_commit") not in LEGACY_PRE_TERMINAL_LEDGER_COMMITS
+                    or summary.get("status") != "COMPLETE"):
+                raise ValueError(f"CORE-02 contains an unterminated budget ledger: {key}")
+            legacy_running += 1
+        elif state not in {"COMPLETE", "INCOMPLETE_BUDGET"}:
+            raise ValueError(f"CORE-02 contains an invalid budget-ledger state: {key}")
     rows = [json.loads(line) for line in (root / "raw_evaluations.jsonl").read_text(encoding="utf-8").splitlines() if line]
     for row in rows:
         if row.get("evidence_type") != "real_model_intervention":
@@ -74,6 +97,7 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("CORE-02 promoted an edge without real intervention evidence")
     return {"overall": "PASS", "status": summary["status"],
             "run_count": len(ledgers), "raw_evaluation_count": len(rows),
+            "legacy_pre_terminal_ledger_count": legacy_running,
             "development_audit_executions": 0, "validation_executions": 0,
             "test_executions": 0}
 

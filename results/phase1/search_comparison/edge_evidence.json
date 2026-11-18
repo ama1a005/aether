@@ -1,0 +1,51 @@
+[
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_s22_decision",
+    "source": "sender.module.L22.attention_output",
+    "status": "insufficient",
+    "target": "message.decision_code"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_decision_r20h5",
+    "source": "message.decision_code",
+    "status": "insufficient",
+    "target": "receiver.head.L20.H5.pre_o_proj"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_decision_r22h7",
+    "source": "message.decision_code",
+    "status": "insufficient",
+    "target": "receiver.head.L22.H7.pre_o_proj"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_decision_r22attn",
+    "source": "message.decision_code",
+    "status": "insufficient",
+    "target": "receiver.module.L22.attention_output"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_r20h5_outcome",
+    "source": "receiver.head.L20.H5.pre_o_proj",
+    "status": "insufficient",
+    "target": "receiver.outcome_margin"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_r22h7_outcome",
+    "source": "receiver.head.L22.H7.pre_o_proj",
+    "status": "insufficient",
+    "target": "receiver.outcome_margin"
+  },
+  {
+    "evidence_type": "none_search_does_not_promote_edges",
+    "id": "e_r22attn_outcome",
+    "source": "receiver.module.L22.attention_output",
+    "status": "insufficient",
+    "target": "receiver.outcome_margin"
+  }
+]

@@ -102,6 +102,7 @@ def test_every_method_queries_only_legal_measured_masks(method: str) -> None:
     assert observed and observed[0] == () and set(observed) <= legal
     assert len(observed) == len(set(observed)) <= 33
     assert outcome.ledger["model_forward_steps"] == 160 * len(observed)
+    assert outcome.ledger["state"] == "COMPLETE"
     if method == "receiver_only":
         assert all(all(node.startswith("receiver.") for node in mask) for mask in observed)
     if method == "matched_random":

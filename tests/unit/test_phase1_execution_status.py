@@ -16,8 +16,8 @@ def test_repository_execution_registry_exactly_covers_evidence_gates() -> None:
     rows = {row["id"]: row for row in report["stages"]}
     assert report["overall_evidence"] == "INCOMPLETE"
     assert rows["qwen_qualification"]["readiness"] == "COMPLETE"
-    assert rows["matched_search_baselines"]["readiness"] == "READY_FOR_DECLARED_EXECUTION"
-    assert rows["mechanism_guided_remediation"]["readiness"] == "BLOCKED_BY_DEPENDENCY"
+    assert rows["matched_search_baselines"]["readiness"] == "COMPLETE"
+    assert rows["mechanism_guided_remediation"]["readiness"] == "READY_FOR_DECLARED_EXECUTION"
     assert rows["mcptox_official"]["readiness"] == "BLOCKED_BY_PROTOCOL_OR_RESOURCE"
     assert rows["matched_search_baselines"]["runner_exists"] is True
 

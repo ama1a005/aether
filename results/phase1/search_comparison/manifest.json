@@ -1,0 +1,43 @@
+{
+  "accounting_amendment_sha256": "fed75de69761c504653026a8a919014ea40bca8f8efe1c2b2f1127206cfda03b",
+  "command_line": [
+    "/tmp/aether-core02-seed11/aether/instrumentation/run_qci2_matched_search.py",
+    "--output",
+    "/kaggle/working/aether-core02-results",
+    "--model-snapshot",
+    "/tmp/aether-core02-seed11/hf-cache/models--Qwen--Qwen2.5-1.5B-Instruct/snapshots/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "--resume",
+    "--seed",
+    "11",
+    "--checkpoint-repo",
+    "DXVNX05/aether-core02-seed11",
+    "--checkpoint-path",
+    "core02/seed11/checkpoint.tar.gz"
+  ],
+  "git_commit": "6c1aab793498df3aeb8627f46ece6e19fe37cae8",
+  "method_amendment_sha256": "5e8fc93feeb04227462769e0ebdb9f8e7aa759b9cbca118c61c0ee4faf421c06",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "parallel_amendment_sha256": "7e39024df56bc35fff00f140124c726ca4e0d5c15c69f762a5406d6f18cde220",
+  "proposal_sha256": "b15b660f3a5f7843e84d3612a8ec0a9434735da34d614c3645d3d5a2cc947d2c",
+  "python": "3.11.9",
+  "schema_version": "aether.core02-merged-manifest.v1",
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "source_shard_manifest_sha256": {
+    "01243c42aacd2f37e9b42f98a776a2def76609aac30643d330e822f4c9cecff8": [
+      11
+    ],
+    "69023725791361ca51025af8d66fd68cd8aa0c75749c992c56f57b2fb693ffa1": [
+      33
+    ],
+    "87046ba97700b709e24ae64d640d6a7a7cbf1300f2fde60936f99efcb3539489": [
+      22
+    ]
+  },
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-18T04:54:01.762796+00:00"
+}

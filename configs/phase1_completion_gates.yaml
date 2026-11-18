@@ -58,7 +58,7 @@ gates:
     kind: json
     path: results/phase1/search_comparison/summary.json
     expect:
-      overall: PASS
+      status: COMPLETE
       validation_executions: 0
       test_executions: 0
   - id: mechanism_guided_remediation

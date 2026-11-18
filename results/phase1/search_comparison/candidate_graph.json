@@ -1,0 +1,90 @@
+{
+  "edges": [
+    {
+      "id": "e_s22_decision",
+      "source": "sender.module.L22.attention_output",
+      "status": "hypothesized",
+      "target": "message.decision_code"
+    },
+    {
+      "id": "e_decision_r20h5",
+      "source": "message.decision_code",
+      "status": "hypothesized",
+      "target": "receiver.head.L20.H5.pre_o_proj"
+    },
+    {
+      "id": "e_decision_r22h7",
+      "source": "message.decision_code",
+      "status": "hypothesized",
+      "target": "receiver.head.L22.H7.pre_o_proj"
+    },
+    {
+      "id": "e_decision_r22attn",
+      "source": "message.decision_code",
+      "status": "hypothesized",
+      "target": "receiver.module.L22.attention_output"
+    },
+    {
+      "id": "e_r20h5_outcome",
+      "source": "receiver.head.L20.H5.pre_o_proj",
+      "status": "hypothesized",
+      "target": "receiver.outcome_margin"
+    },
+    {
+      "id": "e_r22h7_outcome",
+      "source": "receiver.head.L22.H7.pre_o_proj",
+      "status": "hypothesized",
+      "target": "receiver.outcome_margin"
+    },
+    {
+      "id": "e_r22attn_outcome",
+      "source": "receiver.module.L22.attention_output",
+      "status": "hypothesized",
+      "target": "receiver.outcome_margin"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sender.module.L22.attention_output",
+      "intervenable": true,
+      "kind": "internal",
+      "region": "sender"
+    },
+    {
+      "id": "message.decision_code",
+      "intervenable": true,
+      "kind": "mediator_field",
+      "region": "message"
+    },
+    {
+      "id": "message.whole",
+      "intervenable": true,
+      "kind": "mediator_object",
+      "region": "message"
+    },
+    {
+      "id": "receiver.head.L20.H5.pre_o_proj",
+      "intervenable": true,
+      "kind": "internal",
+      "region": "receiver"
+    },
+    {
+      "id": "receiver.head.L22.H7.pre_o_proj",
+      "intervenable": true,
+      "kind": "internal",
+      "region": "receiver"
+    },
+    {
+      "id": "receiver.module.L22.attention_output",
+      "intervenable": true,
+      "kind": "internal",
+      "region": "receiver"
+    },
+    {
+      "id": "receiver.outcome_margin",
+      "intervenable": false,
+      "kind": "outcome",
+      "region": "outcome"
+    }
+  ]
+}

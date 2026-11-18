@@ -1,5 +1,40 @@
 # AETHER project state
 
+## 2026-11-18 CORE-02 matched search complete and ingested
+
+All three approved seed shards independently verified and the deterministic
+merge passed the original full-bundle verifier. The retained evidence contains
+15 method/seed runs and 220 real mask evaluations, with zero development-audit,
+validation or test executions. It was atomically ingested under
+`results/phase1/search_comparison`.
+
+Every distributed-capable method (`greedy`, `matched_random`, `beam`, and
+`flat_ppo`) selected the single message node `message.decision_code` for all
+three seeds, with faithfulness `0.9999991177106842` and benign logit-margin
+damage `0.00001430511474609375`. The receiver-only comparator selected
+`receiver.head.L20.H5.pre_o_proj`, with faithfulness `0.9085500110247975` and
+the same measured benign damage. PPO did not improve the terminal mechanism and
+consumed substantially more forward steps than the deterministic searches.
+
+The defensible development-only conclusion is that the explicit decision-code
+message is a sufficient one-node bottleneck under this task, while a receiver
+head is also feasible but less faithful. CORE-02 does not support a connected
+multi-region internal DCMG, global minimality, search superiority, remediation
+effectiveness or held-out generalization. The next scientific gate is a
+prospectively frozen message-versus-receiver remediation comparison; validation
+and test remain closed.
+
+Post-ingestion registry review found a metadata-only runner defect in the pinned
+source: terminal stop reasons were stored, but all 15 budget ledgers were
+serialized as `RUNNING` before `complete()` was called. The enhanced verifier
+accepts this only for the exact affected commit, requires all 15 terminal stop
+reasons and feasible masks, and reports
+`legacy_pre_terminal_ledger_count: 15`. Future runs now serialize `COMPLETE`.
+The completion gate also now checks the actual summary schema field
+`status: COMPLETE` rather than the nonexistent `overall` field. No raw
+evaluation, selected mask, metric, budget count or evidence artifact was
+changed.
+
 ## 2026-11-14 CORE-02 seed-parallel scheduling approved
 
 The human project owner approved the scheduling-only v2.4 amendment at SHA-256

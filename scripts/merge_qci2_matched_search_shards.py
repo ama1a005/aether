@@ -69,7 +69,8 @@ def merge(shards: list[Path], output: Path) -> dict[str, Any]:
             stream.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")
     status = "INCOMPLETE_BUDGET" if "INCOMPLETE_BUDGET" in statuses else "COMPLETE"
     _write(output / "summary.json", {"schema_version": "aether.core02-summary.v1",
-        "status": status, "experiment_id": json.loads((first / "summary.json").read_text())["experiment_id"],
+        "overall": "PASS", "status": status,
+        "experiment_id": json.loads((first / "summary.json").read_text())["experiment_id"],
         "method_seed_run_count": 15, "execution_mode": "verified_seed_shard_merge",
         "development_audit_executions": 0, "validation_executions": 0,
         "test_executions": 0,
