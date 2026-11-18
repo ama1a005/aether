@@ -259,3 +259,13 @@ The beginner execution guide is `docs/handoffs/target/EXTERNAL_EXECUTION_GUIDE.m
 BFCL remains Linux/CUDA external-only. Its preflight now checks that vLLM is installed and rejects NVIDIA devices below compute capability 7.5 as well as devices below the frozen 16-GiB memory floor. This guards against a Kaggle P100 that has 16 GiB but is incompatible with current vLLM CUDA wheels. The BFCL notebook installs the vLLM backend and supports Kaggle or a compatible Linux Jupyter Pod.
 
 No approval was created and no scientific experiment was started during this preparation. Local preflight on the current Windows machine correctly reports missing `bfcl_eval`, missing vLLM, no CUDA device, and the absent local Qwen snapshot.
+
+
+### Beginner execution materials and final source pins ? 2026-11-19
+
+- Preparation commit `d8adc6cd4c21062c0dec505b3cbadc8a0f317460` adds the measured feasibility analysis, human approval checklist, BFCL backend/compute-capability preflight, Agent-C source-Qwen provenance, and fixes the Agent-C CLI's completed-output return path.
+- Commit `c31eb63662175ad343cf1d89301e9a39754ea7a1` keeps execution environments outside clean source checkouts and removes unnecessary editable installs that could make them dirty.
+- Commit `97fe389273c2ac91154ee6dc0df1bc922a3d8cae` regenerates both notebooks against that exact source commit. All three are pushed to `origin/m1/target-harness`.
+- Relevant model-free tests after these updates: **30 passed**, followed by **3 notebook builder tests passed**. Both notebook builders compile every code cell. No approval was created and no scientific run was started.
+
+The BFCL notebook installs vLLM, checks its presence, CUDA, 16-GiB VRAM and compute capability 7.5 before model download. Kaggle is conditional on actually offering a compatible GPU; a Linux Pod with an explicitly selected compatible card is the reliable option. The Agent-C procedure uses a clean clone and an environment outside it, because the evidence manifest requires a clean Git source. Its currently frozen Agent-C policy is deterministic; the retained real-Qwen part is the upstream A/B trace.

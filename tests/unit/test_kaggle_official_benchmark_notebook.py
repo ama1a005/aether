@@ -21,6 +21,10 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     bfcl_source = "".join("".join(cell["source"]) for cell in build("bfcl", commit)["cells"])
     assert "vllm'" in bfcl_source and "--torch-backend'" in bfcl_source
     assert "verify_protocol_approval" in bfcl_source
+    assert "AETHER_BFCL_ATTEMPT" in bfcl_source
+    assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source
+    assert "verify_bfcl_bundle" in bfcl_source
+    assert "aether-bfcl-official-{ATTEMPT}-results.tar.gz" in bfcl_source
     assert "--no-deps','-e'" not in bfcl_source
 
 

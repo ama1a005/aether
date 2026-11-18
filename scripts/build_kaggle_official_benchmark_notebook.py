@@ -61,7 +61,12 @@ assert observed==expected, 'Downloaded snapshot differs from the independently r
 SNAPSHOT_MANIFEST=WORK/'model_snapshot_manifest.json'
 SNAPSHOT_MANIFEST.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'tokenizer_revision':REVISION,'snapshot_path':str(snapshot),'files':[{'path':name,'size':size,'sha256':digest} for name,(size,digest) in sorted(observed.items())]},indent=2),encoding='utf-8')
 """
-        benchmark_verification = "subprocess.run([str(PY),'-m','scripts.verify_bfcl_bundle',str(OUTPUT)],cwd=REPO,check=True)"
+        benchmark_verification = """bfcl_summary=json.loads((OUTPUT/'summary.json').read_text(encoding='utf-8'))
+if bfcl_summary.get('overall')=='PASS':
+    subprocess.run([str(PY),'-m','scripts.verify_bfcl_bundle',str(OUTPUT)],cwd=REPO,check=True)
+else:
+    print('Retaining a blocked/failed BFCL attempt; this is not a score.')
+"""
     else:
         package_setup = "subprocess.run([UV,'pip','install','--python',str(PY),'agentdojo==0.1.35'],check=True,env=env)\n"
         snapshot_setup = ""
@@ -74,12 +79,13 @@ This notebook does not access AETHER validation/test splits. It exports raw
 official outputs plus a hash-verified AETHER wrapper bundle.
 """),
         _cell("code", f"""from pathlib import Path
-import os,shutil,subprocess,sys,tarfile,hashlib
+import json,os,shutil,subprocess,sys,tarfile,hashlib
 WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
 WORK.mkdir(parents=True,exist_ok=True)
+ATTEMPT=os.environ.get('AETHER_BFCL_ATTEMPT','attempt-1')
 RUNTIME=Path('/tmp/aether-{benchmark}')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
-OUTPUT=WORK/'aether-{benchmark}-official'; COMMIT={commit!r}
+OUTPUT=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}'; COMMIT={commit!r}
 URL='https://github.com/ama1a005/aether.git'
 os.environ.update({{'PYTHONNOUSERSITE':'1','MPLBACKEND':'Agg'}})
 RUNTIME.mkdir(parents=True,exist_ok=True)
@@ -103,7 +109,7 @@ subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','test
 subprocess.run(command,cwd=REPO,check=True)
 subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind',{(benchmark + '_official')!r}],cwd=REPO,check=True)
 {benchmark_verification}
-archive=WORK/'aether-{benchmark}-official-results.tar.gz'
+archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())
 """),

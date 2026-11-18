@@ -9,14 +9,14 @@ preparing this guide.
 
 | Experiment | Run on this Windows laptop? | Recommended environment | Why |
 |---|---:|---|---|
-| Official BFCL | No, not under the pinned runner | Kaggle GPU only if it supplies a compatible GPU; otherwise a Linux cloud GPU pod with an explicit T4/A10/L4/RTX 4090 class device | The canonical BFCL profile invokes vLLM on CUDA and verifies the full pinned Qwen snapshot. The laptop has no CUDA/NVIDIA GPU; vLLM is Linux-oriented and current CUDA wheels require compute capability 7.5+. |
+| Official BFCL | No, not under the pinned runner | Linux GPU Pod with an explicitly selected T4/A10/L4/RTX 4090 class device; Kaggle only if it actually supplies a compatible GPU | The canonical BFCL profile invokes vLLM on CUDA and verifies the full pinned Qwen snapshot. The laptop has no CUDA/NVIDIA GPU; vLLM is Linux-oriented and current CUDA wheels require compute capability 7.5+. |
 | Qwen Agent C development review | Yes, CPU is suitable | Local Windows, in a clean clone/worktree after approval | This is not another Qwen inference run. It applies frozen deterministic Agent C to the 24 retained real-Qwen A/B development rows, reviewing clean and attacked conditions (48 case-condition rows). It does not load model weights. |
 
 The checked-out host reports Windows 10, Python 3.11.9, 15.67 GiB RAM, CPU-only PyTorch (`torch.cuda.is_available() == False`), zero CUDA devices, and about 308 GiB free on C:. Your Intel i7-13620H and integrated graphics do not provide an NVIDIA CUDA device. Agent C's retained input files are about 0.23 MiB (rows) and 0.03 MiB (case registry); the deterministic runner needs only Python and PyYAML, not Torch or Transformers. BFCL's retained Qwen snapshot is 2.89 GiB across 10 files, before runtime/dependency/data storage.
 
 CPU-only BFCL would require changing the pinned vLLM execution backend or rewriting the adapter to use a different inference stack. That would no longer be the approved canonical run. Do not use WSL/CPU or replace vLLM with a mock. vLLM documents Linux as its OS requirement, no native Windows support, and current NVIDIA GPU support from compute capability 7.5 (including T4, A100, L4); the vLLM wheel installation is sensitive to CUDA/PyTorch compatibility. See [vLLM installation requirements](https://docs.vllm.ai/en/stable/getting_started/installation/gpu/) and [installation quickstart](https://docs.vllm.ai/en/stable/getting_started/quickstart/).
 
-Kaggle is the easiest first external attempt because the repository already has a pinned notebook and Kaggle exposes an Accelerator setting. GPU allocation can be queued/limited, and the GPU model matters: if the notebook preflight reports a device below 16 GiB or compute capability 7.5, stop. In particular, do not assume every offered GPU works for vLLM. Kaggle documents GPU selection in Notebook Settings and notes availability/quota limits ([Kaggle notebook setup](https://www.kaggle.com/docs/notebooks), [GPU usage](https://www.kaggle.com/docs/efficient-gpu-usage)). If Kaggle cannot supply a compatible GPU, use a Linux GPU Pod where you can explicitly select a T4 (16 GiB), A10/L4 (typically 24 GiB) or RTX 4090 (24 GiB). For example, RunPod's Pod deployment flow allows GPU type, disk, volume and exposed ports to be selected ([Pod documentation](https://docs.runpod.io/runpodctl/reference/runpodctl-remove-pods)). Cloud GPU time/storage may be billable; review the provider's current prices and stop/terminate the resource after downloading the archive.
+The repository has a Kaggle-ready notebook, but a Kaggle GPU is only suitable if the assigned card passes the preflight. Kaggle documents a free single Tesla P100 option and GPU availability/quota limits; a P100 has compute capability 6.0 and is rejected by the current vLLM CUDA requirements. Treat Kaggle as a convenient option only when Settings actually offers a T4 or newer compatible card. For reliability, the recommended BFCL environment is a Linux GPU Pod where you explicitly select T4/A10/L4/RTX 4090. Kaggle documents GPU selection in Notebook Settings and notes availability/quota limits ([Kaggle notebook setup](https://www.kaggle.com/docs/notebooks), [GPU usage](https://www.kaggle.com/docs/efficient-gpu-usage)). If Kaggle cannot supply a compatible GPU, use a Linux GPU Pod where you can explicitly select a T4 (16 GiB), A10/L4 (typically 24 GiB) or RTX 4090 (24 GiB). For example, RunPod's Pod deployment flow allows GPU type, disk, volume and exposed ports to be selected ([Pod documentation](https://docs.runpod.io/runpodctl/reference/runpodctl-remove-pods)). Cloud GPU time/storage may be billable; review the provider's current prices and stop/terminate the resource after downloading the archive.
 
 ## Human approval gates
 
@@ -64,18 +64,18 @@ there are no changes to commit, stop and check whether the approval file was
 created by the authorized reviewer and is untracked at that path. Do not use an
 approval from another config hash.
 
-### A2. Kaggle first choice: click setup
+### A2. Optional Kaggle route (only if its GPU is compatible)
 
 1. Sign in at [Kaggle](https://www.kaggle.com/) and open **Code / Notebooks**.
 2. Choose **New Notebook**. In the notebook editor use **File ? Import Notebook** (or the upload/import button shown by the editor) and upload `notebooks/aether_bfcl_official.ipynb` from your Windows checkout. Do not use an older downloaded copy.
 3. Open the right-side **Settings** panel. Set **Accelerator ? GPU** and enable **Internet**. Save/apply; the session may restart.
 4. Confirm the notebook's `COMMIT` equals the source commit used by its builder. Click **Run All** only after the approval file has been committed and pushed.
 5. The notebook installs the repository lockfile, downloads and hash-checks the exact BFCL wheel, installs vLLM with the CUDA backend selected by `uv`, verifies approval and hardware, then verifies the qualified Qwen snapshot before official model access. Its preflight must report CUDA available, at least one GPU with at least 16 GiB and compute capability 7.5+, and an installed `vllm` backend. If it reports a P100/compute capability 6.0, insufficient memory, missing vLLM or any other failure, stop; do not try a CPU workaround. Use Part A3.
-6. The official run may take a long session and downloads about 2.89 GiB of pinned model files plus environment and benchmark files. Keep the session alive, do not alter cells/config/categories, and do not click Run All twice. The runner refuses to overwrite a previous output.
+6. The official run may take a long session and downloads about 2.89 GiB of pinned model files plus environment and benchmark files. Keep the session alive, do not alter cells/config/categories, and do not click Run All twice. The notebook uses an `attempt-1` output name and refuses to overwrite a previous output. If a run stops or fails, retain and download its evidence bundle; a failed/blocked summary is not a score. To retry, set `AETHER_BFCL_ATTEMPT` to a new unique value (for example `attempt-2`) in the notebook's first cell, rerun all cells in a fresh runtime, and retain both attempts. The official runner has no partial-generation resume mode; do not reuse or edit a partial output.
 
-### A3. If Kaggle has no compatible GPU: Linux GPU Pod
+### A3. Recommended reliable route: Linux GPU Pod
 
-Choose this only if Kaggle preflight cannot obtain a compatible card. A Pod is an external, potentially billable machine; no resource is created by this guide.
+Use this route when you want to select a known-compatible GPU explicitly, or if Kaggle preflight cannot obtain one. A Pod is an external, potentially billable machine; no resource is created by this guide.
 
 1. In the provider console open **Pods ? Deploy a Pod**. Choose a Linux/PyTorch CUDA template, select one GPU explicitly (T4 16 GiB or larger, compute capability 7.5+; A10/L4/RTX 4090 are suitable classes), set at least 30 GiB container disk and 30 GiB persistent volume, and expose the Jupyter port shown by the selected template (commonly 8888). Review the current price before deploying. The exact current availability depends on provider/region.
 2. Open the template's JupyterLab link. Upload `notebooks/aether_bfcl_official.ipynb` from Windows. The notebook uses `/kaggle/working` on Kaggle and a local `aether-execution-output` folder when that Kaggle path is absent.
@@ -85,7 +85,7 @@ The benchmark's pinned runner needs Linux, CUDA, compatible PyTorch/vLLM wheels,
 
 ### A4. Expected result and verification
 
-Successful execution prints the output archive path and its SHA-256. The bundle folder must contain `preflight.json`, native BFCL raw generation/evaluation outputs under `official_raw/`, command records, `summary.json`, `manifest.json`, `bundle_manifest.json`, and `archive_contents.json`. A summary saying blocked/failed is **not** a score.
+Successful execution prints the output archive path and its SHA-256. The default archive is `aether-bfcl-official-attempt-1-results.tar.gz`; a retry has its own attempt suffix. The bundle folder must contain `preflight.json`, native BFCL raw generation/evaluation outputs under `official_raw/`, command records, `summary.json`, `manifest.json`, `bundle_manifest.json`, and `archive_contents.json`. A blocked/failed attempt is archived for diagnosis but does not produce a score. Run the BFCL-specific verifier only for a summary marked `PASS`; the general integrity verifier runs on every retained attempt.
 
 Download `aether-bfcl-official-results.tar.gz` from the notebook **Output** panel (Kaggle) or JupyterLab file browser (Pod). On Windows, extract it to `C:\AETHER\bfcl-bundle` (create the folder first), then in PowerShell in your clean AETHER clone run:
 
@@ -101,8 +101,10 @@ hand-edit `summary.json` or raw official files.
 
 ## Part B ? Agent C locally on Windows (CPU)
 
+**Scope clarification:** this approved protocol is not a new Qwen inference by Agent C. It applies frozen deterministic Agent C to retained real-Qwen A/B traces. A Qwen-powered Agent C would be a different experiment and requires a separate prospective protocol and human approval.
+
 No Kaggle, NVIDIA GPU, CUDA, Transformers, model download or internet is needed
-for this experiment. The run uses the small retained qualification rows and
+for this approved review. The run uses the small retained qualification rows and
 registry from the repo. The test and validation portions of the registry (8
 cases each) are not eligible; the runner only accepts declared development
 rows. The local computer's 16 GiB RAM and integrated graphics do not constrain
