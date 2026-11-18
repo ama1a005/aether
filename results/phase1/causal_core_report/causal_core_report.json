@@ -1,0 +1,288 @@
+{
+  "evidence_sha256": {
+    "development_audit": {
+      "arm_results.json": "f9bda55423a687a2133a68c3ad10b4b7d749dc38037b524b4e110767b67459e9",
+      "manifest.json": "ccd4fd34b1b2a6172b5fdbe7ef46cb3d4ea451ee0436c30452a18ace1618afd3",
+      "raw_evaluations.jsonl": "1d13aeb76ab515965e6881899ecb9fba3104cc3f9f513a8960527339cae04294",
+      "summary.json": "d783af9443034cf56f0355bd98f2ab2aaa3e8923d9a7e7811b8ce223eb1b6649"
+    },
+    "locked_validation": {
+      "arm_results.json": "8a67b0157adfcf2d3c1bded927a236af0d35332b0b9889a4d56daf4102a7172b",
+      "manifest.json": "f18fc29e48a3d736b17637e27a525de1316459195dd890a9231eb8fafcc22406",
+      "raw_evaluations.jsonl": "b1088bca971c6027776fc5f29e1cd33e014131093a6d144dc92684a851103aa3",
+      "summary.json": "50d32fc37022095df272163616f2fd29d03f64f81f6245e1f70aa47d3e8690c1"
+    },
+    "matched_search": {
+      "manifest.json": "65016e337d5d34e5d3b05016549b3f366514edf7ec36fbd860200fb1a08e85d9",
+      "search_results.json": "35755c70e636995c8d16d2d664d14fa7e0252a19963c9095ffcc1e9c66f104ad",
+      "summary.json": "9eb40c3e6b81058e7151976f7f69f94bed6344f7c2e132480cc45c6d101e3471"
+    },
+    "once_only_test": {
+      "arm_results.json": "26de78655d88881a2a78f6deac535c250a74d35701478d21c1f864b81088990b",
+      "manifest.json": "b380503d21a4a52941577ef0bd01189582d9d1331f7e905f0793904df4eba93e",
+      "raw_evaluations.jsonl": "cfc7c4c64cf7ef9dbbf0a679190c59a32e8120a605ec453c84e17292a4851aa3",
+      "summary.json": "ea4f2be09f47c446a804e54566f10f9ffac2d2fafeef9d9c048ad93ef8a83d94"
+    }
+  },
+  "generated_utc": "2026-11-18T14:20:35.490377+00:00",
+  "matched_search": {
+    "beam": {
+      "faithfulness": [
+        0.9999991177106842,
+        0.9999991177106842,
+        0.9999991177106842
+      ],
+      "forward_passes": [
+        160,
+        160,
+        160
+      ],
+      "retained_masks": [
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ]
+      ]
+    },
+    "flat_ppo": {
+      "faithfulness": [
+        0.9999991177106842,
+        0.9999991177106842,
+        0.9999991177106842
+      ],
+      "forward_passes": [
+        160,
+        160,
+        160
+      ],
+      "retained_masks": [
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ]
+      ]
+    },
+    "greedy": {
+      "faithfulness": [
+        0.9999991177106842,
+        0.9999991177106842,
+        0.9999991177106842
+      ],
+      "forward_passes": [
+        160,
+        160,
+        160
+      ],
+      "retained_masks": [
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ]
+      ]
+    },
+    "matched_random": {
+      "faithfulness": [
+        0.9999991177106842,
+        0.9999991177106842,
+        0.9999991177106842
+      ],
+      "forward_passes": [
+        160,
+        160,
+        160
+      ],
+      "retained_masks": [
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ],
+        [
+          "message.decision_code"
+        ]
+      ]
+    },
+    "receiver_only": {
+      "faithfulness": [
+        0.9085500110247975,
+        0.9085500110247975,
+        0.9085500110247975
+      ],
+      "forward_passes": [
+        160,
+        160,
+        160
+      ],
+      "retained_masks": [
+        [
+          "receiver.head.L20.H5.pre_o_proj"
+        ],
+        [
+          "receiver.head.L20.H5.pre_o_proj"
+        ],
+        [
+          "receiver.head.L20.H5.pre_o_proj"
+        ]
+      ]
+    }
+  },
+  "metrics": {
+    "development_audit": {
+      "baseline_attacked_accuracy": 0.0,
+      "baseline_attacked_correct": 0,
+      "mcnemar_discordant": {
+        "baseline_only": 0,
+        "repair_only": 4
+      },
+      "mcnemar_exact_two_sided_p": 0.125,
+      "repair_attacked_correct": 4,
+      "repair_attacked_recovery_accuracy": 1.0,
+      "repair_attacked_wilson_95": [
+        0.5101091635454027,
+        1.0
+      ],
+      "repair_clean_accuracy": 1.0,
+      "repair_clean_correct": 4,
+      "repair_clean_wilson_95": [
+        0.5101091635454027,
+        1.0
+      ],
+      "representative_seed": 11,
+      "seed_repetitions_not_independent": true,
+      "unique_cases": 4
+    },
+    "locked_validation": {
+      "baseline_attacked_accuracy": 0.0,
+      "baseline_attacked_correct": 0,
+      "mcnemar_discordant": {
+        "baseline_only": 0,
+        "repair_only": 8
+      },
+      "mcnemar_exact_two_sided_p": 0.0078125,
+      "repair_attacked_correct": 8,
+      "repair_attacked_recovery_accuracy": 1.0,
+      "repair_attacked_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "repair_clean_accuracy": 1.0,
+      "repair_clean_correct": 8,
+      "repair_clean_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "representative_seed": 11,
+      "seed_repetitions_not_independent": true,
+      "unique_cases": 8
+    },
+    "once_only_test": {
+      "baseline_attacked_accuracy": 0.0,
+      "baseline_attacked_correct": 0,
+      "mcnemar_discordant": {
+        "baseline_only": 0,
+        "repair_only": 8
+      },
+      "mcnemar_exact_two_sided_p": 0.0078125,
+      "repair_attacked_correct": 8,
+      "repair_attacked_recovery_accuracy": 1.0,
+      "repair_attacked_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "repair_clean_accuracy": 1.0,
+      "repair_clean_correct": 8,
+      "repair_clean_wilson_95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "representative_seed": 11,
+      "seed_repetitions_not_independent": true,
+      "unique_cases": 8
+    }
+  },
+  "non_claims": [
+    "oracle-free deployable defense",
+    "clinical or population validity",
+    "global circuit minimality",
+    "complete distributed internal circuit",
+    "second-model generalization",
+    "official external benchmark performance"
+  ],
+  "overall": "PASS",
+  "phase1_overall_evidence": "INCOMPLETE",
+  "remaining_phase1_gates": [
+    "bfcl_official",
+    "mcptox_official",
+    "tamas_official",
+    "trained_sae_qwen_evaluation",
+    "real_qwen_red_team",
+    "real_qwen_agent_c",
+    "second_model_qualification",
+    "final_verified_report"
+  ],
+  "schema_version": "aether.causal-core-report.v1",
+  "supported_claim": "The frozen paired-clean-donor receiver L20H5 repair recovered attacked decisions on development-audit, locked-validation, and once-only-test cohorts of the frozen balanced synthetic task.",
+  "verification": {
+    "development_audit": {
+      "arm_seed_run_count": 15,
+      "execution_state": "COMPLETE",
+      "model_forward_steps": 624,
+      "overall": "PASS",
+      "raw_evaluation_count": 120,
+      "scientific_outcome": "SELECTED_DEVELOPMENT_REPAIR",
+      "selected_arm": "mechanism_receiver_l20_h5",
+      "test_executions": 0,
+      "validation_executions": 0
+    },
+    "locked_validation": {
+      "arm_seed_run_count": 6,
+      "development_executions": 0,
+      "execution_state": "COMPLETE",
+      "model_forward_steps": 504,
+      "overall": "PASS",
+      "raw_evaluation_count": 96,
+      "scientific_outcome": "VALIDATION_ACCEPTED",
+      "test_executions": 0,
+      "test_gate_open": true,
+      "validation_executions": 96
+    },
+    "matched_search": {
+      "development_audit_executions": 0,
+      "legacy_pre_terminal_ledger_count": 15,
+      "overall": "PASS",
+      "raw_evaluation_count": 220,
+      "run_count": 15,
+      "status": "COMPLETE",
+      "test_executions": 0,
+      "validation_executions": 0
+    },
+    "once_only_test": {
+      "arm_seed_run_count": 6,
+      "attempt_id": "d25c770d-9159-4114-8dfa-7eee8c8618bd",
+      "development_executions": 0,
+      "execution_state": "COMPLETE",
+      "model_forward_steps": 504,
+      "overall": "PASS",
+      "raw_evaluation_count": 96,
+      "scientific_outcome": "TEST_ACCEPTED",
+      "test_executions": 96,
+      "validation_executions": 0
+    }
+  }
+}

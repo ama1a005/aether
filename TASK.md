@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Integrate independently delivered external/supporting evidence
+
+Member-4 causal experiments, protected evaluation, derived causal-core report,
+evidence UI and handoff are complete. Do not rerun CORE-05. Next, review M1-M3
+deliveries, verify every external artifact with its declared verifier, and
+merge only contract-compatible work. The all-project final report must remain
+blocked until every configured prerequisite passes or receives an approved
+not-applicable decision.
+
 ## Close the verified primary causal-core test and continue external evidence
 
 CORE-05 is independently verified, ingested and closed; never rerun it. Update

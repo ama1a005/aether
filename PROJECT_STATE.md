@@ -1,5 +1,21 @@
 # AETHER project state
 
+## 2026-11-18 Member-4 local closure complete
+
+The verified causal-core report is generated under
+`results/phase1/causal_core_report` from independently verified CORE-02 through
+CORE-05 artifacts. It reports unique-case Wilson intervals and exact paired
+McNemar tests without treating deterministic seeds as independent samples. The
+review frontend now displays the current causal-core progression and oracle-
+donor limitation. The M4 final handoff and study-guide status correction are
+complete.
+
+Final local verification: 620 unit tests passed; integration/regression had 24
+passed and 5 declared prerequisite-dependent skips; frontend had 5 tests pass
+and the production build passed; P3 and P4 smokes passed. Overall Phase 1
+remains incomplete only because teammate/external evidence gates and the final
+all-evidence report remain unresolved.
+
 ## 2026-11-18 CORE-05 once-only test accepted and closed
 
 The only authorized CORE-05 attempt, ID
