@@ -2,15 +2,14 @@
 
 ## Freeze CORE-03 remediation after the verified CORE-02 result
 
-CORE-02 is independently verified and atomically ingested. Prospectively freeze
-a development-only remediation comparison before any new model execution. The
-comparison must include the selected message decision-code intervention, the
-selected receiver-head intervention, fixed message and receiver baselines,
-clean-utility/benign-damage accounting, matched cases and budgets, failure
-rules, statistics, artifact schemas and a human review gate. Preserve the
-CORE-02 conclusion that the explicit message node was sufficient and do not
-claim a connected internal DCMG or search superiority. Do not open validation
-or test until remediation is frozen, executed, verified and reviewed.
+CORE-03 v1 is prospectively frozen at SHA-256
+`cd96984e161389cdbff347dc317f04eaa78ea697689f25620f6566f8bc6803b7`
+and awaits independent human review. Do not implement an evidence-bearing
+runner, create an approval artifact, or access Qwen until the exact digest is
+approved. After approval, implement the runner, independent verifier, atomic
+ingester and commit-pinned checkpoint-safe Kaggle notebook without changing
+the five arms, cases, metrics, thresholds, budget, split locks or claim
+boundary. Validation and test remain closed.
 
 ## CORE-02 seed-parallel scheduling extension
 

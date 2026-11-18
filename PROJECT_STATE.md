@@ -1,5 +1,18 @@
 # AETHER project state
 
+## 2026-11-18 CORE-03 remediation protocol awaits review
+
+The prospective development-only message-versus-receiver remediation protocol
+is frozen at SHA-256
+`cd96984e161389cdbff347dc317f04eaa78ea697689f25620f6566f8bc6803b7`.
+It compares the CORE-02-selected decision-code message intervention and the
+receiver L20H5 comparator against no defense, whole-message patching and a
+fixed L22 receiver baseline on the four predeclared development-audit cases.
+The protocol explicitly identifies paired clean donors as oracle information;
+it cannot establish an oracle-free deployable defense. Validation and test
+remain closed. Model-independent fail-closed tests pass, but no runner, Qwen
+execution, remediation result or approval artifact exists yet.
+
 ## 2026-11-18 CORE-02 matched search complete and ingested
 
 All three approved seed shards independently verified and the deterministic
