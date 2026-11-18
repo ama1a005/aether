@@ -121,13 +121,16 @@ git clone --branch m1/target-harness --single-branch https://github.com/ama1a005
 Set-Location $runDir
 git status --short
 py -3.11 --version
-py -3.11 -m venv .venv-agentc
-.\.venv-agentc\Scripts\python.exe -m pip install --upgrade pip
-.\.venv-agentc\Scripts\python.exe -m pip install PyYAML==6.0.3
+$venvDir = Join-Path $env:LOCALAPPDATA 'aether-agentc-venv'
+if (-not (Test-Path $venvDir)) { py -3.11 -m venv $venvDir }
+$python = Join-Path $venvDir 'Scripts\python.exe'
+& $python -m pip install --upgrade pip
+& $python -m pip install PyYAML==6.0.3
 ```
 
-`git status --short` should print nothing. Keep the approval JSON in this clean
-clone at `results\phase1\protocol_approvals\agent_c_qwen_development.json`;
+`git status --short` should print nothing. The Python virtual environment is in
+`%LOCALAPPDATA%`, outside the clone, so it does not make the evidence source dirty.
+Keep the approval JSON in this clean clone at `results\phase1\protocol_approvals\agent_c_qwen_development.json`;
 it was included in the approved/pushed commit. The input files already exist in
 the clone. No separate data/model upload is required.
 
@@ -143,14 +146,14 @@ First verify the code/config and input paths exist without opening the model
 Test-Path results\phase1\protocol_approvals\agent_c_qwen_development.json
 Test-Path results\phase1\model_qualification\qwen15b_kaggle_20261110\mq_g1_rows.json
 Test-Path data\causal_v2\case_registry.json
-.\.venv-agentc\Scripts\python.exe -m experiments.phase1.qwen_agent_c --help
+& $python -m experiments.phase1.qwen_agent_c --help
 ```
 
 Then run once, writing results **outside the Git clone**:
 
 ```powershell
 $output = Join-Path $env:USERPROFILE 'aether-agentc-results'
-.\.venv-agentc\Scripts\python.exe -m experiments.phase1.qwen_agent_c `
+& $python -m experiments.phase1.qwen_agent_c `
   --config configs\experiments\agent_c_qwen_development.yaml `
   --approval results\phase1\protocol_approvals\agent_c_qwen_development.json `
   --output $output
@@ -173,8 +176,8 @@ repeated checkpoint keys. Do not delete or edit the partial `raw_reviews.json`.
 Run independent checks before sharing or ingesting anything:
 
 ```powershell
-.\.venv-agentc\Scripts\python.exe -m scripts.verify_agent_c_bundle $output
-.\.venv-agentc\Scripts\python.exe -m scripts.verify_external_bundle $output --expected-kind qwen_agent_c
+& $python -m scripts.verify_agent_c_bundle $output
+& $python -m scripts.verify_external_bundle $output --expected-kind qwen_agent_c
 ```
 
 Both must pass. The bundle includes raw paired reviews, summary, complete hash
@@ -185,7 +188,7 @@ changing its contents, then rerun both verifiers after extraction. Ingest only
 after verification and only into a new evidence destination:
 
 ```powershell
-.\.venv-agentc\Scripts\python.exe -m scripts.ingest_external_bundle $output `
+& $python -m scripts.ingest_external_bundle $output `
   results\phase1\agent_c\development --expected-kind qwen_agent_c
 ```
 

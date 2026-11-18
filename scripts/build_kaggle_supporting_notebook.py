@@ -22,7 +22,9 @@ def build(kind: str, commit: str) -> dict[str, object]:
         raise ValueError("kind and immutable 40-hex commit are required")
     setup = f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile
-WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-{kind}'); REPO=RUNTIME/'aether'
+WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
+WORK.mkdir(parents=True,exist_ok=True)
+RUNTIME=Path('/tmp/aether-{kind}'); REPO=RUNTIME/'aether'
 VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'; OUTPUT=WORK/'aether-{kind}-results'
 COMMIT={commit!r}; URL='https://github.com/ama1a005/aether.git'
 RUNTIME.mkdir(parents=True,exist_ok=True); os.environ['PYTHONNOUSERSITE']='1'
@@ -34,7 +36,6 @@ subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
-subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 """
     if kind == "agent_c":
         execution = """subprocess.run([str(PY),'-m','experiments.phase1.qwen_agent_c','--config',str(REPO/'configs/experiments/agent_c_qwen_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/agent_c_qwen_development.json'),'--output',str(OUTPUT)],cwd=REPO,check=True)"""

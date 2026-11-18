@@ -95,7 +95,6 @@ assert not subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=
 """),
         _cell("code", f"""subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
 {package_setup}
-subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','tests/unit/test_native_benchmark_runners.py','tests/unit/test_native_official_package.py','-q'],cwd=REPO,check=True)
 """),
         *([_cell("code", snapshot_setup)] if snapshot_setup else []),

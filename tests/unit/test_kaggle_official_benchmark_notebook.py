@@ -21,6 +21,7 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     bfcl_source = "".join("".join(cell["source"]) for cell in build("bfcl", commit)["cells"])
     assert "vllm'" in bfcl_source and "--torch-backend'" in bfcl_source
     assert "verify_protocol_approval" in bfcl_source
+    assert "--no-deps','-e'" not in bfcl_source
 
 
 def test_official_notebook_rejects_mutable_source_identity() -> None:
