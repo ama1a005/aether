@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Review the SAE v1.1 data-source correction
+
+SAE training freeze v1 is approved, but its frozen receiver-only cases provide
+3,872 training token rows and therefore cannot satisfy its 10,000-row minimum.
+Review `configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json`.
+Do not lower the minimum, duplicate activations, access protected cases, download
+the corpus/model, implement an evidence runner or train an SAE before exact-hash
+approval. V1.1 preserves the approved method and replaces only the infeasible
+training source with a pinned, deterministic external language-corpus partition.
+
 ## Integrate independently delivered external/supporting evidence
 
 Member-4 causal experiments, protected evaluation, derived causal-core report,

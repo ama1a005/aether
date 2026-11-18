@@ -1,0 +1,72 @@
+{
+  "schema_version": "aether.qwen-sae-training-freeze-amendment.v1.1",
+  "status": "awaiting_human_scientific_review",
+  "base_protocol_path": "configs/experiments/qwen_sae_training_freeze_v1.json",
+  "base_protocol_sha256": "5dd220297a159a712e114489ca8872ab0a7badf258e410e0ddffa65883ce1272",
+  "reason": "The frozen receiver-only development cases contain exactly 3872 training prompt tokens, so the approved minimum of 10000 unique training rows cannot be met.",
+  "unchanged": [
+    "model_identity_and_revision",
+    "receiver_layer22_audit_component",
+    "aether_development_audit_case_ids",
+    "excluded_case_ids",
+    "normalization",
+    "sae_architecture",
+    "optimizer_and_loss",
+    "seeds",
+    "acceptance_thresholds",
+    "validation_and_test_locks",
+    "claim_boundary"
+  ],
+  "training_corpus": {
+    "dataset_id": "Salesforce/wikitext",
+    "dataset_revision": "de54f133ef530c2e9b46c532f95a01c446ff0f1d",
+    "dataset_config": "wikitext-2-raw-v1",
+    "source_split": "train",
+    "text_field": "text",
+    "selection_order": "repository_dataset_order",
+    "empty_row_policy": "strip_and_skip",
+    "tokenization": "pinned_qwen_tokenizer_without_special_tokens_with_one_eos_between_documents",
+    "selected_token_count": 65536,
+    "training_token_count": 57344,
+    "checkpoint_selection_token_count": 8192,
+    "sequence_length": 256,
+    "remainder_policy": "no_remainder_exact_multiple",
+    "protected_aether_cases_used_for_training": []
+  },
+  "capture_execution": {
+    "device": "cuda:0",
+    "dtype": "float32",
+    "quantized": false,
+    "explicit_offload": false,
+    "trust_remote_code": false,
+    "local_files_only_after_snapshot": true,
+    "component_id": "model.module.L22.attention_output",
+    "token_position_policy": "all_256_positions_in_each_corpus_block"
+  },
+  "checkpoint_selection": {
+    "uses_only_external_corpus_selection_partition": true,
+    "aether_audit_used_for_selection": false,
+    "rule": "approved_v1_lowest_selection_reconstruction_error_subject_to_active_fraction_bounds"
+  },
+  "aether_final_audit": {
+    "component_id": "receiver.module.L22.attention_output",
+    "case_ids": ["v2_case_010", "v2_case_011", "v2_case_022", "v2_case_023"],
+    "conditions": ["clean", "attacked"],
+    "token_position_policy": "all_non_padding_prompt_positions",
+    "purpose": "final_development_audit_after_checkpoint_selection"
+  },
+  "required_additional_artifacts": [
+    "corpus_source_manifest.json",
+    "corpus_token_ids.sha256",
+    "corpus_activation_manifest.json",
+    "aether_audit_activation_manifest.json"
+  ],
+  "validation_executions": 0,
+  "test_executions": 0,
+  "claim_boundary": "Development-only SAE reconstruction and sparsity evidence. The SAE is trained on a pinned external language corpus and audited on frozen AETHER development prompts. No feature-level causal claim is authorized.",
+  "human_review": {
+    "approved": false,
+    "reviewer": "",
+    "utc_timestamp": ""
+  }
+}

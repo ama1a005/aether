@@ -1,5 +1,20 @@
 # AETHER project state
 
+## 2026-11-19 SAE v1 approved; data-source arithmetic requires v1.1 review
+
+The human project owner approved Qwen SAE training freeze v1 at SHA-256
+`5dd220297a159a712e114489ca8872ab0a7badf258e410e0ddffa65883ce1272`.
+Pre-execution arithmetic then established that its 16 receiver-only training
+cases contain exactly 3,872 unique non-padding prompt-token rows, below the
+approved minimum of 10,000. The historical full-token archive cannot change
+that component-specific row count. No model was accessed and no threshold was
+weakened.
+
+V1.1 prospectively changes only the SAE training source to a pinned deterministic
+WikiText-2 raw corpus partition while retaining the AETHER four-case final
+development audit, architecture, seeds, thresholds, split locks and claim
+boundary. It awaits exact-hash human review; execution remains forbidden.
+
 ## 2026-11-18 Member-4 local closure complete
 
 The verified causal-core report is generated under
