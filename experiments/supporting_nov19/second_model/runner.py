@@ -105,6 +105,11 @@ def execute(config_path: Path, output_root: Path) -> int:
 
     Results are only written from actual model execution.
     """
+    raise RuntimeError(
+        "This legacy partial runner cannot produce second-model qualification. "
+        "Use paired_trace.run_secondary_model_qualification with a committed, "
+        "prospectively frozen and human-approved candidate config."
+    )
     run_id = f"sm_{uuid.uuid4().hex[:12]}"
     _log(run_id, "execute_start", {"config": str(config_path)})
 

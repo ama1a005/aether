@@ -328,7 +328,9 @@ class TestSAETrainerUnit(unittest.TestCase):
         trainer.train(data, epochs=2, batch_size=16, verbose=False)
         with tempfile.TemporaryDirectory() as td:
             out = Path(td) / "ckpt"
-            trainer.save_checkpoint(out, component_id="test.component")
+            trainer.save_checkpoint(
+                out, component_id="test.component", data_sha256="a" * 64
+            )
             self.assertTrue((out / "metadata.json").is_file())
             self.assertTrue((out / "weights.npz").is_file())
             # Verify metadata is valid JSON
@@ -427,6 +429,15 @@ class TestActivationDataLoader(unittest.TestCase):
             )
             with self.assertRaises(ValueError):
                 loader.load()
+
+    def test_loader_does_not_substitute_an_unrelated_npy_file(self):
+        """A missing component must fail rather than silently selecting another tensor."""
+        import numpy as np
+        from experiments.supporting_nov19.sae.data_loader import ActivationLoader
+        with tempfile.TemporaryDirectory() as td:
+            np.save(os.path.join(td, "different_component.npy"), np.ones((2, 4), dtype=np.float32))
+            with self.assertRaises(FileNotFoundError):
+                ActivationLoader(data_dir=Path(td), component_id="test.component")
 
     def test_loader_iter_batches(self):
         """Loader must yield correct batch sizes."""
