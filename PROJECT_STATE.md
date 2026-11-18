@@ -1,5 +1,21 @@
 # AETHER project state
 
+## 2026-11-19 SAE v1.1 approved; dual-T4 execution package ready
+
+The human project owner approved the v1.1 corpus-source amendment at SHA-256
+`30c7b828c1b237ff8d8d5855bd78bb285c73a0986e5f61555004e9c6485a4ff6`.
+The approved package now implements deterministic pinned-corpus token selection,
+two disjoint float32 Qwen activation-capture workers, three restart-safe Adam
+SAE seed jobs, checkpoint selection without AETHER audit access, final frozen
+development-audit capture/evaluation, independent bundle verification and
+continuous private Hugging Face persistence. The uploadable notebook is
+`notebooks/aether_qwen_sae_dual_t4.ipynb`, pinned to implementation commit
+`431ae07ad51ab374393fd89525ddeaf92c425dfd`.
+
+No model or dataset was downloaded locally and no SAE evidence exists yet. The
+next action is the retained Kaggle dual-T4 execution. Validation and test remain
+closed, and even an accepted result supports reconstruction/sparsity only.
+
 ## 2026-11-19 SAE v1 approved; data-source arithmetic requires v1.1 review
 
 The human project owner approved Qwen SAE training freeze v1 at SHA-256

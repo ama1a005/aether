@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## Execute the approved SAE v1.1 package on Kaggle
+
+Run `notebooks/aether_qwen_sae_dual_t4.ipynb` in a 2 x T4 Kaggle session with
+Internet enabled and private `HF_TOKEN`/`AETHER_HF_REPO` secrets. The notebook
+restores remotely persisted activation blocks and epoch checkpoints, so rerun
+all cells after an interruption. Preserve either accepted or rejected output,
+download or retain the final archive, then independently verify and atomically
+ingest it locally. Do not alter corpus selection, token counts, architecture,
+seeds, thresholds or split locks, and do not describe SAE reconstruction as a
+causal feature result.
+
 ## Review the SAE v1.1 data-source correction
 
 SAE training freeze v1 is approved, but its frozen receiver-only cases provide
