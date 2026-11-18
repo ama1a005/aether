@@ -52,9 +52,10 @@ def _execution_paths(output: Path, *, resume: bool) -> tuple[Path, Path]:
     if checkpoint.exists():
         if not resume:
             raise FileExistsError(f"output exists; pass --resume to validate/reuse checkpoint: {resolved_output}")
-        unexpected = sorted(item.name for item in entries if item.name != checkpoint.name)
+        allowed_partial = {checkpoint.name, "summary.json"}
+        unexpected = sorted(item.name for item in entries if item.name not in allowed_partial)
         if unexpected:
-            raise FileExistsError(f"refusing to resume over non-checkpoint output artifacts: {unexpected}")
+            raise FileExistsError(f"refusing to resume over completed or unexpected output artifacts: {unexpected}")
     elif resume:
         raise FileNotFoundError(f"cannot resume; checkpoint is missing: {checkpoint}")
     elif entries:
@@ -211,7 +212,13 @@ def run(config_path: Path, approval_path: Path, output: Path, resume: bool = Fal
     summary = {"overall": "SUPPORTING_EVIDENCE_ONLY", "evidence_origin": "retained_real_qwen_plus_deterministic_agent_c",
                "model_id": "Qwen/Qwen2.5-1.5B-Instruct", **result["counts"],
                "validation_executions": 0, "test_executions": 0}
-    _atomic_json(output / "summary.json", summary)
+    summary_path = output / "summary.json"
+    if summary_path.exists():
+        existing_summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        if existing_summary != summary:
+            raise ValueError("resume summary differs from counts derived from the raw checkpoint")
+    else:
+        _atomic_json(summary_path, summary)
     source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
     metadata = runtime_metadata(
         repository=ROOT, experiment_id="P0_agent_c_qwen15b_development", run_id=output.name,

@@ -104,3 +104,12 @@ def test_execution_paths_refuse_repository_outputs_and_overwrites(tmp_path, monk
     with pytest.raises(FileExistsError, match="nonempty output"):
         runner._execution_paths(occupied, resume=False)
     assert (occupied / "keep.txt").read_text(encoding="utf-8") == "preserve"
+
+    partial = tmp_path / "partial-output"
+    partial.mkdir()
+    (partial / "raw_reviews.json").write_text("{}", encoding="utf-8")
+    (partial / "summary.json").write_text("{}", encoding="utf-8")
+    assert runner._execution_paths(partial, resume=True)[0] == partial.resolve()
+    (partial / "bundle_manifest.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(FileExistsError, match="completed or unexpected"):
+        runner._execution_paths(partial, resume=True)

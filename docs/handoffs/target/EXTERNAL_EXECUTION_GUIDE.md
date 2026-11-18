@@ -168,10 +168,14 @@ before approval. The result must say `SUPPORTING_EVIDENCE_ONLY`, retain invalid
 rows in counts, and report zero validation/test executions. It does not qualify
 Agent C as a real Qwen model or causal-core result.
 
-If the process is interrupted after the output directory was created, rerun the
-same command with `--resume` appended. The runner checks the exact config/input
-hash plan and resumes missing case-condition rows; it rejects mismatched or
-repeated checkpoint keys. Do not delete or edit the partial `raw_reviews.json`.
+If the process is interrupted after the output directory was created, resume
+only when `raw_reviews.json` exists and `bundle_manifest.json` does not. Rerun
+the same command with `--resume` appended. The runner checks the exact
+config/input/provenance hash plan and validates that the checkpoint is an exact,
+source-backed ordered prefix before completing missing case-condition rows. If
+`summary.json` exists, it must match the raw checkpoint counts. Do not delete or
+edit the partial checkpoint. If `bundle_manifest.json` already exists, treat
+the run as complete and verify it; do not rerun or overwrite it.
 
 ### B3. Verify and retain Agent C evidence
 
