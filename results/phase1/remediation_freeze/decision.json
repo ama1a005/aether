@@ -1,0 +1,22 @@
+{
+  "schema_version": "aether.core03-remediation-freeze-decision.v1",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_core_workstream",
+  "reviewed_utc": "2026-11-18T00:00:00+05:30",
+  "proposal_path": "configs/phase1_core/core03_remediation_freeze_v1.yaml",
+  "proposal_sha256": "cd96984e161389cdbff347dc317f04eaa78ea697689f25620f6566f8bc6803b7",
+  "source_commit_before_decision": "31b1184",
+  "authorized_next_state": "IMPLEMENT_CORE03_DEVELOPMENT_ONLY_EXECUTION_PACKAGE",
+  "development_audit_case_count": 4,
+  "validation_executions": 0,
+  "test_executions": 0,
+  "restrictions": [
+    "paired_clean_donor_is_oracle_information",
+    "no_deployable_defense_claim",
+    "no_threshold_or_arm_changes",
+    "do_not_access_validation_or_test",
+    "retain_negative_and_incomplete_outcomes"
+  ]
+}
