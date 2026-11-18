@@ -1,5 +1,17 @@
 # AETHER project state
 
+## 2026-11-18 CORE-04 validation accepted
+
+The retained CORE-04 archive independently verifies and is atomically ingested
+under `results/phase1/locked_validation`. Across eight locked validation cases
+and seeds 11/22/33, the frozen receiver L20H5 repair achieved attacked decision
+recovery 1.0 and clean decision accuracy 1.0 with zero invalid/error rows; the
+no-defense baseline achieved attacked recovery 0.0 and clean accuracy 1.0. All
+six arm/seed units, 96 evaluation rows and 504 forwards verify. Development and
+test execution counts are zero. This opens review of a once-only test protocol;
+it does not itself authorize test access or support an oracle-free deployment
+claim.
+
 ## 2026-11-18 CORE-04 locked validation approved and being implemented
 
 The human project owner approved the exact CORE-04 proposal at SHA-256

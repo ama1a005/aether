@@ -1,5 +1,14 @@
 # AETHER current bounded task
 
+## Review the prospective CORE-05 once-only test protocol
+
+CORE-04 validation is independently verified, ingested and accepted. Review
+`configs/phase1_core/core05_once_only_test_freeze_v1.yaml` and
+`docs/CORE05_ONCE_ONLY_TEST_REVIEW.md`. Do not implement the test runner, load
+Qwen for test execution, or access test prompts before exact-hash human
+approval. A completed test is non-repeatable; interrupted execution may only
+resume the same retained attempt.
+
 ## Implement the approved CORE-04 locked-validation package
 
 CORE-04 v1 is human-approved at SHA-256

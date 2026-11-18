@@ -1,0 +1,33 @@
+{
+  "copied_artifact_sha256": {
+    "archive_contents.json": "34805403a298159022f9746ca8e44b0d96df247d118b40c056f8d39a80596d56",
+    "arm_results.json": "8a67b0157adfcf2d3c1bded927a236af0d35332b0b9889a4d56daf4102a7172b",
+    "budget_ledger.json": "e3dc648b85eee04353d11d20b7458090512b80215d23d3af87b590841f684e40",
+    "checkpoint_state.json": "cf56c0a6b25f2b65b8acf87193ec000fffde43ae1ed5219fe0b974a1c198bb3e",
+    "manifest.json": "f18fc29e48a3d736b17637e27a525de1316459195dd890a9231eb8fafcc22406",
+    "preflight.json": "3debab93d32e83a98f964f37ef87c0ca1e735d4dadb354677677e3e031547f0a",
+    "raw_evaluations.jsonl": "b1088bca971c6027776fc5f29e1cd33e014131093a6d144dc92684a851103aa3",
+    "statistics.json": "2efde82353d2a4cdac6dee4a13b96d54b3d730768e470c0e651d00287966cd6f",
+    "summary.json": "50d32fc37022095df272163616f2fd29d03f64f81f6245e1f70aa47d3e8690c1",
+    "units/frozen_receiver_l20_h5-11.json": "81be0d5fbfbc8f35d9c302090d7df6f138410a49c7b3715dbc0e85097bd2b78e",
+    "units/frozen_receiver_l20_h5-22.json": "3c8ff19f1a7288029ff22c37829efa1a2cf1935d3d27d7b436986e6638fc6c57",
+    "units/frozen_receiver_l20_h5-33.json": "f55b5f8bd0e8411c30b97d795e130a88774cdb24f395450176f57aca15a93ddf",
+    "units/no_defense-11.json": "8e686c478ecec6261b5f79c519d016c675559fdde0a6e97293dd1fefe6d9634e",
+    "units/no_defense-22.json": "f0a92db1931ff6afe52a9e3bb16b5a55fda3c3dfcd4b2665ca8a37856935dd2d",
+    "units/no_defense-33.json": "f5bc25a0e6e279d4801319f043ce42781d02fcb01aa94a70ea55b5a3af0a9c3d"
+  },
+  "ingested_utc": "2026-11-18T12:27:08.134042+00:00",
+  "schema_version": "aether.core04-ingest.v1",
+  "verification": {
+    "arm_seed_run_count": 6,
+    "development_executions": 0,
+    "execution_state": "COMPLETE",
+    "model_forward_steps": 504,
+    "overall": "PASS",
+    "raw_evaluation_count": 96,
+    "scientific_outcome": "VALIDATION_ACCEPTED",
+    "test_executions": 0,
+    "test_gate_open": true,
+    "validation_executions": 96
+  }
+}
