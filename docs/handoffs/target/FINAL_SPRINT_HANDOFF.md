@@ -243,3 +243,10 @@ The audit tightened the target runner to require its declared attack spec and wr
 - No external scientific execution was performed. Software/fixture checks are not experimental results.
 
 The original uncommitted CORE/evidence work and untracked `reference_docs/` were left unstaged and preserved.
+
+
+### Approval-gate and notebook pin follow-up ? 2026-11-19
+
+Final source commit: `e8966b4ed6dd4cdd354322666ceaef3364b576d0` adds a mandatory BFCL approval JSON gate bound to the exact canonical config. The notebook checks approval before model download; a missing decision leaves the path blocked. Commit `16c43d37cd87ccffd6a0f9c38392406461a8ffaf` repins both external notebooks to that exact source commit. Both commits are pushed to `origin/m1/target-harness`.
+
+Regression verification after the approval change: **26 relevant unit tests passed**, then **7 approval/notebook tests passed**; the demo verifier passed. The full unit-suite result remains 606 passed and the one unrelated QCI-2 artifact-resolution failure documented above. No unapproved BFCL or Agent-C run was started.

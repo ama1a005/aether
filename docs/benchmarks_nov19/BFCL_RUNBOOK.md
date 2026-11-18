@@ -94,8 +94,8 @@ python -m scripts.ingest_external_bundle /path/to/aether-bfcl-official /path/to/
 ## 4. Expected Artifacts and Provenance
 
 When executed on qualified compute, the output directory contains:
-1. `execution_logs/plan.json` — Frozen plan and environment parameters
-2. `execution_logs/command_0.json` — Generation command stdout/stderr/exit code
+1. `command_records/plan.json` — Frozen plan and environment parameters
+2. `command_records/command_0.json` — Generation command stdout/stderr/exit code
 3. `execution_logs/command_1.json` — Evaluation command stdout/stderr/exit code
 4. Raw per-category model outputs and evaluation scores for `simple`, `multiple`, `parallel`, `irrelevance`
 5. `summary.json` — Conforming to schema `aether.nov19.external_benchmark.v1`
