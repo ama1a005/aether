@@ -175,3 +175,45 @@ Output:
    python scripts/verify_demo_package.py
    ```
 5. Merge `m1/target-harness` into `lm`.
+
+---
+
+## Supplemental follow-up — 2026-11-18
+
+The final-sprint audit found two launch/error-reporting defects and corrected
+them without touching the pre-existing CORE-04 or evidence-related working-tree
+changes:
+
+- `BFCLRunner.plan()` now propagates native-plan construction errors instead
+  of silently replacing them with `native_plan: null`.
+- `scripts/benchmark_bfcl_external_runner.py` now adds the repository root to
+  `sys.path`, so the runbook's direct `python scripts/... --dry-run` command
+  works from a clean checkout.
+
+### Verification performed
+
+- BFCL and native-package model-free tests: **18 passed** after these changes.
+- Full Member 1 Python suite: **61 passed, 2 skipped**. The two review-demo
+  end-to-end cases are skipped by their declared environment gate.
+- BFCL dry-run starts and creates the pinned native plan, then correctly
+  refuses execution because `bfcl_eval==2026.3.23`, CUDA, and the model snapshot
+  are unavailable on this Windows host. No official score or result bundle was
+  created.
+- Demo package verifier: **PASS**, 12 demo cases and 22 Phase-1 gates; this is
+  network-free packaging evidence only.
+- Frontend: five Vitest tests passed and the production build succeeded.
+- MCP stdio: the integration test passed when run with permission to create
+  its Windows child-process pipe.
+- Real-Qwen Agent C: its SUPPORT-02 config dry-run passes. No model execution
+  was started; the qualified snapshot is remote and the canonical protocol
+  proposal remains at human review. Supporting Agent-C evidence is not part of
+  the causal core.
+
+The follow-up implementation and regression tests are in commit
+`4b972a85c287ea8e0726bd775141d635fd349e03` on `m1/target-harness`.
+
+### Follow-up limitations
+
+BFCL and real-Qwen Agent C still require their reviewed, commit-pinned Linux /
+Kaggle execution paths. The demo's external MCP service behavior was not tested
+live. No evidence gate is promoted by these software checks.
