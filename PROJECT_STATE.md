@@ -1,5 +1,14 @@
 # AETHER project state
 
+## 2026-11-18 CORE-03 newline-portability repair
+
+The first Kaggle CORE-03 setup stopped in model-independent tests before
+preflight and before model access because Git converted an ingested JSON
+evidence file from Windows CRLF to Linux LF. The validator now accepts only an
+exact raw hash or canonical LF/CRLF variants for declared UTF-8 text evidence;
+scientific content changes still fail closed. The frozen CORE-03 proposal,
+approval, cases, arms, metrics, budget and split locks are unchanged.
+
 ## 2026-11-18 CORE-03 remediation protocol awaits review
 
 The prospective development-only message-versus-receiver remediation protocol

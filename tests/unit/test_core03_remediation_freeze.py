@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from causal.remediation_freeze import load_and_validate_remediation_freeze
+from causal.remediation_freeze import frozen_text_hash_matches, load_and_validate_remediation_freeze
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -86,4 +86,18 @@ def test_review_gate_cannot_authorize_model_access(tmp_path: Path) -> None:
     )
     with pytest.raises(PermissionError, match="await exact-hash approval"):
         load_and_validate_remediation_freeze(path, ROOT)
+
+
+def test_frozen_evidence_accepts_only_newline_portability(tmp_path: Path) -> None:
+    crlf = tmp_path / "evidence.json"
+    lf = tmp_path / "checkout.json"
+    changed = tmp_path / "changed.json"
+    crlf.write_bytes(b'{"value": 1}\r\n')
+    lf.write_bytes(b'{"value": 1}\n')
+    changed.write_bytes(b'{"value": 2}\n')
+    import hashlib
+
+    expected = hashlib.sha256(crlf.read_bytes()).hexdigest()
+    assert frozen_text_hash_matches(lf, expected)
+    assert not frozen_text_hash_matches(changed, expected)
 

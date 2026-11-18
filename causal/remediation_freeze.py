@@ -24,6 +24,22 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def frozen_text_hash_matches(path: Path, expected: str) -> bool:
+    """Accept an exact hash or newline-only Git conversion for UTF-8 text evidence."""
+    raw = path.read_bytes()
+    variants = {hashlib.sha256(raw).hexdigest()}
+    if path.suffix.lower() in {".json", ".jsonl", ".yaml", ".yml", ".md", ".txt"}:
+        try:
+            raw.decode("utf-8")
+        except UnicodeDecodeError:
+            return expected in variants
+        canonical_lf = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        canonical_crlf = canonical_lf.replace(b"\n", b"\r\n")
+        variants.update({hashlib.sha256(canonical_lf).hexdigest(),
+                         hashlib.sha256(canonical_crlf).hexdigest()})
+    return expected in variants
+
+
 def load_and_validate_remediation_freeze(path: Path, repo: Path) -> dict[str, Any]:
     """Load CORE-03 and reject scientific, split, budget, or provenance drift."""
     protocol = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -79,7 +95,7 @@ def load_and_validate_remediation_freeze(path: Path, repo: Path) -> dict[str, An
         evidence = (repo / record["path"]).resolve()
         if not evidence.is_relative_to(repo.resolve()) or not evidence.is_file():
             raise ValueError(f"Missing CORE-03 evidence input: {record['path']}")
-        if sha256_file(evidence) != record["sha256"]:
+        if not frozen_text_hash_matches(evidence, record["sha256"]):
             raise ValueError(f"CORE-03 evidence hash mismatch: {record['path']}")
     return protocol
 
