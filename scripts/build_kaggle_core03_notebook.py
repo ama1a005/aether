@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMIT = "cbc2844ba84c989ea286721fa1d2ca310cd92634"
+COMMIT = "0078c1793ef82c917cb57440a7196a9d8c97da73"
 
 
 def _cell(kind: str, source: str) -> dict[str, object]:
