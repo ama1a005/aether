@@ -10,8 +10,10 @@ receiver L20H5 comparator against no defense, whole-message patching and a
 fixed L22 receiver baseline on the four predeclared development-audit cases.
 The protocol explicitly identifies paired clean donors as oracle information;
 it cannot establish an oracle-free deployable defense. Validation and test
-remain closed. Model-independent fail-closed tests pass, but no runner, Qwen
-execution, remediation result or approval artifact exists yet.
+remain closed. The exact proposal is now human-approved. A restart-safe real
+Qwen runner, evaluator, strict verifier, atomic ingester and commit-pinned
+Kaggle notebook are implemented and model-independently tested. No CORE-03
+Qwen execution or remediation result exists yet.
 
 ## 2026-11-18 CORE-02 matched search complete and ingested
 
