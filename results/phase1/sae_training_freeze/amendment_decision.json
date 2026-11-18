@@ -1,0 +1,20 @@
+{
+  "schema_version": "aether.qwen-sae-training-freeze-amendment-decision.v1.1",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_member3_workstream",
+  "reviewed_utc": "2026-11-19T00:00:00+05:30",
+  "proposal_path": "configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json",
+  "proposal_sha256": "30c7b828c1b237ff8d8d5855bd78bb285c73a0986e5f61555004e9c6485a4ff6",
+  "source_commit_before_decision": "c5993a4",
+  "authorized_next_state": "IMPLEMENT_QWEN_SAE_DUAL_T4_EXECUTION_PACKAGE",
+  "restrictions": [
+    "pinned_wikitext_corpus_only",
+    "aether_audit_not_used_for_selection",
+    "development_only",
+    "no_validation_or_test_access",
+    "no_feature_level_causal_claim",
+    "retain_negative_and_incomplete_outcomes"
+  ]
+}
