@@ -17,6 +17,8 @@ def test_core03_notebook_is_pinned_restart_safe_and_cpu_frozen() -> None:
     assert "device='cuda'" not in source and 'device="cuda"' not in source
     assert "core03/checkpoint.tar.gz" in source
     assert "--checkpoint-repo" in source
+    assert "api.create_repo" in source
+    assert "private=True" in source
     assert "scripts.verify_core03_remediation_bundle" in source
     assert "validation_case_ids" not in source
     assert "test_case_ids" not in source

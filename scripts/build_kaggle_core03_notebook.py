@@ -32,8 +32,8 @@ uploaded synchronously to a private Hugging Face dataset, so a restarted Kaggle
 session resumes at the next incomplete unit.
 
 Kaggle requirements: Internet enabled, standard CPU runtime, and secrets
-`HF_TOKEN` plus `AETHER_HF_REPO`. The dataset repository must already exist,
-belong to the token owner, and be private.
+`HF_TOKEN` plus `AETHER_HF_REPO`. The notebook creates the named private dataset
+if necessary, then verifies that it is private before writing a checkpoint.
 """),
         _cell("code", f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile
@@ -67,8 +67,10 @@ from huggingface_hub import HfApi,hf_hub_download
 from huggingface_hub.errors import EntryNotFoundError
 secrets=UserSecretsClient(); os.environ['HF_TOKEN']=secrets.get_secret('HF_TOKEN')
 HF_REPO=secrets.get_secret('AETHER_HF_REPO'); assert os.environ['HF_TOKEN'] and HF_REPO
-api=HfApi(token=os.environ['HF_TOKEN']); info=api.repo_info(repo_id=HF_REPO,repo_type='dataset')
-assert info.private, 'AETHER_HF_REPO must already exist and be private'
+api=HfApi(token=os.environ['HF_TOKEN'])
+api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
+info=api.repo_info(repo_id=HF_REPO,repo_type='dataset')
+assert info.private, 'AETHER_HF_REPO must be private'
 REMOTE='core03/checkpoint.tar.gz'
 try: checkpoint=Path(hf_hub_download(HF_REPO,REMOTE,repo_type='dataset',cache_dir=RUNTIME/'checkpoint-cache'))
 except EntryNotFoundError: checkpoint=None
