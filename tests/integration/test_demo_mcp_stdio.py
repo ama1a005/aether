@@ -27,7 +27,8 @@ def test_real_mcp_stdio_lists_and_calls_tools() -> None:
             read, write = await stack.enter_async_context(stdio_client(parameters))
             client = await stack.enter_async_context(ClientSession(read, write))
             initialized = await client.initialize()
-            assert initialized.protocolVersion is not None
+            version = getattr(initialized, "protocol_version", getattr(initialized, "protocolVersion", None))
+            assert version is not None
             tools = await client.list_tools()
             assert {tool.name for tool in tools.tools} == {
                 "patient_record", "ecg_analysis", "lab_results", "vitals_monitor",
@@ -35,9 +36,11 @@ def test_real_mcp_stdio_lists_and_calls_tools() -> None:
             }
             for name in ("patient_record", "ecg_analysis", "lab_results"):
                 result = await client.call_tool(name, {"case_id": "DEMO-PAT-001"})
-                assert result.isError is False
-                assert result.structuredContent["server"] == "aether-clinical-tools"
-                assert result.structuredContent["tool_name"] == name
-                assert result.structuredContent["case_id"] == "DEMO-PAT-001"
+                is_error = getattr(result, "is_error", getattr(result, "isError", None))
+                assert is_error is False
+                structured = getattr(result, "structured_content", getattr(result, "structuredContent", None))
+                assert structured["server"] == "aether-clinical-tools"
+                assert structured["tool_name"] == name
+                assert structured["case_id"] == "DEMO-PAT-001"
 
     asyncio.run(exercise())

@@ -24,6 +24,11 @@
 
 ## 3. Files Changed
 - `scripts/verify_demo_package.py` — added deterministic root path resolution (`sys.path.insert(0, str(ROOT))`) prior to importing backend app, ensuring standalone invocability without external PYTHONPATH dependency.
+- `demo/mcp_server/server.py` — added dual `FastMCP` / `MCPServer` compatibility import for official MCP SDK versions 1.x and 2.x stdio transport.
+- `tests/integration/test_demo_mcp_stdio.py` — updated attribute access to support both camelCase and snake_case attributes across MCP SDK releases, ensuring full stdio tool discovery and execution tests pass.
+- `scripts/build_kaggle_official_benchmark_notebook.py` & `scripts/build_kaggle_supporting_notebook.py` — updated clone target from deprecated `phase1/core-nov19` to active `lm` branch.
+- `notebooks/aether_bfcl_official.ipynb` & `notebooks/aether_qwen_agent_c.ipynb` — regenerated Kaggle notebooks with `lm` branch clone and pinned commits.
+- `pyproject.toml` — registered `integration` pytest marker to ensure zero test warnings.
 - `docs/handoffs/target/FINAL_SPRINT_START.md` — baseline environment, hardware inventory, model qualification audit, BFCL readiness audit, and Agent C status.
 - `docs/handoffs/target/DEMO_FINAL_RUNBOOK.md` — complete Windows and Linux startup, port mappings (8000), health verification endpoints, shutdown commands, and live review checklist.
 - `docs/handoffs/target/FINAL_SPRINT_HANDOFF.md` — this formal handoff document.
@@ -45,6 +50,7 @@ python -m pytest \
   tests/unit/test_support_nov19_agent_c.py \
   tests/integration/test_target_pipeline.py \
   tests/integration/test_support_nov19_agent_c_integration.py \
+  tests/integration/test_demo_mcp_stdio.py \
   tests/integration/test_review_demo_e2e.py -q
 
 # Demo frontend verification and build
@@ -62,7 +68,7 @@ python scripts/verify_demo_package.py
 
 ## 5. Exact Tests Passed / Failed / Skipped
 
-### Python Test Suite (51 total tests):
+### Python Test Suite (52 total tests):
 ```text
 tests/unit/test_target.py ................                               [16 passed]
 tests/unit/test_bfcl_qwen25_adapter.py ..                                [ 2 passed]
@@ -72,12 +78,13 @@ tests/unit/test_qwen_agent_c.py .                                        [ 1 pas
 tests/unit/test_support_nov19_agent_c.py ........                        [ 8 passed]
 tests/integration/test_target_pipeline.py ...                            [ 3 passed]
 tests/integration/test_support_nov19_agent_c_integration.py ...          [ 3 passed]
+tests/integration/test_demo_mcp_stdio.py .                               [ 1 passed]
 tests/integration/test_review_demo_e2e.py ..                             [ 2 passed]
 ```
-- **Passed:** 51
+- **Passed:** 52
 - **Failed:** 0
 - **Skipped:** 0
-- **Warnings:** 1 (`PytestUnknownMarkWarning` for custom `integration` mark in `test_support_nov19_agent_c_integration.py`)
+- **Warnings:** 0
 
 ### Frontend Vitest Suite (5 total tests):
 - `src/App.test.tsx` (3 tests passed)
