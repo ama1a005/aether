@@ -217,3 +217,29 @@ The follow-up implementation and regression tests are in commit
 BFCL and real-Qwen Agent C still require their reviewed, commit-pinned Linux /
 Kaggle execution paths. The demo's external MCP service behavior was not tested
 live. No evidence gate is promoted by these software checks.
+
+
+## Final requirements audit ? 2026-11-19
+
+Commits pushed to `origin/m1/target-harness`:
+- `e0d084bf7f5348a134c4e3a9c6851aec728df096` ? target, BFCL, Agent C, demo verifier and regression fixes.
+- `2ffcbbc0639cca869ff9446fafbb2444cd1769d5` ? regenerated BFCL and Agent C external notebooks pinned to the source commit above.
+
+The audit tightened the target runner to require its declared attack spec and write unique run-scoped traces with provenance; hardened the canonical BFCL runner with exact config/pin validation, wheel and full model/tokenizer snapshot checks, native raw-output re-verification, error denominators and bundle inventory; added an independent BFCL bundle verifier; corrected Agent C to use the paired development cohort, retain source inputs, checkpoint each case-condition atomically and support hash-checked resume; added an Agent C bundle verifier; extended the demo verifier to exercise the unavailable external-MCP 503 path without fallback; and updated the BFCL runbook.
+
+### Current execution blockers
+
+- **BFCL:** No approved protocol decision currently exists at `results/phase1/protocol_approvals/bfcl_official.json`. The canonical runner and Kaggle notebook now require a human decision bound to the exact frozen config before model download/access. This Windows host also lacks the pinned BFCL wheel, CUDA/vLLM and the local Qwen snapshot. The notebook verifies all prerequisites and exports raw outputs, hashes and an archive for atomic ingestion after execution. No BFCL score was generated.
+- **Agent C:** `results/phase1/protocol_approvals/agent_c_qwen_development.json` remains absent. The canonical runner fails before loading the retained Qwen trace or model data until approval. No Agent C bundle was generated. The clean commit-pinned notebook and paired, checkpointable execution/verifier path are ready after approval.
+- **Demo:** Automated package check passes (12 fixtures, 22 evidence stages, clean/attack distinction and explicit external MCP failure). MCP stdio integration passes. The actual Docker WSO2 stack was not started or manually reviewed live on this host.
+
+### Verification in this audit
+
+- Member 1 focused unit set: **52 passed**.
+- Member 1 integration set, including target pipelines, three-agent pipeline and MCP stdio: **8 passed**.
+- `python -m scripts.verify_demo_package`: **PASS**, frontend production assets verified; external MCP outage explicitly returns 503 without fallback.
+- Full `tests/unit/`: **606 passed, 1 failed**. The unrelated existing completion-audit test fails because QCI-2 verification finds duplicate `dependency-check.log` artifacts (`cannot uniquely resolve artifact`). Its QCI/evidence files were not modified by this Member 1 change.
+- Notebook builder tests after regeneration: **3 passed**.
+- No external scientific execution was performed. Software/fixture checks are not experimental results.
+
+The original uncommitted CORE/evidence work and untracked `reference_docs/` were left unstaged and preserved.

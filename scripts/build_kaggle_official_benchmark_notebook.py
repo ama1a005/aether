@@ -40,8 +40,11 @@ subprocess.run([str(PY),'-m','pip','install',str(WHEEL)],check=True)
 from benchmarks.run_native_official import _load_config
 from benchmarks.nov19_bfcl.preflight import check_backend_and_hardware, check_package
 from causal.remediation_freeze import frozen_text_hash_matches
+from experiments.external_bundle import verify_protocol_approval
 CONFIG=REPO/'configs/benchmarks/phase1_external.yaml'
 _load_config(CONFIG,'bfcl')
+APPROVAL=REPO/'results/phase1/protocol_approvals/bfcl_official.json'
+verify_protocol_approval(CONFIG,APPROVAL)
 wheel_ok,wheel_reasons,_=check_package(wheel_path=WHEEL)
 gpu_ok,gpu_reasons,gpu_details=check_backend_and_hardware('vllm',1)
 assert wheel_ok, wheel_reasons

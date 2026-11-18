@@ -37,6 +37,7 @@ from experiments.external_bundle import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "configs/benchmarks/phase1_external.yaml"
+DEFAULT_BFCL_APPROVAL = ROOT / "results/phase1/protocol_approvals/bfcl_official.json"
 BFCL_CONFIG_SHA256 = "017bce07725a36ed4f7d8f08b399a22c1b4092271c2ce2473b2fd138b5e4ff75"
 
 
@@ -165,7 +166,8 @@ def _blocked_summary(reasons: list[str]) -> dict[str, Any]:
 
 def run(benchmark: str, config_path: Path, output: Path,
         snapshot_manifest: Path | None, *, package_wheel: Path | None = None,
-        backend: str = "vllm", num_gpus: int = 1) -> Path:
+        backend: str = "vllm", num_gpus: int = 1,
+        approval_path: Path = DEFAULT_BFCL_APPROVAL) -> Path:
     """Execute an official plan and retain native outputs plus a verified bundle."""
     if output.exists():
         raise FileExistsError(f"output already exists: {output}")
@@ -175,6 +177,11 @@ def run(benchmark: str, config_path: Path, output: Path,
     if _command(["git", "status", "--porcelain"]):
         raise RuntimeError("official evidence execution requires a clean source tree")
     config = _load_config(config_path, benchmark)
+    if benchmark == "bfcl":
+        # Require a separate human decision over the exact frozen configuration
+        # before loading the model snapshot or invoking any evaluator command.
+        from experiments.external_bundle import verify_protocol_approval
+        verify_protocol_approval(config_path, approval_path)
     if benchmark != "bfcl":
         plan = build_plan(benchmark, config_path, output, snapshot_manifest)
         output.mkdir(parents=True)
@@ -279,11 +286,14 @@ def main() -> None:
                         help="Downloaded bfcl_eval wheel whose pinned SHA-256 was reviewed")
     parser.add_argument("--backend", choices=("vllm", "sglang"), default="vllm")
     parser.add_argument("--num-gpus", type=int, default=1)
+    parser.add_argument("--approval", type=Path, default=DEFAULT_BFCL_APPROVAL,
+                        help="Human approval JSON bound to the exact canonical BFCL config")
     arguments = parser.parse_args()
     result = run(
         arguments.benchmark, arguments.config, arguments.output,
         arguments.snapshot_manifest, package_wheel=arguments.package_wheel,
         backend=arguments.backend, num_gpus=arguments.num_gpus,
+        approval_path=arguments.approval,
     )
     print(result)
 

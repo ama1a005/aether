@@ -6,6 +6,7 @@ import sys
 
 import pytest
 
+from benchmarks import run_native_official
 from benchmarks.run_native_official import build_plan
 
 
@@ -28,6 +29,17 @@ def test_official_package_rejects_unknown_benchmark_or_missing_snapshot(tmp_path
         build_plan("bfcl", CONFIG, tmp_path, None)
     with pytest.raises(ValueError, match="unsupported"):
         build_plan("other", CONFIG, tmp_path, None)
+
+
+def test_bfcl_missing_human_approval_fails_before_snapshot_or_model_access(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(run_native_official, "_command", lambda command: "")
+    output = tmp_path / "bfcl"
+    with pytest.raises(PermissionError, match="human protocol decision is missing"):
+        run_native_official.run(
+            "bfcl", CONFIG, output, tmp_path / "absent_snapshot_manifest.json",
+            approval_path=tmp_path / "absent_approval.json",
+        )
+    assert not output.exists()
 
 
 def test_bfcl_external_runner_supports_documented_script_invocation() -> None:

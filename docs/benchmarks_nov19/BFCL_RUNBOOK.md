@@ -51,7 +51,9 @@ In AETHER:
 ### Step 3.1: Commit-Pinned External Execution
 
 Use the clean Kaggle notebook `notebooks/aether_bfcl_official.ipynb`. It checks out
-the recorded source commit, verifies the exact wheel digest, verifies the retained
+the recorded source commit, requires a separate human approval JSON bound to the exact
+canonical config (`results/phase1/protocol_approvals/bfcl_official.json`) before
+model download, verifies the exact wheel digest, verifies the retained
 qualification manifest and every downloaded model/tokenizer file, and checks the
 GPU/backend before model execution. It writes to `/kaggle/working`, then runs both
 bundle verifiers and exports a tarball with a printed SHA-256. Preserve that hash
@@ -61,7 +63,8 @@ The canonical local preflight (which does not generate model output) uses:
 ```bash
 python -m benchmarks.run_native_official bfcl --config configs/benchmarks/phase1_external.yaml \
   --snapshot-manifest /path/to/verified-model-snapshot-manifest.json \
-  --package-wheel /path/to/bfcl_eval-2026.3.23-*.whl --output /tmp/aether-bfcl-preflight
+  --package-wheel /path/to/bfcl_eval-2026.3.23-*.whl --approval results/phase1/protocol_approvals/bfcl_official.json \
+  --output /tmp/aether-bfcl-preflight
 ```
 
 The command fails closed if the pinned wheel, Linux GPU backend, or verified snapshot
@@ -73,6 +76,7 @@ python -m benchmarks.run_native_official bfcl \
   --config configs/benchmarks/phase1_external.yaml \
   --snapshot-manifest /path/to/verified-model-snapshot-manifest.json \
   --package-wheel /path/to/bfcl_eval-2026.3.23-*.whl \
+  --approval results/phase1/protocol_approvals/bfcl_official.json \
   --output /tmp/aether-bfcl-official --num-gpus 1 --backend vllm
 ```
 
