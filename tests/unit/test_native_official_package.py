@@ -1,6 +1,8 @@
 """Model-free tests for official benchmark execution packages."""
 
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -26,3 +28,17 @@ def test_official_package_rejects_unknown_benchmark_or_missing_snapshot(tmp_path
         build_plan("bfcl", CONFIG, tmp_path, None)
     with pytest.raises(ValueError, match="unsupported"):
         build_plan("other", CONFIG, tmp_path, None)
+
+
+def test_bfcl_external_runner_supports_documented_script_invocation() -> None:
+    """The documented script path must import repository packages standalone."""
+    script = Path("scripts/benchmark_bfcl_external_runner.py").resolve()
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "Run official BFCL benchmark" in result.stdout

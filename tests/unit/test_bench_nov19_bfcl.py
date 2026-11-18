@@ -209,3 +209,15 @@ def test_runner_dry_run_generates_diagnostics(tmp_path):
     assert "output_dir" in dry
     # Preflight should fail because CUDA and bfcl_eval are not present in this test env
     assert not dry["preflight"]["passed"]
+
+
+def test_runner_surfaces_native_plan_errors(tmp_path):
+    """Invalid native plan inputs must remain visible to the caller."""
+    runner = BFCLRunner(
+        snapshot_manifest=tmp_path / "manifest.json",
+        output_dir=tmp_path / "output",
+        categories=(),
+    )
+
+    with pytest.raises(ValueError, match="BFCL version, model revision and categories"):
+        runner.plan(verify_snapshot_hashes=False)
