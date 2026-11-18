@@ -3,7 +3,7 @@
 **Document:** `docs/handoffs/target/DEMO_FINAL_RUNBOOK.md`  
 **Owner:** Member 1 (`m1/target-harness`)  
 **Status:** Verified & Model-Free Launchable  
-**Last Verified:** 2026-11-18  
+**Last Verified:** 2026-11-19  
 
 ---
 
@@ -130,8 +130,9 @@ Expected output:
   "case_count": 12,
   "phase1_gate_count": 22,
   "frontend_build_verified": true,
+  "external_mcp_failure_mode_verified": true,
   "live_external_services_tested": false,
-  "claim_boundary": "Network-free packaging verification; not live MCP or model evidence."
+  "claim_boundary": "Local failure-path check plus network-free packaging verification; not live MCP or model evidence."
 }
 ```
 
