@@ -5,13 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from fastapi.testclient import TestClient
 
 from demo.backend.app import app
-
-
-ROOT = Path(__file__).resolve().parents[1]
 
 
 def verify(root: Path = ROOT, *, require_frontend_build: bool = True) -> dict[str, object]:
