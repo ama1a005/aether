@@ -76,10 +76,10 @@ except Exception as error:
 
 def upload_tree_once(root, remote_prefix):
  for path in sorted(Path(root).rglob('*')):
-  if path.is_file(): api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{{remote_prefix}}/{{path.relative_to(root).as_posix()}}',repo_id=HF_REPO,repo_type='dataset')
+  if path.is_file(): api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{remote_prefix}/{path.relative_to(root).as_posix()}',repo_id=HF_REPO,repo_type='dataset')
 
 def run_with_sync(commands, watched, label):
- stop=threading.Event(); uploaded={{}}
+ stop=threading.Event(); uploaded={}
  def sync():
   while not stop.wait(5):
    for root,remote in watched:
@@ -87,13 +87,13 @@ def run_with_sync(commands, watched, label):
      if path.is_file():
       stamp=(path.stat().st_size,path.stat().st_mtime_ns)
       if uploaded.get(str(path))!=stamp:
-       api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{{remote}}/{{path.relative_to(root).as_posix()}}',repo_id=HF_REPO,repo_type='dataset')
+       api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{remote}/{path.relative_to(root).as_posix()}',repo_id=HF_REPO,repo_type='dataset')
        uploaded[str(path)]=stamp
  thread=threading.Thread(target=sync,daemon=True); thread.start()
  processes=[subprocess.Popen(command,cwd=REPO,env=os.environ.copy()) for command in commands]
  codes=[process.wait() for process in processes]; stop.set(); thread.join(timeout=10)
  for root,remote in watched: upload_tree_once(root,remote)
- if any(codes): raise RuntimeError(f'{{label}} failed with exit codes {{codes}}')"""),
+ if any(codes): raise RuntimeError(f'{label} failed with exit codes {codes}')"""),
         _code("""# Download pinned model and corpus snapshots, then create exact token IDs.
 from huggingface_hub import snapshot_download
 MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; MODEL_REV='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
@@ -128,11 +128,11 @@ print('All 256 activation blocks retained.')"""),
 seeds_root=OUTPUT/'seeds'; seeds_root.mkdir(exist_ok=True)
 def train_command(seed,gpu):
  return [str(PY),'-u','-m','experiments.phase1.qwen_sae_training','train-seed',
-  '--activations',str(activations),'--output',str(seeds_root/f'seed-{{seed}}'),
-  '--seed',str(seed),'--device',f'cuda:{{gpu}}']
+  '--activations',str(activations),'--output',str(seeds_root/f'seed-{seed}'),
+  '--seed',str(seed),'--device',f'cuda:{gpu}']
 run_with_sync([train_command(11,0),train_command(22,1)],[(seeds_root,f'{REMOTE_PREFIX}/seeds')],'SAE seeds 11 and 22')
 run_with_sync([train_command(33,0)],[(seeds_root,f'{REMOTE_PREFIX}/seeds')],'SAE seed 33')
-assert all((seeds_root/f'seed-{{seed}}'/'seed_summary.json').is_file() for seed in (11,22,33))
+assert all((seeds_root/f'seed-{seed}'/'seed_summary.json').is_file() for seed in (11,22,33))
 print('All frozen seeds complete.')"""),
         _code("""# Select without AETHER audit access, then capture the frozen audit on GPU 0.
 from experiments.phase1.qwen_sae_training import select_seed
