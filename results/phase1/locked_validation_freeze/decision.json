@@ -1,0 +1,22 @@
+{
+  "schema_version": "aether.core04-locked-validation-freeze-decision.v1",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_core_workstream",
+  "reviewed_utc": "2026-11-18T00:00:00+05:30",
+  "proposal_path": "configs/phase1_core/core04_locked_validation_freeze_v1.yaml",
+  "proposal_sha256": "6313d3a8d81e25be0897c6d5b986f85382303a499f524611d91abeec192868dc",
+  "source_commit_before_decision": "4b95f00",
+  "authorized_next_state": "IMPLEMENT_CORE04_LOCKED_VALIDATION_PACKAGE",
+  "validation_case_count": 8,
+  "test_executions": 0,
+  "restrictions": [
+    "frozen_receiver_l20_h5_only",
+    "paired_clean_donor_is_oracle_information",
+    "no_deployable_defense_claim",
+    "no_threshold_or_arm_changes",
+    "do_not_access_test",
+    "retain_negative_and_incomplete_outcomes"
+  ]
+}

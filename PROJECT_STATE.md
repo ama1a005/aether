@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-18 CORE-04 locked validation approved and being implemented
+
+The human project owner approved the exact CORE-04 proposal at SHA-256
+`6313d3a8d81e25be0897c6d5b986f85382303a499f524611d91abeec192868dc`.
+Implementation is authorized for the frozen L20H5 repair, no-defense baseline,
+eight validation cases, three seeds and 504-forward ceiling. The test split
+remains locked. The runner must retain an accepted or rejected result without
+reselection or threshold changes and must continue to disclose its paired-clean
+oracle dependency.
+
 ## 2026-11-18 CORE-03 remediation complete; CORE-04 awaits review
 
 The retained CORE-03 archive independently verifies and is atomically ingested

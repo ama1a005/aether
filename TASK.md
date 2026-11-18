@@ -1,5 +1,15 @@
 # AETHER current bounded task
 
+## Implement the approved CORE-04 locked-validation package
+
+CORE-04 v1 is human-approved at SHA-256
+`6313d3a8d81e25be0897c6d5b986f85382303a499f524611d91abeec192868dc`.
+Implement and model-independently test the exact validation evaluator,
+restart-safe runner, strict verifier, atomic ingester and commit-pinned Kaggle
+notebook. Do not access Qwen locally or execute validation during implementation.
+The test split remains forbidden. A negative validation result must be retained
+and must keep the test gate closed.
+
 ## Review the prospective CORE-04 locked-validation protocol
 
 CORE-03 is independently verified and ingested. Review
