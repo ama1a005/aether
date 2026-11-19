@@ -27,6 +27,7 @@ from benchmarks.nov19_bfcl.preflight import (
 from benchmarks.nov19_bfcl.report import assemble_bfcl_summary
 from benchmarks.nov19_bfcl.runner import BFCLRunner
 from benchmarks.nov19_bfcl.verifier import BFCLArtifactVerifier, VerificationResult
+from scripts.verify_bfcl_bundle import _torch_base_version
 
 
 def test_package_check_wrong_version():
@@ -138,6 +139,12 @@ def test_bfcl_overlay_pins_backend_and_cuda_compatible_torch() -> None:
     overlay = Path("requirements-bfcl-vllm.txt").read_text(encoding="utf-8")
     assert "vllm==0.34.0" in overlay
     assert "torch==2.14.0" in overlay
+
+
+def test_bundle_verifier_accepts_cuda_build_suffix_for_pinned_torch() -> None:
+    # vLLM's CUDA wheel reports a local build tag such as 2.14.0+cu130.
+    assert _torch_base_version("2.14.0+cu130") == PINNED_TORCH_VERSION
+    assert _torch_base_version(None) is None
 
 
 def test_categories_rejects_empty_or_invalid():
