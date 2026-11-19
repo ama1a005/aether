@@ -35,6 +35,12 @@ subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
+if {kind!r} == 'red_team':
+    # This checkpoint was published against Transformers 4.43.  The generic
+    # project lock may resolve a newer major release whose Qwen attention API
+    # is not compatible with the pinned checkpoint.
+    subprocess.run([UV,'pip','install','--python',str(PY),'--upgrade','--reinstall',
+                    'transformers==4.43.4','tokenizers==0.19.1'],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 """
     if kind == "agent_c":
@@ -54,6 +60,12 @@ snapshot=Path(snapshot_download('Qwen/Qwen2.5-1.5B-Instruct',revision=revision,c
 files=[]
 for path in sorted(p for p in snapshot.rglob('*') if p.is_file()): files.append({'path':path.relative_to(snapshot).as_posix(),'size':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
 manifest=WORK/'model_snapshot_manifest.json'; manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':revision,'snapshot_path':str(snapshot),'files':files},indent=2))
+from transformers import AutoModelForCausalLM, AutoTokenizer
+tokenizer=AutoTokenizer.from_pretrained(snapshot,local_files_only=True,trust_remote_code=False)
+model=AutoModelForCausalLM.from_pretrained(snapshot,local_files_only=True,trust_remote_code=False,attn_implementation='eager').eval()
+probe=model(**tokenizer('Reply with A.',return_tensors='pt'),use_cache=False).logits
+assert probe.shape[0] == 1 and probe.shape[-1] == tokenizer.vocab_size
+del model
 subprocess.run([str(PY),'-m','experiments.phase1.qwen_red_team','--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/qwen_red_team_development.json'),'--snapshot-manifest',str(manifest),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
     archive = f"""import hashlib, subprocess, tarfile
 subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT)],cwd=REPO,check=True)
