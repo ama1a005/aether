@@ -7,8 +7,9 @@
 - Integrated `lm` merge commit: `ecf5be3`
 - Integration/portability repair: `c7d5bfa`
 - Real-Qwen Agent C proposal commit: `3aaa6f2`
+- Real-Qwen Agent C implementation commit: `27ee9dc`
 - BFCL notebook commit: `b796d81`
-- Date: 2026-11-19
+- Date: 2026-11-20
 
 The branch was integrated by merging `origin/lm`; history was not rebased or
 rewritten. Frozen CORE evidence was not rerun or replaced.
@@ -52,7 +53,7 @@ It uses retained real-Qwen Agent A/B traces with deterministic clean-tool
 Agent C. It is supporting evidence only, not a Qwen-powered third agent, and
 cannot satisfy `real_qwen_agent_c`.
 
-### Prospective genuine Qwen Agent C
+### Approved genuine Qwen Agent C
 
 The separate candidate protocol is:
 
@@ -68,8 +69,12 @@ review, real MCP stdio discovery/tool execution, strict JSON output, no
 ground-truth access, invalid-as-incorrect denominators, per-row checkpointing,
 protected-split locks and honest execution-PASS semantics.
 
-No approval artifact was created by the coding agent. No runner, model access
-or execution is authorized until the human owner approves the exact hash.
+The human project owner approved the exact hash on 2026-11-19/20. The approval
+artifact, strict loader, Qwen runner, real MCP stdio server/client, independent
+verifier, atomic ingester and checkpoint-safe Kaggle notebook are implemented.
+The implementation is pinned in
+`notebooks/aether_qwen_agent_c_real.ipynb` to commit
+`27ee9dc2b1a8e6cbbfef50cf7760a0ad1a852ab8`. No model execution has occurred.
 
 ### Cross-platform frozen evidence
 
@@ -94,7 +99,7 @@ fallback was introduced, and a build from a different lockfile was not reused.
 Final integrated unit suite, including the prospective protocol checks:
 
 ```text
-649 passed, 0 failed, 0 skipped
+655 passed, 0 failed, 0 skipped
 ```
 
 BFCL package/notebook focused suite:
@@ -106,7 +111,7 @@ BFCL package/notebook focused suite:
 Integration:
 
 ```text
-23 collected; 18 passed; 5 skipped; 0 failed
+24 collected; 19 passed; 5 skipped; 0 failed
 ```
 
 The five skips are declared unavailable real-model or live-demo-service gates,
@@ -134,21 +139,20 @@ python -m scripts.verify_external_bundle `
 | Target harness | Implemented and tested | Deterministic plumbing works |
 | Deterministic Agent C | Verified supporting evidence | Not a third Qwen agent |
 | Official BFCL | Execution package ready | No official result yet |
-| Real-Qwen Agent C | Awaiting exact-hash human review | Not implemented or run |
+| Real-Qwen Agent C | Approved and implemented | External execution pending |
 | Demo package | Python paths verified; frontend rebuild blocked | No false PASS |
 
 ## Manual actions
 
-### 1. Review real-Qwen Agent C
+### 1. Execute real-Qwen Agent C
 
-Read the proposal and review document, independently compute the proposal hash,
-and approve only if acceptable. The exact human response is:
-
-```text
-I approve real-Qwen Agent C development protocol v1 SHA-256 9e031fb2911686702e28ec00b54299e01d428a1d2e1676050d0b3dc541d392a7
-```
-
-Only then may the runner, verifier, ingester and notebook be implemented.
+After the branch is pushed, upload
+`notebooks/aether_qwen_agent_c_real.ipynb` to Kaggle, enable a T4 or better GPU,
+Internet and the `HF_TOKEN` plus `AETHER_HF_REPO` secrets. The Hugging Face
+repository must already exist and be private. Run all cells unchanged. Each of
+the 48 case-condition units is uploaded immediately; a restarted session
+continues from the exact next row. Return the final archive for verification and
+atomic ingestion into `results/phase1/agent_c/qwen15b`.
 
 ### 2. Execute official BFCL
 
@@ -177,13 +181,13 @@ Supported:
 - target and official-execution infrastructure are implemented and tested;
 - the deterministic Agent C bundle verifies with real-Qwen A/B provenance;
 - the BFCL notebook is pinned and fail-closed; and
-- a separate reviewable protocol exists for genuine Qwen Agent C.
+- the approved genuine Qwen Agent C package is implemented and fail-closed.
 
 Not supported:
 
 - no official BFCL score exists;
 - deterministic Agent C is not a Qwen third agent;
-- genuine Qwen Agent C is not approved, implemented or run;
+- genuine Qwen Agent C has not yet been externally executed;
 - readiness is not scientific evidence; and
 - no protected validation/test split was accessed by this work.
 
@@ -197,8 +201,9 @@ Not supported:
 - [x] BFCL notebook is repinned to integrated source.
 - [x] No mock/synthetic result was promoted as evidence.
 - [x] No model or official dataset was downloaded locally.
-- [ ] Human approval for genuine Qwen Agent C v1.
-- [ ] Real-Qwen Agent C implementation/execution after approval.
+- [x] Human approval for genuine Qwen Agent C v1.
+- [x] Real-Qwen Agent C implementation and model-independent verification.
+- [ ] Real-Qwen Agent C external execution, verification and ingestion.
 - [ ] Official BFCL execution, verification and ingestion.
 - [ ] Fresh frontend production build and package verification.
 - [ ] Teammate review before merge into `lm`.
