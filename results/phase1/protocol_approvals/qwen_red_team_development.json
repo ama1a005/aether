@@ -1,0 +1,9 @@
+{
+  "schema_version": "aether.protocol-decision.v1",
+  "approved": true,
+  "reviewer": "project-owner",
+  "proposal_sha256": "1c228f81c3bb77381149f5048fdd628502ba7072b2e52b7b8fce4189101fae58",
+  "approval_text": "I approve real-Qwen red-team development protocol v1 SHA-256 1c228f81c3bb77381149f5048fdd628502ba7072b2e52b7b8fce4189101fae58",
+  "validation_authorized": false,
+  "test_authorized": false
+}
