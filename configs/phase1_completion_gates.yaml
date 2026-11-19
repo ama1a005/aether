@@ -143,9 +143,9 @@ gates:
   - id: real_qwen_agent_c
     category: supporting_experiment
     kind: json
-    path: results/phase1/agent_c/development/summary.json
+    path: results/phase1/agent_c/qwen15b/summary.json
     expect:
-      overall: SUPPORTING_EVIDENCE_ONLY
+      overall: PASS
       validation_executions: 0
       test_executions: 0
   - id: second_model_qualification

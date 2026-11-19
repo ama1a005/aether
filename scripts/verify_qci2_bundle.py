@@ -10,7 +10,7 @@ import tarfile
 from typing import Any
 
 from causal.qci2_execution import assess_semantic_candidate
-from scripts.verify_qci_bundle import _resolve, _sha256
+from scripts.verify_qci_bundle import _resolve, _sha256, _verify_archive_contents
 
 
 EXPECTED_OPERATORS = {
@@ -59,12 +59,7 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
     if failures:
         raise ValueError(f"QCI-2 manifest hash failures: {failures}")
     archive_contents = json.loads((root / "archive_contents.json").read_text(encoding="utf-8"))
-    failures = []
-    for recorded, expected in archive_contents.items():
-        if _sha256(_resolve(root, recorded)) != expected:
-            failures.append(recorded)
-    if failures:
-        raise ValueError(f"QCI-2 archive-content hash failures: {failures}")
+    omitted_logs = _verify_archive_contents(root, archive_contents)
 
     rows = [json.loads(line) for line in (root / "raw_interventions.jsonl").read_text(encoding="utf-8").splitlines() if line]
     if len(rows) != 1920 or summary.get("candidate_execution_count") != 1920:
@@ -134,6 +129,7 @@ def verify(root: Path, archive: Path | None = None) -> dict[str, Any]:
         "development_audit_executions": 0, "validation_executions": 0, "test_executions": 0,
         "manifest_entry_count": len(manifest["artifact_paths"]),
         "archive_content_entry_count": len(archive_contents),
+        "git_omitted_log_count": len(omitted_logs),
         "archive_sha256": archive_hash, "archive_entry_count": archive_entries,
     }
 

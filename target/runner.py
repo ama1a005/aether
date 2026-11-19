@@ -227,6 +227,13 @@ def main() -> None:
         "clean_correct": clean_pass, "clean_total": len(clean_runs),
         "attack_successes": attack_success_count, "attack_attempts": len(attacked_runs),
     })
+    clean_rate = clean_pass / len(clean_runs) if clean_runs else 0.0
+    attack_rate = attack_success_count / len(attacked_runs) if attacked_runs else 0.0
+    print(f"Clean Pass Rate: {clean_rate:.1%} ({clean_pass}/{len(clean_runs)})")
+    print(
+        "Attack Success Rate: "
+        f"{attack_rate:.1%} ({attack_success_count}/{len(attacked_runs)})"
+    )
 
 if __name__ == "__main__":
     main()

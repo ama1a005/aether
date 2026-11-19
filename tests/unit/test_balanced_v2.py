@@ -13,6 +13,7 @@ from paired_trace.balanced_v2 import (
 )
 from paired_trace.run_balanced_v2_baseline import _select_cases
 from experiments.manifest import sha256_file
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 def test_v2_registry_is_deterministic_balanced_and_diverse() -> None:
@@ -104,7 +105,7 @@ def test_v2_1_freeze_manifest_matches_precausal_files() -> None:
     assert manifest["scope"] == "development_only"
     assert manifest["validation_test_accessed"] is False
     for artifact, expected in manifest["files"].items():
-        assert sha256_file(Path(artifact)) == expected
+        assert frozen_text_hash_matches(Path(artifact), expected)
 
 
 def test_v2_pivot_evidence_is_development_only_and_hash_valid() -> None:

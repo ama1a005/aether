@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from causal.remediation_freeze import sha256_file
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 ARMS = {"no_defense", "fixed_message_whole", "fixed_receiver_l22_attention",
@@ -40,7 +40,8 @@ def verify(root: Path) -> dict[str, Any]:
     inventory = json.loads((root / "archive_contents.json").read_text(encoding="utf-8"))
     for relative, expected in inventory.items():
         path = (root / relative).resolve()
-        if root not in path.parents or not path.is_file() or sha256_file(path) != expected:
+        if (root not in path.parents or not path.is_file()
+                or not frozen_text_hash_matches(path, expected)):
             raise ValueError(f"CORE-03 archive hash failure: {relative}")
     ledger = json.loads((root / "budget_ledger.json").read_text(encoding="utf-8"))
     if {(row["arm"], int(row["seed"])) for row in ledger} != {

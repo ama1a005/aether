@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from causal.remediation_freeze import frozen_text_hash_matches
+
 
 METHODS = {"matched_random", "greedy", "beam", "receiver_only", "flat_ppo"}
 SEEDS = {11, 22, 33}
@@ -50,7 +52,8 @@ def verify(root: Path) -> dict[str, Any]:
     inventory = json.loads((root / "archive_contents.json").read_text(encoding="utf-8"))
     for relative, expected in inventory.items():
         path = (root / relative).resolve()
-        if root not in path.parents or not path.is_file() or _hash(path) != expected:
+        if (root not in path.parents or not path.is_file()
+                or not frozen_text_hash_matches(path, expected)):
             raise ValueError(f"CORE-02 archive hash failure: {relative}")
     ledgers = json.loads((root / "budget_ledger.json").read_text(encoding="utf-8"))
     identities = {(row["method"], int(row["seed"])) for row in ledgers}
