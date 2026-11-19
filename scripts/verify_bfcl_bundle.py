@@ -15,6 +15,9 @@ from benchmarks.nov19_bfcl.preflight import (
     PINNED_MODEL_REVISION,
     PINNED_PACKAGE_VERSION,
     PINNED_WHEEL_SHA256,
+    PINNED_BACKEND_VERSION,
+    PINNED_TORCH_VERSION,
+    PINNED_CUDA_VERSION,
 )
 from benchmarks.nov19_bfcl.verifier import BFCLArtifactVerifier
 from experiments.external_bundle import artifact_hashes, verify_bundle
@@ -41,6 +44,11 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("BFCL manifest package wheel hash differs from the frozen release")
     if manifest.get("protocol_label") != "official_evaluator_with_disclosed_aether_model_adapter":
         raise ValueError("BFCL adapter claim label is absent or incorrect")
+    if (manifest.get("inference_backend") != "vllm"
+            or manifest.get("inference_backend_version") != PINNED_BACKEND_VERSION
+            or manifest.get("torch_version") != PINNED_TORCH_VERSION
+            or manifest.get("cuda_runtime_version") != PINNED_CUDA_VERSION):
+        raise ValueError("BFCL inference backend or CUDA compatibility pins differ from the frozen runtime")
     required_metadata = {
         "run_id", "utc_timestamp", "git_commit", "uncommitted_diff",
         "dataset_manifest_hashes", "model_id", "model_revision", "tokenizer_revision",
@@ -60,6 +68,13 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("BFCL summary does not disclose its AETHER model adapter")
     if summary.get("model_id") != PINNED_MODEL_ID or summary.get("model_revision") != PINNED_MODEL_REVISION:
         raise ValueError("BFCL summary model identity differs from the frozen target")
+    summary_torch_version = summary.get("torch_version")
+    if (summary.get("inference_backend") != "vllm"
+            or summary.get("inference_backend_version") != PINNED_BACKEND_VERSION
+            or not isinstance(summary_torch_version, str)
+            or summary_torch_version.split("+", maxsplit=1)[0] != PINNED_TORCH_VERSION
+            or summary.get("cuda_runtime_version") != PINNED_CUDA_VERSION):
+        raise ValueError("BFCL summary inference stack differs from the frozen runtime")
     if summary.get("categories") != list(PHASE1_CATEGORIES) or summary.get("partial_evaluation") is not False:
         raise ValueError("BFCL summary categories or complete-evaluation label differ")
     if summary.get("validation_executions") != 0 or summary.get("test_executions") != 0:

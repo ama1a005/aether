@@ -8,6 +8,7 @@ from importlib.metadata import PackageNotFoundError, version
 from importlib.util import find_spec
 import json
 from pathlib import Path
+import subprocess
 import sys
 from typing import Any, Sequence
 
@@ -19,6 +20,10 @@ PINNED_WHEEL_SHA256 = "3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d8
 PINNED_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 PINNED_MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 ADAPTER_REGISTRY_NAME = "AETHER/Qwen2.5-1.5B-Instruct-FC"
+PINNED_BACKEND_VERSION = "0.34.0"
+PINNED_TORCH_VERSION = "2.14.0"
+PINNED_CUDA_VERSION = "13.0"
+CUDA13_MIN_DRIVER_MAJOR = 580
 VALID_OFFICIAL_CATEGORIES = frozenset({
     "simple", "multiple", "parallel", "parallel_multiple",
     "irrelevance", "live_simple", "live_multiple", "live_parallel",
@@ -86,11 +91,34 @@ def check_backend_and_hardware(
         "backend": backend,
         "num_gpus_requested": num_gpus,
         "cuda_available": torch.cuda.is_available(),
+        "backend_version": None,
+        "torch_version": torch.__version__,
+        "cuda_runtime_version": torch.version.cuda,
     }
-    if backend not in {"vllm", "sglang"}:
-        reasons.append(f"Unsupported backend {backend!r}; only 'vllm' and 'sglang' supported")
+    if backend != "vllm":
+        reasons.append(f"Unsupported BFCL backend {backend!r}; the frozen profile requires 'vllm'")
     elif find_spec(backend) is None:
         reasons.append(f"Required inference backend {backend!r} is not installed")
+    else:
+        try:
+            installed_backend = version(backend)
+        except PackageNotFoundError:
+            installed_backend = None
+        details["backend_version"] = installed_backend
+        if installed_backend != PINNED_BACKEND_VERSION:
+            reasons.append(
+                f"vLLM version mismatch: expected {PINNED_BACKEND_VERSION}, found {installed_backend}"
+            )
+        installed_torch = torch.__version__.split("+", maxsplit=1)[0]
+        installed_cuda = torch.version.cuda
+        if installed_torch != PINNED_TORCH_VERSION:
+            reasons.append(
+                f"PyTorch version mismatch: expected {PINNED_TORCH_VERSION}, found {installed_torch}"
+            )
+        if installed_cuda != PINNED_CUDA_VERSION:
+            reasons.append(
+                f"CUDA runtime mismatch: expected {PINNED_CUDA_VERSION}, found {installed_cuda}"
+            )
 
     if not torch.cuda.is_available():
         reasons.append(
@@ -98,6 +126,22 @@ def check_backend_and_hardware(
         )
         details["gpu_count"] = 0
     else:
+        try:
+            driver_versions = _query_cuda_driver_versions()
+        except (FileNotFoundError, RuntimeError) as exc:
+            reasons.append(f"Unable to verify the NVIDIA driver required for CUDA 13.0: {exc}")
+            driver_versions = []
+        details["nvidia_driver_versions"] = driver_versions
+        for driver in driver_versions:
+            try:
+                driver_major = int(driver.split(".", maxsplit=1)[0])
+            except ValueError:
+                reasons.append(f"Unrecognized NVIDIA driver version: {driver!r}")
+                continue
+            if driver_major < CUDA13_MIN_DRIVER_MAJOR:
+                reasons.append(
+                    f"NVIDIA driver {driver} is below the CUDA 13.0 minimum R{CUDA13_MIN_DRIVER_MAJOR}"
+                )
         count = torch.cuda.device_count()
         details["gpu_count"] = count
         if count < num_gpus:
@@ -105,7 +149,8 @@ def check_backend_and_hardware(
         else:
             for idx in range(num_gpus):
                 props = torch.cuda.get_device_properties(idx)
-                total_vram_gb = props.total_memory / (1024 ** 3)
+                # GPU vendors advertise memory in decimal GB; CUDA reports bytes.
+                total_vram_gb = props.total_memory / 1_000_000_000
                 capability = torch.cuda.get_device_capability(idx)
                 details[f"gpu_{idx}_name"] = props.name
                 details[f"gpu_{idx}_vram_gb"] = round(total_vram_gb, 2)
@@ -121,6 +166,20 @@ def check_backend_and_hardware(
                         f"{capability[0]}.{capability[1]}; current vLLM CUDA wheels require 7.5 or newer"
                     )
     return len(reasons) == 0, reasons, details
+
+
+def _query_cuda_driver_versions() -> list[str]:
+    """Read driver versions from nvidia-smi without hiding command failures."""
+    completed = subprocess.run(
+        ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader"],
+        check=False, capture_output=True, text=True,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(completed.stderr.strip() or f"nvidia-smi exited {completed.returncode}")
+    versions = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    if not versions:
+        raise RuntimeError("nvidia-smi returned no GPU driver versions")
+    return versions
 
 
 def check_snapshot_manifest(

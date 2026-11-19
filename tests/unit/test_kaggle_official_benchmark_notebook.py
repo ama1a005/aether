@@ -22,9 +22,15 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "vllm'" in bfcl_source and "--torch-backend'" in bfcl_source
     assert "verify_protocol_approval" in bfcl_source
     assert "AETHER_BFCL_ATTEMPT" in bfcl_source
+    assert "requirements-bfcl-vllm.txt" in bfcl_source
+    assert "vllm==0.34.0" not in bfcl_source  # version is centralized in the overlay file
+    assert "uv==0.11.8" in bfcl_source
+    assert "Refusing to repeat or overwrite this attempt" in bfcl_source
+    assert "git','fetch','origin','m1/target-harness'" in bfcl_source
     assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source
     assert "verify_bfcl_bundle" in bfcl_source
     assert "aether-bfcl-official-{ATTEMPT}-results.tar.gz" in bfcl_source
+    assert bfcl_source.index("tarfile.open") < bfcl_source.index("verify_bfcl_bundle")
     assert "--no-deps','-e'" not in bfcl_source
 
 

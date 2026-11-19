@@ -8,7 +8,8 @@
 **Disclosed Custom Adapter:** `AETHER/Qwen2.5-1.5B-Instruct-FC`  
 **Protocol Label:** `official_evaluator_with_disclosed_aether_model_adapter`  
 **Configured Categories:** `simple`, `multiple`, `parallel`, `irrelevance` (`partial_evaluation: false`)  
-**Target Output Directory:** `/kaggle/working/aether-bfcl-official/` (outside the source checkout)
+**Target Output Directory:** `/kaggle/working/aether-bfcl-official-<attempt>/` (outside the source checkout)
+**Inference stack:** `vllm==0.34.0`, `torch==2.14.0`, CUDA 13.0
 
 ---
 
@@ -28,14 +29,14 @@ In AETHER:
 
 - **OS:** Linux (Ubuntu 22.04+ recommended; Windows is incompatible with vLLM)
 - **Python:** 3.11
-- **Accelerator:** NVIDIA GPU with at least 16 GB VRAM and CUDA compute capability 7.5 or newer (e.g. T4, A10, L4, A100, RTX 4090). Kaggle P100 (compute capability 6.0) is rejected by the current vLLM preflight.
-- **CUDA:** 12.1+
-- **Inference Engine:** `vllm>=0.4.0` or `sglang`
+- **Accelerator:** NVIDIA GPU with at least 16 decimal GB VRAM and CUDA compute capability 7.5 or newer (e.g. T4, A10, L4, A100, RTX 4090). The preflight converts CUDA-reported bytes to decimal GB, so a nominal 16 GB T4 passes the memory threshold; Kaggle P100 (compute capability 6.0) is rejected.
+- **Driver/runtime:** CUDA 13.0 compatible environment. If runtime initialization fails or reports a different CUDA runtime, stop; do not substitute a CPU backend.
+- **Inference Engine:** `vllm==0.34.0` with `torch==2.14.0` and CUDA 13.0. This compatibility overlay is in `requirements-bfcl-vllm.txt`; it deliberately supersedes the project lock's Torch patch version only in the isolated BFCL environment.
 - **Dependencies:**
   ```bash
-  pip install "bfcl_eval==2026.3.23"
-  pip install vllm
-  pip install -e .
+  python -m pip install -r requirements-lock.txt
+  python -m pip install "bfcl_eval==2026.3.23"  # verify the recorded wheel SHA-256
+  uv pip install --python .venv/bin/python -r requirements-bfcl-vllm.txt --torch-backend cu130
   ```
 
 ### Local Laptop Status (Laptop 2)
@@ -67,7 +68,7 @@ python -m benchmarks.run_native_official bfcl --config configs/benchmarks/phase1
   --output /tmp/aether-bfcl-preflight
 ```
 
-The command fails closed if human approval, the pinned wheel, Linux GPU backend (including vLLM installation, 16 GiB VRAM and capability 7.5+), or verified snapshot is unavailable. It never writes experiment artifacts inside the checkout.
+The command fails closed if human approval, the pinned wheel, Linux GPU backend (including exact vLLM/Torch/CUDA versions, 16 decimal GB VRAM and capability 7.5+), or verified snapshot is unavailable. It never writes experiment artifacts inside the checkout.
 
 ### Step 3.2: Native Execution (only after preflight)
 ```bash

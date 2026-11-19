@@ -15,6 +15,9 @@ from benchmarks.nov19_bfcl.preflight import (
     PINNED_MODEL_REVISION,
     PINNED_PACKAGE,
     PINNED_PACKAGE_VERSION,
+    PINNED_BACKEND_VERSION,
+    PINNED_TORCH_VERSION,
+    PINNED_CUDA_VERSION,
     check_backend_and_hardware,
     check_categories,
     check_package,
@@ -51,7 +54,7 @@ def test_package_check_wheel_hash_mismatch(tmp_path):
 def test_backend_hardware_rejects_invalid_backend():
     ok, reasons, details = check_backend_and_hardware(backend="unsupported_engine")
     assert not ok
-    assert any("Unsupported backend" in r for r in reasons)
+    assert any("Unsupported BFCL backend" in r for r in reasons)
 
 
 def test_backend_hardware_requires_installed_vllm(monkeypatch):
@@ -66,7 +69,8 @@ def test_vllm_preflight_rejects_unsupported_compute_capability(monkeypatch):
         name = "Tesla P100"
         total_memory = 16 * 1024 ** 3
 
-    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: object())
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
     monkeypatch.setattr("torch.cuda.is_available", lambda: True)
     monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
     monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
@@ -75,6 +79,65 @@ def test_vllm_preflight_rejects_unsupported_compute_capability(monkeypatch):
     assert not ok
     assert details["gpu_0_compute_capability"] == "6.0"
     assert any("require 7.5 or newer" in reason for reason in reasons)
+
+
+def _mock_pinned_vllm(monkeypatch, *, backend_version=PINNED_BACKEND_VERSION):
+    import torch
+
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: object())
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.version",
+                        lambda name: backend_version if name == "vllm" else "0")
+    monkeypatch.setattr(torch, "__version__", f"{PINNED_TORCH_VERSION}+cu130")
+    monkeypatch.setattr(torch.version, "cuda", PINNED_CUDA_VERSION)
+
+
+def test_vllm_preflight_rejects_unpinned_backend_version(monkeypatch):
+    _mock_pinned_vllm(monkeypatch, backend_version="0.35.0")
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm")
+    assert not ok
+    assert any("vLLM version mismatch" in reason for reason in reasons)
+
+
+def test_vllm_preflight_accepts_t4_reported_15_gib_as_16_decimal_gb(monkeypatch):
+    class Properties:
+        name = "Tesla T4"
+        total_memory = 15 * 1024 ** 3
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert ok, reasons
+    assert details["gpu_0_vram_gb"] > 16
+
+
+def test_vllm_preflight_rejects_driver_too_old_for_cuda_13(monkeypatch):
+    class Properties:
+        name = "Tesla T4"
+        total_memory = 16_000_000_000
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["570.99.01"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert not ok
+    assert any("below the CUDA 13.0 minimum R580" in reason for reason in reasons)
+
+
+def test_bfcl_overlay_pins_backend_and_cuda_compatible_torch() -> None:
+    overlay = Path("requirements-bfcl-vllm.txt").read_text(encoding="utf-8")
+    assert "vllm==0.34.0" in overlay
+    assert "torch==2.14.0" in overlay
 
 
 def test_categories_rejects_empty_or_invalid():

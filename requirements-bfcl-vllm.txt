@@ -1,0 +1,5 @@
+# BFCL GPU overlay: vLLM 0.34.0 is built for PyTorch 2.14.0 / CUDA 13.0.
+# This intentionally replaces requirements-lock.txt's torch==2.14.1 only in
+# the isolated external BFCL environment; do not change the project lock.
+vllm==0.34.0
+torch==2.14.0

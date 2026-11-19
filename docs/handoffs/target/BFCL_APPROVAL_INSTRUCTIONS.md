@@ -20,6 +20,11 @@ has reviewed and approved the protocol.
 5. The development-only boundary: this benchmark uses no AETHER validation or
    test split.
 6. Required Linux CUDA inference hardware and the no-model-access preflight.
+7. The pinned runtime compatibility set: Python 3.11.9, `uv==0.11.8`,
+   `vllm==0.34.0`, `torch==2.14.0`, CUDA 13.0, NVIDIA driver R580 or newer,
+   and a GPU with at least 16 decimal GB memory and compute capability 7.5+.
+   The project's general lock pins Torch 2.14.1; the isolated external BFCL
+   overlay intentionally selects Torch 2.14.0 to match the vLLM CUDA wheel.
 
 Frozen config SHA-256: `017bce07725a36ed4f7d8f08b399a22c1b4092271c2ce2473b2fd138b5e4ff75`.
 If it differs locally, stop and obtain a new human review; do not silently

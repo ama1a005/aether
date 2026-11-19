@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import hashlib
+from importlib.metadata import PackageNotFoundError, version
 import json
 import platform
 from pathlib import Path
@@ -127,11 +128,21 @@ def _make_bfcl_metadata(config_path: Path, snapshot_manifest: Path,
         config_file=config_path,
         evidence_kind="bfcl_official",
     )
+    try:
+        backend_version = version("vllm")
+    except PackageNotFoundError:
+        backend_version = None
+    import torch
+
     metadata.update({
         "raw_output_path": str((output / "official_raw").resolve()),
         "prompt_versions": {"bfcl_adapter": ADAPTER_REGISTRY_NAME},
         "package_wheel_sha256": sha256_file(package_wheel),
         "protocol_label": config["protocol_label"],
+        "inference_backend": "vllm",
+        "inference_backend_version": backend_version,
+        "torch_version": torch.__version__,
+        "cuda_runtime_version": torch.version.cuda,
     })
     return metadata
 
@@ -154,6 +165,7 @@ def _blocked_summary(reasons: list[str]) -> dict[str, Any]:
         VerificationResult(False, tuple(reasons), {}, {}),
         execution_blocked_reasons=reasons,
     )
+    hardware_preflight = preflight.details.get("hardware", {})
     summary.update({
         "execution_status": "BLOCKED_BEFORE_MODEL_ACCESS",
         "subset_totals": None,
@@ -178,6 +190,8 @@ def run(benchmark: str, config_path: Path, output: Path,
         raise RuntimeError("official evidence execution requires a clean source tree")
     config = _load_config(config_path, benchmark)
     if benchmark == "bfcl":
+        if backend != "vllm":
+            raise ValueError("the frozen BFCL profile requires the pinned vLLM backend")
         # Require a separate human decision over the exact frozen configuration
         # before loading the model snapshot or invoking any evaluator command.
         from experiments.external_bundle import verify_protocol_approval
@@ -255,6 +269,10 @@ def run(benchmark: str, config_path: Path, output: Path,
         "official_evaluator": verification.passed and execution_error is None,
         "official_evaluator_executed": bool(records) and execution_error is None,
         "custom_model_adapter_disclosed": True,
+        "inference_backend": "vllm",
+        "inference_backend_version": hardware_preflight.get("backend_version"),
+        "torch_version": hardware_preflight.get("torch_version"),
+        "cuda_runtime_version": hardware_preflight.get("cuda_runtime_version"),
         "model_id": PINNED_MODEL_ID,
         "model_revision": PINNED_MODEL_REVISION,
         "tokenizer_revision": PINNED_MODEL_REVISION,

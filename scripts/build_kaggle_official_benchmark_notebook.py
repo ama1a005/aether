@@ -35,7 +35,8 @@ assert len(WHEELS)==1, f'Expected exactly one pinned BFCL wheel, found {len(WHEE
 WHEEL=WHEELS[0]; WHEEL_SHA256=hashlib.sha256(WHEEL.read_bytes()).hexdigest()
 assert WHEEL_SHA256=='3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a', WHEEL_SHA256
 subprocess.run([str(PY),'-m','pip','install',str(WHEEL)],check=True)
-subprocess.run([UV,'pip','install','--python',str(PY),'vllm','--torch-backend','auto'],check=True,env=env)
+subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-bfcl-vllm.txt'),'--torch-backend','cu130'],check=True,env=env)
+assert subprocess.check_output([str(PY),'-c','import torch; from importlib.metadata import version; print(version("vllm"),torch.__version__,torch.version.cuda)'],text=True).strip().startswith('0.34.0 2.14.0+ 13.0')
 """
         snapshot_setup = """from huggingface_hub import snapshot_download
 from benchmarks.run_native_official import _load_config
@@ -79,22 +80,27 @@ This notebook does not access AETHER validation/test splits. It exports raw
 official outputs plus a hash-verified AETHER wrapper bundle.
 """),
         _cell("code", f"""from pathlib import Path
-import json,os,shutil,subprocess,sys,tarfile,hashlib
+import json,os,re,shutil,subprocess,sys,tarfile,hashlib
 WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
 WORK.mkdir(parents=True,exist_ok=True)
 ATTEMPT=os.environ.get('AETHER_BFCL_ATTEMPT','attempt-1')
+assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{{0,63}}',ATTEMPT), f'Invalid attempt identifier: {{ATTEMPT!r}}'
 RUNTIME=Path('/tmp/aether-{benchmark}')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
 OUTPUT=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}'; COMMIT={commit!r}
+if OUTPUT.exists(): raise FileExistsError(f'Refusing to repeat or overwrite this attempt: {{OUTPUT}}')
 URL='https://github.com/ama1a005/aether.git'
 os.environ.update({{'PYTHONNOUSERSITE':'1','MPLBACKEND':'Agg'}})
 RUNTIME.mkdir(parents=True,exist_ok=True)
 """),
-        _cell("code", """if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
-UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
+        _cell("code", """subprocess.run([sys.executable,'-m','pip','install','--upgrade','uv==0.11.8'],check=True)
+UV=shutil.which('uv'); assert UV is not None, 'Pinned uv installation did not provide an executable'
+uv_version=subprocess.check_output([UV,'--version'],text=True).strip().split()[-1]
+assert uv_version=='0.11.8', f'Expected uv 0.11.8, found {uv_version}'
+env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
 subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
 subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
-subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
+subprocess.run(['git','fetch','origin','m1/target-harness'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
 assert not subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip()
@@ -107,11 +113,11 @@ subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','test
         _cell("code", f"""command=[str(PY),'-m','benchmarks.run_native_official',{benchmark!r},'--config',str(REPO/'configs/benchmarks/phase1_external.yaml'),'--output',str(OUTPUT)]
 {("command += ['--snapshot-manifest',str(SNAPSHOT_MANIFEST),'--package-wheel',str(WHEEL),'--backend','vllm','--num-gpus','1']" if benchmark == 'bfcl' else "")}
 subprocess.run(command,cwd=REPO,check=True)
-subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind',{(benchmark + '_official')!r}],cwd=REPO,check=True)
-{benchmark_verification}
 archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())
+subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind',{(benchmark + '_official')!r}],cwd=REPO,check=True)
+{benchmark_verification}
 """),
     ]
     return {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}}, "nbformat": 4, "nbformat_minor": 5}
