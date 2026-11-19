@@ -118,6 +118,27 @@ Result: `Integrity: OK`
 3. **TAMAS native execution** requires AutoGen/CrewAI plus provider APIs or Ollama.
 4. **BFCL execution** requires downloading official benchmark data.
 
+## Completion remediation update — 20 November 2026
+
+- Current Member 2 head: `55d2f5e`; latest integrated `lm` merge: `22a9ed8`.
+- The canonical campaign now binds each accepted pair to corpus provenance,
+  plan fingerprint, and a recursive bounded delta. Unknown attack IDs fail
+  closed rather than disappearing from denominators.
+- `scripts/verify_qwen_red_team_bundle.py` independently checks raw pair
+  coverage, real-model markers, prompts, deltas, budget, and recomputed ASR;
+  `scripts/ingest_qwen_red_team_bundle.py` verifies before atomic ingestion.
+- Qwen protocol proposal SHA-256:
+  `86c4a4dae88978dfedb891e8d0e65c98fcf650f58d5fcd38a12394c0d66608d0`.
+  No human approval decision exists, so no Qwen model access occurred.
+- Source audits: `results-staging/source_audits/mcptox_source_audit.json` and
+  `results-staging/source_audits/tamas_source_audit.json`. MCPTox is
+  `BLOCKED_LICENSE_AND_NO_NATIVE_EVALUATOR`; TAMAS is
+  `BLOCKED_NATIVE_FRAMEWORK_OR_PROVIDER`. Neither audit redistributes raw data.
+- The required Python 3.11 test environment is unavailable on this host: its
+  Windows app alias is denied and Python 3.13 has no pytest installation.
+  Syntax compilation and `git diff --check` completed successfully; rerun the
+  focused and full suites in a provisioned Python 3.11 environment.
+
 ## Manual integration steps
 
 1. Merge `m2/attack-corpus` into `lm` after review.

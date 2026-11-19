@@ -1,0 +1,99 @@
+{
+  "benchmark": "TAMAS",
+  "commit": "545c112af9aab93b7ef2b0b60831d93c81c365c3",
+  "data_inventory": {
+    "count": 30,
+    "paths": [
+      "data/Byzantine/education_byzantine.json",
+      "data/Byzantine/finance_byzantine.json",
+      "data/Byzantine/healthcare_byzantine.json",
+      "data/Byzantine/legal_byzantine.json",
+      "data/Byzantine/news_byzantine.json",
+      "data/Colluding/education_colluding.json",
+      "data/Colluding/finance_colluding.json",
+      "data/Colluding/healthcare_colluding.json",
+      "data/Colluding/legal_colluding.json",
+      "data/Colluding/news_colluding.json",
+      "data/Contradicting/education_contradicting.json",
+      "data/Contradicting/finance_contradicting.json",
+      "data/Contradicting/healthcare_contradicting.json",
+      "data/Contradicting/legal_contradicting.json",
+      "data/Contradicting/news_contradinting.json",
+      "data/DPI/education_DPI.json",
+      "data/DPI/finance_DPI.json",
+      "data/DPI/healthcare_DPI.json",
+      "data/DPI/legal_DPI.json",
+      "data/DPI/news_DPI.json",
+      "data/Impersonation/education_impersonation.json",
+      "data/Impersonation/finance_impersonation.json",
+      "data/Impersonation/healthcare_impersonation.json",
+      "data/Impersonation/legal_impersonation.json",
+      "data/Impersonation/news_impersonation.json",
+      "data/IPI/education_IPI.json",
+      "data/IPI/finance_IPI.json",
+      "data/IPI/healthcare_IPI.json",
+      "data/IPI/legal_IPI.json",
+      "data/IPI/news_IPI.json"
+    ],
+    "sha256": {
+      "data/Byzantine/education_byzantine.json": "fb0d245c08311b2950735632e913e2a7b027ac934ff4b9c9ef001e24c7e3c34b",
+      "data/Byzantine/finance_byzantine.json": "a7c7bd7b2377f80314199805fcdf2328de7c9f4668007f463305e2c0f813e5f5",
+      "data/Byzantine/healthcare_byzantine.json": "94aa718363afb4b6c67853e2bc7d032b5f49be29498160ba39c8fd06cfbdd4bc",
+      "data/Byzantine/legal_byzantine.json": "f3c7280a537f67708d36a26fb6f946b4924d8ea247a1a537baed78684d2e901f",
+      "data/Byzantine/news_byzantine.json": "fe56a04345db868056b2f8e5c01e0ee349d22a99877b384cf771967e31718f1c",
+      "data/Colluding/education_colluding.json": "18756ab40d1078c155747a0c32b80e0a8aa17a2b86a028ee7adf16c03af03ad0",
+      "data/Colluding/finance_colluding.json": "ac696b6ba824a0f26bac84be0aba7779e2c787cb238992805a645bf93e18ec3b",
+      "data/Colluding/healthcare_colluding.json": "b0efdaac854dad5f3d6d2eb7448091ae4d85fbb5a1bdb01f78d94c1d0bba5431",
+      "data/Colluding/legal_colluding.json": "fb8245262a4bae80e4734dc61d5c4b5c54ff31c4fadc1ca7f5377f2f006fdc8f",
+      "data/Colluding/news_colluding.json": "831b863cf7fe0cc249c9a9b606a1e397bd187111bd820d8eb05a69dd17df9de5",
+      "data/Contradicting/education_contradicting.json": "ae17e2e85f46e0558b52a9cf771c848919ba2a424a2373d1a16d6b06ba69a774",
+      "data/Contradicting/finance_contradicting.json": "aada9514f7d3be9a094487aac9122fb79d245b99531d75f35a8fa65cdeafe8a6",
+      "data/Contradicting/healthcare_contradicting.json": "29f7afc9e1881b0e3e5ff505f7bcbadd0b5e55abcfb4f235b23f1c30b4be873f",
+      "data/Contradicting/legal_contradicting.json": "e6b53cfe3de04b6493e58f52385fd3eccedf85a31f69654e51b36c7ae6f642d4",
+      "data/Contradicting/news_contradinting.json": "39e5f95799a7dbd1529ec064bc529e5e229d97d79ef1f5a1aefac1d7ee5a1313",
+      "data/DPI/education_DPI.json": "713926a1e9bd80fbb3e4bb31003439e2e8d7862733e9653678f43484d96ac441",
+      "data/DPI/finance_DPI.json": "f7167f60d86c717effe17b6fac26fdf35493e6d21dd75036e62c9b993901c5c7",
+      "data/DPI/healthcare_DPI.json": "4756a92a09ad7222d7734b8819a377fe92c00843a7cacf31e01a9ede0d137616",
+      "data/DPI/legal_DPI.json": "ce951f8afc82c946ef1c9f7f83023ee04ae249fefcc6eb7e4405d77d58ba4478",
+      "data/DPI/news_DPI.json": "a914d7dc8e14fe2415cb4879ee2f992ed2b7b49184ba08f75867a2478246a96d",
+      "data/IPI/education_IPI.json": "21f239afc4b90468513246a86b280edd03196872996c67325b22396704b6dce7",
+      "data/IPI/finance_IPI.json": "b9c204848655f0e53f999adb5d795b645e26f6956e3ea492da90e015c7bd2977",
+      "data/IPI/healthcare_IPI.json": "fbed8dfcd017c9947bcb07f1495e09f288745dfd1f865f53448d4d519fa9e1b5",
+      "data/IPI/legal_IPI.json": "309c90a99f5561e031af1d5665c4dbe92b0c17582b45e92fc682c79ff7a1cefb",
+      "data/IPI/news_IPI.json": "8539485e2669a8187bc437f9b794e4af7b9ece44ade08f92068f839ebc9f7bbb",
+      "data/Impersonation/education_impersonation.json": "dccb3e35d63c5a354c975dc8c15907624de3375de1ec27ec1ca5c2247f59acdb",
+      "data/Impersonation/finance_impersonation.json": "d0ada62f6471ef43b9471c0019f53069b2de57756746b9f91ca224dbb00cce7d",
+      "data/Impersonation/healthcare_impersonation.json": "3bbd517fceb6719712ed50a8dc308b5c9b9d0e10f2d597c71bf9c69a1a3779ed",
+      "data/Impersonation/legal_impersonation.json": "8a88a30032b62d79477f8678ff1535d6f23ab1f0d61086d1bcedbc2dceeaf193",
+      "data/Impersonation/news_impersonation.json": "dad84b8b48df7581570f8acde8281f7ec9dfce6b19ad576d71022c16d9aeaec8"
+    }
+  },
+  "execution_state": "BLOCKED_NATIVE_FRAMEWORK_OR_PROVIDER",
+  "git_clean": true,
+  "license": {
+    "paths": [
+      "LICENSE",
+      "LICENSE.CDLA-2.0"
+    ],
+    "sha256": {
+      "LICENSE": "820ff92d890bd6b411c38249f050d652ffb76c1bc750268be23fd75f4fc67f29",
+      "LICENSE.CDLA-2.0": "87d0fecab2a1d9b90f6dadef103e3984c4fd17fcad1a7137d613baa0c937c7a7"
+    },
+    "status": "PRESENT"
+  },
+  "native_entrypoints": [
+    "autogen_inference.py",
+    "crewai_inference.py",
+    "eval"
+  ],
+  "native_entrypoints_present": {
+    "autogen_inference.py": true,
+    "crewai_inference.py": true,
+    "eval": true
+  },
+  "raw_data_redistributed": false,
+  "repository": "https://github.com/microsoft/TAMAS",
+  "retrieved_at_utc": "2026-11-19T18:36:30.366462+00:00",
+  "schema_version": "aether.external-source-audit.v1",
+  "source_path": "D:\\final year Project\\aather\\aether-m2\\.cache\\benchmarks\\TAMAS"
+}
