@@ -1,0 +1,80 @@
+{
+  "schema_version": "aether.qwen-sae-training-freeze-amendment.v1.3",
+  "status": "awaiting_human_scientific_review",
+  "parent_amendment_path": "configs/experiments/qwen_sae_training_freeze_v1_2_amendment.json",
+  "parent_amendment_sha256": "fdc02d9542af6d6b54aad57da8facd21ba7ff07bf5286a0874fc7ded6418b238",
+  "trigger": {
+    "classification": "retained_incomplete_training_attempt",
+    "observed_seeds": [11, 22],
+    "epochs_completed_per_observed_seed": 10,
+    "seed_33_started": false,
+    "failure": "no_sparsity_eligible_checkpoint_before_preeligibility_patience_stop",
+    "scientific_result": "not_a_completed_sae_acceptance_result"
+  },
+  "reason": "The implementation incremented early-stopping staleness before any sparsity-eligible checkpoint existed, terminating seeds 11 and 22 after 10 of the approved 100 epochs and preventing seed 33 from starting. The amendment clarifies execution and negative-result semantics without changing any scientific threshold, model, data, optimization hyperparameter or split.",
+  "execution_semantics": {
+    "preeligibility_early_stopping": "forbidden",
+    "preeligibility_behavior": "continue_until_first_eligible_checkpoint_or_maximum_epoch_100",
+    "posteligibility_patience": 10,
+    "posteligibility_monitor": "lowest_checkpoint_selection_relative_reconstruction_error_among_sparsity_eligible_epochs",
+    "maximum_epochs_unchanged": 100,
+    "checkpoint_after_every_epoch": true,
+    "resume_seed_11_and_22": "required_from_exact_retained_epoch_10_model_optimizer_and_history_prefix",
+    "seed_33": "must_execute_fresh_even_if_seed_11_or_22_has_no_eligible_checkpoint",
+    "foreign_or_ambiguous_checkpoint": "fail_before_training"
+  },
+  "terminal_outcomes": {
+    "eligible_seed": "write_weights_metadata_and_seed_summary_with_SAE_SEED_ELIGIBLE",
+    "no_eligible_checkpoint_after_100_epochs": "write_seed_summary_with_SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT_and_retain_training_history_and_checkpoint",
+    "seed_process_exit_for_scientific_rejection": 0,
+    "seed_process_exit_for_execution_error": "nonzero",
+    "all_three_seed_summaries_required_before_selection": true,
+    "selection_when_no_seed_is_eligible": "write_final_FAIL_summary_with_SAE_REJECTED_NO_ELIGIBLE_SEED_without_audit_capture",
+    "selection_when_at_least_one_seed_is_eligible": "apply_unchanged_v1_lowest_error_then_seed_then_earliest_epoch_rule"
+  },
+  "orchestration": {
+    "seed_11_and_22": "parallel_on_cuda_0_and_cuda_1",
+    "seed_33": "run_after_parallel_pair_on_cuda_0",
+    "continue_after_scientific_seed_rejection": true,
+    "stop_after_execution_error": true,
+    "remote_sync_after_every_epoch": true,
+    "final_archive_required_for_PASS_or_FAIL": true
+  },
+  "unchanged": [
+    "base_v1_protocol",
+    "v1_1_external_corpus_amendment",
+    "v1_2_pinned_corpus_revision",
+    "model_and_tokenizer_identity",
+    "component_identity",
+    "corpus_tokens_and_partitions",
+    "normalization",
+    "linear_relu_architecture_and_dimensions",
+    "optimizer_learning_rate_batch_size_l1_coefficient_and_loss",
+    "seeds",
+    "minimum_active_fraction_0_001",
+    "maximum_active_fraction_0_2",
+    "maximum_relative_reconstruction_error_0_1",
+    "maximum_dead_feature_fraction_0_5",
+    "mean_vector_baseline_requirement",
+    "checkpoint_selection_rule",
+    "aether_development_audit_cases",
+    "validation_and_test_locks",
+    "claim_boundary"
+  ],
+  "prohibited": [
+    "loosening_sparsity_or_reconstruction_thresholds",
+    "changing_l1_coefficient_after_observing_epoch_metrics",
+    "changing_architecture_or_latent_width",
+    "discarding_or_overwriting_the_retained_failed_attempt",
+    "using_aether_audit_validation_or_test_to_tune_training",
+    "calling_an_ineligible_or_incomplete_seed_successful"
+  ],
+  "validation_executions": 0,
+  "test_executions": 0,
+  "claim_boundary": "Development-only SAE reconstruction and sparsity evidence. A completed negative result is retained as rejection. No feature-level causal, validation or test claim is authorized.",
+  "human_review": {
+    "approved": false,
+    "reviewer": "",
+    "utc_timestamp": ""
+  }
+}
