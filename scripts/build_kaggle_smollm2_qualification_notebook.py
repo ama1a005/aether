@@ -36,7 +36,10 @@ subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_secondary_model_freeze.py','tests/unit/test_secondary_model_qualification.py','tests/unit/test_model_adapter.py','-q'],cwd=REPO,check=True)'''),
         cell("code", '''# Preflight is model-free and must pass before download.
-subprocess.run([str(PY),'-m','paired_trace.run_secondary_model_qualification','--preflight-only','--output',str(OUTPUT),'--cache',str(CACHE)],cwd=REPO,check=True)'''),
+preflight_run=subprocess.run([str(PY),'-m','paired_trace.run_secondary_model_qualification','--preflight-only','--output',str(OUTPUT),'--cache',str(CACHE)],cwd=REPO,check=False)
+preflight_path=OUTPUT/'hardware_preflight.json'
+if preflight_path.is_file(): print(preflight_path.read_text(encoding='utf-8'))
+if preflight_run.returncode: raise RuntimeError(f'SmolLM2 preflight blocked with exit code {preflight_run.returncode}; inspect the JSON printed above')'''),
         cell("code", '''# Download and hash the immutable snapshot, then create the required access marker.
 code=r"""import hashlib,json,sys
 from pathlib import Path

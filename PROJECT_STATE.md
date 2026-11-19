@@ -1,5 +1,14 @@
 # AETHER project state
 
+## 2026-11-19 SmolLM2 derived single-model gate defect confirmed
+
+The model-free SmolLM2 preflight measured sufficient RAM, cgroup headroom and
+disk, but the inherited primary-model predicate compared every candidate to a
+hard-coded Qwen model ID. This incorrectly blocked the already approved sole
+SmolLM2 candidate. The prospective repair binds the generic one-model predicate
+to the derived gate's explicitly authorized model ID; it does not change any
+resource threshold, model, task, split or scientific acceptance criterion.
+
 ## 2026-11-19 SAE checkpoint uploader batching correction
 
 The first v1.2 Kaggle activation capture completed its local block computation

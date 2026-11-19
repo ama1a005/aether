@@ -67,6 +67,7 @@ def prepare(proposal_path: Path, output: Path, decision_path: Path = DECISION) -
     })
     gate = json.loads(primary.HW_PATH.read_text(encoding="utf-8"))
     gate["candidate_model_id"] = model["model_id"]
+    gate["authorized_single_model_id"] = model["model_id"]
     gate["minimum_pre_access_available_physical_ram_gib"] = execution["minimum_preload_available_memory_gib"]
     gate["minimum_post_load_available_physical_ram_gib"] = execution["minimum_postload_available_memory_gib"]
     hardware = output / "derived_hardware_gate.json"
