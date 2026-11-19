@@ -95,12 +95,13 @@ def run_with_sync(commands, watched, label):
  for root,remote in watched: upload_tree_once(root,remote)
  if any(codes): raise RuntimeError(f'{label} failed with exit codes {codes}')"""),
         _code("""# Download pinned model and corpus snapshots, then create exact token IDs.
-from huggingface_hub import snapshot_download
+from huggingface_hub import hf_hub_download,snapshot_download
 MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; MODEL_REV='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
 DATA_ID='Salesforce/wikitext'; DATA_REV='de54f133ef530c2e9b46c532f95a01c446ff0f1d'
 model_snapshot=Path(snapshot_download(MODEL_ID,revision=MODEL_REV,cache_dir=CACHE,max_workers=2))
-dataset_snapshot=Path(snapshot_download(DATA_ID,repo_type='dataset',revision=DATA_REV,cache_dir=CACHE,allow_patterns='wikitext-2-raw-v1/*',max_workers=2))
-assert model_snapshot.name==MODEL_REV and dataset_snapshot.name==DATA_REV
+data_file=Path(hf_hub_download(repo_id=DATA_ID,repo_type='dataset',revision=DATA_REV,
+ filename='wikitext-2-raw-v1/train-00000-of-00001.parquet',cache_dir=CACHE))
+assert model_snapshot.name==MODEL_REV and data_file.name=='train-00000-of-00001.parquet'
 corpus=OUTPUT/'corpus'
 if not (corpus/'corpus_source_manifest.json').is_file():
  token_code=r'''import sys
@@ -108,15 +109,15 @@ from pathlib import Path
 import pandas as pd
 from transformers import AutoTokenizer
 from experiments.phase1.qwen_sae_training import write_token_artifacts
-model_snapshot,dataset_snapshot,corpus=map(Path,sys.argv[1:])
-files=sorted((dataset_snapshot/'wikitext-2-raw-v1').glob('train-*.parquet'))
-if not files: raise FileNotFoundError('pinned WikiText training parquet is absent')
+model_snapshot,data_file,corpus=map(Path,sys.argv[1:])
+if not data_file.is_file(): raise FileNotFoundError('pinned WikiText training parquet is absent')
+files=[data_file]
 texts=[]
 for file in files: texts.extend(pd.read_parquet(file,columns=['text'])['text'].tolist())
 tokenizer=AutoTokenizer.from_pretrained(model_snapshot,local_files_only=True,trust_remote_code=False)
 write_token_artifacts(texts,tokenizer,corpus,files)
 '''
- subprocess.run([str(PY),'-c',token_code,str(model_snapshot),str(dataset_snapshot),str(corpus)],cwd=REPO,check=True)
+ subprocess.run([str(PY),'-c',token_code,str(model_snapshot),str(data_file),str(corpus)],cwd=REPO,check=True)
 upload_tree_once(corpus,f'{REMOTE_PREFIX}/corpus')
 print(json.loads((corpus/'corpus_source_manifest.json').read_text())['selected_token_count'])"""),
         _code("""# Dual-T4 corpus capture. Reruns skip every verified existing block.
