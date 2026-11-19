@@ -1,0 +1,12 @@
+{
+  "overall": "SUPPORTING_EVIDENCE_ONLY",
+  "evidence_origin": "retained_real_qwen_plus_deterministic_agent_c",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "total": 48,
+  "valid": 48,
+  "invalid": 0,
+  "incoming_correct": 24,
+  "reviewed_correct": 24,
+  "validation_executions": 0,
+  "test_executions": 0
+}
