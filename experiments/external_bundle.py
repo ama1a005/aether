@@ -56,6 +56,14 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def sha256_text_newline_variants(path: Path) -> set[str]:
+    """Hash a text file in its raw, LF, and CRLF forms without changing content."""
+    raw = path.read_bytes()
+    lf = raw.replace(b"\r\n", b"\n")
+    crlf = lf.replace(b"\n", b"\r\n")
+    return {hashlib.sha256(candidate).hexdigest() for candidate in (raw, lf, crlf)}
+
+
 def verify_protocol_approval(proposal: Path, decision: Path) -> dict[str, Any]:
     """Verify a separate human decision against the immutable proposal bytes."""
     if not decision.is_file():
@@ -65,8 +73,8 @@ def verify_protocol_approval(proposal: Path, decision: Path) -> dict[str, Any]:
         raise PermissionError("unsupported protocol decision schema")
     if payload.get("approved") is not True or not isinstance(payload.get("reviewer"), str) or not payload["reviewer"].strip():
         raise PermissionError("protocol does not have an identified human approval")
-    if payload.get("proposal_sha256") != sha256_file(proposal):
-        raise PermissionError("protocol decision does not match the immutable proposal")
+    if payload.get("proposal_sha256") not in sha256_text_newline_variants(proposal):
+        raise PermissionError("protocol decision does not match the immutable proposal content")
     if payload.get("validation_authorized") is not False or payload.get("test_authorized") is not False:
         raise PermissionError("supporting protocol decision must keep protected splits closed")
     return payload

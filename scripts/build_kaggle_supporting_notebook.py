@@ -29,8 +29,8 @@ COMMIT={commit!r}; URL='https://github.com/ama1a005/aether.git'
 RUNTIME.mkdir(parents=True,exist_ok=True); os.environ['PYTHONNOUSERSITE']='1'
 if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
 UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
-subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
-subprocess.run(['git','clone','--branch',{branch!r},'--single-branch',URL,str(REPO)],check=True)
+if not PY.is_file(): subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
+if not REPO.is_dir(): subprocess.run(['git','clone','--branch',{branch!r},'--single-branch',URL,str(REPO)],check=True)
 subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
