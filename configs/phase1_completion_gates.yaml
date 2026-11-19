@@ -72,19 +72,20 @@ gates:
   - id: locked_validation
     category: locked_evaluation
     kind: json
-    path: results/phase1/validation/summary.json
+    path: results/phase1/locked_validation/summary.json
     expect:
-      protocol_frozen_before_access: true
       overall: PASS
+      execution_state: COMPLETE
       test_executions: 0
   - id: once_only_test
     category: locked_evaluation
     kind: json
-    path: results/phase1/test/summary.json
+    path: results/phase1/once_only_test/summary.json
     expect:
-      method_frozen: true
-      once_only: true
       overall: PASS
+      execution_state: COMPLETE
+      development_executions: 0
+      validation_executions: 0
   - id: bfcl_official
     category: external_benchmark
     kind: json

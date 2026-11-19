@@ -1,5 +1,42 @@
 # AETHER current bounded task
 
+## Integrate independently delivered external/supporting evidence
+
+Member-4 causal experiments, protected evaluation, derived causal-core report,
+evidence UI and handoff are complete. Do not rerun CORE-05. Next, review M1-M3
+deliveries, verify every external artifact with its declared verifier, and
+merge only contract-compatible work. The all-project final report must remain
+blocked until every configured prerequisite passes or receives an approved
+not-applicable decision.
+
+## Close the verified primary causal-core test and continue external evidence
+
+CORE-05 is independently verified, ingested and closed; never rerun it. Update
+all evidence registries and reports from the retained artifacts only. The
+remaining Phase-1 execution work is external/supporting evidence: BFCL,
+MCPTox/TAMAS where official access is available, real-Qwen red-team and Agent C,
+trained-SAE evaluation with a pinned compatible checkpoint, second-model
+qualification, and the final verified report. Do not represent readiness as
+evidence or weaken prerequisites to force completion.
+
+## Execute the approved CORE-05 test exactly once
+
+The approved runner, attempt controls, verifier and ingester are implemented.
+Generate and run the commit-pinned checkpoint-safe Kaggle notebook. It must
+write the attempt marker before model access, retain checkpoints after every
+arm/seed unit, resume only the same attempt, independently verify before export,
+and preserve either `TEST_ACCEPTED` or `TEST_REJECTED`. Do not initiate a fresh
+run after a complete attempt.
+
+## Review the prospective CORE-05 once-only test protocol
+
+CORE-04 validation is independently verified, ingested and accepted. Review
+`configs/phase1_core/core05_once_only_test_freeze_v1.yaml` and
+`docs/CORE05_ONCE_ONLY_TEST_REVIEW.md`. Do not implement the test runner, load
+Qwen for test execution, or access test prompts before exact-hash human
+approval. A completed test is non-repeatable; interrupted execution may only
+resume the same retained attempt.
+
 ## Implement the approved CORE-04 locked-validation package
 
 CORE-04 v1 is human-approved at SHA-256

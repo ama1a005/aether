@@ -1,0 +1,15 @@
+{
+  "arm_seed_run_count": 6,
+  "claim_boundary": "This experiment evaluates one already-selected paired-clean-donor receiver repair on the eight prospectively locked validation cases. It may support or reject held-out validation of that exact oracle-dependent repair. It cannot claim deployment, oracle-free defense, test-set performance, global circuit identification, clinical utility, or publication-level external validity.",
+  "deployable_without_oracle": false,
+  "development_executions": 0,
+  "execution_state": "COMPLETE",
+  "model_forward_steps": 504,
+  "overall": "PASS",
+  "raw_evaluation_count": 96,
+  "runtime_seconds": 1964.319237885,
+  "schema_version": "aether.core04-summary.v1",
+  "scientific_outcome": "VALIDATION_ACCEPTED",
+  "test_executions": 0,
+  "validation_executions": 96
+}

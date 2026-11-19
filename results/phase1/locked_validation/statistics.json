@@ -1,0 +1,22 @@
+{
+  "per_seed_acceptance": {
+    "11": true,
+    "22": true,
+    "33": true
+  },
+  "schema_version": "aether.core04-statistics.v1",
+  "seed_stability": {
+    "frozen_receiver_l20_h5": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "no_defense": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "selected_arm": "frozen_receiver_l20_h5",
+  "test_gate_open": true
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "aether.core05-once-only-test-freeze-decision.v1",
+  "decision_recorded": true,
+  "decision": "APPROVED",
+  "reviewer_role": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_core_workstream",
+  "reviewed_utc": "2026-11-18T00:00:00+05:30",
+  "proposal_path": "configs/phase1_core/core05_once_only_test_freeze_v1.yaml",
+  "proposal_sha256": "fc70dfedab254b428287f2d128f7eb2b521b54574f8925c3f695d562460f3c4d",
+  "source_commit_before_decision": "4e8abb5",
+  "authorized_next_state": "IMPLEMENT_CORE05_ONCE_ONLY_TEST_PACKAGE",
+  "test_case_count": 8,
+  "restrictions": [
+    "one_retained_attempt_only",
+    "resume_same_attempt_only",
+    "frozen_receiver_l20_h5_only",
+    "paired_clean_donor_is_oracle_information",
+    "no_threshold_or_arm_changes",
+    "retain_negative_and_incomplete_outcomes"
+  ]
+}

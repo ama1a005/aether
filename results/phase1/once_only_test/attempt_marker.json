@@ -1,0 +1,10 @@
+{
+  "attempt_id": "d25c770d-9159-4114-8dfa-7eee8c8618bd",
+  "completed_utc": "2026-11-18T13:18:10.826588+00:00",
+  "git_commit": "c2a4ff24c1789bfe9db9b220e728e4443a0c1133",
+  "proposal_sha256": "fc70dfedab254b428287f2d128f7eb2b521b54574f8925c3f695d562460f3c4d",
+  "schema_version": "aether.core05-attempt.v1",
+  "scientific_outcome": "TEST_ACCEPTED",
+  "started_utc": "2026-11-18T12:42:09.702497+00:00",
+  "state": "COMPLETE"
+}
