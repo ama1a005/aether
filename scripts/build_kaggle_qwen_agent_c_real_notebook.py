@@ -68,11 +68,11 @@ REVISION='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
 snapshot=Path(snapshot_download('Qwen/Qwen2.5-1.5B-Instruct',revision=REVISION,cache_dir=CACHE,max_workers=2))
 frozen_path=REPO/'results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json'
 frozen=json.loads(frozen_path.read_text(encoding='utf-8'))
-expected={{x['path']:(x['size'],x['sha256']) for x in frozen['files']}}
-observed={{p.relative_to(snapshot).as_posix():(p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(snapshot.rglob('*')) if p.is_file()}}
+expected={x['path']:(x['size'],x['sha256']) for x in frozen['files']}
+observed={p.relative_to(snapshot).as_posix():(p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(snapshot.rglob('*')) if p.is_file()}
 assert observed==expected, 'Model snapshot differs from qualified Qwen revision'
 manifest=WORK/'agent-c-model-snapshot.json'
-manifest.write_text(json.dumps({{'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'files':[{{'path':k,'size':v[0],'sha256':v[1]}} for k,v in observed.items()]}},indent=2),encoding='utf-8')
+manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'files':[{'path':k,'size':v[0],'sha256':v[1]} for k,v in observed.items()]},indent=2),encoding='utf-8')
 """
     execute = """command=[str(PY),'-u','-m','experiments.phase1.qwen_agent_c_real','--output',str(OUTPUT),
          '--model-snapshot',str(snapshot),'--snapshot-manifest',str(manifest),

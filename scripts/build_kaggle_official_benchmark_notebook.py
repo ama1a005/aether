@@ -101,7 +101,8 @@ This notebook does not access AETHER validation/test splits. It exports raw
 official outputs plus a hash-verified AETHER wrapper bundle.
 """),
         _cell("code", f"""from pathlib import Path
-import json,os,re,shutil,subprocess,sys,tarfile,hashlib
+import json,os,re,shutil,subprocess,sys,tarfile,hashlib,threading,time
+from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
 WORK.mkdir(parents=True,exist_ok=True)
 ATTEMPT=os.environ.get('AETHER_BFCL_ATTEMPT','attempt-1')
@@ -113,6 +114,9 @@ if OUTPUT.exists(): raise FileExistsError(f'Refusing to repeat or overwrite this
 URL='https://github.com/ama1a005/aether.git'
 os.environ.update({{'PYTHONNOUSERSITE':'1','MPLBACKEND':'Agg'}})
 RUNTIME.mkdir(parents=True,exist_ok=True)
+secrets=UserSecretsClient(); os.environ['HF_TOKEN']=secrets.get_secret('HF_TOKEN')
+HF_REPO=secrets.get_secret('AETHER_HF_REPO')
+assert os.environ['HF_TOKEN'] and HF_REPO and '/' in HF_REPO, 'Enable HF_TOKEN and AETHER_HF_REPO secrets'
 """),
         _cell("code", f"""if 'RUNTIME' not in globals() or 'REPO' not in globals() or 'VENV' not in globals():
     raise RuntimeError('Setup variables are missing. Run the notebook setup cell (Cell 1) successfully before this cell.')
@@ -155,12 +159,35 @@ DEPENDENCIES_COMPLETE=True
     raise RuntimeError('Required setup/preflight cells did not complete. Run all preceding cells in order.')
 command=[str(PY),'-m','benchmarks.run_native_official',{benchmark!r},'--config',str(REPO/'configs/benchmarks/phase1_external.yaml'),'--output',str(OUTPUT)]
 {("command += ['--snapshot-manifest',str(SNAPSHOT_MANIFEST),'--package-wheel',str(WHEEL),'--backend','vllm','--num-gpus','1']" if benchmark == 'bfcl' else "")}
-subprocess.run(command,cwd=REPO,check=True)
-archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
-with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())
+from huggingface_hub import HfApi
+api=HfApi(token=os.environ['HF_TOKEN']); info=api.repo_info(HF_REPO,repo_type='dataset')
+assert info.private, 'AETHER_HF_REPO must be an existing private dataset repository'
+REMOTE_PREFIX=f'{benchmark}-official/{{ATTEMPT}}'
+checkpoint_archive=WORK/f'aether-{benchmark}-{{ATTEMPT}}-checkpoint.tar.gz'
+sync_stop=threading.Event(); sync_errors=[]
+def upload_checkpoint():
+ if not OUTPUT.is_dir() or not any(path.is_file() for path in OUTPUT.rglob('*')): return
+ temporary=checkpoint_archive.with_suffix('.tmp')
+ with tarfile.open(temporary,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
+ temporary.replace(checkpoint_archive)
+ api.upload_file(path_or_fileobj=str(checkpoint_archive),path_in_repo=f'{{REMOTE_PREFIX}}/checkpoint.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'{benchmark.upper()} retained checkpoint')
+def sync_loop():
+ while not sync_stop.wait(300):
+  try: upload_checkpoint()
+  except BaseException as error: sync_errors.append(error); print('Remote checkpoint error:',type(error).__name__,str(error),flush=True)
+sync_thread=threading.Thread(target=sync_loop,daemon=True); sync_thread.start()
+try:
+ subprocess.run(command,cwd=REPO,check=True)
+finally:
+ sync_stop.set(); sync_thread.join(timeout=15)
+ upload_checkpoint()
+if sync_errors: raise RuntimeError('One or more periodic Hugging Face checkpoint uploads failed') from sync_errors[0]
 subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind',{(benchmark + '_official')!r}],cwd=REPO,check=True)
 {benchmark_verification}
+archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
+with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
+api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{{REMOTE_PREFIX}}/final-results.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'Verified {benchmark.upper()} final bundle')
+print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())
 """),
     ]
     return {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}}, "nbformat": 4, "nbformat_minor": 5}
