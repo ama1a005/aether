@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 
 from demo.backend.app import app
 from demo.backend.repository import ALLOWED_TOOLS, load_cases
+from demo.backend import service
 from demo.backend.service import get_replay, run_pipeline, run_rescue
 from demo.backend.tools import run_all_tools
 from paired_trace.schemas import MediatorMessage
@@ -59,6 +60,33 @@ def test_replay_artifacts_validate_and_keep_provenance() -> None:
         replay = get_replay(record["case_id"])
         assert replay["provenance_type"] == "REPLAY — VERIFIED PRECOMPUTED EXECUTION"
         assert replay["content_sha256"] == record["artifact_id"]
+
+
+def test_replay_read_rejects_content_or_manifest_tampering(tmp_path, monkeypatch) -> None:
+    source = Path("demo/artifacts/replays/DEMO-PAT-001.json")
+    replay_root = tmp_path / "replays"
+    replay_root.mkdir()
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    (replay_root / source.name).write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setattr(service, "REPLAY_ROOT", replay_root)
+    monkeypatch.setattr(service, "REPLAY_MANIFEST_PATH", Path("demo/cases/demo_case_manifest.json"))
+    assert get_replay("DEMO-PAT-001")["content_sha256"] == payload["content_sha256"]
+
+    payload["clean"]["receiver"]["decision"] = "TAMPERED"
+    (replay_root / source.name).write_text(json.dumps(payload), encoding="utf-8")
+    import pytest
+    with pytest.raises(ValueError, match="failed integrity verification"):
+        get_replay("DEMO-PAT-001")
+
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    (replay_root / source.name).write_text(json.dumps(payload), encoding="utf-8")
+    manifest = json.loads(Path("demo/cases/demo_case_manifest.json").read_text(encoding="utf-8"))
+    manifest["cases"][0]["artifact_id"] = "0" * 64
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setattr(service, "REPLAY_MANIFEST_PATH", manifest_path)
+    with pytest.raises(ValueError, match="failed integrity verification"):
+        get_replay("DEMO-PAT-001")
 
 
 def test_frontend_api_contracts() -> None:

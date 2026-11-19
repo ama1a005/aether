@@ -190,6 +190,7 @@ def replay(case_id: str):
     _case(case_id)
     try: return get_replay(case_id)
     except KeyError as exc: raise HTTPException(404, f"no verified replay for {case_id}") from exc
+    except ValueError as exc: raise HTTPException(500, str(exc)) from exc
 
 
 @app.get("/api/demo/replay-live/{case_id}")
