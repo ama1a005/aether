@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 import platform
 from typing import Any, Mapping
 
+from causal.remediation_freeze import frozen_text_hash_matches
+
 
 @dataclass(frozen=True)
 class VerifiedBundle:
@@ -65,7 +67,7 @@ def verify_protocol_approval(proposal: Path, decision: Path) -> dict[str, Any]:
         raise PermissionError("unsupported protocol decision schema")
     if payload.get("approved") is not True or not isinstance(payload.get("reviewer"), str) or not payload["reviewer"].strip():
         raise PermissionError("protocol does not have an identified human approval")
-    if payload.get("proposal_sha256") != sha256_file(proposal):
+    if not frozen_text_hash_matches(proposal, str(payload.get("proposal_sha256", ""))):
         raise PermissionError("protocol decision does not match the immutable proposal")
     if payload.get("validation_authorized") is not False or payload.get("test_authorized") is not False:
         raise PermissionError("supporting protocol decision must keep protected splits closed")
