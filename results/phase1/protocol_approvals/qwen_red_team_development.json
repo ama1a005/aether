@@ -1,0 +1,19 @@
+{
+  "schema_version": "aether.protocol-decision.v1",
+  "approved": true,
+  "reviewer": "human_project_owner",
+  "approval_source": "explicit_user_approval_in_member_2_workstream",
+  "reviewed_date": "2026-11-20",
+  "proposal_path": "configs/experiments/qwen_red_team_development.yaml",
+  "proposal_sha256": "86c4a4dae88978dfedb891e8d0e65c98fcf650f58d5fcd38a12394c0d66608d0",
+  "validation_authorized": false,
+  "test_authorized": false,
+  "authorized_next_state": "EXECUTE_APPROVED_DEVELOPMENT_ONLY_QWEN_RED_TEAM",
+  "restrictions": [
+    "development_split_only",
+    "pinned_qwen_revision_only",
+    "no_synthetic_or_rule_backend_fallback",
+    "retain_negative_error_and_incomplete_outcomes",
+    "verify_before_ingestion"
+  ]
+}
