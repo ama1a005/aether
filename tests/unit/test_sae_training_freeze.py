@@ -9,6 +9,7 @@ from experiments.phase1.sae_training_freeze import (
     load_and_validate_amendment,
     load_and_validate_freeze,
     load_and_validate_v1_2_amendment,
+    load_and_validate_v1_3_amendment,
     verify_human_decision,
 )
 
@@ -16,6 +17,7 @@ from experiments.phase1.sae_training_freeze import (
 PROTOCOL = Path("configs/experiments/qwen_sae_training_freeze_v1.json")
 AMENDMENT = Path("configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json")
 AMENDMENT_V1_2 = Path("configs/experiments/qwen_sae_training_freeze_v1_2_amendment.json")
+AMENDMENT_V1_3 = Path("configs/experiments/qwen_sae_training_freeze_v1_3_amendment.json")
 DECISION = Path("results/phase1/sae_training_freeze/decision.json")
 
 
@@ -94,3 +96,23 @@ def test_v1_2_rejects_unreviewed_file_hash_change(tmp_path) -> None:
     candidate.write_text(json.dumps(raw), encoding="utf-8")
     with pytest.raises(ValueError, match="retrieval mismatch"):
         load_and_validate_v1_2_amendment(candidate, AMENDMENT, PROTOCOL)
+
+
+def test_v1_3_changes_only_execution_and_negative_result_semantics() -> None:
+    amendment = load_and_validate_v1_3_amendment(
+        AMENDMENT_V1_3, AMENDMENT_V1_2, AMENDMENT, PROTOCOL
+    )
+    assert amendment["execution_semantics"]["preeligibility_early_stopping"] == "forbidden"
+    assert amendment["execution_semantics"]["maximum_epochs_unchanged"] == 100
+    assert amendment["validation_executions"] == amendment["test_executions"] == 0
+
+
+def test_v1_3_rejects_threshold_or_epoch_drift(tmp_path) -> None:
+    raw = json.loads(AMENDMENT_V1_3.read_text(encoding="utf-8"))
+    raw["execution_semantics"]["maximum_epochs_unchanged"] = 10
+    candidate = tmp_path / "bad.json"
+    candidate.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(ValueError, match="maximum epochs"):
+        load_and_validate_v1_3_amendment(
+            candidate, AMENDMENT_V1_2, AMENDMENT, PROTOCOL
+        )

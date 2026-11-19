@@ -20,12 +20,12 @@ def _markdown(source: str) -> dict:
 def generate(commit: str, destination: Path) -> None:
     """Write a restart-safe notebook pinned to an immutable implementation commit."""
     cells = [
-        _markdown("""# AETHER Qwen SAE v1.2 - dual-T4 execution
+        _markdown("""# AETHER Qwen SAE v1.3 - dual-T4 execution
 
 Use a Kaggle **2 x T4 GPU** session with Internet enabled. This v1.2 package
 verifies the exact approved corpus file before model work. Add notebook secrets
 `HF_TOKEN` (write token) and `AETHER_HF_REPO` (for example
-`DXVNX05/aether-qwen-sae-v1-2`). The dataset repository is created privately.
+`DXVNX05/aether-qwen-sae-v1-3`). The dataset repository is created privately.
 
 Run all cells in order. Completed corpus blocks and epoch checkpoints are
 uploaded continuously. If Kaggle stops, start a new session with the same two
@@ -35,11 +35,11 @@ This is development-only reconstruction/sparsity evidence. It does not access
 validation/test cases and cannot support a causal SAE-feature claim."""),
         _code(f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile,threading,time
-WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-sae-v1-2')
+WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-sae-v1-3')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
-CACHE=RUNTIME/'hf-cache'; OUTPUT=WORK/'aether-qwen-sae-v1-2'
+CACHE=RUNTIME/'hf-cache'; OUTPUT=WORK/'aether-qwen-sae-v1-3'
 URL='https://github.com/ama1a005/aether.git'; COMMIT='{commit}'
-REMOTE_PREFIX='sae-v1-2'
+REMOTE_SOURCE_PREFIX='sae-v1-2'; REMOTE_PREFIX='sae-v1-3'
 os.environ.update({{'MPLBACKEND':'Agg','PYTHONNOUSERSITE':'1','TOKENIZERS_PARALLELISM':'false'}})
 for path in (RUNTIME,CACHE,OUTPUT): path.mkdir(parents=True,exist_ok=True)
 print(subprocess.run(['nvidia-smi','--query-gpu=index,name,memory.total,memory.free','--format=csv,noheader'],capture_output=True,text=True).stdout)
@@ -69,11 +69,12 @@ HF_REPO=secrets.get_secret('AETHER_HF_REPO'); assert os.environ['HF_TOKEN'] and 
 api=HfApi(token=os.environ['HF_TOKEN'])
 api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
 assert api.repo_info(repo_id=HF_REPO,repo_type='dataset').private
-try:
- remote=Path(snapshot_download(HF_REPO,repo_type='dataset',allow_patterns=f'{REMOTE_PREFIX}/*',cache_dir=RUNTIME/'remote-cache'))/REMOTE_PREFIX
- if remote.is_dir(): shutil.copytree(remote,OUTPUT,dirs_exist_ok=True); print('Restored remote checkpoint:',remote)
-except Exception as error:
- print('No prior remote checkpoint restored:',type(error).__name__,str(error))
+for prefix in (REMOTE_SOURCE_PREFIX,REMOTE_PREFIX):
+ try:
+  remote=Path(snapshot_download(HF_REPO,repo_type='dataset',allow_patterns=f'{prefix}/*',cache_dir=RUNTIME/f'remote-cache-{prefix}'))/prefix
+  if remote.is_dir(): shutil.copytree(remote,OUTPUT,dirs_exist_ok=True); print('Restored remote checkpoint:',remote)
+ except Exception as error:
+  print('No remote checkpoint restored for',prefix,type(error).__name__,str(error))
 
 def upload_tree_once(root, remote_prefix):
  root=Path(root)
@@ -144,7 +145,7 @@ for gpu in (0,1):
 run_with_sync(commands,[(activations,f'{REMOTE_PREFIX}/activations')],'dual-GPU activation capture')
 assert len(list(activations.glob('block_*.npy')))==256
 print('All 256 activation blocks retained.')"""),
-        _code("""# Three frozen SAE seeds. Seeds 11/22 run together, then seed 33.
+        _code("""# Three frozen SAE seeds. Seeds 11/22 resume together, then seed 33 always runs.
 seeds_root=OUTPUT/'seeds'; seeds_root.mkdir(exist_ok=True)
 def train_command(seed,gpu):
  return [str(PY),'-u','-m','experiments.phase1.qwen_sae_training','train-seed',
@@ -154,25 +155,31 @@ run_with_sync([train_command(11,0),train_command(22,1)],[(seeds_root,f'{REMOTE_P
 run_with_sync([train_command(33,0)],[(seeds_root,f'{REMOTE_PREFIX}/seeds')],'SAE seed 33')
 assert all((seeds_root/f'seed-{seed}'/'seed_summary.json').is_file() for seed in (11,22,33))
 print('All frozen seeds complete.')"""),
-        _code("""# Select without AETHER audit access, then capture the frozen audit on GPU 0.
-selection_code='from pathlib import Path; from experiments.phase1.qwen_sae_training import select_seed; print(select_seed(Path(__import__("sys").argv[1])))'
-selected=Path(subprocess.check_output([str(PY),'-c',selection_code,str(seeds_root)],cwd=REPO,text=True).strip())
-print('Selected checkpoint:',selected)
-audit=OUTPUT/'audit'
-if not (audit/'aether_audit_activation_manifest.json').is_file():
- subprocess.run([str(PY),'-u','-m','experiments.phase1.qwen_sae_training','capture-audit',
-  '--output',str(audit),'--snapshot',str(model_snapshot),'--cache',str(CACHE),'--device','cuda:0'],cwd=REPO,check=True)
-upload_tree_once(audit,f'{REMOTE_PREFIX}/audit')"""),
+        _code("""# Select without AETHER audit access. Skip audit for an all-seed rejection.
+selection_code='from pathlib import Path; from experiments.phase1.qwen_sae_training import select_seed,NoEligibleSeed; import sys; p=Path(sys.argv[1]);\\ntry: print(select_seed(p))\\nexcept NoEligibleSeed: print("NONE")'
+selection=subprocess.check_output([str(PY),'-c',selection_code,str(seeds_root)],cwd=REPO,text=True).strip()
+selected=None if selection=='NONE' else Path(selection); audit=OUTPUT/'audit'; final=OUTPUT/'final'
+if selected is None:
+ print('All three seeds completed without an eligible checkpoint; retaining scientific rejection.')
+ if not (final/'summary.json').is_file():
+  subprocess.run([str(PY),'-m','experiments.phase1.qwen_sae_training','finalize-rejected-seeds',
+   '--seeds',str(seeds_root),'--output',str(final)],cwd=REPO,check=True)
+else:
+ print('Selected checkpoint:',selected)
+ if not (audit/'aether_audit_activation_manifest.json').is_file():
+  subprocess.run([str(PY),'-u','-m','experiments.phase1.qwen_sae_training','capture-audit',
+   '--output',str(audit),'--snapshot',str(model_snapshot),'--cache',str(CACHE),'--device','cuda:0'],cwd=REPO,check=True)
+ upload_tree_once(audit,f'{REMOTE_PREFIX}/audit')"""),
         _code("""# Final evaluation, independent verification, durable export.
 final=OUTPUT/'final'
-if not (final/'summary.json').is_file():
+if selected is not None and not (final/'summary.json').is_file():
  subprocess.run([str(PY),'-m','experiments.phase1.qwen_sae_training','evaluate-audit',
   '--seeds',str(seeds_root),'--audit',str(audit),'--output',str(final)],cwd=REPO,check=True)
 verification=subprocess.check_output([str(PY),'-m','scripts.verify_qwen_sae_bundle',str(OUTPUT)],cwd=REPO,text=True)
 print(verification); upload_tree_once(OUTPUT,REMOTE_PREFIX)
-archive=WORK/'aether-qwen-sae-v1-2-results.tar.gz'
+archive=WORK/'aether-qwen-sae-v1-3-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{REMOTE_PREFIX}/aether-qwen-sae-v1-2-results.tar.gz',repo_id=HF_REPO,repo_type='dataset')
+api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{REMOTE_PREFIX}/aether-qwen-sae-v1-3-results.tar.gz',repo_id=HF_REPO,repo_type='dataset')
 print(json.dumps(json.loads((final/'summary.json').read_text()),indent=2)); print('ARCHIVE:',archive,archive.stat().st_size)"""),
     ]
     notebook = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

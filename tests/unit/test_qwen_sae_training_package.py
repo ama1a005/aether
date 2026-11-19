@@ -8,7 +8,9 @@ import torch
 
 from experiments.phase1.qwen_sae_training import (
     TorchSAE,
+    NoEligibleSeed,
     authorization,
+    finalize_rejected_seeds,
     select_corpus_tokens,
     select_seed,
     train_seed,
@@ -59,11 +61,30 @@ def test_seed_selection_requires_all_seeds_and_uses_error_then_seed(tmp_path) ->
         root.mkdir()
         (root / "seed_summary.json").write_text(json.dumps({
             "seed": seed,
+            "scientific_outcome": "SAE_SEED_ELIGIBLE",
             "best_selection": {"relative_reconstruction_error": error},
             "validation_executions": 0,
             "test_executions": 0,
         }), encoding="utf-8")
     assert select_seed(tmp_path).name == "seed-22"
+
+
+def test_all_seed_rejection_is_retained_without_audit(tmp_path) -> None:
+    seeds = tmp_path / "seeds"
+    for seed in (11, 22, 33):
+        root = seeds / f"seed-{seed}"
+        root.mkdir(parents=True)
+        (root / "seed_summary.json").write_text(json.dumps({
+            "seed": seed, "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+            "best_selection": None, "epochs_completed": 100,
+            "validation_executions": 0, "test_executions": 0,
+        }), encoding="utf-8")
+    with pytest.raises(NoEligibleSeed):
+        select_seed(seeds)
+    destination = finalize_rejected_seeds(seeds, tmp_path / "final")
+    summary = json.loads(destination.read_text(encoding="utf-8"))
+    assert summary["overall"] == "FAIL"
+    assert summary["scientific_outcome"] == "SAE_REJECTED_NO_ELIGIBLE_SEED"
 
 
 def test_training_refuses_incomplete_capture_before_allocating_model(tmp_path) -> None:
@@ -100,6 +121,8 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     )
     assert "allow_patterns='wikitext-2-raw-v1/*'" not in joined
     assert "{{" not in joined and "}}" not in joined
+    assert "REMOTE_SOURCE_PREFIX" in joined and "sae-v1-2" in joined
+    assert "finalize-rejected-seeds" in joined
 
 
 def test_bundle_verifier_rejects_missing_inventory(tmp_path: Path) -> None:

@@ -46,6 +46,23 @@ def verify(root: Path) -> dict[str, Any]:
            for path in blocks):
         raise ValueError("SAE corpus activation block shape mismatch")
 
+    summary = json.loads((root / "final/summary.json").read_text(encoding="utf-8"))
+    if summary.get("scientific_outcome") == "SAE_REJECTED_NO_ELIGIBLE_SEED":
+        if summary.get("overall") != "FAIL" or summary.get("selected_seed") is not None:
+            raise ValueError("SAE negative summary is inconsistent")
+        seed_summaries = [json.loads((root / f"seeds/seed-{seed}/seed_summary.json").read_text(encoding="utf-8"))
+                          for seed in (11, 22, 33)]
+        if any(item.get("scientific_outcome") != "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT"
+               or item.get("epochs_completed") != 100 for item in seed_summaries):
+            raise ValueError("SAE negative result lacks three completed rejected seeds")
+        if (root / "audit").exists():
+            raise ValueError("SAE negative result must not access the AETHER audit")
+        if summary.get("validation_executions") != 0 or summary.get("test_executions") != 0:
+            raise PermissionError("SAE negative result accessed a protected split")
+        return {"bundle_valid": True, "scientific_outcome": summary["scientific_outcome"],
+                "selected_seed": None, "corpus_blocks": len(blocks), "audit_records": 0,
+                "validation_executions": 0, "test_executions": 0}
+
     selected = select_seed(root / "seeds")
     codec = load_sae_checkpoint(
         selected, expected_model_id=base["model_id"],
@@ -60,7 +77,6 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("SAE AETHER audit cohort mismatch")
     if audit.get("validation_executions") != 0 or audit.get("test_executions") != 0:
         raise PermissionError("SAE bundle accessed a protected split")
-    summary = json.loads((root / "final/summary.json").read_text(encoding="utf-8"))
     if summary.get("selected_seed") != codec.provenance.training_seed:
         raise ValueError("SAE selected seed differs from final summary")
     if summary.get("validation_executions") != 0 or summary.get("test_executions") != 0:

@@ -23,6 +23,7 @@ from causal.interventions.sae import load_sae_checkpoint
 from experiments.phase1.sae_training_freeze import (
     load_and_validate_amendment,
     load_and_validate_v1_2_amendment,
+    load_and_validate_v1_3_amendment,
     verify_human_decision,
 )
 from instrumentation.adapters import Qwen2ModelAdapter
@@ -35,6 +36,12 @@ AMENDMENT_V1_2 = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_2_amend
 BASE_DECISION = ROOT / "results/phase1/sae_training_freeze/decision.json"
 AMENDMENT_DECISION = ROOT / "results/phase1/sae_training_freeze/amendment_decision.json"
 AMENDMENT_V1_2_DECISION = ROOT / "results/phase1/sae_training_freeze/v1_2_amendment_decision.json"
+AMENDMENT_V1_3 = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_3_amendment.json"
+AMENDMENT_V1_3_DECISION = ROOT / "results/phase1/sae_training_freeze/v1_3_amendment_decision.json"
+
+
+class NoEligibleSeed(RuntimeError):
+    """All frozen seeds completed without an eligible checkpoint."""
 
 
 def sha256_file(path: Path) -> str:
@@ -47,7 +54,7 @@ def sha256_file(path: Path) -> str:
 
 
 def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load the approved chain and return the effective v1.2 amendment."""
+    """Load the approved chain and return the effective v1.3 amendment."""
     base = json.loads(BASE.read_text(encoding="utf-8"))
     verify_human_decision(BASE, BASE_DECISION)
     amendment = load_and_validate_amendment(AMENDMENT, BASE)
@@ -66,6 +73,16 @@ def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
         raise PermissionError("SAE v1.2 approval hash mismatch")
     if v1_2_decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE v1.2 lacks a human project owner")
+    load_and_validate_v1_3_amendment(
+        AMENDMENT_V1_3, AMENDMENT_V1_2, AMENDMENT, BASE
+    )
+    v1_3_decision = json.loads(AMENDMENT_V1_3_DECISION.read_text(encoding="utf-8"))
+    if v1_3_decision.get("decision") != "APPROVED":
+        raise PermissionError("SAE v1.3 is not approved")
+    if v1_3_decision.get("proposal_sha256") != sha256_file(AMENDMENT_V1_3):
+        raise PermissionError("SAE v1.3 approval hash mismatch")
+    if v1_3_decision.get("reviewer_role") != "human_project_owner":
+        raise PermissionError("SAE v1.3 lacks a human project owner")
     effective = json.loads(json.dumps(amendment))
     effective["training_corpus"].update(correction["correction"])
     return base, effective
@@ -272,6 +289,13 @@ def train_seed(
         state = torch.load(checkpoint, map_location=device, weights_only=True)
         model.load_state_dict(state["model"]); optimizer.load_state_dict(state["optimizer"])
         start_epoch = int(state["epoch"]); best = state["best"]; stale = int(state["stale"])
+        history = [json.loads(line) for line in history_path.read_text(encoding="utf-8").splitlines()]
+        if (len(history) != start_epoch
+                or [row.get("epoch") for row in history] != list(range(1, start_epoch + 1))
+                or any(row.get("seed") != seed for row in history)):
+            raise ValueError("SAE retained checkpoint and history prefix differ")
+        if best is None:
+            stale = 0
     generator = torch.Generator(device="cpu").manual_seed(seed + start_epoch)
     batch_size = optimization["batch_size"]
     bounds = base["selection"]
@@ -294,7 +318,7 @@ def train_seed(
                 key: value.detach().cpu().clone() for key, value in model.state_dict().items()
             }}
             stale = 0
-        else:
+        elif best is not None:
             stale += 1
         row = {"seed": seed, "epoch": epoch + 1, "mean_training_loss": total / len(permutation.split(batch_size)),
                **metrics, "eligible": eligible}
@@ -302,15 +326,23 @@ def train_seed(
             stream.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")
             stream.flush(); os.fsync(stream.fileno())
         temporary = checkpoint.with_suffix(".tmp")
-        torch.save({"epoch": epoch + 1, "model": model.state_dict(),
-                    "optimizer": optimizer.state_dict(), "best": best, "stale": stale}, temporary)
+        torch.save({"epoch": epoch + 1, "seed": seed,
+                    "protocol_sha256": sha256_file(AMENDMENT_V1_3),
+                    "model": model.state_dict(), "optimizer": optimizer.state_dict(),
+                    "best": best, "stale": stale}, temporary)
         temporary.replace(checkpoint)
         print(json.dumps({"event": "training_epoch", **row}), flush=True)
-        if stale >= optimization["early_stopping_patience"]:
+        if best is not None and stale >= optimization["early_stopping_patience"]:
             break
     if best is None:
-        raise RuntimeError("seed produced no sparsity-eligible checkpoint")
-    best_state = best.pop("state")
+        summary = {"schema_version": "aether.sae-seed-result.v1", "seed": seed,
+                   "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+                   "best_selection": None, "epochs_completed": epoch + 1,
+                   "validation_executions": 0, "test_executions": 0}
+        (output / "seed_summary.json").write_text(
+            json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
+        return summary
+    best_state = best["state"]
     model.load_state_dict(best_state)
     weights = output / "weights.npz"
     np.savez(
@@ -332,8 +364,10 @@ def train_seed(
         training_seed=seed, weights_sha256=sha256_file(weights),
     )
     write_sae_metadata(output / "metadata.json", provenance)
+    best_summary = {key: value for key, value in best.items() if key != "state"}
     summary = {"schema_version": "aether.sae-seed-result.v1", "seed": seed,
-               "best_selection": best, "epochs_completed": epoch + 1,
+               "scientific_outcome": "SAE_SEED_ELIGIBLE",
+               "best_selection": best_summary, "epochs_completed": epoch + 1,
                "validation_executions": 0, "test_executions": 0}
     (output / "seed_summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
     return summary
@@ -342,18 +376,51 @@ def train_seed(
 def select_seed(seed_root: Path) -> Path:
     """Select the frozen lowest-error seed with deterministic seed tie-break."""
     candidates: list[tuple[float, int, Path]] = []
+    observed_seeds: set[int] = set()
     for path in sorted(seed_root.glob("seed-*/seed_summary.json")):
         summary = json.loads(path.read_text(encoding="utf-8"))
         if summary.get("validation_executions") != 0 or summary.get("test_executions") != 0:
             raise PermissionError("SAE seed result accessed a protected split")
-        error = summary.get("best_selection", {}).get("relative_reconstruction_error")
         seed = summary.get("seed")
-        if not isinstance(error, (int, float)) or not isinstance(seed, int):
+        if not isinstance(seed, int):
+            raise ValueError("invalid SAE seed summary")
+        observed_seeds.add(seed)
+        if summary.get("scientific_outcome") == "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT":
+            continue
+        error = (summary.get("best_selection") or {}).get("relative_reconstruction_error")
+        if summary.get("scientific_outcome") != "SAE_SEED_ELIGIBLE" or not isinstance(error, (int, float)):
             raise ValueError("invalid SAE seed summary")
         candidates.append((float(error), seed, path.parent))
-    if {item[1] for item in candidates} != {11, 22, 33}:
+    if observed_seeds != {11, 22, 33}:
         raise ValueError("all three frozen SAE seeds are required")
+    if not candidates:
+        raise NoEligibleSeed("all frozen SAE seeds were sparsity-ineligible")
     return min(candidates, key=lambda item: (item[0], item[1]))[2]
+
+
+def finalize_rejected_seeds(seed_root: Path, output: Path) -> Path:
+    """Retain a complete negative result when all three seeds are ineligible."""
+    try:
+        select_seed(seed_root)
+    except NoEligibleSeed:
+        output.mkdir(parents=True, exist_ok=False)
+        summaries = [json.loads((seed_root / f"seed-{seed}/seed_summary.json").read_text(encoding="utf-8"))
+                     for seed in (11, 22, 33)]
+        result = {"schema_version": "aether.qwen-sae-result.v1", "overall": "FAIL",
+                  "scientific_outcome": "SAE_REJECTED_NO_ELIGIBLE_SEED",
+                  "selected_seed": None, "seed_summaries": summaries,
+                  "validation_executions": 0, "test_executions": 0,
+                  "claim_boundary": json.loads(BASE.read_text(encoding="utf-8"))["claim_boundary"]}
+        destination = output / "summary.json"
+        destination.write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
+        bundle_root = output.parent
+        inventory = {path.relative_to(bundle_root).as_posix(): sha256_file(path)
+                     for path in sorted(bundle_root.rglob("*"))
+                     if path.is_file() and path.name != "archive_contents.json"}
+        (bundle_root / "archive_contents.json").write_text(
+            json.dumps(inventory, indent=2, sort_keys=True), encoding="utf-8")
+        return destination
+    raise ValueError("at least one eligible seed exists; capture and evaluate the audit")
 
 
 def capture_aether_audit(
@@ -496,6 +563,8 @@ def main() -> None:
     evaluate = sub.add_parser("evaluate-audit")
     evaluate.add_argument("--seeds", type=Path, required=True); evaluate.add_argument("--audit", type=Path, required=True)
     evaluate.add_argument("--output", type=Path, required=True)
+    reject = sub.add_parser("finalize-rejected-seeds")
+    reject.add_argument("--seeds", type=Path, required=True); reject.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "capture-corpus":
         result = capture_corpus_shard(args.tokens, args.output, args.snapshot, args.cache,
@@ -504,8 +573,10 @@ def main() -> None:
         result = train_seed(args.activations, args.output, seed=args.seed, device=args.device)
     elif args.command == "capture-audit":
         result = {"manifest": str(capture_aether_audit(args.output, args.snapshot, args.cache, device=args.device))}
-    else:
+    elif args.command == "evaluate-audit":
         result = {"summary": str(evaluate_aether_audit(args.seeds, args.audit, args.output))}
+    else:
+        result = {"summary": str(finalize_rejected_seeds(args.seeds, args.output))}
     print(json.dumps(result, indent=2, sort_keys=True, default=str))
 
 

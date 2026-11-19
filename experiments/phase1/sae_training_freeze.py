@@ -13,6 +13,7 @@ QUALIFIED_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 ALLOWED_COMPONENT = "receiver.module.L22.attention_output"
 AMENDMENT_SCHEMA = "aether.qwen-sae-training-freeze-amendment.v1.1"
 AMENDMENT_V1_2_SCHEMA = "aether.qwen-sae-training-freeze-amendment.v1.2"
+AMENDMENT_V1_3_SCHEMA = "aether.qwen-sae-training-freeze-amendment.v1.3"
 
 
 def sha256_file(path: Path) -> str:
@@ -159,4 +160,41 @@ def load_and_validate_v1_2_amendment(
         review.get("approved") is True and review.get("reviewer") and review.get("utc_timestamp")
     ):
         raise PermissionError("SAE v1.2 lacks exact human approval")
+    return amendment
+
+
+def load_and_validate_v1_3_amendment(
+    path: Path, v1_2_path: Path, v1_1_path: Path, base_path: Path,
+    *, require_approval: bool = False,
+) -> dict[str, Any]:
+    """Validate the execution-only v1.3 correction without weakening gates."""
+    amendment = json.loads(path.read_text(encoding="utf-8"))
+    if amendment.get("schema_version") != AMENDMENT_V1_3_SCHEMA:
+        raise ValueError("unexpected SAE v1.3 amendment schema")
+    if amendment.get("parent_amendment_sha256") != sha256_file(v1_2_path):
+        raise ValueError("SAE v1.3 parent-amendment hash mismatch")
+    load_and_validate_v1_2_amendment(v1_2_path, v1_1_path, base_path)
+    base = load_and_validate_freeze(base_path)
+    execution = amendment.get("execution_semantics", {})
+    if execution.get("preeligibility_early_stopping") != "forbidden":
+        raise ValueError("SAE v1.3 must forbid pre-eligibility early stopping")
+    if execution.get("maximum_epochs_unchanged") != base["optimization"]["maximum_epochs"]:
+        raise ValueError("SAE v1.3 changes maximum epochs")
+    if execution.get("posteligibility_patience") != base["optimization"]["early_stopping_patience"]:
+        raise ValueError("SAE v1.3 changes patience")
+    unchanged = set(amendment.get("unchanged", []))
+    required = {"optimizer_learning_rate_batch_size_l1_coefficient_and_loss",
+                "minimum_active_fraction_0_001", "maximum_active_fraction_0_2",
+                "maximum_relative_reconstruction_error_0_1", "validation_and_test_locks"}
+    if not required.issubset(unchanged):
+        raise ValueError("SAE v1.3 omits a frozen scientific gate")
+    if amendment.get("validation_executions") != 0 or amendment.get("test_executions") != 0:
+        raise PermissionError("SAE v1.3 opens a protected split")
+    if amendment.get("status") != "awaiting_human_scientific_review":
+        raise ValueError("unexpected SAE v1.3 status")
+    review = amendment.get("human_review", {})
+    if require_approval and not (
+        review.get("approved") is True and review.get("reviewer") and review.get("utc_timestamp")
+    ):
+        raise PermissionError("SAE v1.3 lacks exact human approval")
     return amendment
