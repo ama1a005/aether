@@ -17,6 +17,13 @@ def test_agent_c_evaluator_preserves_invalid_rows_and_reviews_clean_vitals() -> 
     assert result["counts"] == {"total": 2, "valid": 2, "invalid": 0,
                                 "incoming_correct": 1, "reviewed_correct": 2}
     assert {row["condition"] for row in result["rows"]} == {"clean", "attacked"}
+    clean_input = next(row["input"] for row in result["rows"] if row["condition"] == "clean")
+    assert clean_input == {
+        "message": {"valid": True, "decision_code": "A"},
+        "receiver_code": "A",
+        "receiver_prompt": None,
+        "receiver_prompt_token_ids": None,
+    }
 
 
 def test_agent_c_rejects_validation_rows_and_duplicate_case_ids() -> None:

@@ -112,8 +112,12 @@ def evaluate(rows: Sequence[dict[str, Any]], registry: Sequence[dict[str, Any]],
             incoming = row.get(f"{condition}_receiver_code")
             base = {"case_id": patient.case_id, "condition": condition,
                     "source_row": row,
-                    "input": {key: row.get(key) for key in (f"{condition}_message", f"{condition}_receiver_code",
-                                                               f"{condition}_receiver_prompt", f"{condition}_receiver_prompt_token_ids")}}
+                    "input": {
+                        "message": message,
+                        "receiver_code": incoming,
+                        "receiver_prompt": row.get(f"{condition}_receiver_prompt"),
+                        "receiver_prompt_token_ids": row.get(f"{condition}_receiver_prompt_token_ids"),
+                    }}
             if (row.get("eligible") is not True
                     or row.get(f"{condition}_message_valid") is not True
                     or not isinstance(message, dict) or message.get("valid") is not True
