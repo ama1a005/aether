@@ -48,6 +48,8 @@ def assemble_bfcl_summary(
     limitations = [
         "Evaluates benign tool-use competence only; does not alone demonstrate DCMG novelty.",
         "Uses disclosed AETHER Qwen2.5 adapter; not an unmodified leaderboard submission.",
+        "Evaluates the four prespecified Phase-1 BFCL categories only; not the full BFCL category suite or a leaderboard result.",
+        "BFCL's own evaluation/test cases may be included; AETHER validation and test splits are not accessed.",
     ]
     if is_blocked:
         limitations.extend(execution_blocked_reasons or [])
@@ -65,7 +67,7 @@ def assemble_bfcl_summary(
         "official_evaluator": official_evaluator,
         "official_evaluator_executed": executed,
         "categories": list(PHASE1_CATEGORIES),
-        "selection_rule": "complete categories: simple, multiple, parallel, irrelevance; no outcome conditioning",
+        "selection_rule": "complete evaluation of prespecified Phase-1 categories only: simple, multiple, parallel, irrelevance; no outcome conditioning",
         "partial_evaluation": False,
         "status": status,
         "overall": overall,

@@ -10,15 +10,17 @@ has reviewed and approved the protocol.
 1. The assignment and `docs/benchmarks_nov19/BFCL_RUNBOOK.md`, including the
    disclosed-adapter claim boundary. This is BFCL's official evaluator with the
    AETHER Qwen adapter; it is not an unmodified leaderboard-model submission.
-2. The frozen config SHA-256 below and its fixed complete category list:
-   `simple`, `multiple`, `parallel`, `irrelevance`. Do not edit the config to
-   make a runtime pass.
+2. The frozen config SHA-256 below and its four prespecified Phase-1 categories:
+   `simple`, `multiple`, `parallel`, `irrelevance`. This is a complete evaluation
+   of those four categories only, not the full BFCL category suite and not a
+   leaderboard result. Do not edit the config to make a runtime pass.
 3. Target model `Qwen/Qwen2.5-1.5B-Instruct`, model and tokenizer revision
    `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, and pinned wheel SHA-256.
 4. The use of BFCL's native generation and evaluation commands, with invalid and
    error attempts included in denominators.
-5. The development-only boundary: this benchmark uses no AETHER validation or
-   test split.
+5. Split terminology: BFCL's own official evaluation/test cases may be
+   evaluated. `split: development` means the AETHER project development scope;
+   no AETHER validation or test split may be accessed.
 6. Required Linux CUDA inference hardware and the no-model-access preflight.
 7. The pinned runtime compatibility set: Python 3.11.9, `uv==0.11.8`,
    `vllm==0.34.0`, `torch==2.14.0`, CUDA 13.0, NVIDIA driver R580 or newer,

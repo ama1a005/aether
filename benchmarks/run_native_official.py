@@ -18,6 +18,7 @@ import yaml
 from benchmarks.native_runners import NativeBenchmarkPlan, agentdojo_plan, bfcl_qwen25_plan, execute_native_plan
 from benchmarks.nov19_bfcl.preflight import (
     ADAPTER_REGISTRY_NAME,
+    BFCLPreflightResult,
     PHASE1_CATEGORIES,
     PINNED_MODEL_ID,
     PINNED_MODEL_REVISION,
@@ -159,15 +160,19 @@ def _finalize_bfcl_bundle(output: Path, metadata: dict[str, Any]) -> Path:
     return write_bundle_manifest(output, metadata)
 
 
-def _blocked_summary(reasons: list[str]) -> dict[str, Any]:
+def _blocked_summary(preflight: BFCLPreflightResult) -> dict[str, Any]:
     """Create a blocked readiness report without implying benchmark execution."""
-    summary = assemble_bfcl_summary(
-        VerificationResult(False, tuple(reasons), {}, {}),
-        execution_blocked_reasons=reasons,
-    )
     hardware_preflight = preflight.details.get("hardware", {})
+    summary = assemble_bfcl_summary(
+        VerificationResult(False, tuple(preflight.reasons), {}, {}),
+        execution_blocked_reasons=list(preflight.reasons),
+    )
     summary.update({
         "execution_status": "BLOCKED_BEFORE_MODEL_ACCESS",
+        "inference_backend": hardware_preflight.get("backend", "vllm"),
+        "inference_backend_version": hardware_preflight.get("backend_version"),
+        "torch_version": hardware_preflight.get("torch_version"),
+        "cuda_runtime_version": hardware_preflight.get("cuda_runtime_version"),
         "subset_totals": None,
         "invalid_error_counts": None,
         "validation_executions": 0,
@@ -245,7 +250,7 @@ def run(benchmark: str, config_path: Path, output: Path,
     output.mkdir(parents=True)
     _write_json(output / "preflight.json", preflight.to_dict())
     if not preflight.passed:
-        _write_json(output / "summary.json", _blocked_summary(list(preflight.reasons)))
+        _write_json(output / "summary.json", _blocked_summary(preflight))
         _finalize_bfcl_bundle(output, metadata)
         return output / "summary.json"
 
@@ -264,6 +269,7 @@ def run(benchmark: str, config_path: Path, output: Path,
             expected_model_adapter=ADAPTER_REGISTRY_NAME,
         ).verify()
     summary = assemble_bfcl_summary(verification)
+    hardware_preflight = preflight.details.get("hardware", {})
     summary.update({
         "execution_status": "COMPLETE" if not execution_error else "FAILED",
         "official_evaluator": verification.passed and execution_error is None,

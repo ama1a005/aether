@@ -285,6 +285,8 @@ def test_report_fails_closed_without_unwarranted_official_evaluator(tmp_path):
     assert summary["official_evaluator_executed"] is False
     assert summary["status"] == "FAILED"
     assert summary["overall"] == "FAIL"
+    assert "four prespecified Phase-1 BFCL categories only" in " ".join(summary["limitations"])
+    assert "AETHER validation and test splits are not accessed" in " ".join(summary["limitations"])
 
     # Blocked state
     blocked_summary = assemble_bfcl_summary(

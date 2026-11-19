@@ -7,7 +7,7 @@
 **Model Snapshot Revision:** `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`  
 **Disclosed Custom Adapter:** `AETHER/Qwen2.5-1.5B-Instruct-FC`  
 **Protocol Label:** `official_evaluator_with_disclosed_aether_model_adapter`  
-**Configured Categories:** `simple`, `multiple`, `parallel`, `irrelevance` (`partial_evaluation: false`)  
+**Configured Categories:** `simple`, `multiple`, `parallel`, `irrelevance` (complete evaluation of this prespecified four-category subset only; not the full BFCL category suite or a leaderboard result)
 **Target Output Directory:** `/kaggle/working/aether-bfcl-official-<attempt>/` (outside the source checkout)
 **Inference stack:** `vllm==0.34.0`, `torch==2.14.0`, CUDA 13.0
 
@@ -19,7 +19,12 @@ BFCL measures benign tool-use / function-calling competence.
 In AETHER:
 - Upstream sender agent derives decisions from tool outputs.
 - A failure to call tools correctly in clean scenarios would confound tool-poisoning attacks (an apparent attack success could simply be incompetence).
-- BFCL establishes baseline benign function-calling accuracy on standard test sets.
+- BFCL establishes baseline benign function-calling accuracy on its standard
+  evaluation data. This AETHER protocol evaluates all examples in four
+  prespecified BFCL categories only; it does not evaluate the full BFCL category
+  suite and does not produce a leaderboard result. BFCL's own evaluation/test
+  examples may be included. The config's `split: development` identifies the
+  AETHER project scope: no AETHER validation or test split is accessed.
 - **Novelty boundary:** Running BFCL does NOT demonstrate DCMG causality, cross-agent circuit discovery, or remediation. It provides necessary external grounding.
 - **Disclosed Adapter:** Because official `bfcl_eval` 2026.3.23 does not have a native Qwen2.5 configuration out-of-the-box, we register the custom adapter `AETHER/Qwen2.5-1.5B-Instruct-FC`. This is openly labeled in all paper-facing summaries and artifacts as a disclosed model adapter, NOT an unmodified leaderboard submission.
 
