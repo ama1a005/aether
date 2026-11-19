@@ -23,16 +23,21 @@ MEDIATOR_EVIDENCE = "authoritative ECG tool analysis"
 class Core04Evaluator:
     """Evaluate one frozen arm on exactly eight locked validation cases."""
 
+    expected_split = "validation"
+    evaluation_schema = "aether.core04-evaluation.v1"
+    result_schema = "aether.core04-arm-result.v1"
+    stage_name = "CORE-04"
+
     def __init__(self, adapter: Qwen2ModelAdapter, protocol: Mapping[str, Any],
                  cases: list[dict[str, Any]]) -> None:
         self.adapter = adapter
         self.protocol = protocol
         by_id = {str(case["case_id"]): case for case in cases}
         self.cases = [by_id[case_id] for case_id in protocol["cohort"]["case_ids"]]
-        if len(self.cases) != 8 or any(case.get("split") != "validation" for case in self.cases):
-            raise PermissionError("CORE-04 requires exactly eight validation cases")
+        if len(self.cases) != 8 or any(case.get("split") != self.expected_split for case in self.cases):
+            raise PermissionError(f"{self.stage_name} requires exactly eight {self.expected_split} cases")
         if any(case.get("case_id") not in protocol["cohort"]["case_ids"] for case in self.cases):
-            raise PermissionError("CORE-04 validation case identity differs")
+            raise PermissionError(f"{self.stage_name} case identity differs")
         self.label_ids = validate_label_tokens(adapter.tokenizer)
 
     def _sender(self, case: Mapping[str, Any], code: str) -> tuple[str, MediatorMessage, list[int]]:
@@ -43,11 +48,11 @@ class Core04Evaluator:
         output = self.adapter.tokenizer.decode([int(generated[0, len(ids)])],
                                                 skip_special_tokens=True).strip()
         if output not in {"A", "B"}:
-            raise ValueError(f"invalid CORE-04 sender code for {case['case_id']}: {output!r}")
+            raise ValueError(f"invalid {self.stage_name} sender code for {case['case_id']}: {output!r}")
         message = MediatorMessage.from_sender_code(str(case["task_id"]), output,
                                                    MEDIATOR_EVIDENCE)
         if not message.valid:
-            raise ValueError(f"invalid CORE-04 mediator message for {case['case_id']}")
+            raise ValueError(f"invalid {self.stage_name} mediator message for {case['case_id']}")
         return output, message, ids
 
     def _receiver_inputs(self, message: MediatorMessage) -> tuple[dict[str, torch.Tensor], list[int], str]:
@@ -80,7 +85,7 @@ class Core04Evaluator:
         finally:
             self.adapter.remove_hooks()
         if observed != expected:
-            raise RuntimeError(f"CORE-04 patch count differs: {observed} != {expected}")
+            raise RuntimeError(f"{self.stage_name} patch count differs: {observed} != {expected}")
         margin = float(logits[0, self.label_ids["A"]] - logits[0, self.label_ids["B"]])
         return margin, "A" if margin >= 0 else "B", ids, prompt, observed
 
@@ -106,9 +111,9 @@ class Core04Evaluator:
                 if condition == "clean" and arm == "no_defense":
                     baseline_margins[str(case["case_id"])] = margin
                 raw.append({
-                    "schema_version": "aether.core04-evaluation.v1",
+                    "schema_version": self.evaluation_schema,
                     "evidence_type": "real_model_intervention",
-                    "split": "validation", "case_id": str(case["case_id"]),
+                    "split": self.expected_split, "case_id": str(case["case_id"]),
                     "seed": seed, "arm": arm, "condition": condition, "status": "ok",
                     "sender_output": output, "message": asdict(message),
                     "receiver_decision": decision,
@@ -124,7 +129,7 @@ class Core04Evaluator:
         attacked = [row for row in raw if row["condition"] == "attacked"]
         # The patch arm's clean-margin reference is supplied later from its same-seed baseline.
         return {
-            "schema_version": "aether.core04-arm-result.v1", "arm": arm, "seed": seed,
+            "schema_version": self.result_schema, "arm": arm, "seed": seed,
             "status": "COMPLETE", "rows": raw,
             "attacked_decision_recovery_accuracy": sum(row["correct"] for row in attacked) / 8,
             "clean_decision_accuracy": sum(row["correct"] for row in clean) / 8,

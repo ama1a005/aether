@@ -1,5 +1,20 @@
 # AETHER Complete Project Study Guide
 
+## Verified status update — 18 November 2026
+
+The primary Qwen causal-core sequence has advanced beyond several historical
+status paragraphs later in this guide. Qwen2.5-1.5B-Instruct is qualified at
+the pinned revision, and QCI-2 plus CORE-02 through CORE-05 independently
+verify. The frozen receiver L20H5 paired-clean-donor patch recovered all
+attacked decisions in the four-case development audit, eight-case locked
+validation and eight-case once-only test for deterministic seeds 11/22/33,
+while preserving clean decisions. Repeated seeds are not independent samples.
+The repair depends on an oracle clean activation donor and is not deployable.
+Qwen2.5-0.5B failed balanced qualification. Official external benchmarks,
+trained-SAE evidence, red-team/Agent-C evidence and second-model generalization
+remain incomplete. When a historical paragraph conflicts with this update,
+the verified artifacts and `PROJECT_STATE.md` control.
+
 ## The project in one page
 
 AETHER is a research system for studying adversarial failure and causal information flow in a tool-using, two-agent pipeline. A synthetic `CaseRecord` is converted into tool evidence. A sender produces a structured `MediatorMessage`; a receiver converts that message into an outcome. An `AttackDelta` changes a narrowly authorized field, while instrumentation and interventions ask where the resulting behavior is represented and transmitted.

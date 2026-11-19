@@ -1,0 +1,134 @@
+{
+  "frozen_receiver_l20_h5:11": {
+    "arm": "frozen_receiver_l20_h5",
+    "attacked_decision_recovery_accuracy": 1.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 88,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 11,
+    "status": "COMPLETE"
+  },
+  "frozen_receiver_l20_h5:22": {
+    "arm": "frozen_receiver_l20_h5",
+    "attacked_decision_recovery_accuracy": 1.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 88,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 22,
+    "status": "COMPLETE"
+  },
+  "frozen_receiver_l20_h5:33": {
+    "arm": "frozen_receiver_l20_h5",
+    "attacked_decision_recovery_accuracy": 1.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 88,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 33,
+    "status": "COMPLETE"
+  },
+  "no_defense:11": {
+    "arm": "no_defense",
+    "attacked_decision_recovery_accuracy": 0.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 80,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 11,
+    "status": "COMPLETE"
+  },
+  "no_defense:22": {
+    "arm": "no_defense",
+    "attacked_decision_recovery_accuracy": 0.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 80,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 22,
+    "status": "COMPLETE"
+  },
+  "no_defense:33": {
+    "arm": "no_defense",
+    "attacked_decision_recovery_accuracy": 0.0,
+    "clean_decision_accuracy": 1.0,
+    "clean_flip_count": 0,
+    "clean_margins": {
+      "v2_case_024": 11.531898498535156,
+      "v2_case_025": 11.458354949951172,
+      "v2_case_026": 11.520042419433594,
+      "v2_case_027": 11.511415481567383,
+      "v2_case_028": -5.110713958740234,
+      "v2_case_029": -5.086048126220703,
+      "v2_case_030": -4.990594863891602,
+      "v2_case_031": -4.967693328857422
+    },
+    "invalid_or_error_count": 0,
+    "median_absolute_clean_margin_change": 0.0,
+    "model_forward_steps": 80,
+    "schema_version": "aether.core04-arm-result.v1",
+    "seed": 33,
+    "status": "COMPLETE"
+  }
+}

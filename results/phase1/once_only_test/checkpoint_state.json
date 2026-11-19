@@ -1,0 +1,141 @@
+{
+  "attempt_id": "d25c770d-9159-4114-8dfa-7eee8c8618bd",
+  "completed": {
+    "frozen_receiver_l20_h5:11": {
+      "arm": "frozen_receiver_l20_h5",
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 88,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 11,
+      "status": "COMPLETE"
+    },
+    "frozen_receiver_l20_h5:22": {
+      "arm": "frozen_receiver_l20_h5",
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 88,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 22,
+      "status": "COMPLETE"
+    },
+    "frozen_receiver_l20_h5:33": {
+      "arm": "frozen_receiver_l20_h5",
+      "attacked_decision_recovery_accuracy": 1.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 88,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 33,
+      "status": "COMPLETE"
+    },
+    "no_defense:11": {
+      "arm": "no_defense",
+      "attacked_decision_recovery_accuracy": 0.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 80,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 11,
+      "status": "COMPLETE"
+    },
+    "no_defense:22": {
+      "arm": "no_defense",
+      "attacked_decision_recovery_accuracy": 0.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 80,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 22,
+      "status": "COMPLETE"
+    },
+    "no_defense:33": {
+      "arm": "no_defense",
+      "attacked_decision_recovery_accuracy": 0.0,
+      "clean_decision_accuracy": 1.0,
+      "clean_flip_count": 0,
+      "clean_margins": {
+        "v2_case_032": 11.448297500610352,
+        "v2_case_033": 11.532947540283203,
+        "v2_case_034": 11.571205139160156,
+        "v2_case_035": 11.558145523071289,
+        "v2_case_036": -5.046552658081055,
+        "v2_case_037": -5.069400787353516,
+        "v2_case_038": -5.090482711791992,
+        "v2_case_039": -5.109279632568359
+      },
+      "invalid_or_error_count": 0,
+      "median_absolute_clean_margin_change": 0.0,
+      "model_forward_steps": 80,
+      "schema_version": "aether.core05-arm-result.v1",
+      "seed": 33,
+      "status": "COMPLETE"
+    }
+  },
+  "development_executions": 0,
+  "last_completed": "frozen_receiver_l20_h5:33",
+  "schema_version": "aether.core05-checkpoint.v1",
+  "validation_executions": 0
+}

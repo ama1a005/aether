@@ -13,6 +13,12 @@ def _read(path: str) -> dict[str, Any]:
 
 def evidence_cards() -> list[dict[str, Any]]:
     """Return concise cards computed from actual committed artifacts."""
+    core02 = _read("results/phase1/search_comparison/summary.json")
+    core03 = _read("results/phase1/remediation/summary.json")
+    core04 = _read("results/phase1/locked_validation/summary.json")
+    core04_stats = _read("results/phase1/locked_validation/statistics.json")
+    core05 = _read("results/phase1/once_only_test/summary.json")
+    core05_stats = _read("results/phase1/once_only_test/statistics.json")
     real = _read("results/manifests/P0_mech_20261012_real_instrumentation_0.json")
     ioi = _read("results/calibration/ioi/summary.json")
     paired = _read("results/phase1/paired_real/summary.json")
@@ -22,6 +28,10 @@ def evidence_cards() -> list[dict[str, Any]]:
     tamas = _read("results/phase1/tamas/smoke/summary.json")
     mq = _read("results/phase1/model_qualification/v2_mq_hw1_retry/manifest.json")
     return [
+        {"title":"CORE-02 Matched Search","status":core02["status"],"provenance_type":"VERIFIED REAL-MODEL DEVELOPMENT EVIDENCE","artifact":"results/phase1/search_comparison/summary.json","details":{"method_seed_runs":core02["method_seed_run_count"],"protected_split_executions":0}},
+        {"title":"CORE-03 Development Remediation","status":core03["scientific_outcome"],"provenance_type":"VERIFIED REAL-MODEL DEVELOPMENT-AUDIT EVIDENCE","artifact":"results/phase1/remediation/summary.json","details":{"selected_arm":core03["selected_arm"],"evaluation_rows":core03["raw_evaluation_count"],"model_forwards":core03["model_forward_steps"],"oracle_dependent":not core03["deployable_without_oracle"]}},
+        {"title":"CORE-04 Locked Validation","status":core04["scientific_outcome"],"provenance_type":"VERIFIED REAL-MODEL LOCKED-VALIDATION EVIDENCE","artifact":"results/phase1/locked_validation/summary.json","details":{"repair_recovery_by_seed":core04_stats["seed_stability"]["frozen_receiver_l20_h5"],"no_defense_by_seed":core04_stats["seed_stability"]["no_defense"],"evaluation_rows":core04["raw_evaluation_count"],"test_executions":core04["test_executions"]}},
+        {"title":"CORE-05 Once-Only Test","status":core05["scientific_outcome"],"provenance_type":"VERIFIED REAL-MODEL ONCE-ONLY TEST EVIDENCE","artifact":"results/phase1/once_only_test/summary.json","details":{"attempt_id":core05["attempt_id"],"repair_recovery_by_seed":core05_stats["seed_stability"]["frozen_receiver_l20_h5"],"no_defense_by_seed":core05_stats["seed_stability"]["no_defense"],"evaluation_rows":core05["raw_evaluation_count"],"oracle_dependent":not core05["deployable_without_oracle"]}},
         {"title":"Real Model Instrumentation","status":"VERIFIED","provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/manifests/P0_mech_20261012_real_instrumentation_0.json","details":{"model":real.get("model_id"),"revision":real.get("model_revision"),"manifest_valid":True}},
         {"title":"GPT-2 IOI Calibration","status":"VERIFIED","provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/calibration/ioi/summary.json","details":{"baseline_accuracy":ioi["baseline"]["accuracy"],"known_recovery":ioi["known_group"]["normalized_recovery"],"random_mean":ioi["comparison"]["control_mean_normalized_recovery"],"passive_delta":ioi["passive_non_interference"]["max_absolute_logit_difference"]}},
         {"title":"AETHER Positive Control","status":"VERIFIED LEVEL 1","provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/phase1/paired_real/summary.json","details":{"development_cases":paired["counts"]["N_total"],"clean_correct":paired["counts"]["N_clean_correct"],"attack_success":paired["counts"]["N_attack_success"],"message_rescue":paired["message_interventions"]["clean_message_rescue_mean_recovery"],"full_path":paired["full_distributed_path_verified"]}},
@@ -37,14 +47,14 @@ def evidence_cards() -> list[dict[str, Any]]:
 def system_status() -> list[dict[str, str]]:
     """Return claim-safe current capabilities."""
     return [
-        {"capability":"Synthetic patient tools","status":"WORKING — DETERMINISTIC"}, {"capability":"Real MCP","status":"IMPLEMENTED — NOT RUNTIME VERIFIED"},
-        {"capability":"Qwen GPU","status":"IMPLEMENTED — DEPENDENCY BLOCKED"}, {"capability":"Live Model + MCP","status":"NOT QUALIFIED"},
+        {"capability":"Synthetic patient tools","status":"WORKING — DETERMINISTIC"}, {"capability":"Real MCP","status":"IMPLEMENTED — RUNTIME DEPENDENT"},
+        {"capability":"Qualified Qwen model","status":"VERIFIED PASS"}, {"capability":"Live Model + MCP","status":"SEPARATE INTEGRATION PATH"},
         {"capability":"Deterministic Agent A / mediator / Agent B","status":"WORKING"},
         {"capability":"Tool-output manipulation","status":"WORKING"}, {"capability":"Paired clean/attack traces","status":"WORKING"},
         {"capability":"Clean-message rescue","status":"VERIFIED"}, {"capability":"Attacked-message induction","status":"VERIFIED"},
         {"capability":"Activation capture/intervention","status":"WORKING"}, {"capability":"Tracr calibration","status":"VERIFIED"},
         {"capability":"GPT-2 IOI calibration","status":"VERIFIED"}, {"capability":"MCPTox adapter","status":"SMOKE ONLY"},
-        {"capability":"TAMAS adapter","status":"SMOKE ONLY"}, {"capability":"Internal DCMG localization","status":"INSUFFICIENT EVIDENCE"},
-        {"capability":"Balanced V2 internal scan","status":"NOT RUN — GATE STOP"}, {"capability":"1.5B qualification","status":"BLOCKED BY LOCAL MEMORY"},
-        {"capability":"Held-out validation","status":"NOT OPENED"}, {"capability":"Held-out test","status":"NOT OPENED"},
+        {"capability":"TAMAS adapter","status":"SMOKE ONLY"}, {"capability":"Internal causal localization","status":"QCI-2 SUPPORTED — COMPLETE DCMG NOT CLAIMED"},
+        {"capability":"Balanced V2 causal search","status":"VERIFIED COMPLETE"}, {"capability":"1.5B qualification","status":"VERIFIED PASS"},
+        {"capability":"Held-out validation","status":"VERIFIED ACCEPTED"}, {"capability":"Held-out test","status":"VERIFIED ACCEPTED — ONCE-ONLY CLOSED"},
     ]
