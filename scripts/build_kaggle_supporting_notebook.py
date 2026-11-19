@@ -20,6 +20,7 @@ def build(kind: str, commit: str) -> dict[str, object]:
     """Return one clean immutable-source supporting-experiment notebook."""
     if kind not in {"red_team", "agent_c", "sae"} or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("kind and immutable 40-hex commit are required")
+    branch = 'm2/attack-corpus' if kind == 'red_team' else 'phase1/core-nov19'
     setup = f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile
 WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-{kind}'); REPO=RUNTIME/'aether'
@@ -29,7 +30,7 @@ RUNTIME.mkdir(parents=True,exist_ok=True); os.environ['PYTHONNOUSERSITE']='1'
 if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
 UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
 subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
-subprocess.run(['git','clone','--branch','phase1/core-nov19','--single-branch',URL,str(REPO)],check=True)
+subprocess.run(['git','clone','--branch',{branch!r},'--single-branch',URL,str(REPO)],check=True)
 subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
@@ -41,7 +42,13 @@ subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)
     elif kind == "sae":
         execution = """subprocess.run([str(PY),'-m','experiments.phase1.qwen_sae_evaluation','--config',str(REPO/'configs/experiments/qwen_sae_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/qwen_sae_development.json'),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
     else:
-        execution = """from huggingface_hub import snapshot_download
+        preflight = """# This must succeed before any model repository access.
+subprocess.run([str(PY),'-m','experiments.phase1.qwen_red_team','--preflight-only',
+ '--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),
+ '--approval',str(REPO/'results/phase1/protocol_approvals/qwen_red_team_development.json'),
+ '--output',str(OUTPUT)],cwd=REPO,check=True)
+"""
+        execution = preflight + """from huggingface_hub import snapshot_download
 revision='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'; cache=RUNTIME/'hf-cache'
 snapshot=Path(snapshot_download('Qwen/Qwen2.5-1.5B-Instruct',revision=revision,cache_dir=cache,max_workers=1))
 files=[]
