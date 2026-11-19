@@ -103,14 +103,20 @@ dataset_snapshot=Path(snapshot_download(DATA_ID,repo_type='dataset',revision=DAT
 assert model_snapshot.name==MODEL_REV and dataset_snapshot.name==DATA_REV
 corpus=OUTPUT/'corpus'
 if not (corpus/'corpus_source_manifest.json').is_file():
- import pandas as pd
- from transformers import AutoTokenizer
- from experiments.phase1.qwen_sae_training import write_token_artifacts
- files=sorted((dataset_snapshot/'wikitext-2-raw-v1').glob('train-*.parquet')); assert files
- texts=[]
- for file in files: texts.extend(pd.read_parquet(file,columns=['text'])['text'].tolist())
- tokenizer=AutoTokenizer.from_pretrained(model_snapshot,local_files_only=True,trust_remote_code=False)
- write_token_artifacts(texts,tokenizer,corpus,files)
+ token_code=r'''import sys
+from pathlib import Path
+import pandas as pd
+from transformers import AutoTokenizer
+from experiments.phase1.qwen_sae_training import write_token_artifacts
+model_snapshot,dataset_snapshot,corpus=map(Path,sys.argv[1:])
+files=sorted((dataset_snapshot/'wikitext-2-raw-v1').glob('train-*.parquet'))
+if not files: raise FileNotFoundError('pinned WikiText training parquet is absent')
+texts=[]
+for file in files: texts.extend(pd.read_parquet(file,columns=['text'])['text'].tolist())
+tokenizer=AutoTokenizer.from_pretrained(model_snapshot,local_files_only=True,trust_remote_code=False)
+write_token_artifacts(texts,tokenizer,corpus,files)
+'''
+ subprocess.run([str(PY),'-c',token_code,str(model_snapshot),str(dataset_snapshot),str(corpus)],cwd=REPO,check=True)
 upload_tree_once(corpus,f'{REMOTE_PREFIX}/corpus')
 print(json.loads((corpus/'corpus_source_manifest.json').read_text())['selected_token_count'])"""),
         _code("""# Dual-T4 corpus capture. Reruns skip every verified existing block.
@@ -135,8 +141,9 @@ run_with_sync([train_command(33,0)],[(seeds_root,f'{REMOTE_PREFIX}/seeds')],'SAE
 assert all((seeds_root/f'seed-{seed}'/'seed_summary.json').is_file() for seed in (11,22,33))
 print('All frozen seeds complete.')"""),
         _code("""# Select without AETHER audit access, then capture the frozen audit on GPU 0.
-from experiments.phase1.qwen_sae_training import select_seed
-selected=select_seed(seeds_root); print('Selected checkpoint:',selected)
+selection_code='from pathlib import Path; from experiments.phase1.qwen_sae_training import select_seed; print(select_seed(Path(__import__("sys").argv[1])))'
+selected=Path(subprocess.check_output([str(PY),'-c',selection_code,str(seeds_root)],cwd=REPO,text=True).strip())
+print('Selected checkpoint:',selected)
 audit=OUTPUT/'audit'
 if not (audit/'aether_audit_activation_manifest.json').is_file():
  subprocess.run([str(PY),'-u','-m','experiments.phase1.qwen_sae_training','capture-audit',

@@ -81,6 +81,8 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     assert commit in joined
     assert "for gpu in (0,1)" in joined and "f'cuda:{gpu}'" in joined
     assert "run_with_sync" in joined and "AETHER_HF_REPO" in joined
+    assert "subprocess.run([str(PY),'-c',token_code" in joined
+    assert "subprocess.check_output([str(PY),'-c',selection_code" in joined
     assert "{{" not in joined and "}}" not in joined
 
 
