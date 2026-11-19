@@ -76,24 +76,31 @@ except Exception as error:
  print('No prior remote checkpoint restored:',type(error).__name__,str(error))
 
 def upload_tree_once(root, remote_prefix):
- for path in sorted(Path(root).rglob('*')):
-  if path.is_file(): api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{remote_prefix}/{path.relative_to(root).as_posix()}',repo_id=HF_REPO,repo_type='dataset')
+ root=Path(root)
+ if not root.is_dir(): raise FileNotFoundError(root)
+ if not any(path.is_file() for path in root.rglob('*')): return
+ api.upload_folder(folder_path=str(root),path_in_repo=remote_prefix,repo_id=HF_REPO,
+                   repo_type='dataset',commit_message=f'checkpoint batch: {remote_prefix}')
 
 def run_with_sync(commands, watched, label):
- stop=threading.Event(); uploaded={}
+ stop=threading.Event(); uploaded={}; sync_errors=[]
+ def fingerprint(root):
+  return tuple((path.relative_to(root).as_posix(),path.stat().st_size,path.stat().st_mtime_ns)
+               for path in sorted(Path(root).rglob('*')) if path.is_file())
  def sync():
-  while not stop.wait(5):
-   for root,remote in watched:
-    for path in sorted(Path(root).rglob('*')):
-     if path.is_file():
-      stamp=(path.stat().st_size,path.stat().st_mtime_ns)
-      if uploaded.get(str(path))!=stamp:
-       api.upload_file(path_or_fileobj=str(path),path_in_repo=f'{remote}/{path.relative_to(root).as_posix()}',repo_id=HF_REPO,repo_type='dataset')
-       uploaded[str(path)]=stamp
+  while not stop.wait(60):
+   try:
+    for root,remote in watched:
+     stamp=fingerprint(root)
+     if stamp and uploaded.get(str(root))!=stamp:
+      upload_tree_once(root,remote); uploaded[str(root)]=stamp
+   except BaseException as error:
+    sync_errors.append(error); stop.set(); return
  thread=threading.Thread(target=sync,daemon=True); thread.start()
  processes=[subprocess.Popen(command,cwd=REPO,env=os.environ.copy()) for command in commands]
  codes=[process.wait() for process in processes]; stop.set(); thread.join(timeout=10)
  for root,remote in watched: upload_tree_once(root,remote)
+ if sync_errors: raise RuntimeError(f'{label} background checkpoint upload failed') from sync_errors[0]
  if any(codes): raise RuntimeError(f'{label} failed with exit codes {codes}')"""),
         _code("""# Download pinned model and corpus snapshots, then create exact token IDs.
 from huggingface_hub import hf_hub_download,snapshot_download

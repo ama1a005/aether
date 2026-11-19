@@ -84,6 +84,10 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     assert commit in joined
     assert "for gpu in (0,1)" in joined and "f'cuda:{gpu}'" in joined
     assert "run_with_sync" in joined and "AETHER_HF_REPO" in joined
+    assert "api.upload_folder" in joined
+    assert "stop.wait(60)" in joined
+    assert "sync_errors.append(error)" in joined
+    assert "api.upload_file(path_or_fileobj=str(path)" not in joined
     assert "subprocess.run([str(PY),'-c',token_code" in joined
     assert "subprocess.check_output([str(PY),'-c',selection_code" in joined
     assert "hf_hub_download" in joined

@@ -1,5 +1,15 @@
 # AETHER project state
 
+## 2026-11-19 SAE checkpoint uploader batching correction
+
+The first v1.2 Kaggle activation capture completed its local block computation
+but the background persistence path exceeded Hugging Face's 128 repository
+commits/hour limit because it created one commit per file. This is an
+infrastructure failure, not an SAE result. The uploader is being corrected to
+batch all changed files into one commit at a bounded interval and to propagate
+background failures explicitly. No training or audit result is admitted from
+the interrupted attempt.
+
 ## 2026-11-19 SAE v1.2 corpus-revision correction approved
 
 Two retained Kaggle setup attempts established that the v1.1-pinned WikiText
