@@ -36,6 +36,8 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "requirements-bfcl-vllm.txt" in bfcl_source
     assert "vllm==0.34.0" not in bfcl_source  # version is centralized in the overlay file
     assert "uv==0.11.8" in bfcl_source
+    assert "'-m','ensurepip','--upgrade'" in bfcl_source
+    assert "'-m','pip','--version'" in bfcl_source
     assert "Refusing to repeat or overwrite this attempt" in bfcl_source
     assert "git','fetch','origin','m1/target-harness'" in bfcl_source
     assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source

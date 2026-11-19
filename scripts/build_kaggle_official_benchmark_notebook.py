@@ -149,6 +149,8 @@ SETUP_COMPLETE=True
     raise RuntimeError('Repository setup is incomplete. Run the preceding setup cell successfully before installing dependencies.')
 if not REPO.is_dir() or not PY.is_file() or 'env' not in globals():
     raise RuntimeError('Repository, pinned Python, or environment is missing. Restart with a fresh Kaggle session and run cells in order.')
+subprocess.run([str(PY),'-m','ensurepip','--upgrade'],check=True)
+subprocess.run([str(PY),'-m','pip','--version'],check=True)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
 {package_setup}
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','tests/unit/test_native_benchmark_runners.py','tests/unit/test_native_official_package.py','-q'],cwd=REPO,check=True)
