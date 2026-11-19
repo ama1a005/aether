@@ -1,8 +1,19 @@
 """Compilation and provenance tests for official benchmark notebooks."""
 
 import pytest
+import re
 
-from scripts.build_kaggle_official_benchmark_notebook import build
+from scripts.build_kaggle_official_benchmark_notebook import UV_VERSION_PARSER, build
+
+
+def test_uv_version_parser_handles_platform_suffix_and_rejects_bad_output() -> None:
+    namespace = {"re": re}
+    exec(UV_VERSION_PARSER, namespace)
+    parse = namespace["parse_uv_version"]
+    assert parse("uv 0.11.8 (x86_64-unknown-linux-gnu)") == "0.11.8"
+    assert parse("uv 0.11.8") == "0.11.8"
+    with pytest.raises(RuntimeError, match="Could not parse uv version"):
+        parse("uv (x86_64-unknown-linux-gnu)")
 
 
 def test_official_notebooks_are_commit_pinned_and_verified() -> None:
@@ -29,6 +40,13 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "git','fetch','origin','m1/target-harness'" in bfcl_source
     assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source
     assert "verify_bfcl_bundle" in bfcl_source
+    assert "parse_uv_version" in bfcl_source
+    assert "SETUP_COMPLETE=True" in bfcl_source
+    assert "DEPENDENCIES_COMPLETE=True" in bfcl_source
+    assert "sys.path.insert(0,str(REPO))" in bfcl_source
+    assert "PREFLIGHT_COMPLETE=True" in bfcl_source
+    assert "Dependency installation or model-free tests did not complete" in bfcl_source
+    assert "Expected pinned repository commit" in bfcl_source
     assert "aether-bfcl-official-{ATTEMPT}-results.tar.gz" in bfcl_source
     assert bfcl_source.index("tarfile.open") < bfcl_source.index("verify_bfcl_bundle")
     assert "--no-deps','-e'" not in bfcl_source

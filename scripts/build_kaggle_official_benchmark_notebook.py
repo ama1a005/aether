@@ -11,6 +11,13 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
+UV_VERSION_PARSER = """def parse_uv_version(output):
+    match=re.match(r'^\\s*uv\\s+(\\d+\\.\\d+\\.\\d+)(?:\\s|$)',output)
+    if match is None:
+        raise RuntimeError(f'Could not parse uv version from --version output: {output!r}')
+    return match.group(1)
+"""
+
 
 def _cell(kind: str, source: str) -> dict[str, object]:
     row: dict[str, object] = {"cell_type": kind, "id": hashlib.sha256(source.encode()).hexdigest()[:8],
@@ -38,7 +45,20 @@ subprocess.run([str(PY),'-m','pip','install',str(WHEEL)],check=True)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-bfcl-vllm.txt'),'--torch-backend','cu130'],check=True,env=env)
 assert subprocess.check_output([str(PY),'-c','import torch; from importlib.metadata import version; print(version("vllm"),torch.__version__,torch.version.cuda)'],text=True).strip().startswith('0.34.0 2.14.0+ 13.0')
 """
-        snapshot_setup = """from huggingface_hub import snapshot_download
+        snapshot_setup = """if not globals().get('SETUP_COMPLETE',False):
+    raise RuntimeError('Repository setup is incomplete. Run all preceding setup cells successfully in order.')
+if not globals().get('DEPENDENCIES_COMPLETE',False):
+    raise RuntimeError('Dependency installation or model-free tests did not complete. Fix the preceding cell before continuing.')
+if not REPO.is_dir() or not PY.is_file() or 'env' not in globals():
+    raise RuntimeError('Repository, pinned Python, or environment is missing. Restart with a fresh Kaggle session and run cells in order.')
+import sys
+sys.path.insert(0,str(REPO))
+if Path.cwd()!=REPO:
+    os.chdir(REPO)
+actual_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
+if actual_commit!=COMMIT:
+    raise RuntimeError(f'Expected pinned repository commit {COMMIT}, found {actual_commit}')
+from huggingface_hub import snapshot_download
 from benchmarks.run_native_official import _load_config
 from benchmarks.nov19_bfcl.preflight import check_backend_and_hardware, check_package
 from causal.remediation_freeze import frozen_text_hash_matches
@@ -61,6 +81,7 @@ observed={p.relative_to(snapshot).as_posix():(p.stat().st_size,hashlib.sha256(p.
 assert observed==expected, 'Downloaded snapshot differs from the independently retained qualification manifest'
 SNAPSHOT_MANIFEST=WORK/'model_snapshot_manifest.json'
 SNAPSHOT_MANIFEST.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'tokenizer_revision':REVISION,'snapshot_path':str(snapshot),'files':[{'path':name,'size':size,'sha256':digest} for name,(size,digest) in sorted(observed.items())]},indent=2),encoding='utf-8')
+PREFLIGHT_COMPLETE=True
 """
         benchmark_verification = """bfcl_summary=json.loads((OUTPUT/'summary.json').read_text(encoding='utf-8'))
 if bfcl_summary.get('overall')=='PASS':
@@ -93,24 +114,46 @@ URL='https://github.com/ama1a005/aether.git'
 os.environ.update({{'PYTHONNOUSERSITE':'1','MPLBACKEND':'Agg'}})
 RUNTIME.mkdir(parents=True,exist_ok=True)
 """),
-        _cell("code", """subprocess.run([sys.executable,'-m','pip','install','--upgrade','uv==0.11.8'],check=True)
-UV=shutil.which('uv'); assert UV is not None, 'Pinned uv installation did not provide an executable'
-uv_version=subprocess.check_output([UV,'--version'],text=True).strip().split()[-1]
-assert uv_version=='0.11.8', f'Expected uv 0.11.8, found {uv_version}'
+        _cell("code", f"""if 'RUNTIME' not in globals() or 'REPO' not in globals() or 'VENV' not in globals():
+    raise RuntimeError('Setup variables are missing. Run the notebook setup cell (Cell 1) successfully before this cell.')
+if RUNTIME.exists() and (REPO.exists() or VENV.exists()):
+    raise RuntimeError(f'Execution paths already exist under {{RUNTIME}}. Use a fresh Kaggle session; existing files are preserved.')
+subprocess.run([sys.executable,'-m','pip','install','--upgrade','uv==0.11.8'],check=True)
+UV=shutil.which('uv')
+if UV is None:
+    raise RuntimeError('Pinned uv==0.11.8 installation succeeded but no uv executable is on PATH.')
+{UV_VERSION_PARSER}
+uv_output=subprocess.check_output([UV,'--version'],text=True).strip()
+uv_version=parse_uv_version(uv_output)
+if uv_version!='0.11.8':
+    raise RuntimeError(f'Expected uv 0.11.8; found version {{uv_version!r}} in {{uv_output!r}}')
 env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
 subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
+if not PY.is_file():
+    raise RuntimeError(f'uv did not create the expected Python executable: {{PY}}')
 subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
 subprocess.run(['git','fetch','origin','m1/target-harness'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
-assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
-assert not subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip()
+actual_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
+if actual_commit!=COMMIT:
+    raise RuntimeError(f'Checked out {{actual_commit}}, expected pinned commit {{COMMIT}}')
+if subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip():
+    raise RuntimeError('Pinned source checkout is not clean; refusing dependency setup.')
+SETUP_COMPLETE=True
 """),
-        _cell("code", f"""subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
+        _cell("code", f"""if not globals().get('SETUP_COMPLETE',False):
+    raise RuntimeError('Repository setup is incomplete. Run the preceding setup cell successfully before installing dependencies.')
+if not REPO.is_dir() or not PY.is_file() or 'env' not in globals():
+    raise RuntimeError('Repository, pinned Python, or environment is missing. Restart with a fresh Kaggle session and run cells in order.')
+subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
 {package_setup}
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','tests/unit/test_native_benchmark_runners.py','tests/unit/test_native_official_package.py','-q'],cwd=REPO,check=True)
+DEPENDENCIES_COMPLETE=True
 """),
         *([_cell("code", snapshot_setup)] if snapshot_setup else []),
-        _cell("code", f"""command=[str(PY),'-m','benchmarks.run_native_official',{benchmark!r},'--config',str(REPO/'configs/benchmarks/phase1_external.yaml'),'--output',str(OUTPUT)]
+        _cell("code", f"""if {"not globals().get('PREFLIGHT_COMPLETE',False)" if benchmark == 'bfcl' else "not globals().get('SETUP_COMPLETE',False)"}:
+    raise RuntimeError('Required setup/preflight cells did not complete. Run all preceding cells in order.')
+command=[str(PY),'-m','benchmarks.run_native_official',{benchmark!r},'--config',str(REPO/'configs/benchmarks/phase1_external.yaml'),'--output',str(OUTPUT)]
 {("command += ['--snapshot-manifest',str(SNAPSHOT_MANIFEST),'--package-wheel',str(WHEEL),'--backend','vllm','--num-gpus','1']" if benchmark == 'bfcl' else "")}
 subprocess.run(command,cwd=REPO,check=True)
 archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
