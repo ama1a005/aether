@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import re
 
 import pytest
 
@@ -18,3 +19,13 @@ def test_secondary_package_requires_committed_reviewed_distinct_candidate(tmp_pa
     outside.write_text(json.dumps({}), encoding="utf-8")
     with pytest.raises(ValueError, match="committed"):
         prepare(outside, tmp_path / "out")
+
+
+def test_kaggle_notebook_is_ordered_and_commit_pinned() -> None:
+    notebook = json.loads(Path("notebooks/aether_smollm2_second_model_qualification.ipynb").read_text(encoding="utf-8"))
+    source = "\n".join("".join(cell["source"]) for cell in notebook["cells"])
+    commit = re.search(r"COMMIT='([0-9a-f]{40})'", source)
+    assert commit is not None
+    assert source.index("--preflight-only") < source.index("snapshot_download")
+    assert source.index("snapshot_download") < source.index("run_secondary_model_qualification','--output")
+    assert source.index("verify_secondary_model_bundle") < source.index("tarfile.open")
