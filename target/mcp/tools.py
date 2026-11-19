@@ -2,8 +2,8 @@ def get_ecg_analysis(case_id: str, features: dict) -> dict:
     """Returns {rhythm, risk_level, flags, heart_rate} derived from features.
     Logic: if 'AF' in features or heart_rate > 120 or st_deviation_mv > 0.2 → CRITICAL; else LOW
     """
-    heart_rate = features.get('heart_rate', 80)
-    st_deviation_mv = features.get('st_deviation_mv', 0.0)
+    heart_rate = float(features.get('heart_rate', 80))
+    st_deviation_mv = float(features.get('st_deviation_mv', 0.0))
     rhythm = features.get('rhythm', 'SR')
     
     flags = []
