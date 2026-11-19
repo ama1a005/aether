@@ -101,12 +101,13 @@ MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; MODEL_REV='989aa7980e4cf806f80c7fef2b1adb
 DATA_ID='Salesforce/wikitext'; DATA_REV='b08601e04326c79dfdd32d625aee71d232d685c3'
 DATA_FILE='wikitext-2-raw-v1/train-00000-of-00001.parquet'
 DATA_SHA256='e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7'
-model_snapshot=Path(snapshot_download(MODEL_ID,revision=MODEL_REV,cache_dir=CACHE,max_workers=2))
 data_file=Path(hf_hub_download(repo_id=DATA_ID,repo_type='dataset',revision=DATA_REV,
  filename=DATA_FILE,cache_dir=CACHE))
-assert model_snapshot.name==MODEL_REV and data_file.name=='train-00000-of-00001.parquet'
+assert data_file.name=='train-00000-of-00001.parquet'
 observed_data_hash=hashlib.sha256(data_file.read_bytes()).hexdigest()
 assert observed_data_hash==DATA_SHA256,f'WikiText parquet SHA-256 mismatch: {observed_data_hash}'
+model_snapshot=Path(snapshot_download(MODEL_ID,revision=MODEL_REV,cache_dir=CACHE,max_workers=2))
+assert model_snapshot.name==MODEL_REV
 corpus=OUTPUT/'corpus'
 if not (corpus/'corpus_source_manifest.json').is_file():
  token_code=r'''import sys

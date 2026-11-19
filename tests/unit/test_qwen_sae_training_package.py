@@ -91,6 +91,9 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     assert "b08601e04326c79dfdd32d625aee71d232d685c3" in joined
     assert "e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7" in joined
     assert "observed_data_hash==DATA_SHA256" in joined
+    assert joined.index("hf_hub_download(repo_id=DATA_ID") < joined.index(
+        "snapshot_download(MODEL_ID"
+    )
     assert "allow_patterns='wikitext-2-raw-v1/*'" not in joined
     assert "{{" not in joined and "}}" not in joined
 
