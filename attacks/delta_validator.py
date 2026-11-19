@@ -5,12 +5,10 @@ corpus-level SHA-256 fingerprinting for reproducibility manifests.
 """
 from __future__ import annotations
 
-import hashlib
 import json
-import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, List, Tuple
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -25,9 +23,38 @@ class AttackDelta:
     actual_changes: tuple[str, ...]
     timestamp: str
     corpus_hash: str
+    plan_fingerprint: str = ""
 
 
-def validate_delta(delta: AttackDelta) -> Tuple[bool, List[str]]:
+_MISSING = object()
+
+
+def _canonical(value: Any) -> str:
+    """Serialize a JSON-compatible value without platform-dependent spacing."""
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
+
+
+def _changed_paths(clean: Any, attacked: Any, prefix: str = "") -> list[str]:
+    """Return changed nested paths while distinguishing absent fields from null."""
+    if isinstance(clean, dict) and isinstance(attacked, dict):
+        paths: list[str] = []
+        for key in sorted(set(clean) | set(attacked)):
+            path = f"{prefix}.{key}" if prefix else str(key)
+            left, right = clean.get(key, _MISSING), attacked.get(key, _MISSING)
+            if left is _MISSING or right is _MISSING:
+                paths.append(path)
+            else:
+                paths.extend(_changed_paths(left, right, path))
+        return paths
+    return [prefix or "$"] if _canonical(clean) != _canonical(attacked) else []
+
+
+def _allowed(path: str, permitted: tuple[str, ...]) -> bool:
+    """A permission applies to its exact path and descendant paths only."""
+    return any(path == item or path.startswith(f"{item}.") for item in permitted)
+
+
+def validate_delta(delta: AttackDelta, *, require_plan_binding: bool = False) -> tuple[bool, list[str]]:
     """Validate that an AttackDelta conforms to the declared threat model.
 
     Returns:
@@ -35,22 +62,20 @@ def validate_delta(delta: AttackDelta) -> Tuple[bool, List[str]]:
     """
     errors: list[str] = []
 
-    if not delta.attack_id or not delta.attack_id.strip():
-        errors.append("attack_id must not be blank")
-
-    if not delta.case_id or not delta.case_id.strip():
-        errors.append("case_id must not be blank")
-
-    if not delta.corpus_hash or not delta.corpus_hash.strip():
-        errors.append("corpus_hash must not be blank")
-
+    for field in ("attack_id", "case_id", "corpus_hash"):
+        if not getattr(delta, field).strip():
+            errors.append(f"{field} must not be blank")
+    if require_plan_binding and not delta.plan_fingerprint.strip():
+        errors.append("plan_fingerprint must not be blank for campaign evidence")
+    recomputed = tuple(_changed_paths(delta.clean_fields, delta.attacked_fields))
+    if tuple(delta.actual_changes) != recomputed:
+        errors.append("actual_changes does not match canonical nested change set")
     if not delta.actual_changes:
         errors.append("actual_changes is empty; no-op delta is invalid")
-
-    unauthorized = set(delta.actual_changes) - set(delta.permitted_changes)
+    unauthorized = [path for path in delta.actual_changes if not _allowed(path, delta.permitted_changes)]
     if unauthorized:
         errors.append(
-            f"over-broad delta: unauthorized field changes {sorted(unauthorized)}"
+            f"over-broad delta: unauthorized field changes {unauthorized}"
         )
 
     return (len(errors) == 0, errors)
@@ -63,6 +88,8 @@ def compute_delta(
     attack_id: str,
     case_id: str,
     corpus_hash: str,
+    *,
+    plan_fingerprint: str = "",
 ) -> AttackDelta:
     """Compare two message dicts and build a validated AttackDelta record.
 
@@ -77,21 +104,16 @@ def compute_delta(
     Returns:
         An AttackDelta recording the actual changes found.
     """
-    all_keys = sorted(set(clean_msg.keys()) | set(attacked_msg.keys()))
-    actual_changes: list[str] = []
-    for key in all_keys:
-        if clean_msg.get(key) != attacked_msg.get(key):
-            actual_changes.append(key)
-
     return AttackDelta(
         attack_id=attack_id,
         case_id=case_id,
         clean_fields=dict(clean_msg),
         attacked_fields=dict(attacked_msg),
-        permitted_changes=tuple(permitted_fields),
-        actual_changes=tuple(actual_changes),
+        permitted_changes=tuple(sorted(permitted_fields)),
+        actual_changes=tuple(_changed_paths(clean_msg, attacked_msg)),
         timestamp=datetime.now(timezone.utc).isoformat(),
         corpus_hash=corpus_hash,
+        plan_fingerprint=plan_fingerprint,
     )
 
 
@@ -104,22 +126,5 @@ def hash_corpus(corpus_dir: str) -> str:
     Returns:
         Hex digest string of the combined corpus fingerprint.
     """
-    combined = hashlib.sha256()
-    if not os.path.isdir(corpus_dir):
-        raise FileNotFoundError(f"Corpus directory not found: {corpus_dir}")
-
-    json_files = sorted(
-        f
-        for f in os.listdir(corpus_dir)
-        if f.endswith(".json") and f != "MANIFEST.json"
-    )
-    if not json_files:
-        raise ValueError(f"No JSON attack cases found in {corpus_dir}")
-
-    for fname in json_files:
-        path = os.path.join(corpus_dir, fname)
-        with open(path, "rb") as fh:
-            file_hash = hashlib.sha256(fh.read()).hexdigest()
-        combined.update(file_hash.encode("utf-8"))
-
-    return combined.hexdigest()
+    from attacks.corpus.provenance import compute_corpus_hash
+    return compute_corpus_hash(corpus_dir)

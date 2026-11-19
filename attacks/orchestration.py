@@ -16,6 +16,7 @@ from typing import Protocol, Sequence
 
 from contracts.schemas import AttackSpec, PatientCase, RunTrace
 from experiments.manifest import create_run_manifest, write_run_manifest
+from attacks.delta_validator import compute_delta, validate_delta
 
 FAMILY_SURFACES = {
     "tool_description_poison": "mcp_tool_description",
@@ -74,6 +75,18 @@ def _json(value: object) -> str:
 
 def _hash(value: object) -> str:
     return hashlib.sha256(_json(value).encode()).hexdigest()
+
+
+def _surface(trace: dict[str, object], surface: str) -> dict[str, object]:
+    """Extract the canonical mutable surface retained in a backend trace."""
+    if surface == "mcp_tool_description":
+        return {"description": trace["tool_calls"][0]["description"]}  # type: ignore[index]
+    if surface == "mcp_tool_output":
+        return dict(trace["tool_calls"][0]["result"])  # type: ignore[index]
+    if surface == "a2a_message":
+        message = trace["messages"][0]  # type: ignore[index]
+        return {"content_text": message["content_text"], **dict(message["structured_payload"])}  # type: ignore[index]
+    raise ValueError(f"unsupported attack surface: {surface}")
 
 
 def plan_campaign(cases: Sequence[PatientCase], attacks: Sequence[AttackSpec],
@@ -142,7 +155,8 @@ def debrief(records: Sequence[dict[str, object]]) -> dict[str, object]:
 
 def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
                  attacks: Sequence[AttackSpec], config: CampaignConfig,
-                 destination: Path, *, resume: bool = False) -> dict[str, object]:
+                 destination: Path, *, resume: bool = False,
+                 corpus_provenance: dict[str, object] | None = None) -> dict[str, object]:
     """Run or resume a campaign, refusing uncertain interrupted target calls.
 
     A started record is persisted before each pair. If interrupted, explicit
@@ -155,7 +169,20 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
                 recon.tokenizer_revision, recon.evidence_class)):
         raise ValueError("Backend provenance is incomplete")
     plan = plan_campaign(cases, attacks, recon, config)
-    identity = {"config": asdict(config), "recon": asdict(recon), "plan": plan}
+    generated_provenance = {
+        "corpus_hash": _hash([asdict(attack) for attack in sorted(attacks, key=lambda item: item.attack_id)]),
+        "selected_ids": [attack.attack_id for attack in sorted(attacks, key=lambda item: item.attack_id)],
+        "family_counts": {family: sum(attack.family == family for attack in attacks)
+                          for family in sorted({attack.family for attack in attacks})},
+        "seed": config.seed,
+        "selection_policy": "deterministic_campaign_plan_v1",
+    }
+    provenance = dict(corpus_provenance or generated_provenance)
+    required_provenance = {"corpus_hash", "selected_ids", "family_counts", "seed", "selection_policy"}
+    if not required_provenance.issubset(provenance) or not isinstance(provenance["corpus_hash"], str):
+        raise ValueError("corpus provenance is incomplete")
+    identity = {"config": asdict(config), "recon": asdict(recon), "plan": plan,
+                "corpus_provenance": provenance}
     fingerprint = _hash(identity)
     if resume:
         saved = json.loads((destination / "plan.json").read_text(encoding="utf-8"))
@@ -164,6 +191,7 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
     else:
         destination.mkdir(parents=True, exist_ok=False)
         write_run_manifest({"fingerprint": fingerprint, "identity": identity}, destination / "plan.json")
+        write_run_manifest(provenance, destination / "corpus_provenance.json")
     run_id = destination.name
     ledger = destination / "attempts"
     ledger.mkdir(exist_ok=True)
@@ -176,7 +204,8 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
             dataset_id="red_team_supplied_cases", dataset_version=fingerprint,
             dataset_split=config.split, subset_ids=[case.case_id for case in cases],
             seeds=[config.seed], config_file=config_path, raw_output_path=ledger,
-            dataset_files=[config_path], artifact_paths=[config_path],
+            dataset_files=[config_path, destination / "corpus_provenance.json"],
+            artifact_paths=[config_path, destination / "corpus_provenance.json"],
             repository=Path(__file__).resolve().parents[1])
         write_run_manifest(manifest, manifest_path)
     else:
@@ -223,6 +252,25 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
             row["success"] = bool(row["attacked"] and
                 not any(error["phase"] == "attacked" for error in row["errors"]) and
                 row["attacked"]["final_decision"] == item["attack"]["target_behavior"])
+            if row["clean"] is not None and row["attacked"] is not None:
+                try:
+                    attack = item["attack"]
+                    surface = str(attack["target_surface"])
+                    permitted = list(dict(attack["adversarial_payload"]).keys())
+                    delta = compute_delta(_surface(row["clean"], surface), _surface(row["attacked"], surface),
+                        permitted, str(attack["attack_id"]), str(item["case"]["case_id"]),
+                        str(provenance["corpus_hash"]), plan_fingerprint=fingerprint)
+                    valid, delta_errors = validate_delta(delta, require_plan_binding=True)
+                    if not valid:
+                        raise ValueError("; ".join(delta_errors))
+                    row["delta"] = asdict(delta)
+                except Exception as exc:
+                    row["errors"].append({"phase": "delta", "type": type(exc).__name__, "message": str(exc)})
+                    row["status"] = "error"
+                    row["success"] = False
+            else:
+                row["errors"].append({"phase": "delta", "type": "ValueError", "message": "paired traces are incomplete"})
+                row["status"] = "error"
             write_run_manifest(row, path)
             records.append(row)
             event = {"timestamp": datetime.now(timezone.utc).isoformat(), "run_id": run_id,
@@ -236,7 +284,7 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
         write_run_manifest(summary, destination / "summary.json")
         from experiments.manifest import sha256_file
         manifest["artifact_paths"] = {str(path): sha256_file(path) for path in
-            [config_path, destination / "summary.json", *sorted(ledger.glob("*.json"))]}
+            [config_path, destination / "corpus_provenance.json", destination / "summary.json", *sorted(ledger.glob("*.json"))]}
         write_run_manifest(manifest, manifest_path)
         return summary
     finally:

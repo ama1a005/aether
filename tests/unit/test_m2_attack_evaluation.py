@@ -198,6 +198,19 @@ class TestDeltaValidation:
         )
         assert set(delta.actual_changes) == {"b", "c"}
 
+    def test_compute_delta_rejects_nested_added_null_and_deleted_fields(self):
+        """Recursive paths catch modifications that a top-level diff would hide."""
+        delta = compute_delta(
+            {"tool": {"result": {"risk": "HIGH", "note": None}}},
+            {"tool": {"result": {"risk": "LOW", "added": None}}},
+            permitted_fields=["tool.result.risk"], attack_id="atk_nested", case_id="case_nested",
+            corpus_hash="hash", plan_fingerprint="plan",
+        )
+        assert set(delta.actual_changes) == {"tool.result.risk", "tool.result.note", "tool.result.added"}
+        ok, errors = validate_delta(delta, require_plan_binding=True)
+        assert ok is False
+        assert any("unauthorized" in error for error in errors)
+
     def test_hash_corpus_deterministic(self, corpus_dir):
         """The same corpus produces the same hash on repeated calls."""
         h1 = hash_corpus(corpus_dir)
@@ -319,6 +332,13 @@ class TestEvaluatorHardening:
         assert ok is False
         assert any("unknown" in e for e in errors)
 
+    def test_compute_asr_fails_closed_for_unknown_spec(self):
+        """Unknown attacks cannot disappear from a production denominator."""
+        evaluator = AttackEvaluator()
+        trace = RunTrace("r1", "c1", 42, {}, [], [], "ESCALATE", attack_id="unknown_atk")
+        with pytest.raises(ValueError, match="unknown"):
+            evaluator.compute_asr([trace], {})
+
     def test_validate_inputs_rejects_duplicate_run_ids(self):
         """Duplicate run_ids fail validation."""
         evaluator = AttackEvaluator()
@@ -408,7 +428,9 @@ class TestBenchmarkAudit:
         assert len(mcptox) == 1, "MCPTox entry must exist in REGISTRY.yaml"
         entry = mcptox[0]
         assert entry["source"] == "official"
-        assert entry["official_evaluator"] is True
+        assert entry["official_benchmark"] is True
+        assert entry["official_evaluator_available"] is False
+        assert entry["official_evaluator_executed"] is False
         assert "f85189f9" in entry.get("commit_or_doi", "")
 
     def test_tamas_registry_has_mit_license(self):

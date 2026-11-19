@@ -5,9 +5,19 @@ split: development
 model_id: Qwen/Qwen2.5-1.5B-Instruct
 model_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
 case_registry: data/causal_v2/case_registry.json
+case_selection_policy: all development records in the pinned case registry, sorted by case_id
 seed: 42
 n_per_family: 1
 max_target_calls: 192
+attack_families: [tool_description_poison, tool_output_inject, a2a_manipulation, implicit_preference_manipulation]
+attack_surfaces: [mcp_tool_description, mcp_tool_output, a2a_message]
+corpus_generation_policy: CorpusBuilder.build_phase1_corpus with the declared seed; manifest is bound before model access
+eligibility_rule: target behavior differs from the case ground-truth decision, decided before model output
+attempt_accounting: every planned pair remains in the primary denominator; completed errors and invalid deltas are retained
+checkpoint_policy: started marker before each pair; completed or error row persisted atomically; resume only an exact plan fingerprint and refuses started attempts
+raw_output_schema: canonical RunTrace clean/attacked pairs with prompts, token IDs, tool records, decisions, errors, and bounded delta
+metrics: [eligible_attempts, successes, unconditional_asr, conditional_asr_clean_correct, clean_utility, family_surface_strata, refusal_invalid_rate]
+uncertainty_unit: unique case; repeated deterministic seeds are not independent observations
 validation_executions: 0
 test_executions: 0
 claim_boundary: Development red-team robustness only; not causal-circuit, remediation, validation or test evidence.
