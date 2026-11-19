@@ -1,5 +1,18 @@
 # AETHER project state
 
+## 2026-11-19 SAE v1.2 corpus-revision correction approved
+
+Two retained Kaggle setup attempts established that the v1.1-pinned WikiText
+revision `de54f133ef530c2e9b46c532f95a01c446ff0f1d` does not contain the declared
+training parquet: wildcard retrieval returned zero files and exact retrieval
+returned HTTP 404. No corpus tokens, activations, SAE checkpoint or audit result
+was produced. V1.2 prospectively changes only the immutable dataset revision to
+the commit that added the exact parquet and freezes its published SHA-256. Its
+proposal hash is `fdc02d9542af6d6b54aad57da8facd21ba7ff07bf5286a0874fc7ded6418b238`.
+The human project owner approved that exact hash. The execution package now
+fails closed on the exact parquet SHA-256 before tokenization; validation and
+test remain closed.
+
 ## 2026-11-19 SmolLM2 second-model freeze approved and implemented
 
 The human project owner approved the exact freeze at SHA-256

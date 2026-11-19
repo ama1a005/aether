@@ -30,6 +30,9 @@ def test_exact_approved_chain_is_authorized() -> None:
     base, amendment = authorization()
     assert base["minimum_training_rows"] == 10000
     assert amendment["training_corpus"]["training_token_count"] == 57344
+    assert amendment["training_corpus"]["dataset_revision"] == (
+        "b08601e04326c79dfdd32d625aee71d232d685c3"
+    )
 
 
 def test_corpus_selection_is_ordered_skips_empty_and_truncates_exactly() -> None:
@@ -85,6 +88,9 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     assert "subprocess.check_output([str(PY),'-c',selection_code" in joined
     assert "hf_hub_download" in joined
     assert "wikitext-2-raw-v1/train-00000-of-00001.parquet" in joined
+    assert "b08601e04326c79dfdd32d625aee71d232d685c3" in joined
+    assert "e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7" in joined
+    assert "observed_data_hash==DATA_SHA256" in joined
     assert "allow_patterns='wikitext-2-raw-v1/*'" not in joined
     assert "{{" not in joined and "}}" not in joined
 

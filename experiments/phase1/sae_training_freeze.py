@@ -12,6 +12,7 @@ QUALIFIED_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
 QUALIFIED_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 ALLOWED_COMPONENT = "receiver.module.L22.attention_output"
 AMENDMENT_SCHEMA = "aether.qwen-sae-training-freeze-amendment.v1.1"
+AMENDMENT_V1_2_SCHEMA = "aether.qwen-sae-training-freeze-amendment.v1.2"
 
 
 def sha256_file(path: Path) -> str:
@@ -125,3 +126,37 @@ def verify_human_decision(protocol_path: Path, decision_path: Path) -> dict[str,
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE training decision lacks a human project owner")
     return decision
+
+
+def load_and_validate_v1_2_amendment(
+    path: Path, v1_1_path: Path, base_path: Path, *, require_approval: bool = False
+) -> dict[str, Any]:
+    """Validate the retrieval-only v1.2 correction against approved v1.1."""
+    amendment = json.loads(path.read_text(encoding="utf-8"))
+    if amendment.get("schema_version") != AMENDMENT_V1_2_SCHEMA:
+        raise ValueError("unexpected SAE v1.2 amendment schema")
+    if amendment.get("parent_amendment_sha256") != sha256_file(v1_1_path):
+        raise ValueError("SAE v1.2 parent-amendment hash mismatch")
+    load_and_validate_amendment(v1_1_path, base_path)
+    expected = {
+        "dataset_id": "Salesforce/wikitext",
+        "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+        "dataset_config": "wikitext-2-raw-v1",
+        "source_split": "train",
+        "source_file": "wikitext-2-raw-v1/train-00000-of-00001.parquet",
+        "source_file_sha256": "e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7",
+    }
+    correction = amendment.get("correction", {})
+    wrong = [key for key, value in expected.items() if correction.get(key) != value]
+    if wrong:
+        raise ValueError(f"SAE v1.2 corpus retrieval mismatch: {wrong}")
+    if amendment.get("validation_executions") != 0 or amendment.get("test_executions") != 0:
+        raise PermissionError("SAE v1.2 opens a protected split")
+    if amendment.get("status") != "awaiting_human_scientific_review":
+        raise ValueError("unexpected SAE v1.2 status")
+    review = amendment.get("human_review", {})
+    if require_approval and not (
+        review.get("approved") is True and review.get("reviewer") and review.get("utc_timestamp")
+    ):
+        raise PermissionError("SAE v1.2 lacks exact human approval")
+    return amendment

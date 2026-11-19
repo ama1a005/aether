@@ -1,5 +1,12 @@
 # AETHER current bounded task
 
+## Execute the approved SAE v1.2 pinned corpus-revision correction
+
+Run the newly generated, commit-pinned v1.2 Kaggle notebook. It must retrieve
+the exact approved parquet revision, verify its frozen SHA-256 before
+tokenization, preserve remote checkpoints, retain negative/incomplete outcomes,
+and keep validation/test closed. Do not run the obsolete v1.1 notebooks.
+
 ## Execute the approved SmolLM2 second-model qualification
 
 Run the commit-pinned Kaggle notebook produced for the approved freeze SHA-256

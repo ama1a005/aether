@@ -20,11 +20,12 @@ def _markdown(source: str) -> dict:
 def generate(commit: str, destination: Path) -> None:
     """Write a restart-safe notebook pinned to an immutable implementation commit."""
     cells = [
-        _markdown("""# AETHER Qwen SAE v1.1 — dual-T4 execution
+        _markdown("""# AETHER Qwen SAE v1.2 - dual-T4 execution
 
-Use a Kaggle **2 x T4 GPU** session with Internet enabled. Add notebook secrets
+Use a Kaggle **2 x T4 GPU** session with Internet enabled. This v1.2 package
+verifies the exact approved corpus file before model work. Add notebook secrets
 `HF_TOKEN` (write token) and `AETHER_HF_REPO` (for example
-`DXVNX05/aether-qwen-sae-v1-1`). The dataset repository is created privately.
+`DXVNX05/aether-qwen-sae-v1-2`). The dataset repository is created privately.
 
 Run all cells in order. Completed corpus blocks and epoch checkpoints are
 uploaded continuously. If Kaggle stops, start a new session with the same two
@@ -34,11 +35,11 @@ This is development-only reconstruction/sparsity evidence. It does not access
 validation/test cases and cannot support a causal SAE-feature claim."""),
         _code(f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile,threading,time
-WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-sae-v1-1')
+WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-sae-v1-2')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
-CACHE=RUNTIME/'hf-cache'; OUTPUT=WORK/'aether-qwen-sae-v1-1'
+CACHE=RUNTIME/'hf-cache'; OUTPUT=WORK/'aether-qwen-sae-v1-2'
 URL='https://github.com/ama1a005/aether.git'; COMMIT='{commit}'
-REMOTE_PREFIX='sae-v1-1'
+REMOTE_PREFIX='sae-v1-2'
 os.environ.update({{'MPLBACKEND':'Agg','PYTHONNOUSERSITE':'1','TOKENIZERS_PARALLELISM':'false'}})
 for path in (RUNTIME,CACHE,OUTPUT): path.mkdir(parents=True,exist_ok=True)
 print(subprocess.run(['nvidia-smi','--query-gpu=index,name,memory.total,memory.free','--format=csv,noheader'],capture_output=True,text=True).stdout)
@@ -97,11 +98,15 @@ def run_with_sync(commands, watched, label):
         _code("""# Download pinned model and corpus snapshots, then create exact token IDs.
 from huggingface_hub import hf_hub_download,snapshot_download
 MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; MODEL_REV='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
-DATA_ID='Salesforce/wikitext'; DATA_REV='de54f133ef530c2e9b46c532f95a01c446ff0f1d'
+DATA_ID='Salesforce/wikitext'; DATA_REV='b08601e04326c79dfdd32d625aee71d232d685c3'
+DATA_FILE='wikitext-2-raw-v1/train-00000-of-00001.parquet'
+DATA_SHA256='e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7'
 model_snapshot=Path(snapshot_download(MODEL_ID,revision=MODEL_REV,cache_dir=CACHE,max_workers=2))
 data_file=Path(hf_hub_download(repo_id=DATA_ID,repo_type='dataset',revision=DATA_REV,
- filename='wikitext-2-raw-v1/train-00000-of-00001.parquet',cache_dir=CACHE))
+ filename=DATA_FILE,cache_dir=CACHE))
 assert model_snapshot.name==MODEL_REV and data_file.name=='train-00000-of-00001.parquet'
+observed_data_hash=hashlib.sha256(data_file.read_bytes()).hexdigest()
+assert observed_data_hash==DATA_SHA256,f'WikiText parquet SHA-256 mismatch: {observed_data_hash}'
 corpus=OUTPUT/'corpus'
 if not (corpus/'corpus_source_manifest.json').is_file():
  token_code=r'''import sys
@@ -157,9 +162,9 @@ if not (final/'summary.json').is_file():
   '--seeds',str(seeds_root),'--audit',str(audit),'--output',str(final)],cwd=REPO,check=True)
 verification=subprocess.check_output([str(PY),'-m','scripts.verify_qwen_sae_bundle',str(OUTPUT)],cwd=REPO,text=True)
 print(verification); upload_tree_once(OUTPUT,REMOTE_PREFIX)
-archive=WORK/'aether-qwen-sae-v1-1-results.tar.gz'
+archive=WORK/'aether-qwen-sae-v1-2-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{REMOTE_PREFIX}/aether-qwen-sae-v1-1-results.tar.gz',repo_id=HF_REPO,repo_type='dataset')
+api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{REMOTE_PREFIX}/aether-qwen-sae-v1-2-results.tar.gz',repo_id=HF_REPO,repo_type='dataset')
 print(json.dumps(json.loads((final/'summary.json').read_text()),indent=2)); print('ARCHIVE:',archive,archive.stat().st_size)"""),
     ]
     notebook = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

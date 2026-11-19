@@ -22,6 +22,7 @@ from causal.interventions.sae import SAEProvenance, write_sae_metadata
 from causal.interventions.sae import load_sae_checkpoint
 from experiments.phase1.sae_training_freeze import (
     load_and_validate_amendment,
+    load_and_validate_v1_2_amendment,
     verify_human_decision,
 )
 from instrumentation.adapters import Qwen2ModelAdapter
@@ -30,8 +31,10 @@ from instrumentation.adapters import Qwen2ModelAdapter
 ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "configs/experiments/qwen_sae_training_freeze_v1.json"
 AMENDMENT = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json"
+AMENDMENT_V1_2 = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_2_amendment.json"
 BASE_DECISION = ROOT / "results/phase1/sae_training_freeze/decision.json"
 AMENDMENT_DECISION = ROOT / "results/phase1/sae_training_freeze/amendment_decision.json"
+AMENDMENT_V1_2_DECISION = ROOT / "results/phase1/sae_training_freeze/v1_2_amendment_decision.json"
 
 
 def sha256_file(path: Path) -> str:
@@ -44,7 +47,7 @@ def sha256_file(path: Path) -> str:
 
 
 def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load the approved base and approved exact-hash correction."""
+    """Load the approved chain and return the effective v1.2 amendment."""
     base = json.loads(BASE.read_text(encoding="utf-8"))
     verify_human_decision(BASE, BASE_DECISION)
     amendment = load_and_validate_amendment(AMENDMENT, BASE)
@@ -55,7 +58,17 @@ def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
         raise PermissionError("SAE v1.1 approval hash mismatch")
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE v1.1 lacks a human project owner")
-    return base, amendment
+    correction = load_and_validate_v1_2_amendment(AMENDMENT_V1_2, AMENDMENT, BASE)
+    v1_2_decision = json.loads(AMENDMENT_V1_2_DECISION.read_text(encoding="utf-8"))
+    if v1_2_decision.get("decision") != "APPROVED":
+        raise PermissionError("SAE v1.2 is not approved")
+    if v1_2_decision.get("proposal_sha256") != sha256_file(AMENDMENT_V1_2):
+        raise PermissionError("SAE v1.2 approval hash mismatch")
+    if v1_2_decision.get("reviewer_role") != "human_project_owner":
+        raise PermissionError("SAE v1.2 lacks a human project owner")
+    effective = json.loads(json.dumps(amendment))
+    effective["training_corpus"].update(correction["correction"])
+    return base, effective
 
 
 def select_corpus_tokens(
@@ -90,6 +103,11 @@ def write_token_artifacts(
     """Write exact token IDs and a hash-complete corpus source manifest."""
     _base, amendment = authorization()
     corpus = amendment["training_corpus"]
+    expected_source_hash = corpus["source_file_sha256"]
+    for source_file in source_files:
+        observed = sha256_file(source_file)
+        if observed != expected_source_hash:
+            raise ValueError(f"WikiText parquet SHA-256 mismatch: {observed}")
     if output.exists():
         raise FileExistsError(output)
     output.mkdir(parents=True)

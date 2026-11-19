@@ -1,0 +1,38 @@
+{
+  "schema_version": "aether.qwen-sae-training-freeze-amendment.v1.2",
+  "status": "awaiting_human_scientific_review",
+  "parent_amendment_path": "configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json",
+  "parent_amendment_sha256": "30c7b828c1b237ff8d8d5855bd78bb285c73a0986e5f61555004e9c6485a4ff6",
+  "reason": "The v1.1 revision de54f133ef530c2e9b46c532f95a01c446ff0f1d does not contain the declared WikiText parquet and returns HTTP 404. The parquet was added by immutable commit b08601e04326c79dfdd32d625aee71d232d685c3.",
+  "correction": {
+    "dataset_id": "Salesforce/wikitext",
+    "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+    "dataset_config": "wikitext-2-raw-v1",
+    "source_split": "train",
+    "source_file": "wikitext-2-raw-v1/train-00000-of-00001.parquet",
+    "source_file_sha256": "e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7"
+  },
+  "unchanged": [
+    "base_v1_protocol",
+    "model_identity_and_revision",
+    "receiver_layer22_audit_component",
+    "dataset_identity_config_split_and_text_field",
+    "repository_order_and_empty_row_policy",
+    "tokenizer_and_eos_policy",
+    "selected_training_and_selection_token_counts",
+    "sequence_length",
+    "sae_architecture_optimizer_loss_and_seeds",
+    "checkpoint_selection_rule",
+    "aether_development_audit_cases",
+    "acceptance_thresholds",
+    "validation_and_test_locks",
+    "claim_boundary"
+  ],
+  "validation_executions": 0,
+  "test_executions": 0,
+  "human_review": {
+    "approved": false,
+    "reviewer": "",
+    "utc_timestamp": ""
+  }
+}

@@ -8,12 +8,14 @@ import pytest
 from experiments.phase1.sae_training_freeze import (
     load_and_validate_amendment,
     load_and_validate_freeze,
+    load_and_validate_v1_2_amendment,
     verify_human_decision,
 )
 
 
 PROTOCOL = Path("configs/experiments/qwen_sae_training_freeze_v1.json")
 AMENDMENT = Path("configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json")
+AMENDMENT_V1_2 = Path("configs/experiments/qwen_sae_training_freeze_v1_2_amendment.json")
 DECISION = Path("results/phase1/sae_training_freeze/decision.json")
 
 
@@ -73,3 +75,22 @@ def test_v1_1_amendment_cannot_change_aether_audit_cases(tmp_path) -> None:
     candidate.write_text(json.dumps(raw), encoding="utf-8")
     with pytest.raises(ValueError, match="audit cases"):
         load_and_validate_amendment(candidate, PROTOCOL)
+
+
+def test_v1_2_changes_only_the_pinned_retrieval_revision() -> None:
+    amendment = load_and_validate_v1_2_amendment(AMENDMENT_V1_2, AMENDMENT, PROTOCOL)
+    assert amendment["correction"]["dataset_revision"] == "b08601e04326c79dfdd32d625aee71d232d685c3"
+    assert amendment["validation_executions"] == amendment["test_executions"] == 0
+    with pytest.raises(PermissionError, match="human approval"):
+        load_and_validate_v1_2_amendment(
+            AMENDMENT_V1_2, AMENDMENT, PROTOCOL, require_approval=True
+        )
+
+
+def test_v1_2_rejects_unreviewed_file_hash_change(tmp_path) -> None:
+    raw = json.loads(AMENDMENT_V1_2.read_text(encoding="utf-8"))
+    raw["correction"]["source_file_sha256"] = "0" * 64
+    candidate = tmp_path / "bad.json"
+    candidate.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(ValueError, match="retrieval mismatch"):
+        load_and_validate_v1_2_amendment(candidate, AMENDMENT, PROTOCOL)
