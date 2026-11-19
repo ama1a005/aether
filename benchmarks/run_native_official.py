@@ -302,7 +302,7 @@ def main() -> None:
     parser.add_argument("--snapshot-manifest", type=Path)
     parser.add_argument("--package-wheel", type=Path,
                         help="Downloaded bfcl_eval wheel whose pinned SHA-256 was reviewed")
-    parser.add_argument("--backend", choices=("vllm", "sglang"), default="vllm")
+    parser.add_argument("--backend", choices=("vllm",), default="vllm")
     parser.add_argument("--num-gpus", type=int, default=1)
     parser.add_argument("--approval", type=Path, default=DEFAULT_BFCL_APPROVAL,
                         help="Human approval JSON bound to the exact canonical BFCL config")

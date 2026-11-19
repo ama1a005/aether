@@ -58,6 +58,17 @@ def test_backend_hardware_rejects_invalid_backend():
     assert any("Unsupported BFCL backend" in r for r in reasons)
 
 
+def test_native_cli_exposes_only_frozen_vllm_backend(monkeypatch, capsys) -> None:
+    import sys
+    from benchmarks.run_native_official import main
+
+    monkeypatch.setattr(sys, "argv", ["run_native_official", "bfcl", "--help"])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 0
+    assert "--backend {vllm}" in capsys.readouterr().out
+
+
 def test_backend_hardware_requires_installed_vllm(monkeypatch):
     monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: None)
     ok, reasons, _ = check_backend_and_hardware(backend="vllm")
