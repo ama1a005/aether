@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "notebooks/aether_smollm2_second_model_qualification.ipynb"
-COMMIT = "8ee2e3652566d3ba3ed462bba1c1a54a1884bc4e"
+COMMIT = "9f9bb8ee37474aa1cd9f0e562ff60fbfda2eda88"
 
 def cell(kind: str, source: str) -> dict:
     """Construct one notebook cell."""
