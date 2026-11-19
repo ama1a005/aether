@@ -122,6 +122,8 @@ def test_generated_notebook_is_multigpu_resumable_and_syntax_valid(tmp_path) -> 
     assert "allow_patterns='wikitext-2-raw-v1/*'" not in joined
     assert "{{" not in joined and "}}" not in joined
     assert "REMOTE_SOURCE_PREFIX" in joined and "sae-v1-2" in joined
+    assert "v1.3 requires the retained v1.2 epoch-10 files" in joined
+    assert "training_checkpoint.pt" in joined and "training_history.jsonl" in joined
     assert "finalize-rejected-seeds" in joined
 
 

@@ -76,6 +76,17 @@ for prefix in (REMOTE_SOURCE_PREFIX,REMOTE_PREFIX):
  except Exception as error:
   print('No remote checkpoint restored for',prefix,type(error).__name__,str(error))
 
+# v1.3 requires continuation of the retained v1.2 attempt. Never silently
+# restart the two observed seeds from random initialization.
+for seed in (11,22):
+ seed_root=OUTPUT/'seeds'/f'seed-{seed}'
+ required=(seed_root/'training_checkpoint.pt',seed_root/'training_history.jsonl')
+ missing=[str(path) for path in required if not path.is_file()]
+ if missing:
+  raise FileNotFoundError(
+   f'v1.3 requires the retained v1.2 epoch-10 files for seed {seed}; '
+   f'missing {missing}. Set AETHER_HF_REPO to the same private dataset used by v1.2.')
+
 def upload_tree_once(root, remote_prefix):
  root=Path(root)
  if not root.is_dir(): raise FileNotFoundError(root)
