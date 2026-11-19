@@ -169,7 +169,9 @@ def finalize(output: Path, proposal: dict[str, Any], instrumentation: dict[str, 
         "overall": "PASS" if behavioral["mq_g1"]["overall"] == "PASS"
         and behavioral["mq_g2"]["overall"] == "PASS" else "FAIL",
     })
-    behavior_ok = behavioral["mq_g1"]["overall"] == "PASS" and behavioral["mq_g2"]["overall"] == "PASS"
+    behavior_ok = (behavioral["mq_g1"]["overall"] == "PASS"
+                   and behavioral["mq_g2"] is not None
+                   and behavioral["mq_g2"]["overall"] == "PASS")
     result = {"schema_version": "aether.second-model-qualification.v1", "run_id": RUN_ID,
               "utc_timestamp": datetime.now(timezone.utc).isoformat(), "git_commit": _clean_commit(),
               "model": proposal["model"], "proposal_sha256": sha256_file(PROPOSAL),
@@ -216,9 +218,18 @@ def main() -> None:
     if args.preflight_only:
         return
     behavioral = json.loads((args.output / "summary.json").read_text(encoding="utf-8"))
-    if behavioral["mq_g1"]["overall"] != "PASS" or behavioral["mq_g2"]["overall"] != "PASS":
-        raise SystemExit("behavioral qualification failed; instrumentation was not opened")
-    result = finalize(args.output, proposal, run_instrumentation(proposal, args.output, args.cache))
+    if (behavioral["mq_g1"]["overall"] != "PASS" or behavioral["mq_g2"] is None
+            or behavioral["mq_g2"]["overall"] != "PASS"):
+        skipped = {"schema_version": "aether.second-model-instrumentation.v1",
+                   "overall": "NOT_RUN_BEHAVIORAL_FAIL",
+                   "reason": "stop_after_behavioral_failure",
+                   "validation_executions": 0, "test_executions": 0}
+        _write(args.output / "activation_artifacts.json", {"captures": [], "interventions": []})
+        torch.save({}, args.output / "activation_tensors.pt")
+        _write(args.output / "instrumentation_summary.json", skipped)
+        result = finalize(args.output, proposal, skipped)
+    else:
+        result = finalize(args.output, proposal, run_instrumentation(proposal, args.output, args.cache))
     print(json.dumps(result, indent=2, allow_nan=False))
 
 

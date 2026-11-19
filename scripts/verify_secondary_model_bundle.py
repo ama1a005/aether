@@ -29,7 +29,12 @@ def verify(bundle: Path) -> dict[str, Any]:
     if summary["decision_sha256"] != sha256_file(DECISION): raise ValueError("decision hash differs")
     if summary["model"] != proposal["model"]: raise ValueError("model identity differs")
     if summary["validation_executions"] or summary["test_executions"]: raise PermissionError("protected split accessed")
-    expected = "PASS" if summary["behavioral"]["mq_g1"]["overall"] == "PASS" and summary["behavioral"]["mq_g2"]["overall"] == "PASS" and summary["instrumentation"]["overall"] == "PASS" else "FAIL"
+    behavior_ok = (summary["behavioral"]["mq_g1"]["overall"] == "PASS"
+                   and summary["behavioral"]["mq_g2"] is not None
+                   and summary["behavioral"]["mq_g2"]["overall"] == "PASS")
+    expected = "PASS" if behavior_ok and summary["instrumentation"]["overall"] == "PASS" else "FAIL"
+    if not behavior_ok and summary["instrumentation"]["overall"] != "NOT_RUN_BEHAVIORAL_FAIL":
+        raise ValueError("instrumentation should be closed after behavioral failure")
     if summary["overall"] != expected: raise ValueError("combined decision differs")
     return {"schema_version": "aether.second-model-verification.v1", "overall": expected,
             "model_id": proposal["model"]["model_id"], "git_commit": summary["git_commit"],
