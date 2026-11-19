@@ -43,8 +43,13 @@ assert os.environ['HF_TOKEN'] and HF_REPO and '/' in HF_REPO, 'Enable HF_TOKEN a
     environment = """if shutil.which('uv') is None:
  subprocess.run([sys.executable,'-m','pip','install','uv==0.11.8'],check=True)
 UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
-subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
-subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
+if not PY.is_file():
+ subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
+subprocess.run([str(PY),'-c','import sys; assert sys.version_info[:3]==(3,11,9),sys.version'],check=True)
+if not REPO.exists():
+ subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
+elif not (REPO/'.git').exists():
+ raise RuntimeError(f'Existing repository path is incomplete: {REPO}')
 subprocess.run(['git','fetch','origin','m1/target-harness'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT

@@ -14,6 +14,7 @@ def test_notebook_is_pinned_gpu_resumable_and_hf_retained() -> None:
     assert "HF_TOKEN" in source and "AETHER_HF_REPO" in source
     assert "checkpoint.tar.gz" in source and "final-results.tar.gz" in source
     assert "--resume" in source and "plan.json" in source
+    assert "if not PY.is_file()" in source and "if not REPO.exists()" in source
     assert "scripts.verify_external_bundle" in source
     for index, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":
