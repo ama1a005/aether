@@ -49,8 +49,10 @@ def preflight(config_path: Path, approval_path: Path, snapshot_manifest: Path | 
     revision = str(config["model_revision"])
     snapshot = verify_snapshot_manifest(snapshot_manifest, revision) if snapshot_manifest is not None else None
     registry = json.loads((ROOT / config["case_registry"]).read_text(encoding="utf-8"))["cases"]
+    development_rows = [row for row in registry if row.get("split") == "development"]
     cases = [PatientCase(str(row["case_id"]), dict(row["features"]), str(row["ground_truth_decision"]),
-                         source_dataset=str(row["dataset_version"]), source_split=str(row["split"])) for row in registry]
+                         source_dataset=str(row["dataset_version"]), source_split=str(row["split"]))
+             for row in development_rows]
     if not cases or any(case.source_split != "development" for case in cases):
         raise ValueError("red-team cases must be nonempty and development-only")
     status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True)
