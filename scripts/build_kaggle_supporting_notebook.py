@@ -55,7 +55,8 @@ files=[]
 for path in sorted(p for p in snapshot.rglob('*') if p.is_file()): files.append({'path':path.relative_to(snapshot).as_posix(),'size':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
 manifest=WORK/'model_snapshot_manifest.json'; manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':revision,'snapshot_path':str(snapshot),'files':files},indent=2))
 subprocess.run([str(PY),'-m','experiments.phase1.qwen_red_team','--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/qwen_red_team_development.json'),'--snapshot-manifest',str(manifest),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
-    archive = f"""subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT)],cwd=REPO,check=True)
+    archive = f"""import hashlib, subprocess, tarfile
+subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT)],cwd=REPO,check=True)
 archive=WORK/'aether-{kind}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())"""
