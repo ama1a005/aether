@@ -22,7 +22,7 @@ from attacks.qwen_backend import QwenRedTeamBackend
 from benchmarks.bfcl_qwen25 import verify_snapshot_manifest
 from contracts.schemas import PatientCase
 from experiments.external_bundle import verify_protocol_approval, write_bundle_manifest
-from experiments.manifest import sha256_file
+from experiments.manifest import environment_inventory, sha256_file
 from instrumentation.adapters import Qwen2ModelAdapter
 
 
@@ -101,8 +101,7 @@ def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output:
         str(campaign_summary): sha256_file(campaign_summary), str(summary_path): sha256_file(summary_path),
     }
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
-    freeze = subprocess.run([sys.executable, "-m", "pip", "freeze", "--all"], check=True,
-                            capture_output=True, text=True).stdout
+    freeze = environment_inventory(ROOT)
     write_bundle_manifest(output, {
         "experiment_id": config["experiment_id"], "run_id": output.name,
         "utc_timestamp": datetime.now(timezone.utc).isoformat(), "git_commit": manifest["git_commit"],

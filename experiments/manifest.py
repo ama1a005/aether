@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from importlib.metadata import distributions
 import json
 import platform
 import subprocess
@@ -24,6 +25,21 @@ def _run(command: Sequence[str], cwd: Path) -> str:
     """Run a metadata command and return stripped stdout, failing explicitly."""
     result = subprocess.run(command, cwd=cwd, check=True, capture_output=True, text=True)
     return result.stdout.strip()
+
+
+def environment_inventory(repository: Path) -> str:
+    """Return installed-package provenance even when a uv venv omits pip."""
+    try:
+        return _run([sys.executable, "-m", "pip", "freeze", "--all"], repository)
+    except subprocess.CalledProcessError:
+        packages = []
+        for distribution in distributions():
+            name = distribution.metadata.get("Name") or distribution.metadata.get("name")
+            if name:
+                packages.append(f"{name}=={distribution.version}")
+        if not packages:
+            raise RuntimeError("environment package inventory is unavailable")
+        return "\n".join(sorted(set(packages), key=str.lower))
 
 
 def sha256_file(path: Path) -> str:
@@ -73,7 +89,7 @@ def create_run_manifest(
         "dataset_version": _require_metadata("dataset_version", dataset_version),
         "dataset_split": _require_metadata("dataset_split", dataset_split),
     }
-    freeze = _run([sys.executable, "-m", "pip", "freeze", "--all"], repo)
+    freeze = environment_inventory(repo)
     status = _run(["git", "status", "--porcelain"], repo)
 
     def hashes(paths: Sequence[Path]) -> dict[str, str]:
