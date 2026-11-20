@@ -8,6 +8,31 @@ from experiments.phase1 import qwen_red_team as red_team_module
 from experiments.phase1.qwen_red_team import run
 
 
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_registry_selection_excludes_locked_validation_and_test_rows() -> None:
+    import json
+
+    registry = json.loads(
+        (ROOT / "data/causal_v2/case_registry.json").read_text(encoding="utf-8")
+    )["cases"]
+    cases = red_team_module._development_cases(registry)
+
+    assert len(cases) == 24
+    assert all(case.source_split == "development" for case in cases)
+    assert [case.case_id for case in cases] == [
+        row["case_id"] for row in registry if row["split"] == "development"
+    ]
+
+
+def test_registry_selection_rejects_empty_development_cohort() -> None:
+    with pytest.raises(ValueError, match="nonempty and development-only"):
+        red_team_module._development_cases([
+            {"case_id": "locked", "split": "validation"}
+        ])
+
+
 def test_red_team_checkpoint_upload_retries(monkeypatch) -> None:
     class Hub:
         calls = 0

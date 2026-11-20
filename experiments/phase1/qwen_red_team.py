@@ -31,6 +31,19 @@ from instrumentation.adapters import Qwen2ModelAdapter
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def _development_cases(registry: list[dict[str, object]]) -> list[PatientCase]:
+    """Materialize only development rows while preserving registry order."""
+    selected = [row for row in registry if row.get("split") == "development"]
+    cases = [PatientCase(
+        str(row["case_id"]), dict(row["features"]),
+        str(row["ground_truth_decision"]),
+        source_dataset=str(row["dataset_version"]), source_split=str(row["split"]),
+    ) for row in selected]
+    if not cases or any(case.source_split != "development" for case in cases):
+        raise ValueError("red-team cases must be nonempty and development-only")
+    return cases
+
+
 def _upload_with_retry(hub: object, *, attempts: int = 4, **arguments: object) -> None:
     """Upload a required checkpoint with bounded visible retries."""
     if attempts < 1:
@@ -75,10 +88,7 @@ def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output:
     revision = str(config["model_revision"])
     snapshot = verify_snapshot_manifest(snapshot_manifest, revision)
     registry = json.loads((ROOT / config["case_registry"]).read_text(encoding="utf-8"))["cases"]
-    cases = [PatientCase(str(row["case_id"]), dict(row["features"]), str(row["ground_truth_decision"]),
-                         source_dataset=str(row["dataset_version"]), source_split=str(row["split"])) for row in registry]
-    if not cases or any(case.source_split != "development" for case in cases):
-        raise ValueError("red-team cases must be nonempty and development-only")
+    cases = _development_cases(registry)
     runtime = config.get("runtime", {})
     if runtime != {"device": "cuda:0", "dtype": "float32",
                    "deterministic_generation": True}:
