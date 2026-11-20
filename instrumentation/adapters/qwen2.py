@@ -81,7 +81,7 @@ class Qwen2ModelAdapter(ModelAdapter):
             cache_dir=self.cache_dir,
             local_files_only=self.local_files_only,
             trust_remote_code=False,
-            dtype=self.dtype,
+            torch_dtype=self.dtype,
             low_cpu_mem_usage=self.low_cpu_mem_usage,
             attn_implementation="eager",
         ).to(self.device)
