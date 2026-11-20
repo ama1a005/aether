@@ -21,6 +21,8 @@ def test_notebook_is_pinned_gpu_resumable_and_hf_retained() -> None:
     assert "upload_file_retry" in source and "range(1,5)" in source
     assert "scripts.verify_qwen_red_team_bundle" in source
     assert "AETHER_RED_TEAM_ATTEMPT" in source and "attempt-2" in source
+    assert "r'[A-Za-z0-9][A-Za-z0-9._-]{0,63}'" in source
+    assert "https://github.com/ama1a005/aether.git" in source
     for index, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":
             compile("".join(cell["source"]), f"cell-{index}", "exec")

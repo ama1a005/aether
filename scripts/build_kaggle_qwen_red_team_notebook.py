@@ -31,7 +31,7 @@ from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-red-team-real')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
 ATTEMPT=os.environ.get('AETHER_RED_TEAM_ATTEMPT','attempt-2')
-assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,63}',ATTEMPT),f'Invalid attempt identifier: {{ATTEMPT!r}}'
+assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{{0,63}}',ATTEMPT),f'Invalid attempt identifier: {{ATTEMPT!r}}'
 OUTPUT=WORK/f'aether-qwen-red-team-real-{{ATTEMPT}}'; CACHE=RUNTIME/'hf-cache'
 COMMIT={commit!r}; URL='https://github.com/ama1a005/aether.git'
 REMOTE_PREFIX=f'red-team-real/{{ATTEMPT}}'
