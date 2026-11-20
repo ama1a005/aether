@@ -35,6 +35,7 @@ from experiments.external_bundle import (
     sha256_file,
     write_bundle_manifest,
 )
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,7 +79,7 @@ def _load_config(config_path: Path, benchmark: str) -> dict[str, Any]:
     resolved = config_path.resolve()
     if resolved != DEFAULT_CONFIG.resolve():
         raise ValueError("official execution only accepts the repository's canonical config")
-    if sha256_file(resolved) != BFCL_CONFIG_SHA256:
+    if not frozen_text_hash_matches(resolved, BFCL_CONFIG_SHA256):
         raise ValueError("official benchmark configuration hash differs from the reviewed config")
     config = yaml.safe_load(resolved.read_text(encoding="utf-8"))
     if not isinstance(config, dict) or config.get("schema_version") != 1 or config.get("split") != "development":

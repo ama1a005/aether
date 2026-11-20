@@ -9,6 +9,23 @@ import sys
 import pytest
 
 from benchmarks import run_native_official
+
+
+def test_bfcl_config_hash_accepts_git_newline_conversion_only(tmp_path) -> None:
+    canonical = run_native_official.DEFAULT_CONFIG.read_bytes()
+    lf = canonical.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    converted = tmp_path / "phase1_external.yaml"
+    converted.write_bytes(lf)
+    original = run_native_official.DEFAULT_CONFIG
+    run_native_official.DEFAULT_CONFIG = converted
+    try:
+        loaded = run_native_official._load_config(converted, "bfcl")
+        assert loaded["bfcl"]["package"] == "bfcl_eval"
+        converted.write_bytes(lf + b"\n# scientific drift\n")
+        with pytest.raises(ValueError, match="hash differs"):
+            run_native_official._load_config(converted, "bfcl")
+    finally:
+        run_native_official.DEFAULT_CONFIG = original
 from benchmarks.run_native_official import build_plan
 from benchmarks.nov19_bfcl.preflight import (
     ADAPTER_REGISTRY_NAME,
