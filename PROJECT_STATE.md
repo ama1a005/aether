@@ -1,5 +1,22 @@
 # AETHER project state
 
+## Guided walkthrough cleanup — 2026-11-21
+
+The presentation now has six stages: source record, evidence retrieval, clean
+agents, controlled attack, message rescue, and retained experimental results.
+The white/navy layout removes the header badge and collapses technical JSON.
+Local deterministic execution is the default; WSO2 is an explicit external
+service option. Missing PTB-XL heart rate is no longer filled by the legacy
+helper. Historical replay snapshots and frozen scientific evidence are unchanged.
+
+Verification: 765 Python tests passed and 5 prerequisite-dependent tests skipped;
+the added heart-rate regression passed separately. Six frontend tests, TypeScript
+checking, production build and package verification passed. The launcher passed
+instance health checks. Live HTTP checks passed for all 12 records and 48 pipeline
+requests, verifying clean/attack contrasts and clean-message rescue. Browser
+visual inspection was unavailable because its access host was not connected.
+Live external WSO2 services were not verified. Scientific limitations below remain.
+
 ## 2026-11-21 official-source PTB-XL demonstration cohort
 
 The active review demo now uses twelve exact records derived from official

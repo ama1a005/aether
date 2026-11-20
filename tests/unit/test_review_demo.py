@@ -38,6 +38,17 @@ def test_tool_execution_and_deterministic_serialization() -> None:
     assert first.serialize() == second.serialize() and first.sha256() == second.sha256()
 
 
+def test_ptbxl_ecg_does_not_invent_heart_rate() -> None:
+    """Diagnostic metadata must not acquire the legacy helper's default vitals."""
+    from demo.backend.tools import _ecg_analysis
+
+    for case in load_cases():
+        evidence = _ecg_analysis(case)
+        assert "heart_rate" not in evidence
+        assert evidence["flags"] == case.ecg["diagnostic_superclasses"]
+        assert "AETHER" in evidence["risk_level_derivation"]
+
+
 def test_clean_attack_and_rescue_are_integrated_with_core() -> None:
     clean = run_pipeline("DEMO-PAT-001", False)
     attack = run_pipeline("DEMO-PAT-001", True)

@@ -6,7 +6,7 @@ from time import perf_counter
 from typing import Any, Callable
 
 from demo.backend.schemas import DemoPatientCase, ToolExecution
-from target.mcp.tools import get_ecg_analysis, get_patient_history, get_vital_signs
+from target.mcp.tools import get_patient_history, get_vital_signs
 
 
 def _code(case: DemoPatientCase) -> str:
@@ -20,8 +20,10 @@ def _patient_record(case: DemoPatientCase) -> dict[str, Any]:
 
 
 def _ecg_analysis(case: DemoPatientCase) -> dict[str, Any]:
-    features = {**case.ecg, **case.vitals}
-    return {**get_ecg_analysis(case.case_id, features), "summary": case.ecg["summary"], "recommendation_code": _code(case)}
+    return {**case.ecg, "recommendation_code": _code(case),
+            "risk_level": "CRITICAL" if case.expected_action == "ESCALATE" else "LOW",
+            "risk_level_derivation": "AETHER demonstration mapping from published diagnostic superclasses",
+            "flags": case.ecg["diagnostic_superclasses"]}
 
 
 def _vitals(case: DemoPatientCase) -> dict[str, Any]:

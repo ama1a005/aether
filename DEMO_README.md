@@ -1,5 +1,29 @@
 # AETHER Intermediate Review Demo
 
+## Guided presentation workflow
+
+The interface provides six stages: select a PTB-XL record, retrieve evidence,
+execute the clean pipeline, apply the attack, test message rescue, and inspect
+retained Qwen results. Use the Continue button after completing each operation.
+Changing the record or execution mode clears the previous case's outputs.
+The default browser mode uses local deterministic execution. The external MCP
+mode requires the running WSO2/HAPI services.
+
+Launch from the checkout containing these changes with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_review_demo.ps1 -Mode mock_deterministic
+```
+
+For an isolated worktree without its own environment, append
+`-PythonExecutable <path-to-existing-venv-python.exe>`. This uses the explicitly
+selected environment without installing packages globally. The launcher refuses
+an occupied port rather than stopping another server.
+
+The final evidence stage displays the retained causal-core experiments and
+supporting negative outcomes. The interactive message repair remains a
+deterministic illustration; actual Qwen outcomes come from the retained bundles.
+
 ## Active standardized case cohort (2026-11-21)
 
 The active twelve-case demo cohort is derived from official PTB-XL v1.0.3

@@ -1,12 +1,14 @@
 param(
     [ValidateSet("real_fhir_mcp_deterministic", "mock_deterministic", "replay")]
     [string]$Mode = "real_fhir_mcp_deterministic",
-    [switch]$NoBrowser
+    [switch]$NoBrowser,
+    [string]$PythonExecutable
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $environment = ".venv"
 $python = Join-Path $root "$environment\Scripts\python.exe"
+if ($PythonExecutable) { $python = (Resolve-Path -LiteralPath $PythonExecutable).Path }
 $frontend = Join-Path $root "demo\frontend"
 if (-not (Test-Path $python)) { throw "Missing $environment. Follow DEMO_README.md first." }
 if (-not (Test-Path (Join-Path $frontend "node_modules"))) { throw "Frontend packages missing. Run npm.cmd install in demo\frontend." }
@@ -19,7 +21,9 @@ if ($listeners.Count) {
 }
 Push-Location $frontend
 try {
-    & npm.cmd run build
+    & npx.cmd tsc -b
+    if ($LASTEXITCODE -ne 0) { throw "Frontend type checking failed." }
+    & npx.cmd vite build --configLoader runner
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed; demo was not started." }
 } finally { Pop-Location }
 if ($Mode -like "real_fhir_mcp*") {

@@ -1,5 +1,12 @@
 # AETHER current bounded task
 
+## Guided presentation cleanup — completed locally
+
+Implemented the six-stage walkthrough, preserved frozen evidence, removed invented
+ECG defaults, tested retrieval errors/retries, built and launched the packaged UI,
+and ran model-independent verification. No model or benchmark was rerun. Browser
+visual review and live WSO2 verification remain separate checks. See PROJECT_STATE.md.
+
 ## Verify and present the official-source PTB-XL demo cohort
 
 Use `demo/cases/ptbxl_demo_cases.json` as the active review cohort and preserve
