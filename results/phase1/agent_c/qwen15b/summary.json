@@ -1,0 +1,23 @@
+{
+  "attacked_reviewed_accuracy": 0.5,
+  "claim_boundary": "Prospective development-only evidence for a Qwen-powered third-agent reviewer using a real local MCP stdio tool transport. This is not validation, test, causal-circuit, remediation, clinical-deployment, or official-benchmark evidence.",
+  "clean_reviewed_accuracy": 0.375,
+  "correction_fraction_among_incoming_errors": 0.5,
+  "execution_pass_semantics": "integrity_and_completion_only",
+  "incoming_decision_accuracy_all_rows": 0.5,
+  "invalid_fraction": 0.0,
+  "invalid_rows": 0,
+  "mcnemar_exact_p_value": 0.7011080384254456,
+  "overall": "PASS",
+  "paired_accuracy_difference": -0.0625,
+  "paired_bootstrap_95_percent_ci": [
+    -0.2708333333333333,
+    0.14583333333333334
+  ],
+  "regression_fraction_among_incoming_correct": 0.625,
+  "reviewed_decision_accuracy_all_rows": 0.4375,
+  "test_executions": 0,
+  "total_rows": 48,
+  "valid_rows": 48,
+  "validation_executions": 0
+}

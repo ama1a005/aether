@@ -1,0 +1,9 @@
+{
+  "best_selection": null,
+  "epochs_completed": 100,
+  "schema_version": "aether.sae-seed-result.v1",
+  "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+  "seed": 11,
+  "test_executions": 0,
+  "validation_executions": 0
+}

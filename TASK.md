@@ -1,5 +1,22 @@
 # AETHER current bounded task
 
+## 2026-11-20 local Phase-1 closure
+
+Integrate member branches and independently verified retained SAE, SmolLM2 and
+Agent-C artifacts; preserve the rejected red-team attempt without promotion;
+update execution status, documentation and the review frontend; generate the
+current fail-closed completion audit; run all model-independent tests, smokes,
+frontend tests/build and demo-package verification; and prepare a clean
+integration commit. Do not execute or retry BFCL, MCPTox, TAMAS, red team, a
+second model or SAE training. Do not weaken frozen completion predicates or
+generate a final verified report while prerequisites remain unmet.
+
+Acceptance: compact evidence and receipts are versioned without activation
+tensors or model checkpoints; completed negative experiments are distinguishable
+from missing work; Agent-C integrity PASS is not described as performance
+improvement; the full verification suite passes; remaining external evidence is
+reported explicitly.
+
 ## Execute the approved SAE v1.2 pinned corpus-revision correction
 
 Run the newly generated, commit-pinned v1.2 Kaggle notebook. It must retrieve

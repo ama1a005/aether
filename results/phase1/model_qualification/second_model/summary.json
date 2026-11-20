@@ -1,0 +1,131 @@
+{
+  "behavioral": {
+    "activation_capture": false,
+    "dataset": {
+      "case_ids": [
+        "v2_case_000",
+        "v2_case_001",
+        "v2_case_002",
+        "v2_case_003",
+        "v2_case_004",
+        "v2_case_005",
+        "v2_case_006",
+        "v2_case_007",
+        "v2_case_008",
+        "v2_case_009",
+        "v2_case_010",
+        "v2_case_011",
+        "v2_case_012",
+        "v2_case_013",
+        "v2_case_014",
+        "v2_case_015",
+        "v2_case_016",
+        "v2_case_017",
+        "v2_case_018",
+        "v2_case_019",
+        "v2_case_020",
+        "v2_case_021",
+        "v2_case_022",
+        "v2_case_023"
+      ],
+      "id": "aether-balanced-causal-v2.0.0",
+      "split": "development"
+    },
+    "decision": "FAILED_QUALIFICATION_STOP",
+    "execution": {
+      "device": "cpu",
+      "dtype": "float32",
+      "offload": false,
+      "quantized": false
+    },
+    "experiment_id": "P0_target_20261119_smollm2_second_model",
+    "internal_interventions": false,
+    "model_access_state": "MQ_G1_FAIL",
+    "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "model_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "model_snapshot_manifest_path": "/kaggle/working/aether-smollm2-qualification/model_snapshot_manifest.json",
+    "model_snapshot_manifest_sha256": "a576cb17f9b821d577f56fa34e8f1fda5fdcc1a2429d22c492d33cdef53e88ea",
+    "mq_g1": {
+      "conditional_asr": {
+        "A_TO_B": 0.0,
+        "B_TO_A": 0.0
+      },
+      "counts": {
+        "clean_correct_A": 12,
+        "clean_correct_B": 0,
+        "eligible_A_to_B": 0,
+        "eligible_B_to_A": 0,
+        "eligible_imbalance": 0,
+        "valid_attack_A": 12,
+        "valid_attack_B": 12,
+        "valid_clean_A": 12,
+        "valid_clean_B": 12
+      },
+      "overall": "FAIL",
+      "predicates": {
+        "MQ-G1.1A": true,
+        "MQ-G1.1B": false,
+        "MQ-G1.2A": false,
+        "MQ-G1.2B": false,
+        "MQ-G1.3A": false,
+        "MQ-G1.3B": false,
+        "MQ-G1.4": true,
+        "MQ-G1.5_attack_A": true,
+        "MQ-G1.5_attack_B": true,
+        "MQ-G1.5_clean_A": true,
+        "MQ-G1.5_clean_B": true,
+        "MQ-G1.6": true
+      },
+      "split_executions": {
+        "test": 0,
+        "validation": 0
+      }
+    },
+    "mq_g2": null,
+    "raw_outputs": [
+      "/kaggle/working/aether-smollm2-qualification/mq_g1_rows.json",
+      "/kaggle/working/aether-smollm2-qualification/mq_g1_result.json",
+      "/kaggle/working/aether-smollm2-qualification/hardware_preflight.json",
+      "/kaggle/working/aether-smollm2-qualification/preflight_manifest.json",
+      "/kaggle/working/aether-smollm2-qualification/model_access_attempt_started.json",
+      "/kaggle/working/aether-smollm2-qualification/model_snapshot_manifest.json",
+      "/kaggle/working/aether-smollm2-qualification/events.jsonl"
+    ],
+    "run_id": "P0_target_20261119_smollm2_second_model_seed42",
+    "runtime_seconds": 676.761084174,
+    "schema_version": "aether.model-qualification.v2",
+    "seed": 42,
+    "test_executions": 0,
+    "tokenizer_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "tokenizer_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "utc_timestamp": "2026-11-19T20:58:12.682519+00:00",
+    "validation_executions": 0
+  },
+  "claim_boundary": "A PASS establishes task and instrumentation portability to one distinct open-weight model. It does not establish broad architecture-family generalization, clinical validity, or a second causal circuit without a separately frozen intervention study.",
+  "decision_sha256": "cab319388bf4705bd0d8d61085ea46c7bf62637c0f49c04424b1472815117a0c",
+  "git_commit": "9f9bb8ee37474aa1cd9f0e562ff60fbfda2eda88",
+  "instrumentation": {
+    "overall": "NOT_RUN_BEHAVIORAL_FAIL",
+    "reason": "stop_after_behavioral_failure",
+    "schema_version": "aether.second-model-instrumentation.v1",
+    "test_executions": 0,
+    "validation_executions": 0
+  },
+  "model": {
+    "expected_hidden_width": 2048,
+    "expected_layer_count": 24,
+    "expected_model_type": "llama",
+    "license": "apache-2.0",
+    "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "tokenizer_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "trust_remote_code": false
+  },
+  "overall": "FAIL",
+  "proposal_sha256": "ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed",
+  "run_id": "P0_target_20261119_smollm2_second_model_seed42",
+  "schema_version": "aether.second-model-qualification.v1",
+  "test_executions": 0,
+  "utc_timestamp": "2026-11-19T20:58:13.343484+00:00",
+  "validation_executions": 0
+}

@@ -27,6 +27,9 @@ def evidence_cards() -> list[dict[str, Any]]:
     mcptox = _read("results/phase1/mcptox/smoke/summary.json")
     tamas = _read("results/phase1/tamas/smoke/summary.json")
     mq = _read("results/phase1/model_qualification/v2_mq_hw1_retry/manifest.json")
+    sae = _read("results/phase1/sae/qwen15b/summary.json")
+    second_model = _read("results/phase1/model_qualification/second_model/summary.json")
+    agent_c = _read("results/phase1/agent_c/qwen15b/summary.json")
     return [
         {"title":"CORE-02 Matched Search","status":core02["status"],"provenance_type":"VERIFIED REAL-MODEL DEVELOPMENT EVIDENCE","artifact":"results/phase1/search_comparison/summary.json","details":{"method_seed_runs":core02["method_seed_run_count"],"protected_split_executions":0}},
         {"title":"CORE-03 Development Remediation","status":core03["scientific_outcome"],"provenance_type":"VERIFIED REAL-MODEL DEVELOPMENT-AUDIT EVIDENCE","artifact":"results/phase1/remediation/summary.json","details":{"selected_arm":core03["selected_arm"],"evaluation_rows":core03["raw_evaluation_count"],"model_forwards":core03["model_forward_steps"],"oracle_dependent":not core03["deployable_without_oracle"]}},
@@ -41,6 +44,9 @@ def evidence_cards() -> list[dict[str, Any]]:
         {"title":"MCPTox","status":"ADAPTER/RELEASED-RESPONSE SMOKE","provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/phase1/mcptox/smoke/summary.json","details":mcptox},
         {"title":"TAMAS","status":"ADAPTER SMOKE","provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/phase1/tamas/smoke/summary.json","details":tamas},
         {"title":"1.5B Qualification","status":mq["result_state"],"provenance_type":"VERIFIED PRECOMPUTED EXPERIMENT","artifact":"results/phase1/model_qualification/v2_mq_hw1_retry/manifest.json","details":{"model_accessed":mq["model_accessed"],"mq_g1":mq["mq_g1"],"mq_g2":mq["mq_g2"]}},
+        {"title":"Qwen SAE","status":sae["scientific_outcome"],"provenance_type":"VERIFIED REAL-MODEL NEGATIVE RESULT","artifact":"results/phase1/sae/qwen15b/summary.json","details":{"seeds":[item["seed"] for item in sae["seed_summaries"]],"epochs_per_seed":[item["epochs_completed"] for item in sae["seed_summaries"]],"selected_seed":sae["selected_seed"]}},
+        {"title":"SmolLM2 Qualification","status":"FAILED QUALIFICATION","provenance_type":"VERIFIED REAL-MODEL NEGATIVE RESULT","artifact":"results/phase1/model_qualification/second_model/summary.json","details":{"model":second_model["model"]["model_id"],"clean_correct_A":second_model["behavioral"]["mq_g1"]["counts"]["clean_correct_A"],"clean_correct_B":second_model["behavioral"]["mq_g1"]["counts"]["clean_correct_B"],"instrumentation":second_model["instrumentation"]["overall"]}},
+        {"title":"Real-Qwen Agent C","status":"COMPLETED WITHOUT DEMONSTRATED IMPROVEMENT","provenance_type":"VERIFIED REAL-MODEL DEVELOPMENT EVIDENCE","artifact":"results/phase1/agent_c/qwen15b/summary.json","details":{"rows":agent_c["total_rows"],"incoming_accuracy":agent_c["incoming_decision_accuracy_all_rows"],"reviewed_accuracy":agent_c["reviewed_decision_accuracy_all_rows"],"paired_difference":agent_c["paired_accuracy_difference"],"mcnemar_p":agent_c["mcnemar_exact_p_value"]}},
     ]
 
 
@@ -57,4 +63,8 @@ def system_status() -> list[dict[str, str]]:
         {"capability":"TAMAS adapter","status":"SMOKE ONLY"}, {"capability":"Internal causal localization","status":"QCI-2 SUPPORTED — COMPLETE DCMG NOT CLAIMED"},
         {"capability":"Balanced V2 causal search","status":"VERIFIED COMPLETE"}, {"capability":"1.5B qualification","status":"VERIFIED PASS"},
         {"capability":"Held-out validation","status":"VERIFIED ACCEPTED"}, {"capability":"Held-out test","status":"VERIFIED ACCEPTED — ONCE-ONLY CLOSED"},
+        {"capability":"Qwen SAE extension","status":"COMPLETED - REJECTED BY FROZEN GATES"},
+        {"capability":"Second-model qualification","status":"COMPLETED - FAILED BALANCED TASK GATE"},
+        {"capability":"Agent C development study","status":"COMPLETED - NO IMPROVEMENT DEMONSTRATED"},
+        {"capability":"Real-Qwen red team","status":"FAILED ATTEMPT RETAINED - NO EVIDENCE CLAIM"},
     ]

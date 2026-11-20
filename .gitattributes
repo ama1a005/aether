@@ -7,3 +7,7 @@ results/phase1/causal_interventions/qwen15b_qci1/** -text
 results/phase1/causal_interventions/qwen15b_qci2_discovery/** -text
 results/phase1/causal_interventions/qwen15b_qci2_audit/** -text
 results/phase1/agent_c/development/** -text -diff
+results/phase1/agent_c/qwen15b/** -text
+results/phase1/agent_c/qwen15b.ingest_receipt.json -text
+results/phase1/model_qualification/second_model/** -text
+results/phase1/sae/qwen15b/** -text

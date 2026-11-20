@@ -1,0 +1,8 @@
+{
+  "checkpoint_state.json": "860c8c688bf9312c6af14c40279f82e1639ae27c4046f163dfb2eee1eb143f1a",
+  "manifest.json": "33ebb58317de61b1fc5dc23a985bf703b3c838db9eb6a251887c8bf75dff5b1a",
+  "model_snapshot_manifest.json": "2128abb5761d674e3de6d6053bd9a35b25d4ec1782634c5eec84fca95e8ba293",
+  "preflight.json": "dc1b4a11222e8f7d34e21342b45e2334b741e3d603be800756a3f456942e3cae",
+  "raw_reviews.jsonl": "b99339b67fbb7b5fbe7b2b944019320f7390e3ecc76a08eb1da7c2b8b00f24e8",
+  "summary.json": "c4f278f1292c69ee7292556f3f0c0156a4b80c7a63bb312b4ddcbb13f4e004cc"
+}

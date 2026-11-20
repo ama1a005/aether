@@ -1,0 +1,19 @@
+{
+  "activation_artifacts.json": "bf24880293ac37c14efa06d9661260e68507b7cf35b634a1a545eaa673252911",
+  "activation_tensors.pt": "7fb80535facda1caf1837a463c3527cd13221f39aa1bd32a0d448cac0c5bfc44",
+  "behavioral_summary.json": "e86d76a14e55ce8c51cdec49699dbb91bd04744a57e76adf822cab5bb074d9bb",
+  "derived_candidate.json": "da1046daf841ad3946133007c80c6ef9819addc971b6ee979ca08de665dfe886",
+  "derived_hardware_gate.json": "77e6aa189828b8b751bb4d8e6ed3436f77bd9206595e6b118d1fb53579de44f4",
+  "events.jsonl": "e78c8e77391ec807935655f1e65d61e28f0a02137b99e0af0c6261cd743a84c1",
+  "hardware_preflight.json": "eb739d9c64d15201616e950280354c9ac9015e6abef3c8c1e5814f9019f54a5f",
+  "instrumentation_summary.json": "e0379c88ce0d9d9015dc34ae0c8ffe67fa47756d3b57e4c158bbf5b7ee50e933",
+  "manifest.json": "05e6fbc0b2c0baacc555e4a53615027b3fc0467d8d9cb194366d8be84b5dab8c",
+  "model_access_attempt_started.json": "740c8e169e196fc1d067366e397f26991f5fd847bafa30af6130a939573ee2d2",
+  "model_snapshot_manifest.json": "a576cb17f9b821d577f56fa34e8f1fda5fdcc1a2429d22c492d33cdef53e88ea",
+  "mq_g1_result.json": "bba467857dfb524cda685d46ea345a985fdf533a2e52c305d1cb2f00fa06ce47",
+  "mq_g1_rows.json": "395891a87e462e3ff167226f512969c2ba131a99ba47bc8e809dfcf212f1a280",
+  "preflight_manifest.json": "28cf46d1362f31d43cc5291c51b8d07f92af6642159389ffe67c16a53fd4a08f",
+  "python_environment.json": "c0ef6aafd39d1c496e8b3e31d9a3c927fa08b85ec0a5fdb2b555097c8ca4bf71",
+  "raw_behavioral_rows.jsonl": "97f292845b0eba8aabe1e759203699d1184d6ceb04158d7fc11b08553ed87921",
+  "summary.json": "a70e293d17722cecaaf4a480bed7db0aa2a85c03661603a078c25f673afcc754"
+}

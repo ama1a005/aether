@@ -1,5 +1,28 @@
 # AETHER project state
 
+## 2026-11-20 Phase-1 local closure and retained negative evidence
+
+The member branches are integrated on `integration/phase1-closure`. The verified
+Qwen causal core remains the central positive result: the frozen paired-clean-
+donor L20H5 repair achieved 1.0 attacked recovery and 1.0 clean accuracy on the
+four-case development audit, eight-case locked validation and eight-case once-
+only test cohorts. Validation and test exact paired McNemar p-values are both
+0.0078125. This is an oracle-dependent internal result on the frozen balanced
+synthetic substrate, not a deployable defense.
+
+Three retained supporting studies are now ingested. Qwen SAE v1.3 completed 100
+epochs for seeds 11/22/33 but produced no eligible checkpoint; SmolLM2 failed
+balanced behavioral qualification with clean counts A=12 and B=0 and therefore
+did not run instrumentation; Agent C completed 48 valid development rows but
+changed accuracy from 0.5 incoming to 0.4375 reviewed, with no significant
+improvement. The retained real-Qwen red-team attempt is rejected because all 48
+attempts were inference errors. No threshold or completion gate was weakened.
+
+Local implementation closure is documented in
+`docs/PHASE1_LOCAL_CLOSURE_2026-11-20.md`. Official BFCL, MCPTox and TAMAS
+evidence and a valid red-team campaign remain absent. The final all-evidence
+report remains fail-closed.
+
 ## 2026-11-19 SmolLM2 derived single-model gate defect confirmed
 
 The model-free SmolLM2 preflight measured sufficient RAM, cgroup headroom and

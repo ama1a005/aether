@@ -1,8 +1,9 @@
 """Fail-closed checks for the prospective SAE v1.3 semantics amendment."""
 
-import hashlib
 import json
 from pathlib import Path
+
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -11,14 +12,10 @@ PARENT = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_2_amendment.jso
 PROPOSAL = ROOT / "configs/experiments/qwen_sae_training_freeze_v1_3_amendment.json"
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def test_v1_3_is_review_gated_and_bound_to_approved_parent() -> None:
     proposal = json.loads(PROPOSAL.read_text(encoding="utf-8"))
     assert proposal["status"] == "awaiting_human_scientific_review"
-    assert proposal["parent_amendment_sha256"] == _sha256(PARENT)
+    assert frozen_text_hash_matches(PARENT, proposal["parent_amendment_sha256"])
     assert proposal["human_review"]["approved"] is False
 
 

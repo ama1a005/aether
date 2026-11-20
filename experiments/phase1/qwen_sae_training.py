@@ -27,6 +27,7 @@ from experiments.phase1.sae_training_freeze import (
     verify_human_decision,
 )
 from instrumentation.adapters import Qwen2ModelAdapter
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -61,7 +62,7 @@ def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
     decision = json.loads(AMENDMENT_DECISION.read_text(encoding="utf-8"))
     if decision.get("decision") != "APPROVED":
         raise PermissionError("SAE v1.1 is not approved")
-    if decision.get("proposal_sha256") != sha256_file(AMENDMENT):
+    if not frozen_text_hash_matches(AMENDMENT, str(decision.get("proposal_sha256", ""))):
         raise PermissionError("SAE v1.1 approval hash mismatch")
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE v1.1 lacks a human project owner")
@@ -69,7 +70,9 @@ def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
     v1_2_decision = json.loads(AMENDMENT_V1_2_DECISION.read_text(encoding="utf-8"))
     if v1_2_decision.get("decision") != "APPROVED":
         raise PermissionError("SAE v1.2 is not approved")
-    if v1_2_decision.get("proposal_sha256") != sha256_file(AMENDMENT_V1_2):
+    if not frozen_text_hash_matches(
+        AMENDMENT_V1_2, str(v1_2_decision.get("proposal_sha256", ""))
+    ):
         raise PermissionError("SAE v1.2 approval hash mismatch")
     if v1_2_decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE v1.2 lacks a human project owner")
@@ -79,7 +82,9 @@ def authorization() -> tuple[dict[str, Any], dict[str, Any]]:
     v1_3_decision = json.loads(AMENDMENT_V1_3_DECISION.read_text(encoding="utf-8"))
     if v1_3_decision.get("decision") != "APPROVED":
         raise PermissionError("SAE v1.3 is not approved")
-    if v1_3_decision.get("proposal_sha256") != sha256_file(AMENDMENT_V1_3):
+    if not frozen_text_hash_matches(
+        AMENDMENT_V1_3, str(v1_3_decision.get("proposal_sha256", ""))
+    ):
         raise PermissionError("SAE v1.3 approval hash mismatch")
     if v1_3_decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE v1.3 lacks a human project owner")

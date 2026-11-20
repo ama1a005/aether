@@ -1,0 +1,7 @@
+{
+  "overall": "NOT_RUN_BEHAVIORAL_FAIL",
+  "reason": "stop_after_behavioral_failure",
+  "schema_version": "aether.second-model-instrumentation.v1",
+  "test_executions": 0,
+  "validation_executions": 0
+}

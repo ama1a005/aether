@@ -1,5 +1,21 @@
 # Phase-1 execution and evidence guide
 
+## 20 November 2026 local-closure update
+
+This guide's prospective execution instructions remain historical and
+reproducible. The current evidence disposition is:
+
+- the Qwen causal core, locked validation and once-only test are verified;
+- the Qwen SAE study is complete with a frozen-gate rejection;
+- SmolLM2 qualification is complete with a balanced-task failure;
+- real-Qwen Agent C is complete without demonstrated accuracy improvement;
+- the real-Qwen red-team attempt is retained but invalid because it has no
+  usable inference rows;
+- official BFCL, MCPTox and TAMAS evidence is absent.
+
+See `docs/PHASE1_LOCAL_CLOSURE_2026-11-20.md` and the generated completion audit
+for the authoritative current state. Completion-negative is not completion-PASS.
+
 Version: 1.0 (2026-11-14)
 
 Scope: Phase 1 only

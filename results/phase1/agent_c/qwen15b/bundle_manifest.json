@@ -1,0 +1,53 @@
+{
+  "artifacts": {
+    "archive_contents.json": "d4beb333363d185bca3bc87dd09d09f9cc056df125666adc26ca39991c1022c9",
+    "checkpoint_state.json": "860c8c688bf9312c6af14c40279f82e1639ae27c4046f163dfb2eee1eb143f1a",
+    "manifest.json": "33ebb58317de61b1fc5dc23a985bf703b3c838db9eb6a251887c8bf75dff5b1a",
+    "model_snapshot_manifest.json": "2128abb5761d674e3de6d6053bd9a35b25d4ec1782634c5eec84fca95e8ba293",
+    "preflight.json": "dc1b4a11222e8f7d34e21342b45e2334b741e3d603be800756a3f456942e3cae",
+    "raw_reviews.jsonl": "b99339b67fbb7b5fbe7b2b944019320f7390e3ecc76a08eb1da7c2b8b00f24e8",
+    "summary.json": "c4f278f1292c69ee7292556f3f0c0156a4b80c7a63bb312b4ddcbb13f4e004cc"
+  },
+  "command_line": [
+    "/tmp/aether-agent-c-real/aether/experiments/phase1/qwen_agent_c_real.py",
+    "--output",
+    "/kaggle/working/aether-qwen-agent-c-real",
+    "--model-snapshot",
+    "/tmp/aether-agent-c-real/hf-cache/models--Qwen--Qwen2.5-1.5B-Instruct/snapshots/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "--snapshot-manifest",
+    "/kaggle/working/agent-c-model-snapshot.json",
+    "--checkpoint-repo",
+    "Artemis1305/aether-agentc",
+    "--checkpoint-path",
+    "agent-c-real/checkpoint_state.json",
+    "--resume"
+  ],
+  "config_file": "/tmp/aether-agent-c-real/aether/configs/experiments/agent_c_qwen_real_development_v1.yaml",
+  "dataset_manifest_hashes": {
+    "case_registry": "70e9df79dfbe721cb60705990c7ff601dc1e46dd68ac1619e2b96835786b402d",
+    "qwen_ab_manifest": "ff43cf6d6b48d96da0792c0a8d864bbb7dd4753a58014810f14704e153d4c1c1",
+    "qwen_ab_rows": "8ec8da7b6a7ba04924852301b64884cb7591cfa71bca2c30681618dba3d70ffe"
+  },
+  "evidence_kind": "qwen_agent_c_real",
+  "experiment_id": "P0_agent_c_real_qwen15b_development",
+  "git_commit": "972df22ed41467534f7dc6e7f66d202d3190ecfa",
+  "hardware": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "prompt_versions": {
+    "agent_c": "agent_c_real_v1"
+  },
+  "proposal_sha256": "9e031fb2911686702e28ec00b54299e01d428a1d2e1676050d0b3dc541d392a7",
+  "python_env_hash": "a14b644c012a735ece96bef3743573a108f4e06f86713c5f1387f3b0542846de",
+  "random_seeds": [
+    0
+  ],
+  "raw_output_path": "raw_reviews.jsonl",
+  "run_id": "aether-qwen-agent-c-real",
+  "schema_version": "aether.external-bundle.v1",
+  "test_executions": 0,
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-20T10:51:56.929715+00:00",
+  "validation_executions": 0
+}

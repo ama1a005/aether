@@ -1,0 +1,11 @@
+{
+  "claim_boundary": "Prospective development-only evidence for a Qwen-powered third-agent reviewer using a real local MCP stdio tool transport. This is not validation, test, causal-circuit, remediation, clinical-deployment, or official-benchmark evidence.",
+  "condition_rows": 48,
+  "experiment_id": "P0_agent_c_real_qwen15b_development",
+  "invalid_count": 0,
+  "row_count": 48,
+  "run_id": "aether-qwen-agent-c-real",
+  "schema_version": "aether.qwen-agent-c-real-ingest.v1",
+  "valid_count": 48,
+  "verified": true
+}

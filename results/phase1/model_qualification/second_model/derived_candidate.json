@@ -1,0 +1,14 @@
+{
+  "cpu_threads": 2,
+  "device": "cpu",
+  "disk_offload": false,
+  "dtype": "float32",
+  "explicit_offload": false,
+  "local_files_only": true,
+  "low_cpu_mem_usage": true,
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "quantized": false,
+  "revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+  "status": "frozen_for_authorized_campaign",
+  "trust_remote_code": false
+}

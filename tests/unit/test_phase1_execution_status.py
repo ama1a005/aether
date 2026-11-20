@@ -21,6 +21,10 @@ def test_repository_execution_registry_exactly_covers_evidence_gates() -> None:
     assert rows["locked_validation"]["readiness"] == "COMPLETE"
     assert rows["once_only_test"]["readiness"] == "COMPLETE"
     assert rows["mcptox_official"]["readiness"] == "BLOCKED_BY_PROTOCOL_OR_RESOURCE"
+    assert rows["trained_sae_qwen_evaluation"]["readiness"] == "COMPLETE_NEGATIVE_RESULT"
+    assert rows["second_model_qualification"]["readiness"] == "COMPLETE_NEGATIVE_RESULT"
+    assert rows["real_qwen_agent_c"]["readiness"] == "COMPLETE"
+    assert rows["real_qwen_red_team"]["readiness"] == "FAILED_ATTEMPT_RETAINED"
     assert rows["matched_search_baselines"]["runner_exists"] is True
 
 

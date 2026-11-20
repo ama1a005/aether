@@ -1,0 +1,10 @@
+{
+  "hardware_preflight_sha256": "eb739d9c64d15201616e950280354c9ac9015e6abef3c8c1e5814f9019f54a5f",
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "model_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+  "one_attempt_policy": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "snapshot_manifest_path": "/kaggle/working/aether-smollm2-qualification/model_snapshot_manifest.json",
+  "snapshot_manifest_sha256": "a576cb17f9b821d577f56fa34e8f1fda5fdcc1a2429d22c492d33cdef53e88ea",
+  "state": "MQ_G1_FAIL",
+  "utc_timestamp": "2026-11-19T20:46:55.920921+00:00"
+}

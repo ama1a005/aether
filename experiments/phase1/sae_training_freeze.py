@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from causal.remediation_freeze import frozen_text_hash_matches
+
 
 QUALIFIED_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
 QUALIFIED_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
@@ -75,7 +77,7 @@ def load_and_validate_amendment(
     amendment = json.loads(path.read_text(encoding="utf-8"))
     if amendment.get("schema_version") != AMENDMENT_SCHEMA:
         raise ValueError("unexpected SAE amendment schema")
-    if amendment.get("base_protocol_sha256") != sha256_file(base_path):
+    if not frozen_text_hash_matches(base_path, str(amendment.get("base_protocol_sha256", ""))):
         raise ValueError("SAE amendment base-protocol hash mismatch")
     base = load_and_validate_freeze(base_path)
     corpus = amendment.get("training_corpus", {})
@@ -122,7 +124,7 @@ def verify_human_decision(protocol_path: Path, decision_path: Path) -> dict[str,
     decision = json.loads(decision_path.read_text(encoding="utf-8"))
     if decision.get("decision") != "APPROVED":
         raise PermissionError("SAE training freeze is not approved")
-    if decision.get("proposal_sha256") != sha256_file(protocol_path):
+    if not frozen_text_hash_matches(protocol_path, str(decision.get("proposal_sha256", ""))):
         raise PermissionError("SAE training decision does not match the proposal hash")
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("SAE training decision lacks a human project owner")
@@ -136,7 +138,7 @@ def load_and_validate_v1_2_amendment(
     amendment = json.loads(path.read_text(encoding="utf-8"))
     if amendment.get("schema_version") != AMENDMENT_V1_2_SCHEMA:
         raise ValueError("unexpected SAE v1.2 amendment schema")
-    if amendment.get("parent_amendment_sha256") != sha256_file(v1_1_path):
+    if not frozen_text_hash_matches(v1_1_path, str(amendment.get("parent_amendment_sha256", ""))):
         raise ValueError("SAE v1.2 parent-amendment hash mismatch")
     load_and_validate_amendment(v1_1_path, base_path)
     expected = {
@@ -171,7 +173,7 @@ def load_and_validate_v1_3_amendment(
     amendment = json.loads(path.read_text(encoding="utf-8"))
     if amendment.get("schema_version") != AMENDMENT_V1_3_SCHEMA:
         raise ValueError("unexpected SAE v1.3 amendment schema")
-    if amendment.get("parent_amendment_sha256") != sha256_file(v1_2_path):
+    if not frozen_text_hash_matches(v1_2_path, str(amendment.get("parent_amendment_sha256", ""))):
         raise ValueError("SAE v1.3 parent-amendment hash mismatch")
     load_and_validate_v1_2_amendment(v1_2_path, v1_1_path, base_path)
     base = load_and_validate_freeze(base_path)

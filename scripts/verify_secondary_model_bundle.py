@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 from experiments.manifest import sha256_file
 from paired_trace.secondary_model_freeze import load_and_validate, verify_decision
+from causal.remediation_freeze import frozen_text_hash_matches
 
 ROOT = Path(__file__).resolve().parents[1]
 PROPOSAL = ROOT / "configs/model_qualification/smollm2_1_7b_second_model_freeze_v1.json"
@@ -25,8 +26,10 @@ def verify(bundle: Path) -> dict[str, Any]:
     for name, digest in manifest["artifact_hashes"].items():
         if sha256_file(bundle / name) != digest: raise ValueError(f"manifest hash mismatch: {name}")
     summary = json.loads((bundle / "summary.json").read_text(encoding="utf-8"))
-    if summary["proposal_sha256"] != sha256_file(PROPOSAL): raise ValueError("proposal hash differs")
-    if summary["decision_sha256"] != sha256_file(DECISION): raise ValueError("decision hash differs")
+    if not frozen_text_hash_matches(PROPOSAL, str(summary["proposal_sha256"])):
+        raise ValueError("proposal hash differs")
+    if not frozen_text_hash_matches(DECISION, str(summary["decision_sha256"])):
+        raise ValueError("decision hash differs")
     if summary["model"] != proposal["model"]: raise ValueError("model identity differs")
     if summary["validation_executions"] or summary["test_executions"]: raise PermissionError("protected split accessed")
     behavior_ok = (summary["behavioral"]["mq_g1"]["overall"] == "PASS"

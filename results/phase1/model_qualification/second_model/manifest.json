@@ -1,0 +1,26 @@
+{
+  "artifact_hashes": {
+    "activation_artifacts.json": "bf24880293ac37c14efa06d9661260e68507b7cf35b634a1a545eaa673252911",
+    "behavioral_summary.json": "e86d76a14e55ce8c51cdec49699dbb91bd04744a57e76adf822cab5bb074d9bb",
+    "hardware_preflight.json": "eb739d9c64d15201616e950280354c9ac9015e6abef3c8c1e5814f9019f54a5f",
+    "instrumentation_summary.json": "e0379c88ce0d9d9015dc34ae0c8ffe67fa47756d3b57e4c158bbf5b7ee50e933",
+    "model_snapshot_manifest.json": "a576cb17f9b821d577f56fa34e8f1fda5fdcc1a2429d22c492d33cdef53e88ea",
+    "raw_behavioral_rows.jsonl": "97f292845b0eba8aabe1e759203699d1184d6ceb04158d7fc11b08553ed87921",
+    "summary.json": "a70e293d17722cecaaf4a480bed7db0aa2a85c03661603a078c25f673afcc754"
+  },
+  "command_line": [
+    "/tmp/aether-smollm2/aether/paired_trace/run_secondary_model_qualification.py",
+    "--output",
+    "/kaggle/working/aether-smollm2-qualification",
+    "--cache",
+    "/tmp/aether-smollm2/hf-cache"
+  ],
+  "dataset_hash": "d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b",
+  "git_commit": "9f9bb8ee37474aa1cd9f0e562ff60fbfda2eda88",
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "model_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+  "python": "3.11.9",
+  "run_id": "P0_target_20261119_smollm2_second_model_seed42",
+  "schema_version": "aether.second-model-manifest.v1",
+  "seed": 42
+}

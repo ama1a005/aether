@@ -1,0 +1,23 @@
+{
+  "dataset": {
+    "dataset_config": "wikitext-2-raw-v1",
+    "dataset_id": "Salesforce/wikitext",
+    "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+    "empty_row_policy": "strip_and_skip",
+    "selection_order": "repository_dataset_order",
+    "source_split": "train",
+    "tokenization": "pinned_qwen_tokenizer_without_special_tokens_with_one_eos_between_documents"
+  },
+  "schema_version": "aether.sae-corpus-source.v1",
+  "selected_token_count": 65536,
+  "source_files": [
+    {
+      "bytes": 6357543,
+      "name": "train-00000-of-00001.parquet",
+      "sha256": "e83889baabc497075506f91975be5fac0d45c5290b6b20582c8cd1e853d0c9f7"
+    }
+  ],
+  "test_executions": 0,
+  "token_ids_sha256": "2160e7521663b5ff84fa378d8ae39be745b783c8f03e9de91af64c4beda03139",
+  "validation_executions": 0
+}

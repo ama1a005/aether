@@ -1,0 +1,8 @@
+{
+  "bundle_sha256": "b4e5f10ec1631a33cd78f41e385e88d5a61c661d8dfb27b6f8b473aaecbfd104",
+  "file_count": 17,
+  "git_commit": "9f9bb8ee37474aa1cd9f0e562ff60fbfda2eda88",
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "overall": "FAIL",
+  "schema_version": "aether.second-model-verification.v1"
+}

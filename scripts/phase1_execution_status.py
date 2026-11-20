@@ -81,6 +81,10 @@ def execution_status(
         execution = str(specification.get("execution", ""))
         if evidence_row["status"] in {"PASS", "NOT_APPLICABLE"}:
             readiness = "COMPLETE"
+        elif execution == "completed_negative_result" and evidence_row["status"] == "FAIL":
+            readiness = "COMPLETE_NEGATIVE_RESULT"
+        elif execution == "failed_attempt_retained_rerun_deferred":
+            readiness = "FAILED_ATTEMPT_RETAINED"
         else:
             unmet = [item for item in dependencies if evidence_by_id[item]["status"] not in {"PASS", "NOT_APPLICABLE"}]
             if unmet:

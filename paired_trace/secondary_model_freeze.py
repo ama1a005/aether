@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 from typing import Any
 
+from causal.remediation_freeze import frozen_text_hash_matches
+
 
 SCHEMA = "aether.second-model-qualification-freeze.v1"
 PRIMARY = "Qwen/Qwen2.5-1.5B-Instruct"
@@ -48,7 +50,9 @@ def load_and_validate(path: Path, repository: Path) -> dict[str, Any]:
     for path_key, hash_key in (("cases_path", "cases_sha256"),
                                ("controls_path", "controls_sha256")):
         source = repository / str(behavioral.get(path_key, ""))
-        if not source.is_file() or sha256_file(source) != behavioral.get(hash_key):
+        if not source.is_file() or not frozen_text_hash_matches(
+            source, str(behavioral.get(hash_key, ""))
+        ):
             raise ValueError(f"second-model frozen input mismatch: {path_key}")
     instrumentation = proposal.get("instrumentation_acceptance", {})
     layer_count = model.get("expected_layer_count")
@@ -67,13 +71,14 @@ def verify_decision(proposal_path: Path, decision_path: Path) -> dict[str, Any]:
     decision = json.loads(decision_path.read_text(encoding="utf-8"))
     if decision.get("decision") != "APPROVED":
         raise PermissionError("second-model freeze is not approved")
-    if decision.get("proposal_sha256") != sha256_file(proposal_path):
+    proposal_hash = str(decision.get("proposal_sha256", ""))
+    if not frozen_text_hash_matches(proposal_path, proposal_hash):
         raise PermissionError("second-model decision hash mismatch")
     if decision.get("reviewer_role") != "human_project_owner":
         raise PermissionError("second-model decision lacks a human project owner")
     expected = (
         "I approve SmolLM2 second-model qualification freeze v1 SHA-256 "
-        f"{sha256_file(proposal_path)}"
+        f"{proposal_hash}"
     )
     if decision.get("approval_text") != expected:
         raise PermissionError("second-model decision does not contain the exact approval text")

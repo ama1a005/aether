@@ -48,22 +48,22 @@ stages:
   tracr_known_structure_intervention: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
   ioi_causal_calibration: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
   trained_sae_qwen_evaluation:
-    execution: approved_kaggle_dual_t4
+    execution: completed_negative_result
     depends_on: [qwen_development_capture]
     runner: notebooks/aether_qwen_sae_dual_t4.ipynb
     verification: scripts/verify_qwen_sae_bundle.py
   real_qwen_red_team:
-    execution: external_model
+    execution: failed_attempt_retained_rerun_deferred
     depends_on: [matched_search_baselines]
     runner: experiments/phase1/qwen_red_team.py
     verification: scripts/verify_external_bundle.py
   real_qwen_agent_c:
-    execution: external_model
+    execution: completed_development_result
     depends_on: [matched_search_baselines]
     runner: experiments/phase1/qwen_agent_c.py
     verification: scripts/verify_external_bundle.py
   second_model_qualification:
-    execution: approved_kaggle_cpu_float32
+    execution: completed_negative_result
     depends_on: [once_only_test]
     runner: paired_trace/run_secondary_model_qualification.py
     verification: scripts/verify_secondary_model_bundle.py

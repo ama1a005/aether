@@ -1,0 +1,38 @@
+{
+  "claim_boundary": "Development-only SAE reconstruction and sparsity evidence. No feature-level causal claim is authorized.",
+  "overall": "FAIL",
+  "schema_version": "aether.qwen-sae-result.v1",
+  "scientific_outcome": "SAE_REJECTED_NO_ELIGIBLE_SEED",
+  "seed_summaries": [
+    {
+      "best_selection": null,
+      "epochs_completed": 100,
+      "schema_version": "aether.sae-seed-result.v1",
+      "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+      "seed": 11,
+      "test_executions": 0,
+      "validation_executions": 0
+    },
+    {
+      "best_selection": null,
+      "epochs_completed": 100,
+      "schema_version": "aether.sae-seed-result.v1",
+      "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+      "seed": 22,
+      "test_executions": 0,
+      "validation_executions": 0
+    },
+    {
+      "best_selection": null,
+      "epochs_completed": 100,
+      "schema_version": "aether.sae-seed-result.v1",
+      "scientific_outcome": "SAE_SEED_REJECTED_NO_ELIGIBLE_CHECKPOINT",
+      "seed": 33,
+      "test_executions": 0,
+      "validation_executions": 0
+    }
+  ],
+  "selected_seed": null,
+  "test_executions": 0,
+  "validation_executions": 0
+}
