@@ -24,6 +24,7 @@ PINNED_BACKEND_VERSION = "0.34.0"
 PINNED_TORCH_VERSION = "2.14.0"
 PINNED_CUDA_VERSION = "13.0"
 CUDA13_MIN_DRIVER_MAJOR = 580
+MIN_USABLE_VRAM_GB = 15.0
 VALID_OFFICIAL_CATEGORIES = frozenset({
     "simple", "multiple", "parallel", "parallel_multiple",
     "irrelevance", "live_simple", "live_multiple", "live_parallel",
@@ -83,7 +84,7 @@ def check_package(
 def check_backend_and_hardware(
     backend: str = "vllm",
     num_gpus: int = 1,
-    min_vram_gb: float = 16.0,
+    min_vram_gb: float = MIN_USABLE_VRAM_GB,
 ) -> tuple[bool, list[str], dict[str, Any]]:
     """Verify inference backend requirements and GPU resources."""
     reasons = []

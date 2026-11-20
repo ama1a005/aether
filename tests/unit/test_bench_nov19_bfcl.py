@@ -110,10 +110,10 @@ def test_vllm_preflight_rejects_unpinned_backend_version(monkeypatch):
     assert any("vLLM version mismatch" in reason for reason in reasons)
 
 
-def test_vllm_preflight_accepts_t4_reported_15_gib_as_16_decimal_gb(monkeypatch):
+def test_vllm_preflight_accepts_kaggle_t4_usable_vram(monkeypatch):
     class Properties:
         name = "Tesla T4"
-        total_memory = 15 * 1024 ** 3
+        total_memory = 15_640_000_000
 
     _mock_pinned_vllm(monkeypatch)
     monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
@@ -125,7 +125,26 @@ def test_vllm_preflight_accepts_t4_reported_15_gib_as_16_decimal_gb(monkeypatch)
     ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
 
     assert ok, reasons
-    assert details["gpu_0_vram_gb"] > 16
+    assert details["gpu_0_vram_gb"] == 15.64
+
+
+def test_vllm_preflight_rejects_gpu_below_usable_vram_floor(monkeypatch):
+    class Properties:
+        name = "Undersized GPU"
+        total_memory = 14_990_000_000
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert not ok
+    assert details["gpu_0_vram_gb"] == 14.99
+    assert any("below required 15.0 GB" in reason for reason in reasons)
 
 
 def test_vllm_preflight_rejects_driver_too_old_for_cuda_13(monkeypatch):

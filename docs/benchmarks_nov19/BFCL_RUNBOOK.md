@@ -34,7 +34,7 @@ In AETHER:
 
 - **OS:** Linux (Ubuntu 22.04+ recommended; Windows is incompatible with vLLM)
 - **Python:** 3.11
-- **Accelerator:** NVIDIA GPU with at least 16 decimal GB VRAM and CUDA compute capability 7.5 or newer (e.g. T4, A10, L4, A100, RTX 4090). The preflight converts CUDA-reported bytes to decimal GB, so a nominal 16 GB T4 passes the memory threshold; Kaggle P100 (compute capability 6.0) is rejected.
+- **Accelerator:** NVIDIA GPU exposing at least 15.0 decimal GB usable VRAM and CUDA compute capability 7.5 or newer (e.g. T4, A10, L4, A100, RTX 4090). The usable floor accounts for memory reserved by Kaggle/driver runtime on a nominal 16 GB T4; Kaggle P100 (compute capability 6.0) remains rejected.
 - **Driver/runtime:** CUDA 13.0 compatible environment. If runtime initialization fails or reports a different CUDA runtime, stop; do not substitute a CPU backend.
 - **Inference Engine:** `vllm==0.34.0` with `torch==2.14.0` and CUDA 13.0. This compatibility overlay is in `requirements-bfcl-vllm.txt`; it deliberately supersedes the project lock's Torch patch version only in the isolated BFCL environment.
 - **Dependencies:**
@@ -73,7 +73,7 @@ python -m benchmarks.run_native_official bfcl --config configs/benchmarks/phase1
   --output /tmp/aether-bfcl-preflight
 ```
 
-The command fails closed if human approval, the pinned wheel, Linux GPU backend (including exact vLLM/Torch/CUDA versions, 16 decimal GB VRAM and capability 7.5+), or verified snapshot is unavailable. It never writes experiment artifacts inside the checkout.
+The command fails closed if human approval, the pinned wheel, Linux GPU backend (including exact vLLM/Torch/CUDA versions, 15.0 decimal GB usable VRAM and capability 7.5+), or verified snapshot is unavailable. It never writes experiment artifacts inside the checkout.
 
 ### Step 3.2: Native Execution (only after preflight)
 ```bash
