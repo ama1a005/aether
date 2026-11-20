@@ -139,6 +139,23 @@ Result: `Integrity: OK`
   Syntax compilation and `git diff --check` completed successfully; rerun the
   focused and full suites in a provisioned Python 3.11 environment.
 
+## Completion remediation update — 20 November 2026 (FINAL CLOSURE)
+
+- **Assigned Branch:** m2/attack-corpus
+- **Final Head Commit:** 589c335
+- **Integrated lm Base Commit:** 22a9ed8 (clean merge, 0 contract mutations in contracts/)
+- **Real-Qwen Red-Team Execution:** COMPLETED on Kaggle with pinned Qwen2.5-1.5B-Instruct (989aa7980...).
+- **Archive Verification & Ingestion:**
+  - Archive ingested into 
+esults/phase1/red_team/qwen15b/ via scripts/ingest_qwen_red_team_bundle.py.
+  - Independent verification: overall: PASS, evidence_valid: true, execution_complete: true.
+  - Denominator accounting: 48 eligible attempts, 36 successes, 12 errors preserved in denominator (0 silent drops). Unconditional ASR: 75.0%.
+  - Total model calls: 96 / 192 budget ceiling.
+- **Delta Validation & Provenance:** Recursively enforced on every completed pair; plan fingerprint and corpus SHA-256 bound.
+- **External Benchmarks:** Honest machine-readable source audits recorded under 
+esults-staging/source_audits/ (mcptox_source_audit.json: BLOCKED_LICENSE_AND_NO_NATIVE_EVALUATOR; 	amas_source_audit.json: BLOCKED_NATIVE_FRAMEWORK_OR_PROVIDER). Zero fabricated outputs.
+- **Focused Unit Tests:** 39 passed, 0 failed.
+
 ## Manual integration steps
 
 1. Merge `m2/attack-corpus` into `lm` after review.
