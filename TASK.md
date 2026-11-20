@@ -1,5 +1,41 @@
 # AETHER current bounded task
 
+## Execute the approved SAE v1.2 pinned corpus-revision correction
+
+Run the newly generated, commit-pinned v1.2 Kaggle notebook. It must retrieve
+the exact approved parquet revision, verify its frozen SHA-256 before
+tokenization, preserve remote checkpoints, retain negative/incomplete outcomes,
+and keep validation/test closed. Do not run the obsolete v1.1 notebooks.
+
+## Execute the approved SmolLM2 second-model qualification
+
+Run the commit-pinned Kaggle notebook produced for the approved freeze SHA-256
+`ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed`.
+Retain PASS or FAIL, independently verify before export, and atomically ingest
+the archive. Preserve CPU float32/no-offload execution, the unchanged balanced
+task, architecture-relative instrumentation, and validation/test locks.
+
+## Execute the approved SAE v1.1 package on Kaggle
+
+Run `notebooks/aether_qwen_sae_dual_t4.ipynb` in a 2 x T4 Kaggle session with
+Internet enabled and private `HF_TOKEN`/`AETHER_HF_REPO` secrets. The notebook
+restores remotely persisted activation blocks and epoch checkpoints, so rerun
+all cells after an interruption. Preserve either accepted or rejected output,
+download or retain the final archive, then independently verify and atomically
+ingest it locally. Do not alter corpus selection, token counts, architecture,
+seeds, thresholds or split locks, and do not describe SAE reconstruction as a
+causal feature result.
+
+## Review the SAE v1.1 data-source correction
+
+SAE training freeze v1 is approved, but its frozen receiver-only cases provide
+3,872 training token rows and therefore cannot satisfy its 10,000-row minimum.
+Review `configs/experiments/qwen_sae_training_freeze_v1_1_amendment.json`.
+Do not lower the minimum, duplicate activations, access protected cases, download
+the corpus/model, implement an evidence runner or train an SAE before exact-hash
+approval. V1.1 preserves the approved method and replaces only the infeasible
+training source with a pinned, deterministic external language-corpus partition.
+
 ## Integrate independently delivered external/supporting evidence
 
 Member-4 causal experiments, protected evaluation, derived causal-core report,

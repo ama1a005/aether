@@ -1,0 +1,68 @@
+{
+  "schema_version": "aether.qwen-sae-training-freeze.v1",
+  "status": "awaiting_human_scientific_review",
+  "split": "development",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "component_id": "receiver.module.L22.attention_output",
+  "hidden_width": 1536,
+  "token_position_policy": "all_non_padding_prompt_positions",
+  "activation_archive_sha256": "7890212a8e7a4eb099be86bc572cd6172fd1c45b839f695e56e6ba4a46e97b21",
+  "minimum_training_rows": 10000,
+  "train_case_ids": [
+    "v2_case_002", "v2_case_003", "v2_case_004", "v2_case_005",
+    "v2_case_006", "v2_case_007", "v2_case_008", "v2_case_009",
+    "v2_case_014", "v2_case_015", "v2_case_016", "v2_case_017",
+    "v2_case_018", "v2_case_019", "v2_case_020", "v2_case_021"
+  ],
+  "audit_case_ids": ["v2_case_010", "v2_case_011", "v2_case_022", "v2_case_023"],
+  "excluded_case_ids": ["v2_case_000", "v2_case_001", "v2_case_012", "v2_case_013"],
+  "conditions": ["clean", "attacked"],
+  "normalization": "feature_standardization_fit_on_train_only",
+  "architecture": {
+    "type": "linear_relu_sae",
+    "input_dim": 1536,
+    "latent_dim": 3072,
+    "decoder_bias": true
+  },
+  "optimization": {
+    "optimizer": "adam",
+    "learning_rate": 0.0003,
+    "batch_size": 256,
+    "maximum_epochs": 100,
+    "l1_coefficient": 0.0001,
+    "loss": "mean_squared_reconstruction_plus_l1_latent",
+    "seeds": [11, 22, 33],
+    "early_stopping_patience": 10,
+    "checkpoint_interval_epochs": 1
+  },
+  "selection": {
+    "rule": "lowest_audit_reconstruction_error_subject_to_active_fraction_between_bounds",
+    "minimum_active_fraction": 0.001,
+    "maximum_active_fraction": 0.2,
+    "tie_break": "lowest_seed_then_earliest_epoch"
+  },
+  "acceptance": {
+    "maximum_relative_reconstruction_error": 0.1,
+    "maximum_dead_feature_fraction": 0.5,
+    "must_outperform_mean_vector_baseline": true,
+    "finite_metrics_required": true
+  },
+  "required_artifacts": [
+    "activation_manifest.json",
+    "environment.json",
+    "training_history.jsonl",
+    "audit_metrics.json",
+    "metadata.json",
+    "weights.npz",
+    "manifest.json"
+  ],
+  "validation_executions": 0,
+  "test_executions": 0,
+  "claim_boundary": "Development-only SAE reconstruction and sparsity evidence. No feature-level causal claim is authorized.",
+  "human_review": {
+    "approved": false,
+    "reviewer": "",
+    "utc_timestamp": ""
+  }
+}

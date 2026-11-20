@@ -14,6 +14,7 @@ from experiments.supporting_nov19.sae.runner import (
     QCI2_CANDIDATES,
     validate_sae_config,
 )
+from experiments.supporting_nov19.sae.trainer import SAETrainer
 from experiments.supporting_nov19.red_team.adapter import (
     QUALIFIED_MODEL_ID,
     QUALIFIED_MODEL_REVISION,
@@ -147,3 +148,29 @@ class TestLinearSAEContract:
                 expected_model_revision=QUALIFIED_MODEL_REVISION,
                 expected_component_id="receiver.module.L22.attention_output",
             )
+
+
+def test_trainer_checkpoint_is_loadable_by_production_codec(tmp_path: Path) -> None:
+    """The training output and inference loader must share one exact contract."""
+    from causal.interventions.sae import load_sae_checkpoint
+
+    rng = np.random.RandomState(7)
+    data = rng.normal(size=(24, 8)).astype(np.float32)
+    trainer = SAETrainer(input_dim=8, latent_dim=12, seed=7)
+    trainer.train(data, epochs=2, batch_size=8, verbose=False)
+    checkpoint = trainer.save_checkpoint(
+        tmp_path / "checkpoint",
+        component_id="receiver.module.L22.attention_output",
+        data_sha256="a" * 64,
+        max_relative_reconstruction_error=10.0,
+    )
+
+    codec = load_sae_checkpoint(
+        checkpoint,
+        expected_model_id=QUALIFIED_MODEL_ID,
+        expected_model_revision=QUALIFIED_MODEL_REVISION,
+        expected_component_id="receiver.module.L22.attention_output",
+    )
+    assert codec.provenance.training_dataset_hash == "a" * 64
+    assert codec.provenance.training_seed == 7
+    assert codec.encode(torch.from_numpy(data[:2])).shape == (2, 12)

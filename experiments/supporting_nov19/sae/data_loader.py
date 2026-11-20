@@ -59,16 +59,10 @@ class ActivationLoader:
         safe_name = component_id.replace(".", "_")
         self._data_path = self.data_dir / f"{safe_name}.npy"
         if not self._data_path.is_file():
-            # Fallback: try any .npy file
-            npy_files = sorted(self.data_dir.glob("*.npy"))
-            if npy_files:
-                self._data_path = npy_files[0]
-            else:
-                raise FileNotFoundError(
-                    f"No activation data found in {self.data_dir} for "
-                    f"component {component_id}. The 4.87 GB tensor archive "
-                    f"must be downloaded and extracted first."
-                )
+            raise FileNotFoundError(
+                f"Expected activation file {self._data_path} for component "
+                f"{component_id}; refusing to substitute another tensor"
+            )
 
     @property
     def data_path(self) -> Path:

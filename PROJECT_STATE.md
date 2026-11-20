@@ -1,5 +1,81 @@
 # AETHER project state
 
+## 2026-11-19 SmolLM2 derived single-model gate defect confirmed
+
+The model-free SmolLM2 preflight measured sufficient RAM, cgroup headroom and
+disk, but the inherited primary-model predicate compared every candidate to a
+hard-coded Qwen model ID. This incorrectly blocked the already approved sole
+SmolLM2 candidate. The prospective repair binds the generic one-model predicate
+to the derived gate's explicitly authorized model ID; it does not change any
+resource threshold, model, task, split or scientific acceptance criterion.
+
+## 2026-11-19 SAE checkpoint uploader batching correction
+
+The first v1.2 Kaggle activation capture completed its local block computation
+but the background persistence path exceeded Hugging Face's 128 repository
+commits/hour limit because it created one commit per file. This is an
+infrastructure failure, not an SAE result. The uploader is being corrected to
+batch all changed files into one commit at a bounded interval and to propagate
+background failures explicitly. No training or audit result is admitted from
+the interrupted attempt.
+
+## 2026-11-19 SAE v1.2 corpus-revision correction approved
+
+Two retained Kaggle setup attempts established that the v1.1-pinned WikiText
+revision `de54f133ef530c2e9b46c532f95a01c446ff0f1d` does not contain the declared
+training parquet: wildcard retrieval returned zero files and exact retrieval
+returned HTTP 404. No corpus tokens, activations, SAE checkpoint or audit result
+was produced. V1.2 prospectively changes only the immutable dataset revision to
+the commit that added the exact parquet and freezes its published SHA-256. Its
+proposal hash is `fdc02d9542af6d6b54aad57da8facd21ba7ff07bf5286a0874fc7ded6418b238`.
+The human project owner approved that exact hash. The execution package now
+fails closed on the exact parquet SHA-256 before tokenization; validation and
+test remain closed.
+
+## 2026-11-19 SmolLM2 second-model freeze approved and implemented
+
+The human project owner approved the exact freeze at SHA-256
+`ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed`.
+Member 3 audited practical distinct-model candidates and selected
+`HuggingFaceTB/SmolLM2-1.7B-Instruct` under Apache-2.0 at immutable revision
+`dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd`. The proposal reuses unchanged
+balanced behavioral gates and freezes architecture-relative instrumentation,
+CPU float32 execution, negative-result retention and protected-split locks.
+The Llama adapter, combined runner, independent verifier and atomic ingester are
+implemented and model-independently tested. No model was downloaded locally and
+no result exists; the remaining step is a commit-pinned retained Kaggle run.
+
+## 2026-11-19 SAE v1.1 approved; dual-T4 execution package ready
+
+The human project owner approved the v1.1 corpus-source amendment at SHA-256
+`30c7b828c1b237ff8d8d5855bd78bb285c73a0986e5f61555004e9c6485a4ff6`.
+The approved package now implements deterministic pinned-corpus token selection,
+two disjoint float32 Qwen activation-capture workers, three restart-safe Adam
+SAE seed jobs, checkpoint selection without AETHER audit access, final frozen
+development-audit capture/evaluation, independent bundle verification and
+continuous private Hugging Face persistence. The uploadable notebook is
+`notebooks/aether_qwen_sae_dual_t4.ipynb`, pinned to implementation commit
+`431ae07ad51ab374393fd89525ddeaf92c425dfd`.
+
+No model or dataset was downloaded locally and no SAE evidence exists yet. The
+next action is the retained Kaggle dual-T4 execution. Validation and test remain
+closed, and even an accepted result supports reconstruction/sparsity only.
+
+## 2026-11-19 SAE v1 approved; data-source arithmetic requires v1.1 review
+
+The human project owner approved Qwen SAE training freeze v1 at SHA-256
+`5dd220297a159a712e114489ca8872ab0a7badf258e410e0ddffa65883ce1272`.
+Pre-execution arithmetic then established that its 16 receiver-only training
+cases contain exactly 3,872 unique non-padding prompt-token rows, below the
+approved minimum of 10,000. The historical full-token archive cannot change
+that component-specific row count. No model was accessed and no threshold was
+weakened.
+
+V1.1 prospectively changes only the SAE training source to a pinned deterministic
+WikiText-2 raw corpus partition while retaining the AETHER four-case final
+development audit, architecture, seeds, thresholds, split locks and claim
+boundary. It awaits exact-hash human review; execution remains forbidden.
+
 ## 2026-11-18 Member-4 local closure complete
 
 The verified causal-core report is generated under

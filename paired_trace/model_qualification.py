@@ -180,7 +180,8 @@ def evaluate_mq_hw1(measurement: dict[str, float], gate: dict[str, Any]) -> dict
         and execution["disk_offload"] is False,
         "MQ-HW1.no_cuda": execution["cuda_install_or_migration"] is False,
         "MQ-HW1.no_pagefile_change": execution["page_file_modification"] is False,
-        "MQ-HW1.one_model": gate["candidate_model_id"] == "Qwen/Qwen2.5-1.5B-Instruct",
+        "MQ-HW1.one_model": gate["candidate_model_id"]
+        == gate.get("authorized_single_model_id", "Qwen/Qwen2.5-1.5B-Instruct"),
         "MQ-HW1.split_lock": gate["split_access_policy"]["validation"] == "forbidden"
         and gate["split_access_policy"]["test"] == "forbidden",
     }

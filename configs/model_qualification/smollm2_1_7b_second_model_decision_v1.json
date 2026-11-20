@@ -1,0 +1,8 @@
+{
+  "schema_version": "aether.human-scientific-decision.v1",
+  "decision": "APPROVED",
+  "proposal_sha256": "ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed",
+  "reviewer_role": "human_project_owner",
+  "approval_text": "I approve SmolLM2 second-model qualification freeze v1 SHA-256 ced23b44a971e71e1c9bc216a447b0396c39e13fd6d4af6a20bdbab2d31271ed",
+  "approval_date": "2026-11-19"
+}

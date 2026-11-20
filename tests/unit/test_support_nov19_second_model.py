@@ -7,6 +7,7 @@ from experiments.supporting_nov19.second_model.runner import (
     DISQUALIFIED_MODELS,
     PRIMARY_MODEL_ID,
     SECOND_MODEL_ID,
+    execute,
     validate_second_model_config,
 )
 from experiments.supporting_nov19.red_team.adapter import QUALIFIED_MODEL_REVISION
@@ -82,3 +83,9 @@ class TestDisqualifiedModelsList:
     def test_primary_model_not_in_disqualified(self):
         # Primary is separately guarded; must not silently pass through
         assert PRIMARY_MODEL_ID not in DISQUALIFIED_MODELS
+
+
+def test_legacy_partial_execution_path_is_disabled(tmp_path) -> None:
+    """Only the canonical full qualification engine may create evidence."""
+    with pytest.raises(RuntimeError, match="canonical|paired_trace"):
+        execute(tmp_path / "candidate.json", tmp_path / "output")

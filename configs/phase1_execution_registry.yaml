@@ -48,10 +48,10 @@ stages:
   tracr_known_structure_intervention: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
   ioi_causal_calibration: {execution: completed, depends_on: [], runner: null, verification: completion_gate}
   trained_sae_qwen_evaluation:
-    execution: blocked_pinned_trained_checkpoint_required
+    execution: approved_kaggle_dual_t4
     depends_on: [qwen_development_capture]
-    runner: experiments/phase1/qwen_sae_evaluation.py
-    verification: scripts/verify_external_bundle.py
+    runner: notebooks/aether_qwen_sae_dual_t4.ipynb
+    verification: scripts/verify_qwen_sae_bundle.py
   real_qwen_red_team:
     execution: external_model
     depends_on: [matched_search_baselines]
@@ -63,10 +63,10 @@ stages:
     runner: experiments/phase1/qwen_agent_c.py
     verification: scripts/verify_external_bundle.py
   second_model_qualification:
-    execution: external_model
+    execution: approved_kaggle_cpu_float32
     depends_on: [once_only_test]
     runner: paired_trace/run_secondary_model_qualification.py
-    verification: completion_gate
+    verification: scripts/verify_secondary_model_bundle.py
   final_verified_report:
     execution: local_after_all_evidence
     depends_on: [once_only_test, bfcl_official, mcptox_official, tamas_official, trained_sae_qwen_evaluation, real_qwen_red_team, real_qwen_agent_c, second_model_qualification]

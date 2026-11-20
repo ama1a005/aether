@@ -270,48 +270,65 @@ class SAETrainer:
         model_id: str = QUALIFIED_MODEL_ID,
         model_revision: str = QUALIFIED_MODEL_REVISION,
         data_sha256: str = "",
+        max_relative_reconstruction_error: float = 0.10,
     ) -> Path:
-        """Save checkpoint in format compatible with causal.interventions.sae."""
+        """Save a checkpoint accepted by :func:`load_sae_checkpoint`.
+
+        Training diagnostics are deliberately written to a separate file because
+        ``metadata.json`` is a strict, executable-free provenance contract.
+        """
         import numpy as np  # noqa: PLC0415
+        from causal.interventions.sae import SAEProvenance, write_sae_metadata  # noqa: PLC0415
+
+        if len(data_sha256) != 64:
+            raise ValueError("A verified 64-character training dataset SHA-256 is required")
         output_dir.mkdir(parents=True, exist_ok=True)
 
         sae_id = f"sae_{uuid.uuid4().hex[:12]}"
 
-        # Metadata (matches SAEProvenance schema)
-        metadata = {
-            "schema_version": SCHEMA_VERSION,
+        # The inference codec stores matrices as (output_dim, input_dim).
+        weights_path = output_dir / "weights.npz"
+        np.savez(
+            weights_path,
+            encoder_weight=self.encoder_weight.T,
+            encoder_bias=self.encoder_bias,
+            decoder_weight=self.decoder_weight.T,
+            decoder_bias=self.decoder_bias,
+            mean=self.mean,
+            scale=self.scale,
+        )
+        weights_hash = verify_file_sha256(weights_path)
+        provenance = SAEProvenance(
+            schema_version=SCHEMA_VERSION,
+            sae_id=sae_id,
+            model_id=model_id,
+            model_revision=model_revision,
+            component_id=component_id,
+            input_dim=self.input_dim,
+            latent_dim=self.latent_dim,
+            activation=self.activation,
+            normalization=self.normalization,
+            max_relative_reconstruction_error=max_relative_reconstruction_error,
+            training_dataset_hash=data_sha256,
+            training_seed=self.seed,
+            weights_sha256=weights_hash,
+        )
+        write_sae_metadata(output_dir / "metadata.json", provenance)
+        diagnostics = {
+            "schema_version": "aether.sae-training-diagnostics.v1",
             "sae_id": sae_id,
-            "model_id": model_id,
-            "model_revision": model_revision,
-            "component_id": component_id,
-            "input_dim": self.input_dim,
-            "latent_dim": self.latent_dim,
-            "activation": self.activation,
-            "normalization": self.normalization,
-            "max_relative_reconstruction_error": 0.10,
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "training_config": {
                 "lr": self.lr,
                 "sparsity_weight": self.sparsity_weight,
                 "seed": self.seed,
                 "epochs": len(self.training_history),
-                "data_sha256": data_sha256,
+                "training_dataset_hash": data_sha256,
             },
-            "training_history": self.training_history[-5:],  # Last 5 epochs
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "training_history": self.training_history,
         }
-        meta_path = output_dir / "metadata.json"
-        meta_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
-
-        # Weights
-        weights_path = output_dir / "weights.npz"
-        np.savez(
-            weights_path,
-            encoder_weight=self.encoder_weight,
-            encoder_bias=self.encoder_bias,
-            decoder_weight=self.decoder_weight,
-            decoder_bias=self.decoder_bias,
-            mean=self.mean,
-            scale=self.scale,
+        (output_dir / "training_diagnostics.json").write_text(
+            json.dumps(diagnostics, indent=2, allow_nan=False), encoding="utf-8"
         )
 
         print(f"\nCheckpoint saved: {output_dir}", flush=True)
@@ -489,7 +506,7 @@ def main() -> int:
         print("  WARNING: SAE does NOT outperform mean-vector baseline")
 
     # Save
-    data_hash = verify_file_sha256(data_path) if args.data_sha256 else ""
+    data_hash = verify_file_sha256(data_path, args.data_sha256 or None)
     trainer.save_checkpoint(
         output_dir=args.output_dir,
         component_id=args.component_id,

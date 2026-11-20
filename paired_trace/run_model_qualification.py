@@ -301,7 +301,8 @@ def _log_event(output_root: Path, component: str, event: str, payload: dict[str,
 
 def _write_preflight_manifest(output_root: Path, result: dict[str, Any]) -> None:
     """Record reproducibility metadata even when MQ-HW1 blocks before model access."""
-    model_config = _validate_model_candidate("Qwen/Qwen2.5-1.5B-Instruct")
+    hardware_gate = json.loads(HW_PATH.read_text(encoding="utf-8"))
+    model_config = _validate_model_candidate(hardware_gate["candidate_model_id"])
     v21 = json.loads(V21_PATH.read_text(encoding="utf-8"))
     packages, env_hash = _environment_inventory()
     artifact = output_root / "hardware_preflight.json"

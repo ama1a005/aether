@@ -1,0 +1,83 @@
+{
+  "schema_version": "aether.second-model-qualification-freeze.v1",
+  "status": "awaiting_human_scientific_review",
+  "model": {
+    "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "tokenizer_revision": "dfc017ec3d4e0eaed394f8bf2a0fd2ff24f8b2cd",
+    "license": "apache-2.0",
+    "expected_model_type": "llama",
+    "expected_layer_count": 24,
+    "expected_hidden_width": 2048,
+    "trust_remote_code": false
+  },
+  "execution": {
+    "device": "cpu",
+    "dtype": "float32",
+    "quantized": false,
+    "explicit_offload": false,
+    "disk_offload": false,
+    "low_cpu_mem_usage": true,
+    "local_files_only_after_snapshot": true,
+    "attention_implementation": "eager",
+    "cpu_threads": 2,
+    "seed": 42,
+    "minimum_preload_available_memory_gib": 14.0,
+    "minimum_postload_available_memory_gib": 2.0
+  },
+  "behavioral_qualification": {
+    "cases_path": "configs/model_qualification/v2_mq_g1.json",
+    "cases_sha256": "d1c06af5a30ec6194bf974bc3ce8b7507cb4fe777f695d83a79b06830135c42b",
+    "controls_path": "configs/model_qualification/v2_mq_g2.json",
+    "controls_sha256": "8d33c89d7bd178254d9b1d44e2149d88dbda8fb547b92bcfffb720cebc38f2c0",
+    "prompt_and_case_policy": "unchanged_primary_model_frozen_task",
+    "require_single_token_labels": ["A", "B"],
+    "clean_direction_minimum": "12_of_12_each_direction",
+    "attacked_direction_minimum": "12_of_12_each_direction",
+    "rescue_minimum": "12_of_12_each_direction",
+    "induction_minimum": "12_of_12_each_direction",
+    "errors_and_invalid_rows_fail_gate": true
+  },
+  "instrumentation_acceptance": {
+    "selected_case_ids": ["v2_case_000", "v2_case_001", "v2_case_012", "v2_case_013"],
+    "intervention_case_ids": ["v2_case_000", "v2_case_012"],
+    "capture_layers": [0, 12, 23],
+    "capture_component_types": ["block_output", "attention_output", "mlp_output"],
+    "head_capture_layer": 12,
+    "intervention_layer": 12,
+    "intervention_component_type": "mlp_output",
+    "intervention_token_position": -1,
+    "passive_logit_rtol": 0.00001,
+    "passive_logit_atol": 0.000001,
+    "require_nonzero_intervention_logit_effect": true,
+    "require_exact_hook_cleanup": true,
+    "require_activation_round_trip": true
+  },
+  "failure_policy": {
+    "retain_all_raw_rows": true,
+    "stop_after_behavioral_failure": true,
+    "stop_after_instrumentation_failure": true,
+    "no_threshold_changes": true,
+    "no_candidate_substitution_within_attempt": true,
+    "negative_result_is_valid_evidence": true
+  },
+  "required_artifacts": [
+    "hardware_preflight.json",
+    "model_snapshot_manifest.json",
+    "raw_behavioral_rows.jsonl",
+    "behavioral_summary.json",
+    "activation_artifacts.json",
+    "instrumentation_summary.json",
+    "summary.json",
+    "manifest.json",
+    "archive_contents.json"
+  ],
+  "validation_executions": 0,
+  "test_executions": 0,
+  "claim_boundary": "A PASS establishes task and instrumentation portability to one distinct open-weight model. It does not establish broad architecture-family generalization, clinical validity, or a second causal circuit without a separately frozen intervention study.",
+  "human_review": {
+    "approved": false,
+    "reviewer": "",
+    "utc_timestamp": ""
+  }
+}
