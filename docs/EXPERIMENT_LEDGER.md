@@ -14,6 +14,9 @@
   bundles pass package tests. This is a source-provenance/software-demonstration
   verification, not a model experiment, official PTB-XL score or clinical
   evaluation.
+- Verification: 740 unit tests passed; integration/regression 25 passed and 5
+  prerequisite-dependent skips; frontend 5 passed and production build passed;
+  network-free demo package verification passed.
 
 
 ## P0_cross_20261111_qwen15b_qci1_interventions_seed42 — verified negative

@@ -1,7 +1,8 @@
 # AETHER Phase-1 presentation and evidence guide
 
-**Current as of:** 21 November 2026  
-**Integrated source:** `lm` at commit `516cfb1`  
+**Current as of:** 21 November 2026
+**Integrated causal baseline:** `lm` at commit `516cfb1`
+**PTB-XL demo implementation source:** commit `3f6592f`
 **Purpose:** give an accurate, formal account of the work completed without
 converting a project-authored fixture, compatibility smoke, or failed gate into
 an official benchmark result.

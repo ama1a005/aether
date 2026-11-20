@@ -16,6 +16,12 @@ v1 registry and replays remain in place for audit history; the active v2
 registry and replays are separate. This change affects presentation provenance
 only and does not alter any frozen Qwen experiment, threshold, split or result.
 
+Verification on Python 3.11.9: 740 unit tests passed; integration/regression had
+25 passed and 5 declared prerequisite-dependent skips. The focused PTB-XL,
+FHIR/MCP and demo suite passed 48/48; the PTB-XL source verifier passed for all
+12 records with zero protected-fold access. Frontend tests passed 5/5 and the
+production build succeeded. The network-free packaged-demo verifier passed.
+
 ## 2026-11-20 Phase-1 local closure and retained negative evidence
 
 The member branches are integrated on `integration/phase1-closure`. The verified
