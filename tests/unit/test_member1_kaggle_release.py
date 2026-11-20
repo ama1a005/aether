@@ -48,6 +48,10 @@ def test_member1_notebooks_share_complete_release_guards() -> None:
     assert "test_qwen_agent_c_real_mcp.py" in agent
     assert "checkpoint_state.json" in agent and "--resume" in agent
     assert "checkpoint.tar.gz" in red and "--resume" in red
+    assert "AETHER_RED_TEAM_ATTEMPT" in red
+    assert "attempt-2" in red
+    assert "scripts.verify_qwen_red_team_bundle" in red
+    assert "test_qwen_red_team_verifier.py" in red
 
     assert "bfcl_eval==2026.3.23" in bfcl
     assert "requirements-without-torch.txt" in bfcl

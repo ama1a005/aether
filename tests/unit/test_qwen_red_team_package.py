@@ -33,6 +33,20 @@ def test_registry_selection_rejects_empty_development_cohort() -> None:
         ])
 
 
+def test_campaign_acceptance_rejects_all_errors_and_zero_clean_eligibility() -> None:
+    with pytest.raises(RuntimeError, match="every attempt errored"):
+        red_team_module._require_usable_campaign({"overall": {
+            "eligible_attempts": 48, "errors": 48, "conditional_eligible": 0,
+        }})
+    with pytest.raises(RuntimeError, match="no valid clean-correct"):
+        red_team_module._require_usable_campaign({"overall": {
+            "eligible_attempts": 48, "errors": 1, "conditional_eligible": 0,
+        }})
+    red_team_module._require_usable_campaign({"overall": {
+        "eligible_attempts": 48, "errors": 1, "conditional_eligible": 20,
+    }})
+
+
 def test_red_team_checkpoint_upload_retries(monkeypatch) -> None:
     class Hub:
         calls = 0

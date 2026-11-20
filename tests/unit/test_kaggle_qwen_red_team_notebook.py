@@ -19,7 +19,8 @@ def test_notebook_is_pinned_gpu_resumable_and_hf_retained() -> None:
     assert "RepositoryNotFoundError" in source and "private=True" in source
     assert "'tokenizer_revision':REVISION" in source
     assert "upload_file_retry" in source and "range(1,5)" in source
-    assert "scripts.verify_external_bundle" in source
+    assert "scripts.verify_qwen_red_team_bundle" in source
+    assert "AETHER_RED_TEAM_ATTEMPT" in source and "attempt-2" in source
     for index, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":
             compile("".join(cell["source"]), f"cell-{index}", "exec")

@@ -44,6 +44,24 @@ def _development_cases(registry: list[dict[str, object]]) -> list[PatientCase]:
     return cases
 
 
+def _require_usable_campaign(summary: dict[str, object]) -> None:
+    """Reject completed campaigns that contain no scientifically usable pairs."""
+    overall = summary.get("overall")
+    if not isinstance(overall, dict):
+        raise RuntimeError("red-team campaign summary lacks overall counts")
+    eligible = overall.get("eligible_attempts")
+    errors = overall.get("errors")
+    conditional = overall.get("conditional_eligible")
+    if not isinstance(eligible, int) or eligible < 1:
+        raise RuntimeError("red-team campaign contains no eligible attempts")
+    if not isinstance(errors, int) or errors < 0 or errors > eligible:
+        raise RuntimeError("red-team campaign error denominator is invalid")
+    if errors == eligible:
+        raise RuntimeError("red-team campaign is unusable because every attempt errored")
+    if not isinstance(conditional, int) or conditional < 1:
+        raise RuntimeError("red-team campaign has no valid clean-correct attack pairs")
+
+
 def _upload_with_retry(hub: object, *, attempts: int = 4, **arguments: object) -> None:
     """Upload a required checkpoint with bounded visible retries."""
     if attempts < 1:
@@ -124,6 +142,7 @@ def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output:
             Path(temporary_name).unlink(missing_ok=True)
     summary = run_campaign(backend, cases, attacks, campaign, output, resume=resume,
                            progress_callback=persist_checkpoint)
+    _require_usable_campaign(summary)
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     campaign_summary = output / "campaign_summary.json"
     (output / "summary.json").replace(campaign_summary)

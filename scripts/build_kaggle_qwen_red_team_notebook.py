@@ -26,14 +26,17 @@ def build(commit: str) -> dict[str, object]:
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("red-team notebook requires a 40-hex commit")
     setup = f"""from pathlib import Path
-import hashlib,json,os,shutil,subprocess,sys,tarfile,time
+import hashlib,json,os,re,shutil,subprocess,sys,tarfile,time
 from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-red-team-real')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
-OUTPUT=WORK/'aether-qwen-red-team-real'; CACHE=RUNTIME/'hf-cache'
+ATTEMPT=os.environ.get('AETHER_RED_TEAM_ATTEMPT','attempt-2')
+assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,63}',ATTEMPT),f'Invalid attempt identifier: {{ATTEMPT!r}}'
+OUTPUT=WORK/f'aether-qwen-red-team-real-{{ATTEMPT}}'; CACHE=RUNTIME/'hf-cache'
 COMMIT={commit!r}; URL='https://github.com/ama1a005/aether.git'
-REMOTE_CHECKPOINT='red-team-real/checkpoint.tar.gz'
-REMOTE_FINAL='red-team-real/final-results.tar.gz'
+REMOTE_PREFIX=f'red-team-real/{{ATTEMPT}}'
+REMOTE_CHECKPOINT=f'{{REMOTE_PREFIX}}/checkpoint.tar.gz'
+REMOTE_FINAL=f'{{REMOTE_PREFIX}}/final-results.tar.gz'
 os.environ.update({{'PYTHONNOUSERSITE':'1','MPLBACKEND':'Agg'}})
 RUNTIME.mkdir(parents=True,exist_ok=True)
 secrets=UserSecretsClient(); os.environ['HF_TOKEN']=secrets.get_secret('HF_TOKEN')
@@ -61,7 +64,7 @@ lock.write_text(chr(10).join(x for x in lines if not x.startswith('torch=='))+ch
 subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cu130'],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
-subprocess.run([str(PY),'-m','pytest','tests/unit/test_qwen_red_team_package.py','tests/unit/test_qwen_red_team_backend.py','tests/unit/test_red_team_orchestration.py','-q'],cwd=REPO,check=True)
+subprocess.run([str(PY),'-m','pytest','tests/unit/test_qwen_red_team_package.py','tests/unit/test_qwen_red_team_backend.py','tests/unit/test_red_team_orchestration.py','tests/unit/test_qwen_red_team_verifier.py','-q'],cwd=REPO,check=True)
 """
     remote = """from huggingface_hub import HfApi,hf_hub_download
 from huggingface_hub.errors import EntryNotFoundError,RepositoryNotFoundError
@@ -112,8 +115,8 @@ manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolve
  '--checkpoint-repo',HF_REPO,'--checkpoint-path',REMOTE_CHECKPOINT]
 if (OUTPUT/'plan.json').is_file(): command.append('--resume')
 subprocess.run(command,cwd=REPO,env=os.environ,check=True)
-subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind','qwen_red_team'],cwd=REPO,check=True)
-archive=WORK/'aether-qwen-red-team-real-results.tar.gz'
+subprocess.run([str(PY),'-m','scripts.verify_qwen_red_team_bundle',str(OUTPUT)],cwd=REPO,check=True)
+archive=WORK/f'aether-qwen-red-team-real-{{ATTEMPT}}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 upload_file_retry(path_or_fileobj=str(archive),path_in_repo=REMOTE_FINAL,repo_id=HF_REPO,repo_type='dataset',commit_message='Verified real-Qwen red-team final bundle')
 print('Archive:',archive,'SHA-256:',hashlib.sha256(archive.read_bytes()).hexdigest())
