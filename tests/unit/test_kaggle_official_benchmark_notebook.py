@@ -38,6 +38,9 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "uv==0.11.8" in bfcl_source
     assert "'-m','ensurepip','--upgrade'" in bfcl_source
     assert "'-m','pip','--version'" in bfcl_source
+    assert "if not PY.is_file()" in bfcl_source and "if not REPO.exists()" in bfcl_source
+    assert "requirements-without-torch.txt" in bfcl_source
+    assert "if not line.startswith('torch==')" in bfcl_source
     assert "Refusing to repeat or overwrite this attempt" in bfcl_source
     assert "git','fetch','origin','m1/target-harness'" in bfcl_source
     assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source

@@ -120,8 +120,6 @@ assert os.environ['HF_TOKEN'] and HF_REPO and '/' in HF_REPO, 'Enable HF_TOKEN a
 """),
         _cell("code", f"""if 'RUNTIME' not in globals() or 'REPO' not in globals() or 'VENV' not in globals():
     raise RuntimeError('Setup variables are missing. Run the notebook setup cell (Cell 1) successfully before this cell.')
-if RUNTIME.exists() and (REPO.exists() or VENV.exists()):
-    raise RuntimeError(f'Execution paths already exist under {{RUNTIME}}. Use a fresh Kaggle session; existing files are preserved.')
 subprocess.run([sys.executable,'-m','pip','install','--upgrade','uv==0.11.8'],check=True)
 UV=shutil.which('uv')
 if UV is None:
@@ -132,10 +130,15 @@ uv_version=parse_uv_version(uv_output)
 if uv_version!='0.11.8':
     raise RuntimeError(f'Expected uv 0.11.8; found version {{uv_version!r}} in {{uv_output!r}}')
 env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
-subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
+if not PY.is_file():
+    subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
 if not PY.is_file():
     raise RuntimeError(f'uv did not create the expected Python executable: {{PY}}')
-subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
+subprocess.run([str(PY),'-c','import sys; assert sys.version_info[:3]==(3,11,9),sys.version'],check=True)
+if not REPO.exists():
+    subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
+elif not (REPO/'.git').exists():
+    raise RuntimeError(f'Existing repository path is incomplete: {{REPO}}')
 subprocess.run(['git','fetch','origin','m1/target-harness'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 actual_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
@@ -151,7 +154,11 @@ if not REPO.is_dir() or not PY.is_file() or 'env' not in globals():
     raise RuntimeError('Repository, pinned Python, or environment is missing. Restart with a fresh Kaggle session and run cells in order.')
 subprocess.run([str(PY),'-m','ensurepip','--upgrade'],check=True)
 subprocess.run([str(PY),'-m','pip','--version'],check=True)
-subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
+base_lock=RUNTIME/'requirements-without-torch.txt'
+lock_lines=(REPO/'requirements-lock.txt').read_text(encoding='utf-8').splitlines()
+base_lock.write_text(chr(10).join(line for line in lock_lines if not line.startswith('torch=='))+chr(10),encoding='utf-8')
+assert not any(line.startswith('torch==') for line in base_lock.read_text(encoding='utf-8').splitlines())
+subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(base_lock)],check=True,env=env)
 {package_setup}
 subprocess.run([str(PY),'-m','pytest','tests/unit/test_external_bundle.py','tests/unit/test_native_benchmark_runners.py','tests/unit/test_native_official_package.py','-q'],cwd=REPO,check=True)
 DEPENDENCIES_COMPLETE=True
