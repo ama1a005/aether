@@ -54,6 +54,9 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "DEPENDENCIES_COMPLETE=True" in bfcl_source
     assert "sys.path.insert(0,str(REPO))" in bfcl_source
     assert "PREFLIGHT_COMPLETE=True" in bfcl_source
+    assert "[str(PY),'-c',preflight_probe" in bfcl_source
+    assert "from benchmarks.nov19_bfcl.preflight import check_backend_and_hardware,check_package" in bfcl_source
+    assert "wheel_ok,wheel_reasons,_=check_package" not in bfcl_source
     assert "Dependency installation or model-free tests did not complete" in bfcl_source
     assert "Expected pinned repository commit" in bfcl_source
     assert "aether-bfcl-official-{ATTEMPT}-results.tar.gz" in bfcl_source

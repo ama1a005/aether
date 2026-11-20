@@ -65,20 +65,30 @@ actual_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=T
 if actual_commit!=COMMIT:
     raise RuntimeError(f'Expected pinned repository commit {COMMIT}, found {actual_commit}')
 from huggingface_hub import snapshot_download
+CONFIG=REPO/'configs/benchmarks/phase1_external.yaml'
+APPROVAL=REPO/'results/phase1/protocol_approvals/bfcl_official.json'
+FROZEN_MANIFEST=REPO/'results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json'
+preflight_probe=r'''import json,sys
+from pathlib import Path
 from benchmarks.run_native_official import _load_config
-from benchmarks.nov19_bfcl.preflight import check_backend_and_hardware, check_package
+from benchmarks.nov19_bfcl.preflight import check_backend_and_hardware,check_package
 from causal.remediation_freeze import frozen_text_hash_matches
 from experiments.external_bundle import verify_protocol_approval
-CONFIG=REPO/'configs/benchmarks/phase1_external.yaml'
-_load_config(CONFIG,'bfcl')
-APPROVAL=REPO/'results/phase1/protocol_approvals/bfcl_official.json'
-verify_protocol_approval(CONFIG,APPROVAL)
-wheel_ok,wheel_reasons,_=check_package(wheel_path=WHEEL)
+repo,wheel=Path(sys.argv[1]),Path(sys.argv[2])
+config=repo/'configs/benchmarks/phase1_external.yaml'
+approval=repo/'results/phase1/protocol_approvals/bfcl_official.json'
+manifest=repo/'results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json'
+_load_config(config,'bfcl'); verify_protocol_approval(config,approval)
+wheel_ok,wheel_reasons,wheel_details=check_package(wheel_path=wheel)
 gpu_ok,gpu_reasons,gpu_details=check_backend_and_hardware('vllm',1)
-assert wheel_ok, wheel_reasons
-assert gpu_ok, {'reasons':gpu_reasons,'details':gpu_details}
-FROZEN_MANIFEST=REPO/'results/phase1/model_qualification/qwen15b_kaggle_20261110/model_snapshot_manifest.json'
-assert frozen_text_hash_matches(FROZEN_MANIFEST,'1b282b730f38fbe992608e8837fe0f619463a767f93e08d97cd0950d55644f11')
+manifest_ok=frozen_text_hash_matches(manifest,'1b282b730f38fbe992608e8837fe0f619463a767f93e08d97cd0950d55644f11')
+print(json.dumps({'wheel_ok':wheel_ok,'wheel_reasons':wheel_reasons,'wheel_details':wheel_details,
+ 'gpu_ok':gpu_ok,'gpu_reasons':gpu_reasons,'gpu_details':gpu_details,'manifest_ok':manifest_ok}))
+'''
+probe=json.loads(subprocess.check_output([str(PY),'-c',preflight_probe,str(REPO),str(WHEEL)],cwd=REPO,text=True))
+assert probe['wheel_ok'], probe['wheel_reasons']
+assert probe['gpu_ok'], {'reasons':probe['gpu_reasons'],'details':probe['gpu_details']}
+assert probe['manifest_ok'], 'Frozen model qualification manifest hash differs'
 frozen=json.loads(FROZEN_MANIFEST.read_text(encoding='utf-8'))
 REVISION='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
 snapshot=Path(snapshot_download('Qwen/Qwen2.5-1.5B-Instruct',revision=REVISION,cache_dir=RUNTIME/'hf-cache',max_workers=1))
