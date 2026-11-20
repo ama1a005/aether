@@ -50,6 +50,21 @@ def _atomic_json(path: Path, payload: Any) -> None:
             os.unlink(temporary)
 
 
+def _atomic_jsonl(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
+    """Atomically materialize a JSONL export from authoritative checkpoint rows."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+            for row in rows:
+                stream.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")
+            stream.flush(); os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
 def load_protocol() -> dict[str, Any]:
     """Verify human approval and every frozen local input before model access."""
     verify_protocol_approval(PROPOSAL, APPROVAL)
@@ -338,8 +353,7 @@ def run(*, output: Path, snapshot: Path, snapshot_manifest: Path, checkpoint_rep
     truth = {row["case_id"]: ("A" if row["ground_truth_decision"] == "ESCALATE" else "B")
              for row in registry if row["case_id"] in wanted}
     summary = summarize(rows, truth); _atomic_json(output / "summary.json", summary)
-    with (output / "raw_reviews.jsonl").open("x", encoding="utf-8", newline="\n") as stream:
-        for row in rows: stream.write(json.dumps(row, sort_keys=True, allow_nan=False) + "\n")
+    _atomic_jsonl(output / "raw_reviews.jsonl", rows)
     metadata = runtime_metadata(repository=ROOT, experiment_id="P0_agent_c_real_qwen15b_development",
         run_id=output.name, dataset_manifest_hashes={k: v.get("sha256", v.get("canonical_lf_sha256"))
         for k, v in protocol["inputs"].items() if isinstance(v, dict) and "path" in v},

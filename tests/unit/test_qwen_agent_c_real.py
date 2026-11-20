@@ -40,6 +40,18 @@ def test_required_upload_retries_then_succeeds(monkeypatch) -> None:
     assert hub.calls == 3
 
 
+def test_final_jsonl_export_replaces_interrupted_stale_file_atomically(tmp_path: Path) -> None:
+    target = tmp_path / "raw_reviews.jsonl"
+    target.write_text('{"stale":true}\n', encoding="utf-8")
+    rows = [{"case_id": "case-1", "condition": "clean"},
+            {"case_id": "case-1", "condition": "attacked"}]
+
+    agent_c_module._atomic_jsonl(target, rows)
+
+    assert [json.loads(line) for line in target.read_text(encoding="utf-8").splitlines()] == rows
+    assert not list(tmp_path.glob(".raw_reviews.jsonl.*"))
+
+
 def test_approved_protocol_loads_without_model_access() -> None:
     protocol = load_protocol()
     assert protocol["model"]["model_id"] == "Qwen/Qwen2.5-1.5B-Instruct"
