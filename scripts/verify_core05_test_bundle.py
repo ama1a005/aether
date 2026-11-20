@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from causal.remediation_freeze import sha256_file
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 ARMS = {"no_defense", "frozen_receiver_l20_h5"}; SEEDS = {11, 22, 33}
@@ -39,7 +39,8 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("CORE-05 improperly claims oracle-free deployment")
     for relative, expected in load("archive_contents.json").items():
         path = (root / relative).resolve()
-        if root not in path.parents or not path.is_file() or sha256_file(path) != expected:
+        if (root not in path.parents or not path.is_file()
+                or not frozen_text_hash_matches(path, expected)):
             raise ValueError(f"CORE-05 archive hash failure: {relative}")
     ledger = load("budget_ledger.json")
     if {(row["arm"], int(row["seed"])) for row in ledger} != {(arm, seed) for arm in ARMS for seed in SEEDS} or any(row.get("state") != "COMPLETE" for row in ledger):

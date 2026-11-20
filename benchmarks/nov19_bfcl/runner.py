@@ -68,19 +68,15 @@ class BFCLRunner:
             verify_snapshot_hashes=verify_snapshot_hashes,
         )
 
-        native_plan = None
-        try:
-            native_plan = bfcl_qwen25_plan(
-                package_version=self.package_version,
-                model_revision=self.model_revision,
-                snapshot_manifest=self.snapshot_manifest,
-                categories=self.categories,
-                output_dir=self.output_dir,
-                num_gpus=self.num_gpus,
-                backend=self.backend,
-            )
-        except Exception:
-            native_plan = None
+        native_plan = bfcl_qwen25_plan(
+            package_version=self.package_version,
+            model_revision=self.model_revision,
+            snapshot_manifest=self.snapshot_manifest,
+            categories=self.categories,
+            output_dir=self.output_dir,
+            num_gpus=self.num_gpus,
+            backend=self.backend,
+        )
 
         return BFCLRunPlan(
             preflight=preflight,

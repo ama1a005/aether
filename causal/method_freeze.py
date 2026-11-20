@@ -77,12 +77,20 @@ class MatchedBudgetLedger:
 
 
 def sha256_file(path: Path) -> str:
-    """Return the SHA-256 digest of one file without normalizing its bytes."""
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    """Return a platform-stable SHA-256 digest for a frozen text artifact.
+
+    Git may materialize an otherwise identical UTF-8 text file with CRLF on
+    Windows and LF on Linux.  Method-freeze approvals are authored and
+    executed on both platforms, so textual artifacts use canonical LF bytes.
+    Binary artifacts retain exact byte identity.
+    """
+    raw = path.read_bytes()
+    if path.suffix.lower() in {".json", ".jsonl", ".md", ".py", ".txt", ".yaml", ".yml"}:
+        try:
+            raw = raw.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
+        except UnicodeDecodeError:
+            pass
+    return hashlib.sha256(raw).hexdigest()
 
 
 def load_and_validate_proposal(path: Path, repo: Path) -> dict[str, Any]:

@@ -15,6 +15,9 @@ from benchmarks.nov19_bfcl.preflight import (
     PINNED_MODEL_REVISION,
     PINNED_PACKAGE,
     PINNED_PACKAGE_VERSION,
+    PINNED_BACKEND_VERSION,
+    PINNED_TORCH_VERSION,
+    PINNED_CUDA_VERSION,
     check_backend_and_hardware,
     check_categories,
     check_package,
@@ -24,6 +27,7 @@ from benchmarks.nov19_bfcl.preflight import (
 from benchmarks.nov19_bfcl.report import assemble_bfcl_summary
 from benchmarks.nov19_bfcl.runner import BFCLRunner
 from benchmarks.nov19_bfcl.verifier import BFCLArtifactVerifier, VerificationResult
+from scripts.verify_bfcl_bundle import _torch_base_version
 
 
 def test_package_check_wrong_version():
@@ -51,7 +55,129 @@ def test_package_check_wheel_hash_mismatch(tmp_path):
 def test_backend_hardware_rejects_invalid_backend():
     ok, reasons, details = check_backend_and_hardware(backend="unsupported_engine")
     assert not ok
-    assert any("Unsupported backend" in r for r in reasons)
+    assert any("Unsupported BFCL backend" in r for r in reasons)
+
+
+def test_native_cli_exposes_only_frozen_vllm_backend(monkeypatch, capsys) -> None:
+    import sys
+    from benchmarks.run_native_official import main
+
+    monkeypatch.setattr(sys, "argv", ["run_native_official", "bfcl", "--help"])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 0
+    assert "--backend {vllm}" in capsys.readouterr().out
+
+
+def test_backend_hardware_requires_installed_vllm(monkeypatch):
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: None)
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm")
+    assert not ok
+    assert any("backend 'vllm' is not installed" in reason for reason in reasons)
+
+
+def test_vllm_preflight_rejects_unsupported_compute_capability(monkeypatch):
+    class Properties:
+        name = "Tesla P100"
+        total_memory = 16 * 1024 ** 3
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (6, 0))
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+    assert not ok
+    assert details["gpu_0_compute_capability"] == "6.0"
+    assert any("require 7.5 or newer" in reason for reason in reasons)
+
+
+def _mock_pinned_vllm(monkeypatch, *, backend_version=PINNED_BACKEND_VERSION):
+    import torch
+
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.find_spec", lambda name: object())
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight.version",
+                        lambda name: backend_version if name == "vllm" else "0")
+    monkeypatch.setattr(torch, "__version__", f"{PINNED_TORCH_VERSION}+cu130")
+    monkeypatch.setattr(torch.version, "cuda", PINNED_CUDA_VERSION)
+
+
+def test_vllm_preflight_rejects_unpinned_backend_version(monkeypatch):
+    _mock_pinned_vllm(monkeypatch, backend_version="0.35.0")
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm")
+    assert not ok
+    assert any("vLLM version mismatch" in reason for reason in reasons)
+
+
+def test_vllm_preflight_accepts_kaggle_t4_usable_vram(monkeypatch):
+    class Properties:
+        name = "Tesla T4"
+        total_memory = 15_640_000_000
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert ok, reasons
+    assert details["gpu_0_vram_gb"] == 15.64
+
+
+def test_vllm_preflight_rejects_gpu_below_usable_vram_floor(monkeypatch):
+    class Properties:
+        name = "Undersized GPU"
+        total_memory = 14_990_000_000
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["580.00.00"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, details = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert not ok
+    assert details["gpu_0_vram_gb"] == 14.99
+    assert any("below required 15.0 GB" in reason for reason in reasons)
+
+
+def test_vllm_preflight_rejects_driver_too_old_for_cuda_13(monkeypatch):
+    class Properties:
+        name = "Tesla T4"
+        total_memory = 16_000_000_000
+
+    _mock_pinned_vllm(monkeypatch)
+    monkeypatch.setattr("benchmarks.nov19_bfcl.preflight._query_cuda_driver_versions", lambda: ["570.99.01"])
+    monkeypatch.setattr("torch.cuda.is_available", lambda: True)
+    monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    monkeypatch.setattr("torch.cuda.get_device_properties", lambda index: Properties())
+    monkeypatch.setattr("torch.cuda.get_device_capability", lambda index: (7, 5))
+
+    ok, reasons, _ = check_backend_and_hardware(backend="vllm", num_gpus=1)
+
+    assert not ok
+    assert any("below the CUDA 13.0 minimum R580" in reason for reason in reasons)
+
+
+def test_bfcl_overlay_pins_backend_and_cuda_compatible_torch() -> None:
+    overlay = Path("requirements-bfcl-vllm.txt").read_text(encoding="utf-8")
+    assert "soundfile==0.13.1" in overlay
+    assert "cffi==1.17.1" in overlay
+    assert "pycparser==2.22" in overlay
+    assert "vllm==0.34.0" in overlay
+    assert "torch==2.14.0" in overlay
+
+
+def test_bundle_verifier_accepts_cuda_build_suffix_for_pinned_torch() -> None:
+    # vLLM's CUDA wheel reports a local build tag such as 2.14.0+cu130.
+    assert _torch_base_version("2.14.0+cu130") == PINNED_TORCH_VERSION
+    assert _torch_base_version(None) is None
 
 
 def test_categories_rejects_empty_or_invalid():
@@ -61,7 +187,7 @@ def test_categories_rejects_empty_or_invalid():
 
     ok, reasons, _ = check_categories(["invalid_category_xyz"])
     assert not ok
-    assert any("Unknown BFCL categories" in r for r in reasons)
+    assert any("No reviewed BFCL" in r for r in reasons)
 
 
 def test_snapshot_manifest_absent(tmp_path):
@@ -75,6 +201,7 @@ def test_snapshot_manifest_wrong_revision(tmp_path):
     manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": "wrong_revision_sha",
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(tmp_path),
         "files": [],
     }))
@@ -101,6 +228,7 @@ def test_snapshot_manifest_file_tampering(tmp_path):
     manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": PINNED_MODEL_REVISION,
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(snap_dir),
         "files": [{"path": "config.json", "size": len(b"correct content"), "sha256": sha256(b"correct content").hexdigest()}],
     }))
@@ -122,41 +250,49 @@ def test_verifier_rejects_missing_directory(tmp_path):
     assert any("does not exist" in r for r in res.reasons)
 
 
+def _write_official_category(root: Path, semantic: str, official: str,
+                             rows: list[dict], correct: int) -> None:
+    adapter = root / "AETHER_Qwen2.5-1.5B-Instruct-FC" / "non_live"
+    adapter.mkdir(parents=True, exist_ok=True)
+    result = adapter / f"BFCL_v4_{official}_result.json"
+    score = adapter / f"BFCL_v4_{official}_score.json"
+    result.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+    header = {"accuracy": correct / len(rows), "correct_count": correct,
+              "total_count": len(rows)}
+    score.write_text(json.dumps(header) + "\n", encoding="utf-8")
+
+
 def test_verifier_rejects_partial_categories(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    # Create output for simple only
-    simple_file = res_dir / "simple.json"
-    simple_file.write_text(json.dumps([{"id": "s1", "success": True, "valid": True}]))
+    _write_official_category(res_dir, "simple", "simple_python", [{"id": "s1", "result": "ok"}], 1)
 
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple", "multiple"])
     res = verifier.verify()
     assert not res.passed
-    assert any("Missing evaluator output for category: multiple" in r for r in res.reasons)
+    assert any("one official result and score file for multiple" in r for r in res.reasons)
 
 
 def test_verifier_detects_duplicate_task_ids(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    file_1 = res_dir / "simple.json"
-    file_1.write_text(json.dumps([
-        {"id": "duplicate_id_01", "success": True, "valid": True},
-        {"id": "duplicate_id_01", "success": True, "valid": True},
-    ]))
+    _write_official_category(res_dir, "simple", "simple_python", [
+        {"id": "duplicate_id_01", "result": "ok"},
+        {"id": "duplicate_id_01", "result": "ok"},
+    ], 2)
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple"])
     res = verifier.verify()
     assert not res.passed
-    assert any("Duplicate task ID duplicate_id_01" in r for r in res.reasons)
+    assert any("duplicate official task IDs" in r for r in res.reasons)
 
 
 def test_verifier_retains_errors_in_denominator(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    simple_file = res_dir / "simple.json"
-    simple_file.write_text(json.dumps([
-        {"id": "s1", "success": True, "valid": True},
-        {"id": "s2", "success": False, "valid": False, "error": "timeout"},
-    ]))
+    _write_official_category(res_dir, "simple", "simple_python", [
+        {"id": "s1", "result": [{"name": "ok"}]},
+        {"id": "s2", "result": "Error during inference: timeout"},
+    ], 1)
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple"])
     res = verifier.verify()
     assert res.passed
@@ -179,6 +315,8 @@ def test_report_fails_closed_without_unwarranted_official_evaluator(tmp_path):
     assert summary["official_evaluator_executed"] is False
     assert summary["status"] == "FAILED"
     assert summary["overall"] == "FAIL"
+    assert "four prespecified Phase-1 BFCL categories only" in " ".join(summary["limitations"])
+    assert "AETHER validation and test splits are not accessed" in " ".join(summary["limitations"])
 
     # Blocked state
     blocked_summary = assemble_bfcl_summary(
@@ -197,6 +335,7 @@ def test_runner_dry_run_generates_diagnostics(tmp_path):
     snap_manifest.write_text(json.dumps({
         "model_id": PINNED_MODEL_ID,
         "resolved_revision": PINNED_MODEL_REVISION,
+        "tokenizer_revision": PINNED_MODEL_REVISION,
         "snapshot_path": str(tmp_path),
         "files": [],
     }))
@@ -209,3 +348,15 @@ def test_runner_dry_run_generates_diagnostics(tmp_path):
     assert "output_dir" in dry
     # Preflight should fail because CUDA and bfcl_eval are not present in this test env
     assert not dry["preflight"]["passed"]
+
+
+def test_runner_surfaces_native_plan_errors(tmp_path):
+    """Invalid native plan inputs must remain visible to the caller."""
+    runner = BFCLRunner(
+        snapshot_manifest=tmp_path / "manifest.json",
+        output_dir=tmp_path / "output",
+        categories=(),
+    )
+
+    with pytest.raises(ValueError, match="BFCL version, model revision and categories"):
+        runner.plan(verify_snapshot_hashes=False)

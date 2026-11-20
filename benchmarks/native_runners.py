@@ -9,6 +9,8 @@ import subprocess
 import sys
 from typing import Sequence
 
+from benchmarks.bfcl_compat import official_categories
+
 
 @dataclass(frozen=True)
 class NativeBenchmarkPlan:
@@ -50,7 +52,8 @@ def bfcl_plan(*, package_version: str, model: str, categories: Sequence[str],
     if not package_version or not model or not categories or any(not item for item in categories):
         raise ValueError("Pinned BFCL metadata, model and categories are required")
     root = str(output_dir.resolve())
-    common = ["--model", model, "--test-category", ",".join(categories), "--result-dir", root]
+    cli_categories = official_categories(categories)
+    common = ["--model", model, "--test-category", ",".join(cli_categories), "--result-dir", root]
     generate = (sys.executable, "-m", "bfcl_eval", "generate", *common)
     evaluate = [sys.executable, "-m", "bfcl_eval", "evaluate", *common,
                 "--score-dir", root]
@@ -73,8 +76,9 @@ def bfcl_qwen25_plan(*, package_version: str, model_revision: str,
     root = str(output_dir.resolve())
     provenance = ("--model-revision", model_revision, "--snapshot-manifest",
                   str(snapshot_manifest.resolve()))
+    cli_categories = official_categories(categories)
     common = ("--model", "AETHER/Qwen2.5-1.5B-Instruct-FC", "--test-category",
-              ",".join(categories), "--result-dir", root)
+              ",".join(cli_categories), "--result-dir", root)
     generate = (sys.executable, "-m", "benchmarks.bfcl_qwen25", *provenance,
                 "generate", *common, "--num-gpus", str(num_gpus), "--backend", backend)
     evaluate = (sys.executable, "-m", "benchmarks.bfcl_qwen25", *provenance,

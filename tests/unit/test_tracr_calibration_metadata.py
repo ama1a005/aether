@@ -1,8 +1,9 @@
 """Tests for bounded Tracr calibration metadata."""
 
 import json
-from hashlib import sha256
 from pathlib import Path
+
+from causal.remediation_freeze import frozen_text_hash_matches
 
 
 def test_tracr_config_is_pinned_and_classified_narrowly() -> None:
@@ -29,7 +30,7 @@ def test_completed_tracr_manifest_integrity() -> None:
     ):
         path = Path(manifest[path_key])
         assert path.exists()
-        assert sha256(path.read_bytes()).hexdigest() == manifest[hash_key]
+        assert frozen_text_hash_matches(path, manifest[hash_key])
 
 
 def test_tracr_intervention_evidence_when_current_config_was_executed() -> None:
@@ -38,7 +39,7 @@ def test_tracr_intervention_evidence_when_current_config_was_executed() -> None:
         return
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     config_path = Path(manifest["config_path"])
-    if manifest["config_sha256"] != sha256(config_path.read_bytes()).hexdigest():
+    if not frozen_text_hash_matches(config_path, manifest["config_sha256"]):
         return
     summary = json.loads(Path(manifest["result_path"]).read_text(encoding="utf-8"))
     assert summary["intervention"]["performed"] is True

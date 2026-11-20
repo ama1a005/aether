@@ -1,9 +1,26 @@
+import math
+from typing import Any
+
+
+def _finite_number(value: Any, field: str) -> float:
+    """Normalize a numeric JSON field while rejecting booleans and non-finite values."""
+    if isinstance(value, bool):
+        raise TypeError(f"{field} must be numeric, not boolean")
+    try:
+        normalized = float(value)
+    except (TypeError, ValueError) as error:
+        raise TypeError(f"{field} must be numeric") from error
+    if not math.isfinite(normalized):
+        raise ValueError(f"{field} must be finite")
+    return normalized
+
+
 def get_ecg_analysis(case_id: str, features: dict) -> dict:
     """Returns {rhythm, risk_level, flags, heart_rate} derived from features.
     Logic: if 'AF' in features or heart_rate > 120 or st_deviation_mv > 0.2 → CRITICAL; else LOW
     """
-    heart_rate = features.get('heart_rate', 80)
-    st_deviation_mv = features.get('st_deviation_mv', 0.0)
+    heart_rate = _finite_number(features.get('heart_rate', 80), 'heart_rate')
+    st_deviation_mv = _finite_number(features.get('st_deviation_mv', 0.0), 'st_deviation_mv')
     rhythm = features.get('rhythm', 'SR')
     
     flags = []

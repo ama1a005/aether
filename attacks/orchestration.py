@@ -12,7 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import random
-from typing import Protocol, Sequence
+from typing import Callable, Protocol, Sequence
 
 from contracts.schemas import AttackSpec, PatientCase, RunTrace
 from experiments.manifest import create_run_manifest, write_run_manifest
@@ -142,7 +142,9 @@ def debrief(records: Sequence[dict[str, object]]) -> dict[str, object]:
 
 def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
                  attacks: Sequence[AttackSpec], config: CampaignConfig,
-                 destination: Path, *, resume: bool = False) -> dict[str, object]:
+                 destination: Path, *, resume: bool = False,
+                 progress_callback: Callable[[Path, dict[str, object]], None] | None = None
+                 ) -> dict[str, object]:
     """Run or resume a campaign, refusing uncertain interrupted target calls.
 
     A started record is persisted before each pair. If interrupted, explicit
@@ -230,6 +232,9 @@ def run_campaign(backend: TargetBackend, cases: Sequence[PatientCase],
                      "event": "attempt_complete", "payload": row}
             with (destination / "events.jsonl").open("a", encoding="utf-8") as handle:
                 handle.write(_json(event) + "\n")
+                handle.flush()
+            if progress_callback is not None:
+                progress_callback(destination, row)
         summary = {"run_id": run_id, "evidence_class": recon.evidence_class,
                    "target_calls": sum(row["target_calls"] for row in records),
                    "plan_fingerprint": fingerprint, **debrief(records)}

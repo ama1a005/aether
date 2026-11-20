@@ -22,19 +22,20 @@ def build(kind: str, commit: str) -> dict[str, object]:
         raise ValueError("kind and immutable 40-hex commit are required")
     setup = f"""from pathlib import Path
 import hashlib,json,os,shutil,subprocess,sys,tarfile
-WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-{kind}'); REPO=RUNTIME/'aether'
+WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
+WORK.mkdir(parents=True,exist_ok=True)
+RUNTIME=Path('/tmp/aether-{kind}'); REPO=RUNTIME/'aether'
 VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'; OUTPUT=WORK/'aether-{kind}-results'
 COMMIT={commit!r}; URL='https://github.com/ama1a005/aether.git'
 RUNTIME.mkdir(parents=True,exist_ok=True); os.environ['PYTHONNOUSERSITE']='1'
 if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','install','uv'],check=True)
 UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
 subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
-subprocess.run(['git','clone','--branch','phase1/core-nov19','--single-branch',URL,str(REPO)],check=True)
+subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
 subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
-subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
 """
     if kind == "agent_c":
         execution = """subprocess.run([str(PY),'-m','experiments.phase1.qwen_agent_c','--config',str(REPO/'configs/experiments/agent_c_qwen_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/agent_c_qwen_development.json'),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
@@ -48,7 +49,9 @@ files=[]
 for path in sorted(p for p in snapshot.rglob('*') if p.is_file()): files.append({'path':path.relative_to(snapshot).as_posix(),'size':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
 manifest=WORK/'model_snapshot_manifest.json'; manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':revision,'snapshot_path':str(snapshot),'files':files},indent=2))
 subprocess.run([str(PY),'-m','experiments.phase1.qwen_red_team','--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/qwen_red_team_development.json'),'--snapshot-manifest',str(manifest),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
-    archive = f"""subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT)],cwd=REPO,check=True)
+    specific_verification = "subprocess.run([str(PY),'-m','scripts.verify_agent_c_bundle',str(OUTPUT)],cwd=REPO,check=True)" if kind == "agent_c" else ""
+    archive = f"""{specific_verification}
+subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT)],cwd=REPO,check=True)
 archive=WORK/'aether-{kind}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
 print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())"""

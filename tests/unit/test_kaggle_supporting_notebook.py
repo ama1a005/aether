@@ -8,5 +8,7 @@ def test_supporting_notebooks_are_pinned_clean_and_verified() -> None:
         notebook = build(kind, "b" * 40)
         source = "".join("".join(cell["source"]) for cell in notebook["cells"])
         assert "b" * 40 in source and "scripts.verify_external_bundle" in source
+        assert "aether-execution-output" in source
+        assert "--no-deps','-e'" not in source
         for index, cell in enumerate(notebook["cells"]):
             if cell["cell_type"] == "code": compile("".join(cell["source"]), f"cell-{index}", "exec")

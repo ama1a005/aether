@@ -21,6 +21,7 @@ from demo.backend.tools import run_all_tools
 
 RUN_ROOT = Path("demo/artifacts/runs")
 REPLAY_ROOT = Path("demo/artifacts/replays")
+REPLAY_MANIFEST_PATH = Path("demo/cases/demo_case_manifest.json")
 LIVE_QUALIFICATION_PATH = Path("demo/artifacts/live/qualification.json")
 def _code_for_action(action: str) -> str:
     return "A" if action == "ESCALATE" else "B"
@@ -194,11 +195,27 @@ def get_run(run_id: str) -> dict[str, Any]:
 
 
 def get_replay(case_id: str) -> dict[str, Any]:
-    """Read one verified replay bundle."""
+    """Read a replay only when its content and frozen manifest identity agree."""
     path = REPLAY_ROOT / f"{case_id}.json"
     if not path.is_file():
         raise KeyError(case_id)
-    return json.loads(path.read_text(encoding="utf-8"))
+    bundle = json.loads(path.read_text(encoding="utf-8"))
+    expected_case = next(
+        (row for row in json.loads(REPLAY_MANIFEST_PATH.read_text(encoding="utf-8")).get("cases", [])
+         if row.get("case_id") == case_id),
+        None,
+    )
+    recorded_hash = bundle.get("content_sha256")
+    unhashed_bundle = {key: value for key, value in bundle.items() if key != "content_sha256"}
+    actual_hash = sha256(canonical_json(unhashed_bundle).encode("utf-8")).hexdigest()
+    if (
+        bundle.get("case_id") != case_id
+        or expected_case is None
+        or recorded_hash != actual_hash
+        or expected_case.get("artifact_id") != recorded_hash
+    ):
+        raise ValueError(f"replay artifact failed integrity verification: {case_id}")
+    return bundle
 
 
 def get_live_replay(case_id: str) -> dict[str, Any]:

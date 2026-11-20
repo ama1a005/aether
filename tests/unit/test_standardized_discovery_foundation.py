@@ -18,6 +18,7 @@ from causal.run_specificity_hardening import (
     _sample_controls,
 )
 from experiments.manifest import sha256_file
+from causal.remediation_freeze import frozen_text_hash_matches
 from instrumentation.model_adapter import ComponentSite
 import torch
 
@@ -91,7 +92,9 @@ def test_frozen_candidate_registry_identity() -> None:
     registry = json.loads(path.read_text(encoding="utf-8"))
     assert registry["frozen_before_scan"] and registry["scope"] == "development_only"
     assert registry["layers"] == [0, 5, 9, 14, 18, 23]
-    assert sha256_file(path) == "aa96328c63afd46ba6a004f9091e6675cde666fb9f82918e5a332d19554cee11"
+    assert frozen_text_hash_matches(
+        path, "aa96328c63afd46ba6a004f9091e6675cde666fb9f82918e5a332d19554cee11"
+    )
 
 
 def test_completed_causal_scan_and_fixed_receiver_messages() -> None:

@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from mcp.server.fastmcp import FastMCP
+try:
+    from mcp.server.mcpserver import MCPServer as FastMCP
+except ImportError:
+    from mcp.server.fastmcp import FastMCP
 
 from demo.backend.repository import get_case
 from demo.backend.tools import TOOLS

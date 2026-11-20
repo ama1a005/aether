@@ -1,6 +1,7 @@
 """Model-free wiring tests for the real-Qwen red-team backend."""
 
 import torch
+import pytest
 
 from attacks.qwen_backend import QwenRedTeamBackend
 from contracts.schemas import AttackSpec, PatientCase
@@ -30,3 +31,20 @@ def test_qwen_backend_runs_literal_message_attack_and_preserves_provenance() -> 
     assert trace.final_decision == "DO_NOT_ESCALATE" and trace.attack_id == "a"
     assert trace.model_ids == {"agent_a": "qwen", "agent_b": "qwen"}
     assert trace.messages[0]["structured_payload"]["risk_level"] == "LOW"
+
+
+def test_qwen_backend_accepts_frozen_registry_decimal_strings() -> None:
+    backend = QwenRedTeamBackend(Adapter([1, 1]), model_id="qwen", model_revision="rev")
+    case = PatientCase("c", {"heart_rate": 80, "st_deviation_mv": "0.4"},
+                       "ESCALATE", source_split="development")
+    trace = backend.execute(case, None, 7)
+    assert trace.tool_calls[0]["result"]["risk_level"] == "CRITICAL"
+    assert trace.tool_calls[0]["result"]["heart_rate"] == 80.0
+
+
+def test_qwen_backend_rejects_non_numeric_registry_fields() -> None:
+    backend = QwenRedTeamBackend(Adapter([1, 1]), model_id="qwen", model_revision="rev")
+    case = PatientCase("c", {"heart_rate": 80, "st_deviation_mv": "not-a-number"},
+                       "ESCALATE", source_split="development")
+    with pytest.raises(TypeError, match="st_deviation_mv must be numeric"):
+        backend.execute(case, None, 7)

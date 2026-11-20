@@ -1,0 +1,8 @@
+{
+  "schema_version": "aether.protocol-decision.v1",
+  "approved": true,
+  "reviewer": "Ardra M A",
+  "proposal_sha256": "211ff7d3cc78ab962b5b9bf9c478484c656e6ede06ab8be9427a1a05151fef5b",
+  "validation_authorized": false,
+  "test_authorized": false
+}

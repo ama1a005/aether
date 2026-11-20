@@ -4,6 +4,10 @@ experiment_id: P0_attack_qwen15b_development_red_team
 split: development
 model_id: Qwen/Qwen2.5-1.5B-Instruct
 model_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+runtime:
+  device: cuda:0
+  dtype: float32
+  deterministic_generation: true
 case_registry: data/causal_v2/case_registry.json
 seed: 42
 n_per_family: 1

@@ -1,0 +1,11 @@
+# BFCL GPU overlay: vLLM 0.34.0 is built for PyTorch 2.14.0 / CUDA 13.0.
+# This intentionally replaces requirements-lock.txt's torch==2.14.1 only in
+# the isolated external BFCL environment; do not change the project lock.
+vllm==0.34.0
+torch==2.14.0
+# qwen-agent imports SoundFile at module import time, but does not declare it
+# in the dependency path installed by bfcl_eval 2026.3.23.  Keep this runtime
+# boundary explicit and reproducible instead of relying on Kaggle's kernel.
+soundfile==0.13.1
+cffi==1.17.1
+pycparser==2.22

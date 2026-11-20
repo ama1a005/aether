@@ -1,0 +1,65 @@
+{
+  "artifacts": {
+    "raw_reviews.json": "2af60911119dc5d77a045fc72508b26270f7582a42f80442811bcde2c489a293",
+    "summary.json": "5dfd45d918c0d0399c5b5b70c2cb751e6f741b777aafb75d08da8b135479cc65"
+  },
+  "command_line": [
+    "C:\\Users\\ardra\\aether\\.local\\agent_c_worktree\\experiments\\phase1\\qwen_agent_c.py",
+    "--config",
+    "configs/experiments/agent_c_qwen_development.yaml",
+    "--approval",
+    "results/phase1/protocol_approvals/agent_c_qwen_development.json",
+    "--output",
+    "C:\\Users\\ardra\\aether\\.local\\agent_c_attempts\\P0_agent_c_qwen15b_development_20261119_e16d3603_02"
+  ],
+  "config_file": "configs\\experiments\\agent_c_qwen_development.yaml",
+  "dataset_manifest_hashes": {
+    "data/causal_v2/case_registry.json": "805f6c3b7bf932c53b2c31fcd9350d41c291fccb46824991caa816109afb3b9c",
+    "results/phase1/model_qualification/qwen15b_kaggle_20261110/mq_g1_rows.json": "8ec8da7b6a7ba04924852301b64884cb7591cfa71bca2c30681618dba3d70ffe",
+    "source_qwen_qualification_manifest": "ff43cf6d6b48d96da0792c0a8d864bbb7dd4753a58014810f14704e153d4c1c1"
+  },
+  "evidence_kind": "qwen_agent_c",
+  "experiment_id": "P0_agent_c_qwen15b_development",
+  "git_commit": "e16d3603277ef6e3b5478c769da4ec0986238438",
+  "hardware": "Windows-10-10.0.26200-SP0",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "prompt_versions": {
+    "agent_c_policy": "deterministic-agent-c-v1",
+    "paired_trace/balanced_v2.py": "df69d8bb1a2f6c5b7b8f6109cd641dcd5cfb29bb309c77b5787fdf6658743cf3",
+    "paired_trace/model_qualification.py": "b52c7dcfb8cec4225afb6a12f5bd4860dcf7d94860fc5ae4ba76091d8ce983ba",
+    "paired_trace/run_foundation.py": "7187fc7a89fa05e69cddd1e1db5935e8b21c24f47626f839746a57da091db4cc",
+    "paired_trace/run_model_qualification.py": "07d3de67fcb97c23ab19c7839463ead21443debea9aafc553b460689c547fabf",
+    "paired_trace/schemas.py": "411d6a441f0a15a20a7b3db675dd2c4f7b51d30ff25a8e9f7ff2a51ecafd813f"
+  },
+  "python_env_hash": "155d59821446dace2a44cab8f7cbb40e141b9084057ba46bf586130ce7dd0921",
+  "random_seeds": [
+    0
+  ],
+  "run_id": "P0_agent_c_qwen15b_development_20261119_e16d3603_02",
+  "schema_version": "aether.external-bundle.v1",
+  "source_qwen_generation": {
+    "experiment_id": "P0_target_20261110_qwen15b_mq",
+    "git_commit": "ed6a9ab742426d45626b63c211642079af9f1a97",
+    "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "prompt_versions": {
+      "paired_trace/balanced_v2.py": "df69d8bb1a2f6c5b7b8f6109cd641dcd5cfb29bb309c77b5787fdf6658743cf3",
+      "paired_trace/model_qualification.py": "b52c7dcfb8cec4225afb6a12f5bd4860dcf7d94860fc5ae4ba76091d8ce983ba",
+      "paired_trace/run_foundation.py": "7187fc7a89fa05e69cddd1e1db5935e8b21c24f47626f839746a57da091db4cc",
+      "paired_trace/run_model_qualification.py": "07d3de67fcb97c23ab19c7839463ead21443debea9aafc553b460689c547fabf",
+      "paired_trace/schemas.py": "411d6a441f0a15a20a7b3db675dd2c4f7b51d30ff25a8e9f7ff2a51ecafd813f"
+    },
+    "random_seeds": [
+      42
+    ],
+    "run_id": "P0_target_20261110_qwen15b_mq_seed42",
+    "source_manifest_sha256": "ff43cf6d6b48d96da0792c0a8d864bbb7dd4753a58014810f14704e153d4c1c1",
+    "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  },
+  "test_executions": 0,
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "uncommitted_diff": false,
+  "utc_timestamp": "2026-11-19T07:02:59.987148+00:00",
+  "validation_executions": 0
+}

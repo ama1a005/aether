@@ -18,7 +18,7 @@ import psutil
 import torch
 
 from causal.locked_validation_freeze import load_and_validate_locked_validation_freeze
-from causal.remediation_freeze import sha256_file
+from causal.remediation_freeze import frozen_text_hash_matches, sha256_file
 from instrumentation.adapters import Qwen2ModelAdapter
 from instrumentation.core04_evaluator import ARMS, Core04Evaluator, attach_benign_damage
 
@@ -42,9 +42,10 @@ def _git(*args: str) -> str:
 
 def _authorization() -> tuple[dict[str, Any], str]:
     protocol = load_and_validate_locked_validation_freeze(PROTOCOL, ROOT)
-    digest = sha256_file(PROTOCOL)
     decision = json.loads(DECISION.read_text(encoding="utf-8"))
-    if decision.get("decision") != "APPROVED" or decision.get("proposal_sha256") != digest:
+    digest = str(decision.get("proposal_sha256", ""))
+    if (decision.get("decision") != "APPROVED"
+            or not frozen_text_hash_matches(PROTOCOL, digest)):
         raise PermissionError("CORE-04 lacks exact-hash human approval")
     return protocol, digest
 

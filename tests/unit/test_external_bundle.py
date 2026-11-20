@@ -64,3 +64,18 @@ def test_protocol_decision_is_separate_identified_and_hash_exact(tmp_path) -> No
     proposal.write_text("status: changed\n", encoding="utf-8")
     with pytest.raises(PermissionError, match="immutable proposal"):
         verify_protocol_approval(proposal, decision)
+
+
+def test_protocol_decision_accepts_only_newline_equivalent_checkout(tmp_path) -> None:
+    proposal = tmp_path / "proposal.yaml"
+    proposal.write_bytes(b"status: prospective\r\nclaim: frozen\r\n")
+    decision = tmp_path / "decision.json"
+    payload = {"schema_version": "aether.protocol-decision.v1", "approved": True,
+               "reviewer": "human-owner", "proposal_sha256": sha256_file(proposal),
+               "validation_authorized": False, "test_authorized": False}
+    decision.write_text(json.dumps(payload), encoding="utf-8")
+    proposal.write_bytes(b"status: prospective\nclaim: frozen\n")
+    assert verify_protocol_approval(proposal, decision)["proposal_sha256"] == payload["proposal_sha256"]
+    proposal.write_bytes(b"status: prospective\nclaim: changed\n")
+    with pytest.raises(PermissionError, match="immutable proposal"):
+        verify_protocol_approval(proposal, decision)

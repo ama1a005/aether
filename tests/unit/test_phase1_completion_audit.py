@@ -24,6 +24,15 @@ def test_repository_completion_audit_reports_known_evidence_and_open_gates() -> 
     assert statuses["ioi_causal_calibration"] == "PASS"
 
 
+def test_agent_c_completion_gate_does_not_promote_supporting_evidence() -> None:
+    report = audit()
+    agent_c = next(row for row in report["gates"] if row["id"] == "real_qwen_agent_c")
+
+    assert agent_c["status"] == "MISSING"
+    assert agent_c["path"].replace("\\", "/").endswith(
+        "results/phase1/agent_c/qwen15b/summary.json")
+
+
 def test_completion_audit_rejects_missing_predicate(tmp_path) -> None:
     (tmp_path / "evidence.json").write_text(json.dumps({"overall": "PASS"}), encoding="utf-8")
     config = {

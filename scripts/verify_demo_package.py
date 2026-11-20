@@ -4,14 +4,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
-
-from fastapi.testclient import TestClient
-
-from demo.backend.app import app
-
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from fastapi.testclient import TestClient
+from unittest.mock import patch
+
+from demo.backend.app import app
 
 
 def verify(root: Path = ROOT, *, require_frontend_build: bool = True) -> dict[str, object]:
@@ -37,11 +41,19 @@ def verify(root: Path = ROOT, *, require_frontend_build: bool = True) -> dict[st
         raise RuntimeError("deterministic review pipeline failed")
     if clean.json()["receiver"]["decision"] == attacked.json()["receiver"]["decision"]:
         raise RuntimeError("demo attack does not change the declared primary case decision")
+    with patch.dict(os.environ, {"AETHER_FHIR_MCP_ENDPOINT": "http://127.0.0.1:1/mcp/"}):
+        external_failure = client.post(
+            "/api/demo/pipeline/clean",
+            json={"case_id": "DEMO-PAT-001", "execution_mode": "real_fhir_mcp_deterministic"},
+        )
+    if external_failure.status_code != 503 or "external WSO2 MCP pipeline failed" not in external_failure.json().get("detail", ""):
+        raise RuntimeError("unavailable external MCP did not fail explicitly without fallback")
     return {
         "overall": "PASS", "case_count": 12, "phase1_gate_count": 22,
         "frontend_build_verified": require_frontend_build,
+        "external_mcp_failure_mode_verified": True,
         "live_external_services_tested": False,
-        "claim_boundary": "Network-free packaging verification; not live MCP or model evidence.",
+        "claim_boundary": "Local failure-path check plus network-free packaging verification; not live MCP or model evidence.",
     }
 
 

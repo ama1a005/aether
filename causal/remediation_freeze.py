@@ -28,7 +28,7 @@ def frozen_text_hash_matches(path: Path, expected: str) -> bool:
     """Accept an exact hash or newline-only Git conversion for UTF-8 text evidence."""
     raw = path.read_bytes()
     variants = {hashlib.sha256(raw).hexdigest()}
-    if path.suffix.lower() in {".json", ".jsonl", ".yaml", ".yml", ".md", ".txt"}:
+    if path.suffix.lower() in {".json", ".jsonl", ".yaml", ".yml", ".md", ".txt", ".py"}:
         try:
             raw.decode("utf-8")
         except UnicodeDecodeError:

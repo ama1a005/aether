@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from benchmarks.nov19_bfcl.preflight import PHASE1_CATEGORIES
+from benchmarks.bfcl_compat import official_categories
 
 
 @dataclass(frozen=True)
@@ -66,83 +67,67 @@ class BFCLArtifactVerifier:
             digest = sha256(f.read_bytes()).hexdigest()
             artifact_hashes[rel] = digest
 
-        # Look for category score files or aggregate score file
-        # Official BFCL evaluate writes score files under score_dir / model_name
-        score_file = None
-        candidate_score_files = [
-            self.result_dir / "score.json",
-            self.result_dir / "eval_score.json",
-            self.result_dir / "eval_result.json",
-        ]
-        # Also check under adapter subdir
-        sanitized_adapter = self.expected_model_adapter.replace("/", "_")
-        candidate_score_files.extend([
-            self.result_dir / sanitized_adapter / "score.json",
-            self.result_dir / self.expected_model_adapter / "score.json",
-        ])
-
-        for cand in candidate_score_files:
-            if cand.is_file():
-                score_file = cand
-                break
-
-        # Check for per-category score files if aggregate is not found
         category_scores: dict[str, dict[str, Any]] = {}
         total_eligible = 0
         total_success = 0
         total_errors = 0
 
-        for cat in self.expected_categories:
-            cat_files = list(self.result_dir.rglob(f"*{cat}*.json"))
-            if not cat_files:
-                reasons.append(f"Missing evaluator output for category: {cat}")
+        translated = official_categories(self.expected_categories)
+        adapter_dir = self.result_dir / self.expected_model_adapter.replace("/", "_")
+        for cat, cli_cat in zip(self.expected_categories, translated, strict=True):
+            result_files = list(adapter_dir.rglob(f"BFCL_v4_{cli_cat}_result.json"))
+            score_files = list(adapter_dir.rglob(f"BFCL_v4_{cli_cat}_score.json"))
+            if len(result_files) != 1 or len(score_files) != 1:
+                reasons.append(
+                    f"Expected one official result and score file for {cat} ({cli_cat}); "
+                    f"found {len(result_files)} result and {len(score_files)} score files"
+                )
                 continue
-
-            # Parse category files to ensure well-formedness and check task counts
-            cat_task_ids = set()
-            cat_eligible = 0
-            cat_success = 0
-            cat_errors = 0
-
-            for cf in cat_files:
-                try:
-                    data = json.loads(cf.read_text(encoding="utf-8"))
-                except Exception as exc:
-                    reasons.append(f"Corrupt JSON in {cf.name}: {exc}")
-                    continue
-
-                # Process rows if structured as list or dict of records
-                records = data if isinstance(data, list) else data.get("results", [])
-                if isinstance(data, dict) and not records and "accuracy" in data:
-                    # Aggregate category summary file
-                    cat_eligible = data.get("total_cases", data.get("total", 0))
-                    cat_success = data.get("correct", data.get("success", 0))
-                    cat_errors = data.get("errors", 0)
-                elif isinstance(records, list):
-                    for rec in records:
-                        tid = rec.get("id") or rec.get("task_id")
-                        if tid:
-                            if tid in cat_task_ids:
-                                reasons.append(f"Duplicate task ID {tid} in {cf.name}")
-                            cat_task_ids.add(tid)
-                        cat_eligible += 1
-                        if rec.get("valid") is False or rec.get("error"):
-                            cat_errors += 1
-                        elif rec.get("success") is True or rec.get("correct") is True:
-                            cat_success += 1
-
-            if cat_eligible == 0:
+            try:
+                result_rows = self._read_json_lines(result_files[0])
+                score_rows = self._read_json_lines(score_files[0])
+            except ValueError as exc:
+                reasons.append(str(exc))
+                continue
+            if not score_rows or not isinstance(score_rows[0], dict):
+                reasons.append(f"Official score header absent for category {cat}")
+                continue
+            header = score_rows[0]
+            cat_eligible = header.get("total_count")
+            cat_success = header.get("correct_count")
+            accuracy = header.get("accuracy")
+            if not isinstance(cat_eligible, int) or not isinstance(cat_success, int):
+                reasons.append(f"Invalid official score counts for category {cat}")
+                continue
+            if cat_eligible <= 0:
                 reasons.append(f"Category {cat} has 0 eligible cases")
-            else:
-                category_scores[cat] = {
-                    "eligible": cat_eligible,
-                    "success": cat_success,
-                    "errors": cat_errors,
-                    "accuracy": cat_success / cat_eligible if cat_eligible > 0 else 0.0,
-                }
-                total_eligible += cat_eligible
-                total_success += cat_success
-                total_errors += cat_errors
+                continue
+            if not 0 <= cat_success <= cat_eligible or len(result_rows) != cat_eligible:
+                reasons.append(f"Official result/count mismatch for category {cat}")
+                continue
+            expected_accuracy = cat_success / cat_eligible
+            if not isinstance(accuracy, (int, float)) or abs(float(accuracy) - expected_accuracy) > 1e-12:
+                reasons.append(f"Official accuracy/count mismatch for category {cat}")
+                continue
+            ids = [row.get("id") for row in result_rows]
+            if any(not isinstance(item, str) or not item for item in ids) or len(set(ids)) != len(ids):
+                reasons.append(f"Missing or duplicate official task IDs for category {cat}")
+                continue
+            cat_errors = sum(
+                isinstance(row.get("result"), str)
+                and row["result"].startswith("Error during inference:")
+                for row in result_rows
+            )
+            category_scores[cat] = {
+                "official_category": cli_cat,
+                "eligible": cat_eligible,
+                "success": cat_success,
+                "errors": cat_errors,
+                "accuracy": expected_accuracy,
+            }
+            total_eligible += cat_eligible
+            total_success += cat_success
+            total_errors += cat_errors
 
         metrics["categories"] = category_scores
         metrics["total_eligible"] = total_eligible
@@ -159,3 +144,19 @@ class BFCLArtifactVerifier:
             metrics=metrics,
             artifact_hashes=artifact_hashes,
         )
+
+    @staticmethod
+    def _read_json_lines(path: Path) -> list[dict[str, Any]]:
+        """Read BFCL's newline-delimited `.json` artifacts without coercion."""
+        rows: list[dict[str, Any]] = []
+        for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"Corrupt JSONL in {path.name} line {line_number}: {exc}") from exc
+            if not isinstance(row, dict):
+                raise ValueError(f"Non-object JSONL row in {path.name} line {line_number}")
+            rows.append(row)
+        return rows

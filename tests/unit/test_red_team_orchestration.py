@@ -39,7 +39,16 @@ def test_resume_budget_and_errors(tmp_path):
     backend = Backend()
     config = CampaignConfig("test", max_target_calls=2)
     directory = tmp_path / "campaign"
-    result = run_campaign(backend, [case], [attack], config, directory)
+    persisted = []
+    result = run_campaign(
+        backend, [case], [attack], config, directory,
+        progress_callback=lambda root, row: persisted.append(
+            (root, row["attempt_id"], row["status"])
+        ),
+    )
+    assert len(persisted) == 1
+    assert persisted[0][0] == directory.resolve()
+    assert persisted[0][1] and persisted[0][2] == "error"
     assert result["overall"]["eligible_attempts"] == 1
     assert result["overall"]["errors"] == 1
     assert result["overall"]["asr"] == 0
