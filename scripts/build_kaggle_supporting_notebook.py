@@ -67,7 +67,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 tokenizer=AutoTokenizer.from_pretrained(snapshot,local_files_only=True,trust_remote_code=False)
 model=AutoModelForCausalLM.from_pretrained(snapshot,local_files_only=True,trust_remote_code=False,attn_implementation='eager').eval()
 probe=model(**tokenizer('Reply with A.',return_tensors='pt'),use_cache=False).logits
-assert probe.shape[0] == 1 and probe.shape[-1] == tokenizer.vocab_size
+assert probe.shape[0] == 1 and probe.shape[-1] == model.config.vocab_size
 del model
 subprocess.run([str(PY),'-m','experiments.phase1.qwen_red_team','--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),'--approval',str(REPO/'results/phase1/protocol_approvals/qwen_red_team_development.json'),'--snapshot-manifest',str(manifest),'--output',str(OUTPUT)],cwd=REPO,check=True)"""
     archive = f"""import hashlib, subprocess, tarfile
