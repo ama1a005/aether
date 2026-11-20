@@ -169,7 +169,13 @@ DEPENDENCIES_COMPLETE=True
 command=[str(PY),'-m','benchmarks.run_native_official',{benchmark!r},'--config',str(REPO/'configs/benchmarks/phase1_external.yaml'),'--output',str(OUTPUT)]
 {("command += ['--snapshot-manifest',str(SNAPSHOT_MANIFEST),'--package-wheel',str(WHEEL),'--backend','vllm','--num-gpus','1']" if benchmark == 'bfcl' else "")}
 from huggingface_hub import HfApi
-api=HfApi(token=os.environ['HF_TOKEN']); info=api.repo_info(HF_REPO,repo_type='dataset')
+from huggingface_hub.errors import RepositoryNotFoundError
+api=HfApi(token=os.environ['HF_TOKEN'])
+try:
+ info=api.repo_info(HF_REPO,repo_type='dataset')
+except RepositoryNotFoundError:
+ api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
+ info=api.repo_info(HF_REPO,repo_type='dataset')
 assert info.private, 'AETHER_HF_REPO must be an existing private dataset repository'
 REMOTE_PREFIX=f'{benchmark}-official/{{ATTEMPT}}'
 checkpoint_archive=WORK/f'aether-{benchmark}-{{ATTEMPT}}-checkpoint.tar.gz'

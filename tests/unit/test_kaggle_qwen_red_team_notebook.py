@@ -16,6 +16,7 @@ def test_notebook_is_pinned_gpu_resumable_and_hf_retained() -> None:
     assert "--resume" in source and "plan.json" in source
     assert "if not PY.is_file()" in source and "if not REPO.exists()" in source
     assert "'-m','ensurepip','--upgrade'" in source
+    assert "RepositoryNotFoundError" in source and "private=True" in source
     assert "scripts.verify_external_bundle" in source
     for index, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":

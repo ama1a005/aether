@@ -55,6 +55,7 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "aether-bfcl-official-{ATTEMPT}-results.tar.gz" in bfcl_source
     assert bfcl_source.index("verify_bfcl_bundle") < bfcl_source.rindex("tarfile.open")
     assert "AETHER_HF_REPO" in bfcl_source and "HF_TOKEN" in bfcl_source
+    assert "RepositoryNotFoundError" in bfcl_source and "private=True" in bfcl_source
     assert "checkpoint.tar.gz" in bfcl_source and "final-results.tar.gz" in bfcl_source
     assert "sync_stop.wait(300)" in bfcl_source
     assert "--no-deps','-e'" not in bfcl_source
