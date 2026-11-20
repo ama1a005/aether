@@ -13,6 +13,7 @@ import random
 import shutil
 import subprocess
 import tempfile
+import time
 from typing import Any, Callable, Mapping, Sequence
 
 import yaml
@@ -116,6 +117,8 @@ def verify_snapshot(snapshot: Path, manifest_path: Path,
         raise ValueError("Agent C snapshot manifest model ID differs")
     if manifest.get("resolved_revision") != protocol["model"]["model_revision"]:
         raise ValueError("Agent C snapshot manifest revision differs")
+    if manifest.get("tokenizer_revision") != protocol["model"]["tokenizer_revision"]:
+        raise ValueError("Agent C tokenizer snapshot revision differs")
     files = manifest.get("files")
     if not isinstance(files, list) or not files:
         raise ValueError("Agent C snapshot manifest has no files")
@@ -129,6 +132,27 @@ def verify_snapshot(snapshot: Path, manifest_path: Path,
     if observed != expected:
         raise ValueError("Agent C model snapshot differs from its manifest")
     return manifest
+
+
+def _upload_with_retry(hub: Any, *, attempts: int = 4, **arguments: Any) -> None:
+    """Upload one required artifact with bounded visible retries."""
+    if attempts < 1:
+        raise ValueError("upload attempts must be positive")
+    for attempt in range(1, attempts + 1):
+        try:
+            hub.upload_file(**arguments)
+            return
+        except Exception as error:
+            if attempt == attempts:
+                raise RuntimeError(
+                    f"Hugging Face upload failed after {attempts} attempts"
+                ) from error
+            print(
+                f"Hugging Face upload attempt {attempt}/{attempts} failed: "
+                f"{type(error).__name__}: {error}",
+                flush=True,
+            )
+            time.sleep(2 ** (attempt - 1))
 
 
 def evaluate_condition(*, protocol: Mapping[str, Any], source: Mapping[str, Any],
@@ -305,9 +329,11 @@ def run(*, output: Path, snapshot: Path, snapshot_manifest: Path, checkpoint_rep
             generate=generate, tool_call=lambda case_id: call_vital_signs(registry_path, case_id))
         rows.append(row); _atomic_json(checkpoint, {"proposal_sha256": EXPECTED_HASH,
                                                     "plan_sha256": plan_sha256, "rows": rows})
-        hub.upload_file(path_or_fileobj=checkpoint, path_in_repo=checkpoint_path,
-                        repo_id=checkpoint_repo, repo_type="dataset",
-                        commit_message=f"Agent C checkpoint {len(rows)}/48")
+        _upload_with_retry(
+            hub, path_or_fileobj=checkpoint, path_in_repo=checkpoint_path,
+            repo_id=checkpoint_repo, repo_type="dataset",
+            commit_message=f"Agent C checkpoint {len(rows)}/48",
+        )
     registry = json.loads(registry_path.read_text(encoding="utf-8"))["cases"]
     truth = {row["case_id"]: ("A" if row["ground_truth_decision"] == "ESCALATE" else "B")
              for row in registry if row["case_id"] in wanted}

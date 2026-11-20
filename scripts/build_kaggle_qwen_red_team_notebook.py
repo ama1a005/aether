@@ -26,7 +26,7 @@ def build(commit: str) -> dict[str, object]:
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("red-team notebook requires a 40-hex commit")
     setup = f"""from pathlib import Path
-import hashlib,json,os,shutil,subprocess,sys,tarfile
+import hashlib,json,os,shutil,subprocess,sys,tarfile,time
 from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-red-team-real')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
@@ -72,6 +72,14 @@ except RepositoryNotFoundError:
  api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
  info=api.repo_info(HF_REPO,repo_type='dataset')
 assert info.private, 'AETHER_HF_REPO must be an existing private dataset repository'
+def upload_file_retry(**arguments):
+ for attempt in range(1,5):
+  try:
+   api.upload_file(**arguments); return
+  except Exception as error:
+   if attempt==4: raise
+   print(f'Upload attempt {attempt}/4 failed: {type(error).__name__}: {error}',flush=True)
+   time.sleep(2**(attempt-1))
 try:
  retained=Path(hf_hub_download(HF_REPO,REMOTE_CHECKPOINT,repo_type='dataset',cache_dir=RUNTIME/'checkpoint-cache',force_download=True))
 except EntryNotFoundError:
@@ -107,7 +115,7 @@ subprocess.run(command,cwd=REPO,env=os.environ,check=True)
 subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind','qwen_red_team'],cwd=REPO,check=True)
 archive=WORK/'aether-qwen-red-team-real-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-api.upload_file(path_or_fileobj=str(archive),path_in_repo=REMOTE_FINAL,repo_id=HF_REPO,repo_type='dataset',commit_message='Verified real-Qwen red-team final bundle')
+upload_file_retry(path_or_fileobj=str(archive),path_in_repo=REMOTE_FINAL,repo_id=HF_REPO,repo_type='dataset',commit_message='Verified real-Qwen red-team final bundle')
 print('Archive:',archive,'SHA-256:',hashlib.sha256(archive.read_bytes()).hexdigest())
 """
     cells = [

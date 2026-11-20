@@ -62,6 +62,9 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "RepositoryNotFoundError" in bfcl_source and "private=True" in bfcl_source
     assert "checkpoint.tar.gz" in bfcl_source and "final-results.tar.gz" in bfcl_source
     assert "sync_stop.wait(300)" in bfcl_source
+    assert "upload_file_retry" in bfcl_source and "range(1,5)" in bfcl_source
+    assert "sync_thread.join()" in bfcl_source
+    assert "sync_thread.join(timeout=15)" not in bfcl_source
     assert "--no-deps','-e'" not in bfcl_source
 
 

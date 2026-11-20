@@ -4,7 +4,23 @@ from pathlib import Path
 
 import pytest
 
+from experiments.phase1 import qwen_red_team as red_team_module
 from experiments.phase1.qwen_red_team import run
+
+
+def test_red_team_checkpoint_upload_retries(monkeypatch) -> None:
+    class Hub:
+        calls = 0
+
+        def upload_file(self, **_arguments) -> None:
+            self.calls += 1
+            if self.calls < 2:
+                raise OSError("temporary transport failure")
+
+    hub = Hub()
+    monkeypatch.setattr(red_team_module.time, "sleep", lambda _seconds: None)
+    red_team_module._upload_with_retry(hub, path_or_fileobj="x")
+    assert hub.calls == 2
 
 
 def test_unreviewed_red_team_config_blocks_before_snapshot_access(tmp_path) -> None:

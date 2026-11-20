@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 
 import torch
 import yaml
@@ -28,6 +29,27 @@ from instrumentation.adapters import Qwen2ModelAdapter
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def _upload_with_retry(hub: object, *, attempts: int = 4, **arguments: object) -> None:
+    """Upload a required checkpoint with bounded visible retries."""
+    if attempts < 1:
+        raise ValueError("upload attempts must be positive")
+    for attempt in range(1, attempts + 1):
+        try:
+            hub.upload_file(**arguments)  # type: ignore[attr-defined]
+            return
+        except Exception as error:
+            if attempt == attempts:
+                raise RuntimeError(
+                    f"Hugging Face upload failed after {attempts} attempts"
+                ) from error
+            print(
+                f"Hugging Face upload attempt {attempt}/{attempts} failed: "
+                f"{type(error).__name__}: {error}",
+                flush=True,
+            )
+            time.sleep(2 ** (attempt - 1))
 
 
 def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output: Path,
@@ -82,7 +104,8 @@ def run(config_path: Path, approval_path: Path, snapshot_manifest: Path, output:
                 for path in sorted(destination.rglob("*")):
                     if path.is_file() and path.name != "active.lock":
                         bundle.add(path, arcname=(Path(destination.name) / path.relative_to(destination)))
-            hub.upload_file(
+            _upload_with_retry(
+                hub,
                 path_or_fileobj=temporary_name, path_in_repo=checkpoint_path,
                 repo_id=checkpoint_repo, repo_type="dataset",
                 commit_message=f"Red-team checkpoint {row['attempt_id']}",

@@ -18,6 +18,9 @@ def test_notebook_is_pinned_gpu_enabled_and_checkpoint_safe() -> None:
     assert "mcp==1.27.1" in source
     assert "test_qwen_agent_c_real_mcp.py" in source
     assert "'tokenizer_revision':REVISION" in source
+    assert "git','fetch','origin','m1/target-harness'" in source
+    assert "upload_file_retry" in source and "range(1,5)" in source
+    assert "failed-before-checkpoint" in source
     assert "scripts.verify_qwen_agent_c_real_bundle" in source
     assert "validation" not in source.lower() and "test split" not in source.lower()
     assert "final-results.tar.gz" in source

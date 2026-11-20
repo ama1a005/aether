@@ -21,7 +21,7 @@ def build(commit: str) -> dict[str, object]:
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("real-Qwen Agent C notebook requires a 40-hex commit")
     setup = f"""from pathlib import Path
-import hashlib,json,os,shutil,subprocess,sys,tarfile
+import hashlib,json,os,shutil,subprocess,sys,tarfile,time
 from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working'); RUNTIME=Path('/tmp/aether-agent-c-real')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'
@@ -45,9 +45,10 @@ if not REPO.exists():
  subprocess.run(['git','clone','--branch','lm','--single-branch',URL,str(REPO)],check=True)
 elif not (REPO/'.git').exists():
  raise RuntimeError(f'Existing repository path is incomplete: {REPO}')
-subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
+subprocess.run(['git','fetch','origin','m1/target-harness'],cwd=REPO,check=True)
 subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
 assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
+assert not subprocess.check_output(['git','status','--porcelain'],cwd=REPO,text=True).strip()
 lines=(REPO/'requirements-lock.txt').read_text().splitlines(); lock=RUNTIME/'lock.txt'
 lock.write_text(chr(10).join(x for x in lines if not x.startswith('torch=='))+chr(10),encoding='utf-8')
 subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cu130'],check=True,env=env)
@@ -65,6 +66,14 @@ except RepositoryNotFoundError:
     api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
     info=api.repo_info(HF_REPO,repo_type='dataset')
 assert info.private, 'AETHER_HF_REPO must name an existing private dataset repository'
+def upload_file_retry(**arguments):
+    for attempt in range(1,5):
+        try:
+            api.upload_file(**arguments); return
+        except Exception as error:
+            if attempt==4: raise
+            print(f'Upload attempt {attempt}/4 failed: {type(error).__name__}: {error}',flush=True)
+            time.sleep(2**(attempt-1))
 try:
     remote_checkpoint=Path(hf_hub_download(HF_REPO,REMOTE_PATH,repo_type='dataset',cache_dir=RUNTIME/'checkpoint-cache',force_download=True))
 except EntryNotFoundError:
@@ -90,12 +99,16 @@ manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolve
     execute = """command=[str(PY),'-u','-m','experiments.phase1.qwen_agent_c_real','--output',str(OUTPUT),
          '--model-snapshot',str(snapshot),'--snapshot-manifest',str(manifest),
          '--checkpoint-repo',HF_REPO,'--checkpoint-path',REMOTE_PATH]
+if OUTPUT.exists() and not (OUTPUT/'checkpoint_state.json').is_file():
+ failed=WORK/f'aether-qwen-agent-c-real-failed-before-checkpoint-{time.time_ns()}'
+ OUTPUT.rename(failed)
+ print('Preserved incomplete pre-checkpoint attempt:',failed)
 if (OUTPUT/'checkpoint_state.json').is_file(): command.append('--resume')
 subprocess.run(command,cwd=REPO,env=os.environ,check=True)
 subprocess.run([str(PY),'-m','scripts.verify_qwen_agent_c_real_bundle',str(OUTPUT)],cwd=REPO,env=os.environ,check=True)
 archive=WORK/'aether-qwen-agent-c-real-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-api.upload_file(path_or_fileobj=archive,path_in_repo='agent-c-real/final-results.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message='Verified real-Qwen Agent C final bundle')
+upload_file_retry(path_or_fileobj=archive,path_in_repo='agent-c-real/final-results.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message='Verified real-Qwen Agent C final bundle')
 print('Archive:',archive,'SHA-256:',hashlib.sha256(archive.read_bytes()).hexdigest())
 """
     cells = [_cell("markdown", "# AETHER real-Qwen Agent C v1\n\nRun all cells with one T4 or better GPU. Secrets: `HF_TOKEN`, `AETHER_HF_REPO` (an existing private Hugging Face dataset). Progress is uploaded after every case-condition."),

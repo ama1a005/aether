@@ -183,6 +183,14 @@ except RepositoryNotFoundError:
  api.create_repo(repo_id=HF_REPO,repo_type='dataset',private=True,exist_ok=True)
  info=api.repo_info(HF_REPO,repo_type='dataset')
 assert info.private, 'AETHER_HF_REPO must be an existing private dataset repository'
+def upload_file_retry(**arguments):
+ for attempt in range(1,5):
+  try:
+   api.upload_file(**arguments); return
+  except Exception as error:
+   if attempt==4: raise
+   print(f'Upload attempt {{attempt}}/4 failed: {{type(error).__name__}}: {{error}}',flush=True)
+   time.sleep(2**(attempt-1))
 REMOTE_PREFIX=f'{benchmark}-official/{{ATTEMPT}}'
 checkpoint_archive=WORK/f'aether-{benchmark}-{{ATTEMPT}}-checkpoint.tar.gz'
 sync_stop=threading.Event(); sync_errors=[]
@@ -191,7 +199,7 @@ def upload_checkpoint():
  temporary=checkpoint_archive.with_suffix('.tmp')
  with tarfile.open(temporary,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
  temporary.replace(checkpoint_archive)
- api.upload_file(path_or_fileobj=str(checkpoint_archive),path_in_repo=f'{{REMOTE_PREFIX}}/checkpoint.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'{benchmark.upper()} retained checkpoint')
+ upload_file_retry(path_or_fileobj=str(checkpoint_archive),path_in_repo=f'{{REMOTE_PREFIX}}/checkpoint.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'{benchmark.upper()} retained checkpoint')
 def sync_loop():
  while not sync_stop.wait(300):
   try: upload_checkpoint()
@@ -200,14 +208,15 @@ sync_thread=threading.Thread(target=sync_loop,daemon=True); sync_thread.start()
 try:
  subprocess.run(command,cwd=REPO,check=True)
 finally:
- sync_stop.set(); sync_thread.join(timeout=15)
+ sync_stop.set(); sync_thread.join()
  upload_checkpoint()
-if sync_errors: raise RuntimeError('One or more periodic Hugging Face checkpoint uploads failed') from sync_errors[0]
+if sync_errors:
+ print(f'Periodic checkpoint warnings retained: {{len(sync_errors)}}; final required upload succeeded.',flush=True)
 subprocess.run([str(PY),'-m','scripts.verify_external_bundle',str(OUTPUT),'--expected-kind',{(benchmark + '_official')!r}],cwd=REPO,check=True)
 {benchmark_verification}
 archive=WORK/f'aether-{benchmark}-official-{{ATTEMPT}}-results.tar.gz'
 with tarfile.open(archive,'w:gz') as bundle: bundle.add(OUTPUT,arcname=OUTPUT.name)
-api.upload_file(path_or_fileobj=str(archive),path_in_repo=f'{{REMOTE_PREFIX}}/final-results.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'Verified {benchmark.upper()} final bundle')
+upload_file_retry(path_or_fileobj=str(archive),path_in_repo=f'{{REMOTE_PREFIX}}/final-results.tar.gz',repo_id=HF_REPO,repo_type='dataset',commit_message=f'Verified {benchmark.upper()} final bundle')
 print(archive,hashlib.sha256(archive.read_bytes()).hexdigest())
 """),
     ]

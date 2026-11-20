@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from experiments.phase1 import qwen_agent_c_real as agent_c_module
 from experiments.external_bundle import artifact_hashes, write_bundle_manifest
 from experiments.phase1.qwen_agent_c_real import (
     EXPECTED_HASH,
@@ -22,6 +23,21 @@ from scripts.verify_qwen_agent_c_real_bundle import verify
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_required_upload_retries_then_succeeds(monkeypatch) -> None:
+    class Hub:
+        calls = 0
+
+        def upload_file(self, **_arguments) -> None:
+            self.calls += 1
+            if self.calls < 3:
+                raise OSError("temporary transport failure")
+
+    hub = Hub()
+    monkeypatch.setattr(agent_c_module.time, "sleep", lambda _seconds: None)
+    agent_c_module._upload_with_retry(hub, path_or_fileobj="x")
+    assert hub.calls == 3
 
 
 def test_approved_protocol_loads_without_model_access() -> None:
@@ -68,6 +84,7 @@ def test_snapshot_verification_rejects_tampering(tmp_path: Path) -> None:
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps({"model_id": protocol["model"]["model_id"],
         "resolved_revision": protocol["model"]["model_revision"],
+        "tokenizer_revision": protocol["model"]["tokenizer_revision"],
         "files": [{"path": "weight.bin", "size": 4,
                    "sha256": hashlib.sha256(b"real").hexdigest()}]}), encoding="utf-8")
     assert verify_snapshot(snapshot, manifest, protocol)["resolved_revision"] == protocol["model"]["model_revision"]
