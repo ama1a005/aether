@@ -1,5 +1,22 @@
 # AETHER Intermediate Review Demo
 
+## Active standardized case cohort (2026-11-21)
+
+The active twelve-case demo cohort is derived from official PTB-XL v1.0.3
+metadata published by PhysioNet (DOI `10.13026/kfzx-aw45`, CC BY 4.0). The
+selected records come only from folds 1–8. Fold 9 (publisher-recommended
+validation) and fold 10 (publisher-recommended test) are excluded. Exact record
+IDs, source URLs, source-file SHA-256 hashes, the selection seed, and every
+derivation rule are frozen in `demo/cases/ptbxl_source_manifest.json`.
+
+PTB-XL supplies ECG diagnostic statements, not `ESCALATE` or
+`DO_NOT_ESCALATE`. AETHER transparently derives the demo action: NORM-only maps
+to `DO_NOT_ESCALATE`; any non-NORM diagnostic superclass maps to `ESCALATE`.
+No symptoms, vitals, medications, laboratory values or raw waveforms are
+invented. This is an official-source derived software demonstration, not an
+official PTB-XL benchmark or clinical decision system. See
+`docs/DATASET_AND_CASE_PROVENANCE.md`.
+
 ## Current verified entry point (2026-10-21)
 
 Use `./scripts/run_review_demo.ps1 -Mode mock_deterministic` for the verified
@@ -37,7 +54,9 @@ Images must be pulled once; subsequent review execution is local. See `docs/EXTE
 - **Deterministic fallback** is the original review-safe fixture pipeline. It is executable, but it is not model inference or MCP protocol traffic.
 - **Verified replay** reads committed deterministic artifacts and is not live execution.
 
-The eight live tools are real MCP tools in `demo/mcp_server/server.py`. Their data are synthetic local fixtures; “real MCP” describes the protocol connection, not an external clinical system.
+The live tools are real MCP tools in `demo/mcp_server/server.py`. Their active
+case data are PTB-XL-derived metadata; “real MCP” describes the protocol
+connection, not an external clinical system or clinical deployment.
 
 ## Live setup
 
@@ -67,7 +86,10 @@ $env:AETHER_DEMO_MODEL_PATH = "D:\trusted-transfer\qwen-snapshot"
 .\.venv-demo-gpu\Scripts\python.exe scripts\accept_demo_model.py
 ```
 
-The demo is a removable localhost-only review layer over AETHER core contracts, tools, mediator serialization, message intervention, and committed research artifacts. It never reads or executes frozen validation/test splits.
+The demo is a removable localhost-only review layer over AETHER core contracts,
+tools, mediator serialization, message intervention, and committed research
+artifacts. It never reads PTB-XL folds 9–10 or AETHER's frozen validation/test
+splits.
 
 ## Setup
 

@@ -245,3 +245,17 @@ The SAE config additionally needs the real checkpoint/component and activation
 artifact paths. The second-model template needs a distinct public model ID,
 immutable 40-hex revision and named human reviewer. The runners refuse to load
 models or accept artifacts until these fields are frozen.
+# 21 November 2026 — PTB-XL demo presentation action
+
+No dataset download is required to run the packaged demo because the selected,
+attributable metadata fields are already retained in the derived registry. If a
+reviewer requests source verification, download only `ptbxl_database.csv` and
+`scp_statements.csv` from PTB-XL v1.0.3 on PhysioNet and run:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.verify_ptbxl_demo_provenance <metadata-folder>
+```
+
+The verifier must report `PASS`, 12 records and zero protected-fold access.
+During presentation, say “PTB-XL-derived demo action,” not “official PTB-XL
+triage label” or “clinical decision.”

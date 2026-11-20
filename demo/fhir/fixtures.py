@@ -1,4 +1,4 @@
-"""Build deterministic, synthetic FHIR R4 review resources."""
+"""Build deterministic FHIR R4 resources from the active PTB-XL demo cohort."""
 
 from __future__ import annotations
 
@@ -6,7 +6,10 @@ from typing import Any
 
 from demo.backend.repository import load_cases
 
-SYNTHETIC_TAG = {"system": "https://aether.invalid/fhir/tags", "code": "synthetic-review"}
+SOURCE_TAG = {"system": "https://aether.invalid/fhir/tags", "code": "ptbxl-derived-review"}
+# Backward-compatible import name for the seeding CLI; the value is no longer a
+# synthetic-case claim.
+SYNTHETIC_TAG = SOURCE_TAG
 
 
 def patient_id(case_id: str) -> str:
@@ -20,7 +23,7 @@ def case_registry() -> dict[str, str]:
 
 
 def _meta() -> dict[str, Any]:
-    return {"tag": [SYNTHETIC_TAG]}
+    return {"tag": [SOURCE_TAG]}
 
 
 def _observation(pid: str, suffix: str, display: str, value: Any, unit: str | None = None) -> dict[str, Any]:
@@ -40,29 +43,30 @@ def _observation(pid: str, suffix: str, display: str, value: Any, unit: str | No
 
 
 def resources_for_case(case: Any) -> list[dict[str, Any]]:
-    """Convert one demo case to a compact set of valid-looking synthetic FHIR R4 resources."""
+    """Convert one source-attributed case without inventing unavailable fields."""
     pid = patient_id(case.case_id)
-    family, *given = case.display_name.split()[::-1]
     resources: list[dict[str, Any]] = [{
         "resourceType": "Patient", "id": pid, "meta": _meta(), "active": True,
-        "identifier": [{"system": "https://aether.invalid/demo-case-id", "value": case.case_id}],
-        "name": [{"use": "official", "family": family, "given": list(reversed(given))}],
-        "gender": {"M": "male", "F": "female"}.get(case.sex, "other"),
-        "birthDate": f"{2026 - case.age}-01-01",
+        "identifier": [
+            {"system": "https://aether.invalid/demo-case-id", "value": case.case_id},
+            {"system": "https://physionet.org/content/ptb-xl/1.0.3/ecg-id", "value": str(case.provenance["source_record_id"])},
+        ],
+        "gender": case.sex,
     }, {
         "resourceType": "Encounter", "id": f"{pid}-encounter", "meta": _meta(), "status": "finished",
         "class": {"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB"},
         "subject": {"reference": f"Patient/{pid}"},
         "reasonCode": [{"text": case.presenting_complaint}],
     }]
+    resources.append(_observation(pid, "source-age-years", "Age at PTB-XL recording", case.age, "years"))
     for key, value in case.vitals.items():
         resources.append(_observation(pid, f"vital-{key.replace('_', '-')}", key.replace("_", " ").title(), value))
     for key, value in case.labs.items():
         resources.append(_observation(pid, f"lab-{key.replace('_', '-')}", key.replace("_", " ").title(), value))
-    resources.append(_observation(pid, "risk-flag", "Synthetic review urgency flag", case.expected_action == "ESCALATE"))
+    resources.append(_observation(pid, "risk-flag", "AETHER-derived demonstration action", case.expected_action == "ESCALATE"))
     resources.append({
         "resourceType": "DiagnosticReport", "id": f"{pid}-ecg", "meta": _meta(), "status": "final",
-        "code": {"text": "Synthetic electrocardiogram interpretation"},
+        "code": {"text": "PTB-XL diagnostic statement summary"},
         "subject": {"reference": f"Patient/{pid}"}, "conclusion": case.ecg.get("summary", "Not indicated"),
     })
     for index, condition in enumerate(case.history):

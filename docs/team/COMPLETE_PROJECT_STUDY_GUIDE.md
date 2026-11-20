@@ -2,6 +2,11 @@
 
 ## Verified status update — 18 November 2026
 
+> **21 November 2026 provenance addendum:** The active demo uses twelve
+> source-attributed PTB-XL v1.0.3 records from folds 1–8. The displayed binary
+> action is a disclosed AETHER mapping, not an official clinical label or
+> benchmark score. See `docs/DATASET_AND_CASE_PROVENANCE.md`.
+
 The primary Qwen causal-core sequence has advanced beyond several historical
 status paragraphs later in this guide. Qwen2.5-1.5B-Instruct is qualified at
 the pinned revision, and QCI-2 plus CORE-02 through CORE-05 independently
@@ -31,7 +36,9 @@ Platform capability means what the repository can execute. Research novelty mean
 
 ## End-to-end data flow
 
-1. `target.case_loader` supplies a versioned synthetic case.
+1. `target.case_loader` supplies a versioned experimental case; the active
+   presentation registry is PTB-XL-derived, while frozen causal experiments
+   retain their own project-constructed case registry.
 2. `target.mcp.tools` converts fields into deterministic tool evidence.
 3. The sender produces `contracts.MediatorMessage`, including a recommendation code and provenance.
 4. `attacks` constructs and validates an `AttackDelta`; the review attack changes only the permitted recommendation field.
@@ -81,7 +88,14 @@ The review demo spans levels 1–3 live and displays previously committed higher
 
 ## Current state
 
-The Stage-0 environment, contracts, target harness, attack framework, hook/intervention primitives, cross-agent graph, and paired message-rescue foundation exist. The intermediate review demo uses twelve synthetic cases and real core interfaces. The reliable default path is deterministic and labels itself accordingly. Qwen2.5-0.5B is the small review-model line; the Qwen2.5-1.5B MQ-HW1 qualification remains blocked by local host-memory constraints and has not earned progression. No external benchmark download or validation run should begin merely to improve the presentation.
+The Stage-0 environment, contracts, target harness, attack framework,
+hook/intervention primitives, cross-agent graph, and paired message-rescue
+foundation exist. The active intermediate review demo uses twelve PTB-XL v1.0.3
+development-fold records and real core interfaces, with an explicitly derived
+AETHER action. The reliable default path is deterministic and labels itself
+accordingly. The later retained Qwen2.5-1.5B qualification and causal-core runs
+supersede the historical local-memory-blocked checkpoint described in older
+sections.
 
 ## Architecture invariants to memorize
 

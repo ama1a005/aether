@@ -1,5 +1,21 @@
 # Experiment Ledger
 
+## DEMO_PTBXL_20261120_source_provenance_seed20261120 — verified derivation
+
+- Official source: PTB-XL v1.0.3, PhysioNet DOI `10.13026/kfzx-aw45`, CC BY 4.0.
+- Source metadata identities: `ptbxl_database.csv` SHA-256
+  `7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b`;
+  `scp_statements.csv` SHA-256
+  `ad05b0b1fcae83bb1230755ad9cfc7c96f303feddc08a4a9ad5bdc9ca63bac8f`.
+- Twelve records were selected deterministically from folds 1–8: six NORM-only
+  and six containing a non-NORM diagnostic superclass. Folds 9–10 were not
+  accessed. Waveforms were not downloaded or loaded.
+- The active demo registry and 12 deterministic clean/attack/rescue replay
+  bundles pass package tests. This is a source-provenance/software-demonstration
+  verification, not a model experiment, official PTB-XL score or clinical
+  evaluation.
+
+
 ## P0_cross_20261111_qwen15b_qci1_interventions_seed42 — verified negative
 
 - Executed on the pinned Qwen2.5-1.5B-Instruct revision in the qualified CPU

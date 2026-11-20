@@ -2,6 +2,13 @@
 
 **Phase 1 execution reference — novelty-hardened revision**  
 **Active window:** 4 October 2026 – 16 November 2026  
+> **Implementation-status addendum (21 November 2026):** This file defines the
+> planned Phase-1 design and is not itself an evidence ledger. The active demo
+> uses twelve exact PTB-XL v1.0.3 development-fold records with an explicitly
+> AETHER-derived binary action. Current evidence and claim boundaries are in
+> `PROJECT_STATE.md`, `docs/PRESENTATION_EVIDENCE_GUIDE.md`, and
+> `docs/DATASET_AND_CASE_PROVENANCE.md`.
+
 **Intermediate code review:** 8 October 2026  
 **Phase 1 end:** 16 November 2026  
 **Team:** 4 final-year B.Tech students  

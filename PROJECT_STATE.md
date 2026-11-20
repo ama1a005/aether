@@ -1,5 +1,21 @@
 # AETHER project state
 
+## 2026-11-21 official-source PTB-XL demonstration cohort
+
+The active review demo now uses twelve exact records derived from official
+PTB-XL v1.0.3 metadata published by PhysioNet under CC BY 4.0. Source metadata
+files are pinned by URL, size and SHA-256; the cohort records exact ECG IDs,
+development folds 1–8, source paths, diagnostic codes and superclasses. PTB-XL
+folds 9 and 10 remain excluded. No waveform, report, symptom, vital, medication
+or laboratory data were invented or loaded.
+
+The displayed `ESCALATE`/`DO_NOT_ESCALATE` value is explicitly an AETHER demo
+mapping from non-NORM/NORM-only diagnostic superclasses. It is not an official
+PTB-XL label, clinical endpoint or benchmark score. The historical synthetic
+v1 registry and replays remain in place for audit history; the active v2
+registry and replays are separate. This change affects presentation provenance
+only and does not alter any frozen Qwen experiment, threshold, split or result.
+
 ## 2026-11-20 Phase-1 local closure and retained negative evidence
 
 The member branches are integrated on `integration/phase1-closure`. The verified

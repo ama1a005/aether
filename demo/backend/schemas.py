@@ -11,7 +11,7 @@ Action = Literal["ESCALATE", "DO_NOT_ESCALATE"]
 
 @dataclass(frozen=True)
 class DemoPatientCase:
-    """One versioned synthetic intermediate-review fixture."""
+    """One versioned, source-attributed review demonstration case."""
 
     case_id: str
     display_name: str
@@ -31,8 +31,9 @@ class DemoPatientCase:
     expected_action: Action
     primary_attack_target: str
     notes: str
+    provenance: dict[str, Any]
     schema_version: str = "aether.demo.case.v1"
-    dataset_origin: str = "aether_intermediate_review_demo"
+    dataset_origin: str = "ptbxl_v1.0.3_physionet"
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-compatible case."""
@@ -41,11 +42,11 @@ class DemoPatientCase:
 
 @dataclass(frozen=True)
 class ToolExecution:
-    """One deterministic synthetic tool execution."""
+    """One deterministic tool execution over a source-attributed demo case."""
 
     tool_name: str
     request: dict[str, Any]
     response: dict[str, Any]
     execution_status: str
     elapsed_ms: float
-    provenance: str = "SYNTHETIC DEMO FIXTURE"
+    provenance: str = "PTB-XL-DERIVED DEMONSTRATION"

@@ -42,7 +42,9 @@ def test_fhir_fixtures_have_stable_ids_and_twelve_patients() -> None:
     assert len(patients) == 12
     assert patient_id("DEMO-PAT-001") == "aether-demo-pat-001"
     assert case_registry()["DEMO-PAT-012"] == "Patient/aether-demo-pat-012"
-    assert all(item["meta"]["tag"][0]["code"] == "synthetic-review" for item in first)
+    assert all(item["meta"]["tag"][0]["code"] == "ptbxl-derived-review" for item in first)
+    assert all("name" not in item and "birthDate" not in item for item in patients)
+    assert all(any(identifier["system"].endswith("ecg-id") for identifier in item["identifier"]) for item in patients)
 
 
 def test_adapter_and_attack_keep_raw_fhir_immutable() -> None:
@@ -54,7 +56,7 @@ def test_adapter_and_attack_keep_raw_fhir_immutable() -> None:
     assert clean["risk_flag"] is True and attacked["risk_flag"] is False
     assert delta["path"] == "aether_evidence.risk_flag"
     assert [key for key in clean if clean[key] != attacked[key]] == ["risk_flag"]
-    assert {"patient_record", "vitals", "labs", "conditions", "medications", "diagnostic_reports"} <= set(clean["categories"])
+    assert {"patient_record", "clinical_observations", "encounters", "diagnostic_reports"} <= set(clean["categories"])
 
 
 @pytest.mark.parametrize("case_id", [f"DEMO-PAT-{number:03d}" for number in range(1, 13)])

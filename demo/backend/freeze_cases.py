@@ -14,7 +14,7 @@ def main() -> None:
     """Write the review-only manifest without touching research datasets."""
     entries = []
     for case in load_cases():
-        replay_path = Path("demo/artifacts/replays") / f"{case.case_id}.json"
+        replay_path = Path("demo/artifacts/replays_ptbxl_v1") / f"{case.case_id}.json"
         replay = json.loads(replay_path.read_text(encoding="utf-8"))
         entries.append({
             "case_id": case.case_id,
@@ -29,10 +29,13 @@ def main() -> None:
             "artifact_path": str(replay_path).replace("\\", "/"),
         })
     payload = {
-        "manifest_version": "aether.demo.case-manifest.v1",
-        "dataset_origin": "aether_intermediate_review_demo",
+        "manifest_version": "aether.demo.case-manifest.v2.ptbxl",
+        "dataset_origin": "ptbxl_v1.0.3_physionet",
         "scientific_dataset": False,
-        "case_registry_path": str(CASE_PATH).replace("\\", "/"),
+        "source_dataset_is_official": True,
+        "official_benchmark_execution": False,
+        "action_labels_are_aether_derived": True,
+        "case_registry_path": "demo/cases/ptbxl_demo_cases.json",
         "case_count": len(entries),
         "validation_executions": 0,
         "test_executions": 0,

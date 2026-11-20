@@ -2,6 +2,10 @@
 
 ## 20 November 2026 local-closure update
 
+The active presentation cohort and every external-source classification are
+registered in `docs/DATASET_AND_CASE_PROVENANCE.md`. PTB-XL supplies the current
+demo records but not the AETHER binary action or an official benchmark score.
+
 This guide's prospective execution instructions remain historical and
 reproducible. The current evidence disposition is:
 

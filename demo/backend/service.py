@@ -20,7 +20,7 @@ from demo.backend.repository import get_case
 from demo.backend.tools import run_all_tools
 
 RUN_ROOT = Path("demo/artifacts/runs")
-REPLAY_ROOT = Path("demo/artifacts/replays")
+REPLAY_ROOT = Path("demo/artifacts/replays_ptbxl_v1")
 REPLAY_MANIFEST_PATH = Path("demo/cases/demo_case_manifest.json")
 LIVE_QUALIFICATION_PATH = Path("demo/artifacts/live/qualification.json")
 def _code_for_action(action: str) -> str:
@@ -32,7 +32,11 @@ def _score(message: dict[str, Any]) -> float:
 
 
 def _build_mediator(case_id: str, code: str, tool_name: str) -> MediatorMessage:
-    return MediatorMessage.from_sender_code(case_id, code, f"authoritative synthetic output from {tool_name}")
+    return MediatorMessage.from_sender_code(
+        case_id,
+        code,
+        f"deterministic AETHER decision derived from PTB-XL metadata via {tool_name}",
+    )
 
 
 def _attack_tools(tools: list[dict[str, Any]], target: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -168,7 +172,7 @@ def generate_replay(case_id: str, replay_root: Path | None = None) -> dict[str, 
     attack = run_pipeline(case_id, attacked=True)
     rescue = run_rescue(case_id, clean, attack)
     bundle = {
-        "case_id": case_id, "pipeline_version": "aether.demo.pipeline.v1",
+        "case_id": case_id, "pipeline_version": "aether.demo.pipeline.v2.ptbxl",
         "provenance_type": "REPLAY — VERIFIED PRECOMPUTED EXECUTION",
         "model_id": MODEL_ID, "model_revision": MODEL_REVISION,
         "clean": clean, "attacked": attack, "rescue": rescue,

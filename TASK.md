@@ -1,5 +1,16 @@
 # AETHER current bounded task
 
+## Verify and present the official-source PTB-XL demo cohort
+
+Use `demo/cases/ptbxl_demo_cases.json` as the active review cohort and preserve
+`demo/cases/demo_cases.json` as historical synthetic v1 data. Verify any local
+source download with
+`python -m scripts.verify_ptbxl_demo_provenance <ptbxl-metadata-root>`. Present
+the records as PTB-XL v1.0.3 official-source derived cases and the binary action
+as an AETHER mapping. Do not call this a native PTB-XL benchmark, clinical
+validation, or a replacement for the frozen Qwen causal task. Do not access
+PTB-XL folds 9–10.
+
 ## 2026-11-20 local Phase-1 closure
 
 Integrate member branches and independently verified retained SAE, SmolLM2 and

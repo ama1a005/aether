@@ -2,6 +2,13 @@
 
 > **Implementation note (19 October 2026):** The removable review UI now separates live local-Qwen + official MCP stdio execution, deterministic fallback, and verified replay. The live path is implemented but remains unaccepted until the isolated GPU environment installs and the 12-case qualification runs. This does not change frozen scientific claims or turn demo fixtures into validation evidence.
 
+> **Current-status addendum (21 November 2026):** The active review cohort is
+> derived from official PTB-XL v1.0.3 metadata (folds 1–8 only, CC BY 4.0), with
+> exact record provenance and a disclosed AETHER NORM/non-NORM action mapping.
+> It is not a clinical or official PTB-XL benchmark endpoint. See
+> `docs/PRESENTATION_EVIDENCE_GUIDE.md` and
+> `docs/DATASET_AND_CASE_PROVENANCE.md`.
+
 **Platform/project working title:**  
 **AETHER: A Mechanistic Security Analysis and Remediation Platform for MCP/A2A Multi-Agent Systems**  
 **Phase 1 paper working title:**  

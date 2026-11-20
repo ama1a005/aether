@@ -27,5 +27,5 @@ class DemoMCPRuleBackend(RuleBasedBackend):
             raise RuntimeError("MCP server omitted required clinical tools")
         base = super().discover()
         return Recon(base.backend_id, base.model_id, base.model_revision,
-                     base.tokenizer_revision, "synthetic_real_mcp_transport_acceptance",
+                     base.tokenizer_revision, "ptbxl_derived_real_mcp_transport_acceptance",
                      base.surfaces, tools)

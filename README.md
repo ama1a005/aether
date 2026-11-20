@@ -2,7 +2,25 @@
 
 ## Intermediate review demo
 
-The removable localhost review application is documented in [`DEMO_README.md`](DEMO_README.md). It uses twelve explicitly synthetic cases and imports existing AETHER core primitives; research modules do not depend on the demo. Start it from PowerShell with `powershell -ExecutionPolicy Bypass -File scripts/run_review_demo.ps1` after installing the pinned frontend dependencies.
+The removable localhost review application is documented in
+[`DEMO_README.md`](DEMO_README.md). Its active twelve-case cohort is derived
+from exact, hash-pinned PTB-XL v1.0.3 records under CC BY 4.0; the AETHER binary
+action is a disclosed transformation rather than an official PTB-XL endpoint.
+Research modules do not depend on the demo. Start it from PowerShell with
+`powershell -ExecutionPolicy Bypass -File scripts/run_review_demo.ps1` after
+installing the pinned frontend dependencies.
+
+## Current evidence checkpoint (21 November 2026)
+
+The real-Qwen causal chain through locked validation and the once-only test is
+complete and independently verified. The project also retains negative SAE,
+SmolLM2 and Agent-C outcomes. Official BFCL/MCPTox/TAMAS scores are not claimed.
+Use these current documents rather than the historical sprint snapshot below:
+
+- [`docs/PRESENTATION_EVIDENCE_GUIDE.md`](docs/PRESENTATION_EVIDENCE_GUIDE.md)
+- [`docs/DATASET_AND_CASE_PROVENANCE.md`](docs/DATASET_AND_CASE_PROVENANCE.md)
+- [`PROJECT_STATE.md`](PROJECT_STATE.md)
+- [`docs/PHASE1_EXECUTION_AND_EVIDENCE_GUIDE.md`](docs/PHASE1_EXECUTION_AND_EVIDENCE_GUIDE.md)
 **Cross-Agent Causal Circuit Discovery and Mechanism-Guided Remediation for Adversarial Trust Failures in MCP/A2A Multi-Agent Systems**
 
 Sprint 4–8 Oct 2026 | Phase 1 deadline: 16 Nov 2026
@@ -26,8 +44,9 @@ python -m experiments.phase1.cross_agent_smoke
 python -m experiments.phase1.end_to_end_smoke
 
 # Test suite
-python -m pytest tests/unit/ tests/integration/ -q          # 77 tests, <10s
-python -m pytest tests/regression/ -v                        # 6 regression, ~25s
+python -m pytest tests/unit/ -v
+python -m pytest tests/integration/ -v
+python -m pytest tests/regression/ -v
 ```
 
 ---
@@ -108,7 +127,7 @@ aether/
 
 ---
 
-## Key quantitative results (8 October review)
+## Historical 8 October review snapshot
 
 | Member | Command | Key metric |
 |--------|---------|------------|
@@ -136,10 +155,22 @@ aether/
 
 ---
 
-## Important constraints
+## Current claim constraints
+
+- The central causal chain used a real pinned Qwen2.5-1.5B-Instruct model; the
+  localhost deterministic demo remains model-free.
+- Official PTB-XL v1.0.3 metadata supplies the active demo records. AETHER
+  derives the binary action; this is not a native PTB-XL benchmark or clinical
+  endpoint.
+- Official BFCL, MCPTox and TAMAS scores are not claimed.
+- Frozen contract schemas require team approval before modification.
+
+## Historical 8 October constraints (superseded)
 
 - **No real LLM calls**: everything runs on CPU with rule-based / toy models
 - **No GPU required**: all tests pass on CPU in < 30 s total
 - **MCPTox is prior art**: results labelled `AETHER-CATF`, never `MCPTox ASR`
-- **PTB-XL not loaded**: raises `NotImplementedError` by design — restricted dataset
+- **Historical note (superseded):** PTB-XL was not loaded at the 8 October
+  snapshot. Official v1.0.3 metadata now supplies the active presentation
+  cohort under the current claim boundary above.
 - **Schema v0.1.0 frozen**: no field changes without team vote

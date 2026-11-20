@@ -31,11 +31,11 @@ def adapt_fhir_resources(resources: list[dict[str, Any]]) -> dict[str, Any]:
             code = resource.get("code", {}).get("coding", [{}])[0].get("code", "")
             if code == "risk-flag":
                 if risk_flag is not None or type(resource.get("valueBoolean")) is not bool:
-                    raise ValueError("Expected exactly one boolean synthetic review risk observation")
+                    raise ValueError("Expected exactly one boolean AETHER-derived risk observation")
                 risk_flag = resource["valueBoolean"]
             groups["labs" if code.startswith("lab-") else "vitals" if code.startswith("vital-") else "clinical_observations"].append(entry)
     if risk_flag is None:
-        raise ValueError("Required synthetic review risk observation is missing; refusing a default decision")
+        raise ValueError("Required AETHER-derived risk observation is missing; refusing a default decision")
     return {"schema_version": "aether.demo.fhir-evidence.v1", "source": "FHIR via WSO2 MCP",
             "categories": {key: value for key, value in groups.items() if value}, "risk_flag": risk_flag,
             "triage_recommendation": "ESCALATE" if risk_flag else "DO_NOT_ESCALATE"}

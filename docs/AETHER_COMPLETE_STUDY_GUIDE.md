@@ -1,6 +1,11 @@
 # AETHER Complete Study Guide
 
-**Status date:** 18 November 2026
+> **21 November 2026 provenance addendum:** The active presentation cohort is
+> derived from twelve exact PTB-XL v1.0.3 development-fold records. The source
+> is official and hash-pinned; the binary action is AETHER-derived and is not an
+> official PTB-XL endpoint. Consult `docs/DATASET_AND_CASE_PROVENANCE.md`.
+
+**Status date:** 21 November 2026
 **Audience:** beginners, project members, examiners, maintainers, and future researchers
 **Authority order:** `RESEARCH_CONTRACT.md` > executed result artifacts > current source/tests > planning documents
 **Current scientific state:** implementation-rich but evidence-incomplete; CORE-02 has completed and CORE-03 remediation freeze is the active gate
@@ -194,7 +199,8 @@ prove the model works, and installed CUDA does not prove MCP works.
 ### 4.10 FHIR
 
 FHIR is a healthcare data interoperability standard. AETHER’s medical-style
-demo uses synthetic educational cases and FHIR-shaped evidence. It is not a
+historical demo used synthetic educational cases; the active demo uses
+PTB-XL-derived metadata and FHIR-shaped evidence. It is not a
 clinical system and makes no clinical-validity claim.
 
 ---
@@ -863,7 +869,7 @@ real-model generalization.
 ## 22. Demo and frontend
 
 The review application includes a FastAPI backend, React/Vite frontend,
-synthetic case workspace, pipeline view, attack lab, causal-analysis display,
+PTB-XL-derived case workspace, pipeline view, attack lab, causal-analysis display,
 red-team view, live status, and Phase-1 evidence page.
 
 There are three distinct execution modes:
@@ -1081,7 +1087,7 @@ the obligation to preserve negative results.
 
 ## 28. How to explain the demo in a viva
 
-1. Select a synthetic case and show its provenance.
+1. Select a PTB-XL-derived case and show its exact source-record provenance.
 2. Show tool evidence and distinguish deterministic tools from MCP transport.
 3. Run/show the clean path: sender message and receiver outcome.
 4. Show the attacked field-level delta and validator.

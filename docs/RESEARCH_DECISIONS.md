@@ -342,3 +342,12 @@ The intermediate-review application is an isolated presentation layer: it may im
 - **Evidence:** The independently verified retained audit contains 160 candidate executions and eight message positive controls with zero invalid/errors and no validation/test access. All four discovery-supported candidates passed the unchanged audit predicates on four untouched development cases.
 - **Decision:** Accept development-audit replication of decision-semantic mediation and open only `READY_FOR_QCI2_METHOD_FREEZE_REVIEW`. Preserve the discovery and audit bundles as immutable inputs. Freeze matched-search and remediation methods before their execution.
 - **Claim boundary:** This is replicated development evidence, not locked validation/test generalization, a complete distributed circuit, algorithm superiority, remediation effectiveness, external-benchmark performance or publication-ready confirmation.
+# 2026-11-21 — Source-attributed PTB-XL demo without evidence relabelling
+
+The active presentation cohort is derived from twelve exact PTB-XL v1.0.3
+records in development folds 1–8. The official metadata and diagnostic classes
+are retained with hashes and record identifiers. Because PTB-XL has no
+`ESCALATE` endpoint, AETHER's NORM/non-NORM action mapping is disclosed as a
+project transformation. The cohort is presentation-only and does not replace,
+modify or strengthen the frozen Qwen causal evidence. Historical synthetic demo
+artifacts remain immutable and separately addressable.

@@ -15,36 +15,48 @@ def _code(case: DemoPatientCase) -> str:
 
 def _patient_record(case: DemoPatientCase) -> dict[str, Any]:
     features = {"prior_diagnoses": case.history, "medication_count": len(case.medications), "comorbidities": case.history}
-    return {**get_patient_history(case.case_id, features), "recommendation_code": _code(case)}
+    return {**get_patient_history(case.case_id, features), "source_data_available": False,
+            "recommendation_code": _code(case)}
 
 
 def _ecg_analysis(case: DemoPatientCase) -> dict[str, Any]:
-    features = {**case.ecg, **case.vitals, "heart_rate": case.vitals["heart_rate"]}
+    features = {**case.ecg, **case.vitals}
     return {**get_ecg_analysis(case.case_id, features), "summary": case.ecg["summary"], "recommendation_code": _code(case)}
 
 
 def _vitals(case: DemoPatientCase) -> dict[str, Any]:
-    return {**get_vital_signs(case.case_id, case.vitals), "recommendation_code": _code(case)}
+    if not case.vitals:
+        return {"values": {}, "source_data_available": False,
+                "recommendation_code": _code(case)}
+    return {**get_vital_signs(case.case_id, case.vitals), "source_data_available": True,
+            "recommendation_code": _code(case)}
 
 
 def _labs(case: DemoPatientCase) -> dict[str, Any]:
-    return {"values": case.labs, "abnormal": case.expected_action == "ESCALATE", "recommendation_code": _code(case)}
+    return {"values": case.labs, "source_data_available": bool(case.labs),
+            "recommendation_code": _code(case)}
 
 
 def _medication(case: DemoPatientCase) -> dict[str, Any]:
-    return {"medications": case.medications, "interaction_risk": case.expected_action == "ESCALATE", "recommendation_code": _code(case)}
+    return {"medications": case.medications, "source_data_available": bool(case.medications),
+            "recommendation_code": _code(case)}
 
 
 def _allergy(case: DemoPatientCase) -> dict[str, Any]:
-    return {"allergies": case.allergies, "airway": case.additional_assessments.get("airway"), "recommendation_code": _code(case)}
+    return {"allergies": case.allergies, "source_data_available": bool(case.allergies),
+            "recommendation_code": _code(case)}
 
 
 def _neuro(case: DemoPatientCase) -> dict[str, Any]:
-    return {"screen": case.additional_assessments.get("neuro_screen", "normal"), "recommendation_code": _code(case)}
+    return {"screen": case.additional_assessments.get("neuro_screen"),
+            "source_data_available": "neuro_screen" in case.additional_assessments,
+            "recommendation_code": _code(case)}
 
 
 def _risk(case: DemoPatientCase) -> dict[str, Any]:
-    return {"risk_score": case.additional_assessments.get("risk_score", 0.0), "recommendation_code": _code(case)}
+    return {"risk_score": case.additional_assessments.get("risk_score"),
+            "source_data_available": "risk_score" in case.additional_assessments,
+            "recommendation_code": _code(case)}
 
 
 TOOLS: dict[str, Callable[[DemoPatientCase], dict[str, Any]]] = {
@@ -59,7 +71,12 @@ def run_tool(case: DemoPatientCase, tool_name: str) -> ToolExecution:
     if tool_name not in case.available_tools or tool_name not in TOOLS:
         raise ValueError(f"tool {tool_name} is unavailable for {case.case_id}")
     started = perf_counter()
-    request = {"case_id": case.case_id, "dataset_origin": case.dataset_origin}
+    request = {
+        "case_id": case.case_id,
+        "dataset_origin": case.dataset_origin,
+        "source_record_id": case.provenance["source_record_id"],
+        "source_fold": case.provenance["source_fold"],
+    }
     response = TOOLS[tool_name](case)
     return ToolExecution(tool_name, request, response, "COMPLETE", (perf_counter() - started) * 1000)
 

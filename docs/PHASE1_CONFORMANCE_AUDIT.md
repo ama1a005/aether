@@ -1,5 +1,22 @@
 # Phase 1 conformance audit
 
+## Current authoritative update — 21 November 2026
+
+The state paragraph and table below are historical. CORE-02 matched search,
+CORE-03 remediation, CORE-04 locked validation and CORE-05 once-only test have
+since completed and independently verified. The active presentation cohort is
+now derived from twelve official-source PTB-XL v1.0.3 records in folds 1–8,
+with a disclosed AETHER action mapping and no protected-fold access. It remains
+separate from the frozen Qwen causal task and does not constitute an official
+PTB-XL benchmark.
+
+Authoritative evidence wording is in `docs/PRESENTATION_EVIDENCE_GUIDE.md`;
+dataset identity is in `docs/DATASET_AND_CASE_PROVENANCE.md`; current gate state
+is in `PROJECT_STATE.md` and the machine-readable completion audit. Historical
+test counts and pending-gate statements below must not be quoted as current.
+
+## Historical audit snapshot
+
 **State:** QCI-1 executed and independently verified, but no candidate passed
 its case-specific rule and QCI-A1 is forbidden. The separately frozen QCI-2
 decision-semantic study passed discovery and audit: all four admitted

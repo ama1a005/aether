@@ -1,4 +1,4 @@
-"""Idempotently seed the local HAPI FHIR R4 sandbox with AETHER fixtures."""
+"""Idempotently seed HAPI FHIR R4 with PTB-XL-derived review resources."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ def main() -> None:
     parser.add_argument("--base-url", default="http://127.0.0.1:8080/fhir")
     args = parser.parse_args()
     result = seed(args.base_url)
-    print(json.dumps({**result, "synthetic_tag": SYNTHETIC_TAG, "idempotent": True}, indent=2))
+    print(json.dumps({**result, "source_tag": SYNTHETIC_TAG, "idempotent": True}, indent=2))
 
 
 if __name__ == "__main__":

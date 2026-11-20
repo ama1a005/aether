@@ -1,5 +1,10 @@
 # AETHER Project State
 
+> **Current provenance update (21 November 2026):** The active review demo uses
+> a 12-record PTB-XL v1.0.3 development-fold cohort with exact hashes and record
+> IDs. Its action label is AETHER-derived and remains presentation-only. See
+> `docs/DATASET_AND_CASE_PROVENANCE.md`.
+>
 > Historical implementation ledger. The authoritative current status and test
 > count are in the root `PROJECT_STATE.md`.
 >

@@ -54,7 +54,7 @@ async def _run(case: DemoPatientCase, names: list[str]) -> list[ToolExecution]:
                     response=dict(envelope["response"]),
                     execution_status="COMPLETE",
                     elapsed_ms=(perf_counter() - started) * 1000,
-                    provenance="REAL MCP STDIO / SYNTHETIC DEMO FIXTURE",
+                    provenance="REAL MCP STDIO / PTB-XL-DERIVED DEMONSTRATION",
                 )
             )
     return rows

@@ -20,7 +20,9 @@ def test_all_12_case_schemas_ids_provenance_actions_and_tools() -> None:
     cases = load_cases()
     assert len(cases) == 12
     assert len({case.case_id for case in cases}) == 12
-    assert all(case.dataset_origin == "aether_intermediate_review_demo" for case in cases)
+    assert all(case.dataset_origin == "ptbxl_v1.0.3_physionet" for case in cases)
+    assert all(case.provenance["source_fold"] in range(1, 9) for case in cases)
+    assert all(case.provenance["action_is_aether_derived"] is True for case in cases)
     assert all(case.expected_action in {"ESCALATE", "DO_NOT_ESCALATE"} for case in cases)
     assert all(set(case.available_tools) <= ALLOWED_TOOLS for case in cases)
     assert all("validation" not in case.case_id.lower() and "test" not in case.case_id.lower() for case in cases)
@@ -48,9 +50,9 @@ def test_clean_attack_and_rescue_are_integrated_with_core() -> None:
     assert "CrossAgentInterventionRunner" in rescue["source"]
 
 
-def test_benign_and_non_ecg_representatives() -> None:
-    assert run_pipeline("DEMO-PAT-002")["receiver"]["decision"] == "DO_NOT_ESCALATE"
-    assert run_pipeline("DEMO-PAT-009")["receiver"]["decision"] == "ESCALATE"
+def test_abnormal_and_norm_ptbxl_representatives() -> None:
+    assert run_pipeline("DEMO-PAT-001")["receiver"]["decision"] == "ESCALATE"
+    assert run_pipeline("DEMO-PAT-004")["receiver"]["decision"] == "DO_NOT_ESCALATE"
 
 
 def test_replay_artifacts_validate_and_keep_provenance() -> None:
@@ -63,7 +65,7 @@ def test_replay_artifacts_validate_and_keep_provenance() -> None:
 
 
 def test_replay_read_rejects_content_or_manifest_tampering(tmp_path, monkeypatch) -> None:
-    source = Path("demo/artifacts/replays/DEMO-PAT-001.json")
+    source = Path("demo/artifacts/replays_ptbxl_v1/DEMO-PAT-001.json")
     replay_root = tmp_path / "replays"
     replay_root.mkdir()
     payload = json.loads(source.read_text(encoding="utf-8"))

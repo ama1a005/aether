@@ -14,9 +14,13 @@ The current WSO2 digest is ARM64-only. Docker Desktop can emulate it on this AMD
 
 `React -> FastAPI -> official MCP Python client -> Streamable HTTP -> WSO2 FHIR MCP -> FHIR HTTP -> local HAPI FHIR R4`.
 
-Compose is `demo/external_mcp/docker-compose.review.yml`. HAPI is `127.0.0.1:8080/fhir`; the canonical MCP URL is `127.0.0.1:8001/mcp/`. Authorization is disabled only for this localhost synthetic sandbox. Live discovery returned `get_capabilities`, `search`, `read`, `create`, `update`, `delete`, and `get_user`.
+Compose is `demo/external_mcp/docker-compose.review.yml`. HAPI is `127.0.0.1:8080/fhir`; the canonical MCP URL is `127.0.0.1:8001/mcp/`. Authorization is disabled only for this localhost review sandbox. Live discovery returned `get_capabilities`, `search`, `read`, `create`, `update`, `delete`, and `get_user`.
 
-`scripts/seed_review_fhir.py` is the only direct-FHIR setup path. Stable PUT ids make it idempotent. Interactive retrieval is fail-closed through WSO2. All records are synthetic and tagged `https://aether.invalid/fhir/tags|synthetic-review`.
+`scripts/seed_review_fhir.py` is the only direct-FHIR setup path. Stable PUT ids
+make it idempotent. Interactive retrieval is fail-closed through WSO2. Active
+records are derived from the hash-pinned PTB-XL v1.0.3 demo cohort and tagged
+`https://aether.invalid/fhir/tags|ptbxl-derived-review`. The FHIR risk flag is
+explicitly AETHER-derived; it is not a PTB-XL field.
 
 ## Current limitation
 
