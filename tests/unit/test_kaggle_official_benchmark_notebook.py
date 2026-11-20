@@ -41,6 +41,10 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "if not PY.is_file()" in bfcl_source and "if not REPO.exists()" in bfcl_source
     assert "requirements-without-torch.txt" in bfcl_source
     assert "if not line.startswith('torch==')" in bfcl_source
+    assert "installed['torch'].split('+',1)[0]=='2.14.0'" in bfcl_source
+    assert "installed['cuda']=='13.0'" in bfcl_source
+    assert "installed['cuda_available'] is True" in bfcl_source
+    assert "startswith('0.34.0 2.14.0+ 13.0')" not in bfcl_source
     assert "Refusing to repeat or overwrite this attempt" in bfcl_source
     assert "git','fetch','origin','m1/target-harness'" in bfcl_source
     assert "Retaining a blocked/failed BFCL attempt; this is not a score." in bfcl_source
