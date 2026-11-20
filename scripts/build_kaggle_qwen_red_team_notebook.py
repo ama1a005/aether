@@ -95,7 +95,7 @@ expected={x['path']:(x['size'],x['sha256']) for x in frozen['files']}
 observed={p.relative_to(snapshot).as_posix():(p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(snapshot.rglob('*')) if p.is_file()}
 assert observed==expected, 'Model snapshot differs from qualified Qwen revision'
 manifest=WORK/'red-team-model-snapshot.json'
-manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'snapshot_path':str(snapshot),'files':[{'path':k,'size':v[0],'sha256':v[1]} for k,v in observed.items()]},indent=2),encoding='utf-8')
+manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'tokenizer_revision':REVISION,'snapshot_path':str(snapshot),'files':[{'path':k,'size':v[0],'sha256':v[1]} for k,v in observed.items()]},indent=2),encoding='utf-8')
 """
     execute = """command=[str(PY),'-u','-m','experiments.phase1.qwen_red_team',
  '--config',str(REPO/'configs/experiments/qwen_red_team_development.yaml'),

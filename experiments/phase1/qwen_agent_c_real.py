@@ -224,7 +224,7 @@ def _generator(snapshot: Path, protocol: Mapping[str, Any]) -> Callable[..., dic
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tokenizer = AutoTokenizer.from_pretrained(snapshot, local_files_only=True, trust_remote_code=False)
     model = AutoModelForCausalLM.from_pretrained(
-        snapshot, local_files_only=True, trust_remote_code=False, torch_dtype=torch.float16).to("cuda:0").eval()
+        snapshot, local_files_only=True, trust_remote_code=False, dtype=torch.float16).to("cuda:0").eval()
     def generate(system: str, user: str, maximum: int, *, prior_user: str | None = None,
                  prior_assistant: str | None = None) -> dict[str, Any]:
         messages = [{"role": "system", "content": system}]

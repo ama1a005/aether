@@ -52,8 +52,9 @@ lines=(REPO/'requirements-lock.txt').read_text().splitlines(); lock=RUNTIME/'loc
 lock.write_text(chr(10).join(x for x in lines if not x.startswith('torch=='))+chr(10),encoding='utf-8')
 subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cu130'],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True,env=env)
+subprocess.run([UV,'pip','install','--python',str(PY),'mcp==1.27.1'],check=True,env=env)
 subprocess.run([UV,'pip','install','--python',str(PY),'--no-deps','-e',str(REPO)],check=True,env=env)
-subprocess.run([str(PY),'-m','pytest','tests/unit/test_qwen_agent_c_real.py','tests/unit/test_qwen_agent_c_real_proposal.py','-q'],cwd=REPO,check=True)
+subprocess.run([str(PY),'-m','pytest','tests/unit/test_qwen_agent_c_real.py','tests/unit/test_qwen_agent_c_real_proposal.py','tests/integration/test_qwen_agent_c_real_mcp.py','-q'],cwd=REPO,check=True)
 """
     remote = """from huggingface_hub import HfApi,hf_hub_download
 from huggingface_hub.errors import EntryNotFoundError,RepositoryNotFoundError
@@ -84,7 +85,7 @@ expected={x['path']:(x['size'],x['sha256']) for x in frozen['files']}
 observed={p.relative_to(snapshot).as_posix():(p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(snapshot.rglob('*')) if p.is_file()}
 assert observed==expected, 'Model snapshot differs from qualified Qwen revision'
 manifest=WORK/'agent-c-model-snapshot.json'
-manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'files':[{'path':k,'size':v[0],'sha256':v[1]} for k,v in observed.items()]},indent=2),encoding='utf-8')
+manifest.write_text(json.dumps({'model_id':'Qwen/Qwen2.5-1.5B-Instruct','resolved_revision':REVISION,'tokenizer_revision':REVISION,'snapshot_path':str(snapshot),'files':[{'path':k,'size':v[0],'sha256':v[1]} for k,v in observed.items()]},indent=2),encoding='utf-8')
 """
     execute = """command=[str(PY),'-u','-m','experiments.phase1.qwen_agent_c_real','--output',str(OUTPUT),
          '--model-snapshot',str(snapshot),'--snapshot-manifest',str(manifest),
