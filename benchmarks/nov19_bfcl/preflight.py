@@ -14,6 +14,8 @@ from typing import Any, Sequence
 
 import torch
 
+from benchmarks.bfcl_compat import official_categories
+
 PINNED_PACKAGE = "bfcl_eval"
 PINNED_PACKAGE_VERSION = "2026.3.23"
 PINNED_WHEEL_SHA256 = "3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a"
@@ -26,7 +28,7 @@ PINNED_CUDA_VERSION = "13.0"
 CUDA13_MIN_DRIVER_MAJOR = 580
 MIN_USABLE_VRAM_GB = 15.0
 VALID_OFFICIAL_CATEGORIES = frozenset({
-    "simple", "multiple", "parallel", "parallel_multiple",
+    "simple_python", "multiple", "parallel", "parallel_multiple",
     "irrelevance", "live_simple", "live_multiple", "live_parallel",
     "live_parallel_multiple", "live_relevance", "rest", "sql", "java", "javascript"
 })
@@ -266,9 +268,15 @@ def check_categories(
     if not categories:
         reasons.append("Category list cannot be empty")
         return False, reasons, details
-    unknown = [cat for cat in categories if cat not in VALID_OFFICIAL_CATEGORIES]
+    try:
+        translated = official_categories(categories)
+    except ValueError as exc:
+        reasons.append(str(exc))
+        translated = ()
+    details["official_cli_categories"] = list(translated)
+    unknown = [cat for cat in translated if cat not in VALID_OFFICIAL_CATEGORIES]
     if unknown:
-        reasons.append(f"Unknown BFCL categories: {unknown}")
+        reasons.append(f"Unknown BFCL 2026.3.23 CLI categories: {unknown}")
     return len(reasons) == 0, reasons, details
 
 

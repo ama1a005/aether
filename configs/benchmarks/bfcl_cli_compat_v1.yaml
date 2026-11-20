@@ -1,0 +1,48 @@
+schema_version: aether.bfcl-cli-compat-amendment.v1
+status: awaiting_human_review
+scope: prospective_attempt_3_only
+upstream_package: bfcl_eval
+upstream_version: "2026.3.23"
+upstream_wheel_sha256: 3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a
+triggering_attempts:
+  - attempt: attempt-1
+    archive_sha256: 3c977d16e3fa7b6b9e949f8f10ecbf028a7629f58326c4ddb85d0a3dce4dbb95
+    failure: missing_soundfile_runtime_dependency
+  - attempt: attempt-2
+    archive_sha256: dcdde3cfc9619363c35b8393083d12a513660924928250e4f9a6d4b6a3e4592a
+    failure: invalid_upstream_cli_category_simple
+semantic_scope_unchanged:
+  split: development
+  partial_evaluation: false
+  aether_categories: [simple, multiple, parallel, irrelevance]
+official_cli_mapping:
+  simple: simple_python
+  multiple: multiple
+  parallel: parallel
+  irrelevance: irrelevance
+artifact_compatibility:
+  format: newline_delimited_json
+  result_pattern: BFCL_v4_{official_category}_result.json
+  score_pattern: BFCL_v4_{official_category}_score.json
+  score_header_fields: [accuracy, correct_count, total_count]
+  require_unique_result_ids: true
+  require_result_count_equal_total_count: true
+  retain_inference_errors_in_denominator: true
+unchanged:
+  - model_and_tokenizer_revision
+  - disclosed_qwen_adapter
+  - upstream_package_and_wheel
+  - inference_backend_and_versions
+  - development_split
+  - category_meanings_and_count
+  - complete_evaluation_requirement
+  - metrics_and_denominators
+  - validation_and_test_locks
+authorization:
+  model_download: false
+  execution: false
+  validation_access: false
+  test_access: false
+  implementation_and_model_independent_tests: true
+approval_gate:
+  required_phrase_template: I approve BFCL CLI compatibility amendment v1 SHA-256 {sha256}

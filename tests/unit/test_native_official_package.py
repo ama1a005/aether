@@ -169,9 +169,18 @@ def test_successful_bfcl_runner_finalizes_strictly_verifiable_bundle(tmp_path, m
         """Write deterministic temporary fixtures; no BFCL package/model is run."""
         raw = Path(plan.output_dir)
         raw.mkdir(parents=True)
+        mapping = {"simple": "simple_python", "multiple": "multiple",
+                   "parallel": "parallel", "irrelevance": "irrelevance"}
+        adapter = raw / "AETHER_Qwen2.5-1.5B-Instruct-FC" / "non_live"
+        adapter.mkdir(parents=True)
         for category in PHASE1_CATEGORIES:
-            (raw / f"{category}.json").write_text(
-                json.dumps([{"id": f"fixture-{category}", "success": True, "valid": True}]),
+            official = mapping[category]
+            (adapter / f"BFCL_v4_{official}_result.json").write_text(
+                json.dumps({"id": f"fixture-{category}", "result": "fixture"}) + "\n",
+                encoding="utf-8",
+            )
+            (adapter / f"BFCL_v4_{official}_score.json").write_text(
+                json.dumps({"accuracy": 1.0, "correct_count": 1, "total_count": 1}) + "\n",
                 encoding="utf-8",
             )
         record_dir.mkdir(parents=True)

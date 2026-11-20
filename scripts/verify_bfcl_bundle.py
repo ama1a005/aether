@@ -19,6 +19,7 @@ from benchmarks.nov19_bfcl.preflight import (
     PINNED_TORCH_VERSION,
     PINNED_CUDA_VERSION,
 )
+from benchmarks.bfcl_compat import official_categories
 from benchmarks.nov19_bfcl.verifier import BFCLArtifactVerifier
 from experiments.external_bundle import artifact_hashes, verify_bundle
 
@@ -93,7 +94,7 @@ def verify(root: Path) -> dict[str, Any]:
         raise ValueError("BFCL raw command record set is incomplete")
     if any(record.get("exit_code") != 0 for record in records):
         raise ValueError("BFCL generation or evaluation command failed")
-    expected_categories = ",".join(PHASE1_CATEGORIES)
+    expected_categories = ",".join(official_categories(PHASE1_CATEGORIES))
     for index, verb in enumerate(("generate", "evaluate")):
         command = records[index].get("command", [])
         if verb not in command or ADAPTER_REGISTRY_NAME not in command or expected_categories not in command:

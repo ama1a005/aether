@@ -24,7 +24,7 @@ def test_official_command_plans_are_explicit(tmp_path):
     assert len(bfcl.commands) == 2
     assert bfcl.commands[1][-1] == "--partial-eval"
     assert bfcl.result_scope == "official_partial_subset_nonleaderboard"
-    assert bfcl.commands[0][bfcl.commands[0].index("--test-category") + 1] == "simple"
+    assert bfcl.commands[0][bfcl.commands[0].index("--test-category") + 1] == "simple_python"
 
 
 def test_qwen25_adapter_plan_pins_snapshot_and_labels_scope(tmp_path):
@@ -38,7 +38,7 @@ def test_qwen25_adapter_plan_pins_snapshot_and_labels_scope(tmp_path):
     )
     assert plan.commands[0][1:3] == ("-m", "benchmarks.bfcl_qwen25")
     assert "abc123" in plan.commands[0]
-    assert "simple,multiple" in plan.commands[0]
+    assert "simple_python,multiple" in plan.commands[0]
     assert plan.result_scope == "official_evaluator_aether_qwen25_adapter_complete_categories"
 
 

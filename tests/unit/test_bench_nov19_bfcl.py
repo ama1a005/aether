@@ -187,7 +187,7 @@ def test_categories_rejects_empty_or_invalid():
 
     ok, reasons, _ = check_categories(["invalid_category_xyz"])
     assert not ok
-    assert any("Unknown BFCL categories" in r for r in reasons)
+    assert any("No reviewed BFCL" in r for r in reasons)
 
 
 def test_snapshot_manifest_absent(tmp_path):
@@ -250,41 +250,49 @@ def test_verifier_rejects_missing_directory(tmp_path):
     assert any("does not exist" in r for r in res.reasons)
 
 
+def _write_official_category(root: Path, semantic: str, official: str,
+                             rows: list[dict], correct: int) -> None:
+    adapter = root / "AETHER_Qwen2.5-1.5B-Instruct-FC" / "non_live"
+    adapter.mkdir(parents=True, exist_ok=True)
+    result = adapter / f"BFCL_v4_{official}_result.json"
+    score = adapter / f"BFCL_v4_{official}_score.json"
+    result.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+    header = {"accuracy": correct / len(rows), "correct_count": correct,
+              "total_count": len(rows)}
+    score.write_text(json.dumps(header) + "\n", encoding="utf-8")
+
+
 def test_verifier_rejects_partial_categories(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    # Create output for simple only
-    simple_file = res_dir / "simple.json"
-    simple_file.write_text(json.dumps([{"id": "s1", "success": True, "valid": True}]))
+    _write_official_category(res_dir, "simple", "simple_python", [{"id": "s1", "result": "ok"}], 1)
 
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple", "multiple"])
     res = verifier.verify()
     assert not res.passed
-    assert any("Missing evaluator output for category: multiple" in r for r in res.reasons)
+    assert any("one official result and score file for multiple" in r for r in res.reasons)
 
 
 def test_verifier_detects_duplicate_task_ids(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    file_1 = res_dir / "simple.json"
-    file_1.write_text(json.dumps([
-        {"id": "duplicate_id_01", "success": True, "valid": True},
-        {"id": "duplicate_id_01", "success": True, "valid": True},
-    ]))
+    _write_official_category(res_dir, "simple", "simple_python", [
+        {"id": "duplicate_id_01", "result": "ok"},
+        {"id": "duplicate_id_01", "result": "ok"},
+    ], 2)
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple"])
     res = verifier.verify()
     assert not res.passed
-    assert any("Duplicate task ID duplicate_id_01" in r for r in res.reasons)
+    assert any("duplicate official task IDs" in r for r in res.reasons)
 
 
 def test_verifier_retains_errors_in_denominator(tmp_path):
     res_dir = tmp_path / "results"
     res_dir.mkdir()
-    simple_file = res_dir / "simple.json"
-    simple_file.write_text(json.dumps([
-        {"id": "s1", "success": True, "valid": True},
-        {"id": "s2", "success": False, "valid": False, "error": "timeout"},
-    ]))
+    _write_official_category(res_dir, "simple", "simple_python", [
+        {"id": "s1", "result": [{"name": "ok"}]},
+        {"id": "s2", "result": "Error during inference: timeout"},
+    ], 1)
     verifier = BFCLArtifactVerifier(res_dir, expected_categories=["simple"])
     res = verifier.verify()
     assert res.passed
