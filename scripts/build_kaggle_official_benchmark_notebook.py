@@ -43,12 +43,14 @@ WHEEL=WHEELS[0]; WHEEL_SHA256=hashlib.sha256(WHEEL.read_bytes()).hexdigest()
 assert WHEEL_SHA256=='3bb6dfa5f0c68ad403c9ec50b00db2bb3b4cc9b38ab1ff33f48fe30d853d3a0a', WHEEL_SHA256
 subprocess.run([str(PY),'-m','pip','install',str(WHEEL)],check=True)
 subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-bfcl-vllm.txt'),'--torch-backend','cu130'],check=True,env=env)
-version_probe='import json,torch; from importlib.metadata import version; print(json.dumps({"vllm":version("vllm"),"torch":torch.__version__,"cuda":torch.version.cuda,"cuda_available":torch.cuda.is_available()}))'
+version_probe='import json,torch; from importlib.metadata import version; from bfcl_eval.constants.model_config import MODEL_CONFIG_MAPPING,ModelConfig; from bfcl_eval.model_handler.local_inference.qwen_fc import QwenFCHandler; print(json.dumps({"vllm":version("vllm"),"torch":torch.__version__,"cuda":torch.version.cuda,"cuda_available":torch.cuda.is_available(),"soundfile":version("soundfile"),"bfcl_runtime_import":bool(MODEL_CONFIG_MAPPING is not None and ModelConfig is not None and QwenFCHandler is not None)}))'
 installed=json.loads(subprocess.check_output([str(PY),'-c',version_probe],text=True))
 assert installed['vllm']=='0.34.0', installed
 assert installed['torch'].split('+',1)[0]=='2.14.0', installed
 assert installed['cuda']=='13.0', installed
 assert installed['cuda_available'] is True, installed
+assert installed['soundfile']=='0.13.1', installed
+assert installed['bfcl_runtime_import'] is True, installed
 print('Pinned BFCL GPU environment:',json.dumps(installed,sort_keys=True))
 """
         snapshot_setup = """if not globals().get('SETUP_COMPLETE',False):
@@ -121,7 +123,7 @@ import json,os,re,shutil,subprocess,sys,tarfile,hashlib,threading,time
 from kaggle_secrets import UserSecretsClient
 WORK=Path('/kaggle/working') if Path('/kaggle/working').is_dir() else Path.cwd()/'aether-execution-output'
 WORK.mkdir(parents=True,exist_ok=True)
-ATTEMPT=os.environ.get('AETHER_BFCL_ATTEMPT','attempt-1')
+ATTEMPT=os.environ.get('AETHER_BFCL_ATTEMPT','attempt-2')
 assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{{0,63}}',ATTEMPT), f'Invalid attempt identifier: {{ATTEMPT!r}}'
 RUNTIME=Path('/tmp/aether-{benchmark}')
 REPO=RUNTIME/'aether'; VENV=RUNTIME/'venv'; PY=VENV/'bin'/'python'

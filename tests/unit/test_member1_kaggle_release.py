@@ -58,4 +58,7 @@ def test_member1_notebooks_share_complete_release_guards() -> None:
     assert "installed['vllm']=='0.34.0'" in bfcl
     assert "installed['torch'].split('+',1)[0]=='2.14.0'" in bfcl
     assert "installed['cuda']=='13.0'" in bfcl
+    assert "installed['soundfile']=='0.13.1'" in bfcl
+    assert "installed['bfcl_runtime_import'] is True" in bfcl
+    assert "'attempt-2'" in bfcl
     assert "verify_bfcl_bundle" in bfcl

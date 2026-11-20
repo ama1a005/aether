@@ -167,6 +167,9 @@ def test_vllm_preflight_rejects_driver_too_old_for_cuda_13(monkeypatch):
 
 def test_bfcl_overlay_pins_backend_and_cuda_compatible_torch() -> None:
     overlay = Path("requirements-bfcl-vllm.txt").read_text(encoding="utf-8")
+    assert "soundfile==0.13.1" in overlay
+    assert "cffi==1.17.1" in overlay
+    assert "pycparser==2.22" in overlay
     assert "vllm==0.34.0" in overlay
     assert "torch==2.14.0" in overlay
 

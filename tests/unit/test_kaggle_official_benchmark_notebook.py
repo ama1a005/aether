@@ -44,6 +44,10 @@ def test_official_notebooks_are_commit_pinned_and_verified() -> None:
     assert "installed['torch'].split('+',1)[0]=='2.14.0'" in bfcl_source
     assert "installed['cuda']=='13.0'" in bfcl_source
     assert "installed['cuda_available'] is True" in bfcl_source
+    assert "installed['soundfile']=='0.13.1'" in bfcl_source
+    assert "installed['bfcl_runtime_import'] is True" in bfcl_source
+    assert "from bfcl_eval.constants.model_config import MODEL_CONFIG_MAPPING,ModelConfig" in bfcl_source
+    assert "'attempt-2'" in bfcl_source
     assert "startswith('0.34.0 2.14.0+ 13.0')" not in bfcl_source
     assert "Refusing to repeat or overwrite this attempt" in bfcl_source
     assert "git','fetch','origin','m1/target-harness'" in bfcl_source
