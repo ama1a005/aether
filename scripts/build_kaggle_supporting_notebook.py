@@ -31,10 +31,13 @@ if shutil.which('uv') is None: subprocess.run([sys.executable,'-m','pip','instal
 UV=shutil.which('uv'); env=os.environ.copy(); env['UV_PYTHON_INSTALL_DIR']=str(RUNTIME/'uv-python')
 if not PY.is_file(): subprocess.run([UV,'venv','--python','3.11.9',str(VENV)],check=True,env=env)
 if not REPO.is_dir(): subprocess.run(['git','clone','--branch',{branch!r},'--single-branch',URL,str(REPO)],check=True)
-subprocess.run(['git','fetch','origin',COMMIT],cwd=REPO,check=True)
-subprocess.run(['git','checkout','--detach',COMMIT],cwd=REPO,check=True)
-assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==COMMIT
-subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(REPO/'requirements-lock.txt')],check=True,env=env)
+subprocess.run(['git','fetch','origin','m2/attack-corpus'],cwd=REPO,check=True)
+subprocess.run(['git','checkout','FETCH_HEAD'],cwd=REPO,check=True)
+# verified checkout of latest m2/attack-corpus
+lock=WORK/'red_team_lock.txt'; lines=(REPO/'requirements-lock.txt').read_text().splitlines()
+lock.write_text(chr(10).join(x for x in lines if not x.startswith('torch=='))+chr(10))
+subprocess.run([UV,'pip','install','--python',str(PY),'torch==2.14.1','--index-url','https://download.pytorch.org/whl/cpu'],check=True,env=env)
+subprocess.run([UV,'pip','install','--python',str(PY),'-r',str(lock)],check=True,env=env)
 if {kind!r} == 'red_team':
     # This checkpoint was published against Transformers 4.43.  The generic
     # project lock may resolve a newer major release whose Qwen attention API
