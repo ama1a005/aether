@@ -1,0 +1,31 @@
+{
+  "corpus_hash": "1f632fe6df1fc34b5e15880bedfe021711f05590e502a332358f336182ed3b49",
+  "families": [
+    "a2a_manipulation",
+    "implicit_preference_manipulation",
+    "tool_description_poison",
+    "tool_output_inject"
+  ],
+  "family_counts": {
+    "a2a_manipulation": 1,
+    "implicit_preference_manipulation": 1,
+    "tool_description_poison": 1,
+    "tool_output_inject": 1
+  },
+  "file_count": 4,
+  "file_hashes": {
+    "atk_a2a_manipu_000.json": "c09cdd30093f1e17502e9076aab3237ba16484645579fb55de1186796cfad708",
+    "atk_implicit_pref_000.json": "b7d24734a7cff8652474a3415942fb4e11d83a8b4b10b7883c529660e59840db",
+    "atk_tool_desc_000.json": "189bb1130305a4e8b87cbd86491a7d12e2c09b765fbf9336c3a4b756f3e9ebbf",
+    "atk_tool_outp_000.json": "a8a8378dffbb1540cb39331aa9cd80e8e0e7767197c1585d1854377d83cc35f8"
+  },
+  "generation_timestamp": "2026-11-20T05:28:17.391470+00:00",
+  "seed": 42,
+  "selected_ids": [
+    "atk_tool_desc_000",
+    "atk_tool_outp_000",
+    "atk_a2a_manipu_000",
+    "atk_implicit_pref_000"
+  ],
+  "selection_policy": "CorpusBuilder.build_phase1_corpus"
+}

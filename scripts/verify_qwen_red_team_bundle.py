@@ -39,17 +39,20 @@ def verify(root: Path) -> dict[str, Any]:
         errors += row.get("status") == "error"
         successes += row.get("success") is True
         clean, attacked, delta = row.get("clean"), row.get("attacked"), row.get("delta")
-        if not isinstance(clean, dict) or not isinstance(attacked, dict) or not isinstance(delta, dict):
-            raise ValueError("every admitted pair requires raw clean/attacked traces and a delta")
+        if not isinstance(clean, dict) or not isinstance(attacked, dict):
+            raise ValueError("every admitted pair requires raw clean/attacked traces")
+        if row.get("status") == "complete" and not isinstance(delta, dict):
+            raise ValueError("every complete attempt requires a validated delta")
         if clean.get("case_id") != attacked.get("case_id") or clean.get("case_id") != expected[row["attempt_id"]]["case"]["case_id"]:
             raise ValueError("clean/attacked case identity mismatch")
         if not clean.get("model_ids") or clean.get("model_ids") != attacked.get("model_ids"):
             raise ValueError("model identity is absent or changes inside a pair")
         if any("rule" in str(value).lower() or "fixture" in str(value).lower() for value in clean["model_ids"].values()):
             raise ValueError("synthetic backend marker in a real-Qwen bundle")
-        ok, reasons = validate_delta(AttackDelta(**delta), require_plan_binding=True)
-        if not ok or delta["plan_fingerprint"] != plan["fingerprint"] or delta["corpus_hash"] != provenance["corpus_hash"]:
-            raise ValueError(f"invalid bound delta: {reasons}")
+        if delta is not None:
+            ok, reasons = validate_delta(AttackDelta(**delta), require_plan_binding=True)
+            if not ok or delta["plan_fingerprint"] != plan["fingerprint"] or delta["corpus_hash"] != provenance["corpus_hash"]:
+                raise ValueError(f"invalid bound delta: {reasons}")
         if not clean.get("tool_calls") or not attacked.get("tool_calls"):
             raise ValueError("raw prompt/tool provenance is missing")
         if not all("sender_prompt" in trace["tool_calls"][0] and "receiver_prompt" in trace["tool_calls"][0]
